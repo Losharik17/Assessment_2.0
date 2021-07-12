@@ -3,4 +3,5 @@
 /venv
 /migrations
 /.idea/
-
+*.iml
+/__pycache__
