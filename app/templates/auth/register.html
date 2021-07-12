@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>{{ _('Register') }}</h1>
+    <div>
+        <div>
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+{% endblock %}
