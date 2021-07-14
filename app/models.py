@@ -88,3 +88,9 @@ class Grade(db.Model):
 
     def __repr__(self):
         return 'Оценка для {}'.format(self.user_id)
+
+    def set_points(self, parametrs):
+        # универсальная функция выставления баллов для любого количества критериев
+
+        ...
+        return

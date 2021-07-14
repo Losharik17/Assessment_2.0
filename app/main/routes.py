@@ -2,10 +2,9 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, \
     jsonify, current_app
 from flask_login import current_user, login_required
-from flask_babel import _, get_locale
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm
-from app.models import User
+from app.main.forms import EditProfileForm, EmptyForm, GradeForm
+from app.models import User, Expert, Grade
 from app.main import bp
 
 
@@ -30,6 +29,20 @@ def user(username):
     return render_template('user.html', user=user)
 
 
+@bp.route('/expert/<expert_id>', methods=['GET', 'POST'])
+@login_required
+def expert(expert_id):
+    expert = Expert.query.filter_by(expert_id=expert_id).first_or_404()
+    form = GradeForm()
+    if form.validate_on_submit():
+        grade = Grade(user_id=form.user_id.data, expert_id=current_user.id.data)
+        grade.ser_points(form.parametrs.data) # функция не написана
+        ...
+        db.session.add(form)
+        db.session.commit()
+    return render_template('expert.html', expert=expert, form=form)
+
+
 @bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -38,10 +51,10 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash(_('Your changes have been saved.'))
+        flash('Your changes have been saved')
         return redirect(url_for('main.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title=_('Edit Profile'),
+    return render_template('edit_profile.html', title='Edit Profile',
                            form=form)

@@ -26,4 +26,6 @@ class EmptyForm(FlaskForm):
     submit = SubmitField('Принять')
 
 
+class GradeForm(FlaskForm):
 
+    submit = SubmitField('Принять')
