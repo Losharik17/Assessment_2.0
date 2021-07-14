@@ -13,9 +13,17 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64))
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+<<<<<<< Updated upstream
     about_me = db.Column(db.String(256))
     age = db.Column(db.Integer)
     grades = db.relationship('Expert', secondary='grade_user', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
+=======
+    # about_me = db.Column(db.String(256))
+    birth_date = db.Column(db.Integer)
+    grades = db.relationship('Grade', backref='user', lazy='dynamic')
+    # team = db.Column(db.String(32))
+    #grade = db.relationship('Expert', secondary='grade', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
+>>>>>>> Stashed changes
 
     def __repr__(self):
         return '<Пользователь {}>'.format(self.username)
@@ -52,6 +60,9 @@ class Expert(db.Model):
     username = db.Column(db.String(64))
     weight = db.Column(db.Boolean)
     quantity = db.Column(db.Integer)
+
+    def __repr__(self):
+        return 'Эксперт {}'.format(self.username)
 
 
 class Grade(db.Model):
