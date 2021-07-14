@@ -3,7 +3,11 @@
 /venv
 /migrations
 /.idea/
+<<<<<<< HEAD
 *.iml
 /__pycache__
 
 *.flaskenv
+=======
+
+>>>>>>> parent of 557fce3 (БД v0.1)

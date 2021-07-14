@@ -8,25 +8,27 @@ import jwt
 from app import db, login
 
 
+followers = db.Table(
+    'followers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+)
+
+
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64))
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-<<<<<<< Updated upstream
-    about_me = db.Column(db.String(256))
-    age = db.Column(db.Integer)
-    grades = db.relationship('Expert', secondary='grade_user', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
-=======
     # about_me = db.Column(db.String(256))
     birth_date = db.Column(db.Integer)
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     # team = db.Column(db.String(32))
     #grade = db.relationship('Expert', secondary='grade', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
->>>>>>> Stashed changes
+    about_me = db.Column(db.String(140))
 
     def __repr__(self):
-        return '<Пользователь {}>'.format(self.username)
+        return '<User {}>'.format(self.username)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

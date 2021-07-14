@@ -1,9 +1,5 @@
 from flask_wtf import FlaskForm
-<<<<<<< Updated upstream
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-=======
 from wtforms import StringField, IntegerField, PasswordField, BooleanField, SubmitField, DateField
->>>>>>> Stashed changes
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models import User
 
@@ -18,10 +14,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-<<<<<<< Updated upstream
-=======
     birth_date = IntegerField('Дата рождения', validators=[])
->>>>>>> Stashed changes
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
         'Повторите пароль', validators=[DataRequired(), EqualTo('password')])
