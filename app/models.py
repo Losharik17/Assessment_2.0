@@ -8,27 +8,19 @@ import jwt
 from app import db, login
 
 
-followers = db.Table(
-    'followers',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
-)
-
-
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64))
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     # about_me = db.Column(db.String(256))
-    birth_date = db.Column(db.Integer)
+    birth_date = db.Column(db.DateTime)
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     # team = db.Column(db.String(32))
     #grade = db.relationship('Expert', secondary='grade', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
-    about_me = db.Column(db.String(140))
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<Пользователь {}>'.format(self.username)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -60,22 +52,39 @@ def load_user(id):
 class Expert(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
-    weight = db.Column(db.Boolean)
-    quantity = db.Column(db.Integer)
+    grades = db.relationship('Grade', backref='expert', lazy='dynamic')
+    weight = db.Column(db.Boolean, default=1.0)
+    quantity = db.Column(db.Integer, default=0)
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256').decode('utf-8')
 
     def __repr__(self):
         return 'Эксперт {}'.format(self.username)
 
 
 class Grade(db.Model):
-    __tablename__ = 'grade_user'
+    __tablename__ = 'grade'
 
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    expertname = db.Column(db.String(64), db.ForeignKey('expert.username'))
+    expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     parameter_1 = db.Column(db.Integer)
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
     parameter_5 = db.Column(db.Integer)
+
+    def __repr__(self):
+        return 'Оценка для {}'.format(self.user_id)
