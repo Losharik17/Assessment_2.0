@@ -19,7 +19,7 @@ def before_request():
 @bp.route('/T-Park', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template()
+    return render_template('base.html')
 
 
 @bp.route('/user/<username>')
