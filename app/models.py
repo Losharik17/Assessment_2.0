@@ -85,7 +85,7 @@ class Grade(db.Model):
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
-    
+
 
     def __repr__(self):
         return 'Оценка для {}'.format(self.user_id)
