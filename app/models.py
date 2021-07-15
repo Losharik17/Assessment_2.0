@@ -80,11 +80,12 @@ class Grade(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    parameter_0 = db.Column(db.Integer)
     parameter_1 = db.Column(db.Integer)
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
-    parameter_5 = db.Column(db.Integer)
+    
 
     def __repr__(self):
         return 'Оценка для {}'.format(self.user_id)
