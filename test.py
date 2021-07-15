@@ -43,14 +43,13 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
 
         g1 = Grade(user_id=u2.id, expert_id=e1.id)
-        g1.parameter_0 = -1
-        g1.parameter_1 = 3
 
         g2 = Grade(user_id=u2.id, expert_id=e1.id)
-        g2.parameter_0 = -1
-        g2.parameter_1 = 3
 
         db.session.add_all([g1, g2])
+        db.session.commit()
+
+        g1.set_points([4, 5, 6])
         db.session.commit()
 
         grades = Grade.query.filter_by(user_id=u2.id).all()

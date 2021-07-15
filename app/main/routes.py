@@ -36,9 +36,9 @@ def expert(expert_id):
     form = GradeForm()
     if form.validate_on_submit():
         grade = Grade(user_id=form.user_id.data, expert_id=current_user.id.data)
-        grade.ser_points(form.parametrs.data) # функция не написана
-        ...
-        db.session.add(form)
+        parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data, form.parameter_4.data]
+        grade.set_points(parameters)
+        db.session.add(grade)
         db.session.commit()
     return render_template('expert.html', expert=expert, form=form)
 
@@ -56,5 +56,4 @@ def edit_profile():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile',
-                           form=form)
+    return render_template('edit_profile.html', title='Edit Profile', form=form)

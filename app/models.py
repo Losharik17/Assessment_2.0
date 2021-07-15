@@ -3,6 +3,7 @@ from hashlib import md5
 from time import time
 from flask import current_app
 from flask_login import UserMixin
+from sqlalchemy import Integer
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
@@ -80,17 +81,21 @@ class Grade(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    parameter_0 = db.Column(db.Integer)
-    parameter_1 = db.Column(db.Integer)
-    parameter_2 = db.Column(db.Integer)
-    parameter_3 = db.Column(db.Integer)
-    parameter_4 = db.Column(db.Integer)
+    parameter_0 = db.Column(db.Integer, default=0)
+    parameter_1 = db.Column(db.Integer, default=0)
+    parameter_2 = db.Column(db.Integer, default=0)
+    parameter_3 = db.Column(db.Integer, default=0)
+    parameter_4 = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return 'Оценка для {}'.format(self.user_id)
 
-    def set_points(self, parameters):
-        # универсальная функция выставления баллов для любого количества критериев
-        # если хватает полей в БД
-        for i in range(len(parameters)):
-            self.locals()['parameter_{}'.format(i)] = parameters[i]
+    def set_points(self, grades):
+        '''устанавливает баллы для критериев'''
+        def parameters():
+            return [self.parameter_0, self.parameter_1, self.parameter_2, self.parameter_3, self.parameter_4]
+
+        parameter = parameters()
+        for i in range(len(grades)):
+            if grades[i] and parameter[i]:
+                parameter[i] = grades[i]
