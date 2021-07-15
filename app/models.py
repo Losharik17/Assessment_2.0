@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     # about_me = db.Column(db.String(256))
-    birth_date = db.Column(db.DateTime)
+    birth_date = db.Column(db.Date)
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     # team = db.Column(db.String(32))
     #grade = db.relationship('Expert', secondary='grade', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
@@ -91,7 +91,7 @@ class Grade(db.Model):
         return 'Оценка для {}'.format(self.user_id)
 
     def set_points(self, grades):
-        '''устанавливает баллы для критериев'''
+        """ устанавливает баллы для критериев """
         def parameters():
             return [self.parameter_0, self.parameter_1, self.parameter_2, self.parameter_3, self.parameter_4]
 
@@ -99,3 +99,39 @@ class Grade(db.Model):
         for i in range(len(grades)):
             if grades[i] and parameter[i]:
                 parameter[i] = grades[i]
+
+
+class Viewer(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64))
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256').decode('utf-8')
+
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64))
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'],
+            algorithm='HS256').decode('utf-8')

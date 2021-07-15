@@ -35,3 +35,8 @@ class GradeForm(FlaskForm):
     parameter_4 = IntegerField('{}'.format(''))
 
     submit = SubmitField('Принять')
+
+
+class UserForm(FlaskForm):
+    user_id = IntegerField('Номер участника')
+    submit = SubmitField('')
