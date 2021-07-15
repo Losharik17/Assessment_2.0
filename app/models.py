@@ -88,7 +88,7 @@ class Grade(db.Model):
     parameter_4 = db.Column(db.Integer, default=0)
 
     def __repr__(self):
-        return 'Оценка для {}'.format(self.user_id)
+        return 'Оценка для участника номер {}'.format(self.user_id)
 
     def set_points(self, grades):
         """ устанавливает баллы для критериев """

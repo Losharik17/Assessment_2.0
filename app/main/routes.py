@@ -7,18 +7,11 @@ from app.models import User, Expert, Grade, Viewer, Admin
 from app.main import bp
 
 
-@bp.before_app_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
-        db.session.commit()
-
-
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('base.html')
+    return render_template('main.html')
 
 
 @bp.route('/user/<username>')
@@ -53,7 +46,7 @@ def expert_grade(expert_id, user_id):
         grade.set_points(parameters)
         db.session.add(grade)
         db.session.commit()
-        flash('EN')
+        flash('Text')
         return redirect(url_for('main.expert'))
     return render_template('expert_grade.html', expert=expert, form=form)
 
