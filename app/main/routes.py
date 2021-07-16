@@ -2,14 +2,13 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm
+from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin
 from app.main import bp
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
-@login_required
 def index():
     return render_template('main.html')
 
@@ -45,7 +44,10 @@ def expert_grade(expert_id, user_id):
         parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data, form.parameter_4.data]
         grade.set_points(parameters)
         db.session.add(grade)
+        grade.user.sum_grades()
+        expert.quantity_grade()
         db.session.commit()
+
         flash('Text')
         return redirect(url_for('main.expert'))
     return render_template('expert_grade.html', expert=expert, form=form)
@@ -79,3 +81,18 @@ def viewer(viewer_id):
 def admin(admin_id):
     admin = Admin.query.filter_by(admin_id=admin_id).first()
     return render_template('admin.html', admin=admin)
+
+
+@bp.route('/admin_table', methods=['GET', 'POST'])
+@login_required
+def admin_table(admin_id):
+    admin = Admin.query.filter_by(admin_id=admin_id).first()
+    page = request.args.get('page', 1, type=int)
+    users = ...
+    next_url = url_for('main.explore', page=users.next_num) \
+        if users.has_next else None
+    prev_url = url_for('main.index', page=users.prev_num) \
+        if users.has_prev else None
+    return render_template('admin_table.html', title='R',
+                           users=users.items, next_url=next_url,
+                           prev_url=prev_url)

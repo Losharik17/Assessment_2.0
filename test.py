@@ -42,20 +42,22 @@ class UserModelCase(unittest.TestCase):
         db.session.add(e1)
         db.session.commit()
 
-        g1 = Grade(user_id=u2.id, expert_id=e1.id)
+        for i in range(500):
+            g1 = Grade(user_id=u2.id, expert_id=e1.id)
 
-        g2 = Grade(user_id=u2.id, expert_id=e1.id)
+            g2 = Grade(user_id=u2.id, expert_id=e1.id)
 
-        db.session.add_all([g1, g2])
-        db.session.commit()
-
-        g1.set_points([4, 5, 6])
-        db.session.commit()
-
-        grades = Grade.query.filter_by(user_id=u2.id).all()
-
-        self.assertFalse(int(g1.expert_id) != int(e1.id))
-        self.assertTrue(int(g1.expert_id) == int(e1.id))
+            g1.set_points([4, 5, 6])
+            g2.set_points([4, 5, 6])
+            db.session.add_all([g1, g2])
+            db.session.commit()
+        now1 = datetime.now()
+        u2.sum_grades()
+        now2 = datetime.now()
+        print(str(now2-now1))
+        print(u2.sum_grade_all)
+        self.assertFalse(int(u2.expert_id) != int(e1.id))
+        self.assertTrue(int(u2.expert_id) == int(e1.id))
 
 
 if __name__ == '__main__':

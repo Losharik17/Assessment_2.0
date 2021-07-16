@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, BooleanField, SubmitField, DateField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
+from wtforms import StringField, IntegerField, PasswordField, BooleanField, SubmitField, FileField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp
 from app.models import User
 from wtforms.fields.html5 import DateField
 
@@ -17,6 +17,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     birth_date = DateField('Дата рождения', format='%Y-%m-%d',
                            validators=[DataRequired()])
+    avatar = FileField('Фото', validators=[])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
         'Повторите пароль', validators=[DataRequired(), EqualTo('password')])
