@@ -9,6 +9,7 @@ from app.main import bp
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
+@login_required
 def index():
     return render_template('main.html')
 

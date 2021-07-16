@@ -3,7 +3,6 @@ from hashlib import md5
 from time import time
 from flask import current_app
 from flask_login import UserMixin
-from sqlalchemy import Integer
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
@@ -13,9 +12,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(120), index=True, unique=True)
-    avatar = db.Column(db.String)
+    avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
-    # about_me = db.Column(db.String(256))
     birth_date = db.Column(db.Date)
     team = db.Column(db.String(32))
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
@@ -54,23 +52,20 @@ class User(UserMixin, db.Model):
                         grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
 
         for i in range(5):  # должно быть кол-во параметров, а не цифра
-            self.sum_weight_experts(i)
+            self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
-
-
 
     def sum_weight_experts(self, number_parameter):
         """делит на сумму весов экспертов по критерию"""
         grades = self.grades.all()
-        sum = 0
+        sum = float(0)
         for grade in grades:
-            if grade.__dict__['parameter_{}'.format(number_parameter)]:
+            if grade.__dict__['parameter_{}'.format(number_parameter)] is not None \
+                    and grade.__dict__['parameter_{}'.format(number_parameter)] != 0:
                 sum += grade.expert.weight
         if sum:
-            self.__dict__['sum_grade_{}'.format(number_parameter)] /= sum
-
-
-
+            return sum
+        return 1
 
     @staticmethod
     def verify_reset_password_token(token):
