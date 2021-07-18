@@ -90,10 +90,10 @@ def admin_table(admin_id):
     admin = Admin.query.filter_by(admin_id=admin_id).first()
     parameters_name = ParametersName.query.all()
     page = request.args.get('page', 1, type=int)
-    users = User.query.paginate(page, current_app.config['USER_PER_PAGE'], False)
-    next_url = url_for('main.admin_table', page=users.next_num, admin_id=admin.id) \
+    users = User.query.order_by(User.id).paginate(page, current_app.config['USER_PER_PAGE'], False)
+    next_url = url_for(f'main.admin_table({{admin_id}})', page=users.next_num, admin_id=admin.id) \
         if users.has_next else None
-    prev_url = url_for('main.admin_table', page=users.prev_num, admin_id=admin.id) \
+    prev_url = url_for(f'main.admin_table({{admin_id}})', page=users.prev_num, admin_id=admin.id) \
         if users.has_prev else None
     return render_template('admin_table.html', title='Rating', admin=admin,
                            users=users.items, next_url=next_url,
