@@ -10,11 +10,9 @@ from app import db, login
 from sqlalchemy import event, DDL
 
 
-
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
@@ -85,6 +83,7 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     if int(id) < 10000:
+        print(id)
         return User.query.get(int(id))
     if 10000 < int(id) < 11000:
         return Expert.query.get(int(id))
@@ -94,10 +93,10 @@ def load_user(id):
         return Viewer.query.get(int(id))
 
 
-
 class Expert(UserMixin, db.Model):
-    id = db.Column(db.Integer, db.Sequence('seq_reg_id', start=1000, increment=10), unique=True, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
     grades = db.relationship('Grade', backref='expert', lazy='dynamic')
     weight = db.Column(db.Float, default=1.0)
     quantity = db.Column(db.Integer, default=0)
@@ -135,7 +134,6 @@ class Grade(db.Model):
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
 
-
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
 
@@ -148,7 +146,8 @@ class Grade(db.Model):
 
 class Viewer(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -166,7 +165,8 @@ class Viewer(UserMixin, db.Model):
 
 class Admin(UserMixin, db.Model):
     admin_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -182,20 +182,19 @@ class Admin(UserMixin, db.Model):
             algorithm='HS256').decode('utf-8')
 
 
-event.listen(
-    Expert.__table__,
-    'after_create',
-    DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id
-)
+event.listen(Expert.__table__, 'after_create',
+             DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id
+             )
 
-event.listen(
-    Admin.__table__,
-    'after_create',
-    DDL("INSERT INTO admin (admin_id) VALUES (11000)")
-)
+event.listen(Admin.__table__, 'after_create',
+             DDL("INSERT INTO admin (admin_id) VALUES (11000)")
+             )
 
-event.listen(
-    Viewer.__table__,
-    'after_create',
-    DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
-)
+event.listen(Viewer.__table__, 'after_create',
+             DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
+             )
+
+
+class ParametersName(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    name = db.Column(db.String(32))

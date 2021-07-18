@@ -15,8 +15,6 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    birth_date = DateField('Дата рождения', format='%Y-%m-%d',
-                           validators=[DataRequired()])
     avatar = FileField('Фото', validators=[])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
@@ -44,3 +42,6 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField('Повторите пароль', validators=[DataRequired(),
                                                               EqualTo('password')])
     submit = SubmitField('Сбросить пароль')
+
+#     birth_date = DateField('Дата рождения', format='%Y-%m-%d',
+#                            validators=[DataRequired()])
