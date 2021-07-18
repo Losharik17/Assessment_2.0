@@ -1,0 +1,43 @@
+{% extends "main_0.html" %}
+
+{%  block app_content %}
+
+    <div class = "tab">
+        <table>
+            <tr>
+                <th>№</th>
+                <th>Участник</th>
+                <th>Критерий 1</th>
+                <th>Критерий 1</th>
+                <th>Критерий 1</th>
+            </tr>
+
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.birth_date }}</td>
+                    <td>{{ user.team }}</td>
+
+                    {% for i in range(10) %}
+                        {% if user.__dict__['sum_grade_{}'.format(i)] %}
+                            {% if user.__dict__['sum_grade_{}'.format(i)] == 0 %}
+                                <td> — </td>
+                            {% else %}
+                                <td> {{ user.__dict__['sum_grade_{}'.format(i)] }} </td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if user.sum_grade_all == 0 %}
+                        <td> — </td>
+                    {% else %}
+                        <td> {{ user.sum_grade_all }} </td>
+                    {% endif %}
+
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}
