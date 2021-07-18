@@ -1,7 +1,8 @@
-from flask import request
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
+from sqlalchemy import Integer
+from wtforms import StringField, SubmitField, TextAreaField, IntegerField
 from wtforms.validators import ValidationError, DataRequired, Length
+
 from app.models import User
 
 
@@ -26,4 +27,20 @@ class EmptyForm(FlaskForm):
     submit = SubmitField('Принять')
 
 
+class GradeForm(FlaskForm):
+    parameter_0 = IntegerField('{}'.format('')) # подтянуть из БД название параметра
+    parameter_1 = IntegerField('{}'.format(''))
+    parameter_2 = IntegerField('{}'.format(''))
+    parameter_3 = IntegerField('{}'.format(''))
+    parameter_4 = IntegerField('{}'.format(''))
 
+    submit = SubmitField('Принять')
+
+
+class UserForm(FlaskForm):
+    user_id = IntegerField('Номер участника')
+    submit = SubmitField('')
+
+
+class TableForm(FlaskForm):
+    pass

@@ -5,7 +5,7 @@ from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
-from app.models import User
+from app.models import User, Expert, Admin, Viewer
 from app.auth.email import send_password_reset_email
 
 
@@ -15,9 +15,16 @@ def login():
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.email.data).first()
+        if not user:
+            user = Expert.query.filter_by(username=form.email.data).first()
+            if not user:
+                user = Admin.query.filter_by(username=form.email.data).first()
+                if not user:
+                    user = Viewer.query.filter_by(username=form.email.data).first()
+
         if user is None or not user.check_password(form.password.data):
-            flash('Неправильный пароль или имя пользователя')
+            flash('Неправильный пароль или email')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -39,14 +46,20 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, birth_date=form.birth_date.data)
+        user = User(username=form.username.data, email=form.email.data,
+                    birth_date=form.birth_date.data, avatar=form.avatar.data)
+        if User.query.filter_by(email=form.email.data) or \
+                Expert.query.filter_by(email=form.email.data) or \
+                Admin.query.filter_by(email=form.email.data) or \
+                Viewer.query.filter_by(email=form.email.data):
+            flash('Данная почта уже используется одним из пользователей<br>'
+                  'Пожалуйста изпользуйте другой email адрес')
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Регистрация прошла успешно.')
         return redirect(url_for('auth.login'))
-    return render_template('auth/register.html', title='Register',
-                           form=form)
+    return render_template('auth/register.html', title='Register', form=form)
 
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
@@ -58,8 +71,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash(
-            'Проверьте вашу почту и следуйте дальнейшим инструкциям')
+        flash('Проверьте вашу почту и следуйте дальнейшим инструкциям')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
                            title='Сбросить пароль', form=form)
