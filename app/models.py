@@ -84,13 +84,13 @@ class User(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    if id < 10000:
+    if int(id) < 10000:
         return User.query.get(int(id))
-    if 10000 < id < 11000:
+    if 10000 < int(id) < 11000:
         return Expert.query.get(int(id))
-    if 11000 < id < 12000:
+    if 11000 < int(id) < 12000:
         return Admin.query.get(int(id))
-    if 12000 < id:
+    if 12000 < int(id):
         return Viewer.query.get(int(id))
 
 
