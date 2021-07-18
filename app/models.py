@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import unique
 from hashlib import md5
 from time import time
 from flask import current_app
@@ -6,12 +7,15 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
+from sqlalchemy import event, DDL
+
+
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64))
-    email = db.Column(db.String(120), index=True, unique=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(64), unique=True)
+    email = db.Column(db.String(128), index=True, unique=True)
     avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
     birth_date = db.Column(db.Date)
@@ -24,7 +28,8 @@ class User(UserMixin, db.Model):
     sum_grade_4 = db.Column(db.Float, default=0)
     sum_grade_all = db.Column(db.Float, default=0)
 
-    # grade = db.relationship('Expert', secondary='grade', backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
+    # grade = db.relationship('Expert', secondary='grade', /
+    # backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return '<Пользователь {}>'.format(self.username)
@@ -79,12 +84,20 @@ class User(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    return User.query.get(int(id))
+    if id < 10000:
+        return User.query.get(int(id))
+    if 10000 < id < 11000:
+        return Expert.query.get(int(id))
+    if 11000 < id < 12000:
+        return Admin.query.get(int(id))
+    if 12000 < id:
+        return Viewer.query.get(int(id))
 
 
-class Expert(db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64))
+
+class Expert(UserMixin, db.Model):
+    id = db.Column(db.Integer, db.Sequence('seq_reg_id', start=1000, increment=10), unique=True, primary_key=True)
+    username = db.Column(db.String(64), unique=True)
     grades = db.relationship('Grade', backref='expert', lazy='dynamic')
     weight = db.Column(db.Float, default=1.0)
     quantity = db.Column(db.Integer, default=0)
@@ -132,9 +145,9 @@ class Grade(db.Model):
                 self.__dict__['parameter_{}'.format(i)] = grades[i]
 
 
-class Viewer(db.Model):
+class Viewer(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64))
+    username = db.Column(db.String(64), unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -150,9 +163,9 @@ class Viewer(db.Model):
             algorithm='HS256').decode('utf-8')
 
 
-class Admin(db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64))
+class Admin(UserMixin, db.Model):
+    admin_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64), unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -166,3 +179,22 @@ class Admin(db.Model):
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
             algorithm='HS256').decode('utf-8')
+
+
+event.listen(
+    Expert.__table__,
+    'after_create',
+    DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id
+)
+
+event.listen(
+    Admin.__table__,
+    'after_create',
+    DDL("INSERT INTO admin (admin_id) VALUES (11000)")
+)
+
+event.listen(
+    Viewer.__table__,
+    'after_create',
+    DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
+)

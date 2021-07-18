@@ -11,7 +11,7 @@ from app.main import bp
 @bp.route('/T-Park', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('main.html')
+    return render_template('base.html')
 
 
 @bp.route('/user/<username>')
@@ -29,9 +29,9 @@ def expert(expert_id):
     if form.validate_on_submit():
         user = User.query.filter_by(user_id=form.user_id.data).first()
         if user is None:
-            flash('En')
+            flash('None User')
             return redirect(url_for('main.expert'))
-        return redirect(url_for('main.expert_grade'))
+        return redirect(url_for('main.expert_grade', expert_id=expert.id, user_id=user.id))
     return render_template('expert.html', form=form, expert=expert)
 
 
@@ -84,15 +84,15 @@ def admin(admin_id):
     return render_template('admin.html', admin=admin)
 
 
-@bp.route('/admin_table', methods=['GET', 'POST'])
+@bp.route('/admin_table/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin_table(admin_id):
-    admin = Admin.query.filter_by(admin_id=admin_id).first()
+    admin = Admin.query.filter_by(id=admin_id).first()
     page = request.args.get('page', 1, type=int)
-    users = User.query.all().paginate(page, current_app.config['USER_PER_PAGE'], False)
-    next_url = url_for('main.admin_table', page=users.next_num) \
+    users = User.query.paginate(page, current_app.config['USER_PER_PAGE'], False)
+    next_url = url_for('main.admin_table', page=users.next_num, admin_id=admin.id) \
         if users.has_next else None
-    prev_url = url_for('main.admin_table', page=users.prev_num) \
+    prev_url = url_for('main.admin_table', page=users.prev_num, admin_id=admin.id) \
         if users.has_prev else None
     return render_template('admin_table.html', title='Rating', admin=admin,
                            users=users.items, next_url=next_url,
