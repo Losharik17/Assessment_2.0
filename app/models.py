@@ -134,6 +134,10 @@ class Grade(db.Model):
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
