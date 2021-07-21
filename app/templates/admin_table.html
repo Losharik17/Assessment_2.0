@@ -2,84 +2,109 @@
 
 {%  block app_content %}
 
-    <script type=text/javascript src="{{ url_for('static', filename='js/jquery-2.2.2.min.js') }}"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <div>
         <table class="table_sort">
             <thead>
             <tr>
-                <th>№</th>
-                <th>Участник</th>
-                <th>Дата рождения</th>
-                <th>Команда</th>
+                <th id="id" onclick="sort('id')">№</th>
+                <th id="username" onclick="sort('#username')">Участник</th>
+                <th id="birthday" onclick="sort('#birthday')">Дата рождения</th>
+                <th id="team" onclick="sort('#team')">Команда</th>
+                {% set j = 0 %}
                 {% for parameter in ParName %}
-                <th>{{ parameter.name }}</th>
+                <th id="sum_grade_{{ j }}" onclick="sort('#sum_grade_{{ j }}')">{{ parameter.name }}</th>
+                    {% set j = j + 1%}
                 {% endfor %}
-                <th>Общая оценка</th>
+                <th id="sum_grade_all" onclick="sort('#sum_grade_all')">Общая оценка</th>
             </tr>
             </thead>
 
             <tbody>
+            {% set j = 0 %}
             {% for user in users %}
-                <tr>
-                    {% if user.id %}
-                        <td>{{ user.id }}</td>
-                    {% else %}
-                        <td> – </td>
-                    {% endif %}
-                    {% if user.username %}
-                        <td>{{ user.username }}</td>
-                    {% else %}
-                        <td> – </td>
-                    {% endif %}
-                    {% if user.birth_date %}
-                        <td>{{ user.birth_date }}</td>
-                    {% else %}
-                        <td> – </td>
-                    {% endif %}
+                <tr id="number_str{{ j }}">
+
+                    <td id="id{{ j }}">
+                        {% if user.id %}
+                            {{ user.id }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    <td id="username{{ j }}">
+                        {% if user.username %}
+                            {{ user.username }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    <td id="birthday{{ j }}">
+                        {% if user.birth_date %}
+                            {{ user.birthday }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    <td id="team{{ j }}">
                     {% if user.team %}
-                        <td>{{ user.team }}</td>
+                        {{ user.team }}
                     {% else %}
-                        <td> – </td>
+                        –
                     {% endif %}
+                    </td>
+
 
                     {% for i in range(10) %}
                         {% if user.__dict__['sum_grade_{}'.format(i)] %}
-                            {% if user.__dict__['sum_grade_{}'.format(i)] == 0 %}
-                                <td> — </td>
-                            {% else %}
-                                <td> {{ user.__dict__['sum_grade_{}'.format(i)] }} </td>
-                            {% endif %}
+                            <td id="'sum_grade_{{ i }}_{{ j }}">
+                                {% if user.__dict__['sum_grade_{}'.format(i)] == 0 %}
+                                    —
+                                {% else %}
+                                    {{ user.__dict__['sum_grade_{}'.format(i)] }}
+                                {% endif %}
+                            </td>
                         {% endif %}
                     {% endfor %}
 
-                    {% if user.sum_grade_all == 0 %}
-                        <td> — </td>
-                    {% else %}
-                        <td> {{ user.sum_grade_all }} </td>
-                    {% endif %}
+                    <td id="sum_grade_all_{{ j }}">
+                        {% if user.sum_grade_all == 0 %}
+                            —
+                        {% else %}
+                            {{ user.sum_grade_all }}
+                        {% endif %}
+                    </td>
 
                 </tr>
+
+                {% set j = j + 1 %}
+
             {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <nav aria-label="...">
-        <ul>
-            <li>
-                <a href="{{ prev_url or '#' }}">
-                    <span aria-hidden="true">&larr;</span> Newer posts
-                </a>
-            </li>
-            <li>
-                <a href="{{ next_url or '#' }}">
-                    Older posts<span aria-hidden="true">&rarr;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <div id="test"></div>
 
+    <script>
+
+        function sort(parameter) {
+
+            $.post('/sort_users_table', {
+                par: parameter
+            }).done(function (response) {
+                let u = JSON.parse(response['users'])
+                $(parameter).html(u.id)
+            }).fail(function () {
+                $(parameter).text("Error")
+            })
+
+        }
+
+    </script>
 
 
 

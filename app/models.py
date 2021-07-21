@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
-    birth_date = db.Column(db.Date)
+    birthday = db.Column(db.Date)
     team = db.Column(db.String(32))
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     sum_grade_0 = db.Column(db.Float, default=0)
@@ -49,12 +49,12 @@ class User(UserMixin, db.Model):
         пока по неправильной формуле +-"""
         grades = self.grades.all()
         for grade in grades:
-            for i in range(5):  # должно быть кол-во параметров, а не цифра
+            for i in range(10):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
                     self.__dict__['sum_grade_{}'.format(i)] += \
                         grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
 
-        for i in range(5):  # должно быть кол-во параметров, а не цифра
+        for i in range(10):  # должно быть кол-во параметров, а не цифра
             self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
 
@@ -83,7 +83,6 @@ class User(UserMixin, db.Model):
 @login.user_loader
 def load_user(id):
     if int(id) < 10000:
-        print(id)
         return User.query.get(int(id))
     if 10000 < int(id) < 11000:
         return Expert.query.get(int(id))
