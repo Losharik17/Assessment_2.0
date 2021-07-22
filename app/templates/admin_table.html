@@ -7,25 +7,26 @@
         <table class="table_sort">
             <thead>
             <tr>
-                <th id="id" onclick="sort('id')">№</th>
+                <th id="id" onclick="sort('#id')">№</th>
                 <th id="username" onclick="sort('#username')">Участник</th>
                 <th id="birthday" onclick="sort('#birthday')">Дата рождения</th>
                 <th id="team" onclick="sort('#team')">Команда</th>
-                {% set j = 0 %}
+
+                {% set j = namespace(a=0) %}
                 {% for parameter in ParName %}
-                <th id="sum_grade_{{ j }}" onclick="sort('#sum_grade_{{ j }}')">{{ parameter.name }}</th>
-                    {% set j = j + 1%}
+                    <th id="sum_grade_{{ j.a }}" onclick="sort('#sum_grade_{{ j.a }}')">{{ parameter.name }}</th>
+                    {% set j.a = j.a + 1 %}
                 {% endfor %}
                 <th id="sum_grade_all" onclick="sort('#sum_grade_all')">Общая оценка</th>
             </tr>
             </thead>
 
             <tbody>
-            {% set j = 0 %}
+            {% set j.a = 0 %}
             {% for user in users %}
-                <tr id="number_str{{ j }}">
 
-                    <td id="id{{ j }}">
+                <tr id="number_str{{ j.a }}">
+                    <td id="id{{ j.a }}">
                         {% if user.id %}
                             {{ user.id }}
                         {% else %}
@@ -33,7 +34,7 @@
                         {% endif %}
                     </td>
 
-                    <td id="username{{ j }}">
+                    <td id="username{{ j.a }}">
                         {% if user.username %}
                             {{ user.username }}
                         {% else %}
@@ -41,26 +42,24 @@
                         {% endif %}
                     </td>
 
-                    <td id="birthday{{ j }}">
-                        {% if user.birth_date %}
+                    <td id="birthday{{ j.a }}">
+                        {% if user.birthday %}
                             {{ user.birthday }}
                         {% else %}
                             –
                         {% endif %}
                     </td>
 
-                    <td id="team{{ j }}">
+                    <td id="team{{ j.a }}">
                         {% if user.team %}
                             {{ user.team }}
                         {% else %}
                             –
                         {% endif %}
                     </td>
-
-
                     {% for i in range(10) %}
                         {% if user.__dict__['sum_grade_{}'.format(i)] %}
-                            <td id="'sum_grade_{{ i }}_{{ j }}">
+                            <td id="sum_grade_{{ i }}{{ j.a }}">
                                 {% if user.__dict__['sum_grade_{}'.format(i)] == 0 %}
                                     —
                                 {% else %}
@@ -70,40 +69,61 @@
                         {% endif %}
                     {% endfor %}
 
-                    <td id="sum_grade_all_{{ j }}">
+                    <td id="sum_grade_all{{ j.a }}">
                         {% if user.sum_grade_all == 0 %}
                             —
                         {% else %}
                             {{ user.sum_grade_all }}
                         {% endif %}
                     </td>
-
                 </tr>
 
-                {% set j = j + 1 %}
+                {% set j.a = j.a + 1 %}
 
             {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <div id="test"></div>
-
     <script>
 
-        function sort(parameter) {
+    sort.sort_up = true
+    sort.current_parameter = ''
 
-            $.post('/sort_users_table', {
-                par: parameter
-            }).done(function (response) {
-                let u = JSON.parse(response['users'])
-                $(parameter).html(u.id)
-            }).fail(function () {
-                $(parameter).text("Error")
-            })
-
+    function sort(parameter) {
+        if (sort.current_parameter === parameter.slice(1))
+            sort.sort_up = !sort.sort_up
+        else {
+            sort.current_parameter = parameter.slice(1)
+            sort.sort_up = true
         }
 
+        $.post('/sort_users_table', {
+            parameter: parameter.slice(1),
+            sort_up: sort.sort_up
+        }).done(
+            function (response) {
+
+                let users = JSON.parse(response['users'])
+                let quantity = users.length
+
+                for (let j = 0; j < quantity; j++) {
+                    document.getElementById('id' + j).innerHTML = users[j].id ? users[j].id : '-';
+                    document.getElementById('username' + j).innerHTML = users[j].username ? users[j].username : '-';
+                    document.getElementById('birthday' + j).innerHTML = users[j].birthday != 'None' ? users[j].birthday : '-';
+                    document.getElementById('team' + j).innerHTML = users[j].team != 'None' ? users[j].team : '-';
+
+                    for (let i = 0; i < 10; i++)
+                        if (document.getElementById('sum_grade_' + i + j))
+                            document.getElementById('sum_grade_' + i + j).innerHTML = users[j]['sum_grade_' + i] != 'None' ? users[j]['sum_grade_' + i] : '-'
+
+                    if (document.getElementById('sum_grade_all' + j))
+                        document.getElementById('sum_grade_all' + j).innerHTML = users[j]['sum_grade_all'] != 'None' ? users[j]['sum_grade_all'] : '-'
+                }
+            }).fail(function () {
+            alert("Error AJAX request")
+        })
+    }
     </script>
 
 
