@@ -5,6 +5,7 @@ from app import db
 from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
+from app.main.functions import users_in_json
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -100,29 +101,25 @@ def admin_table(admin_id):
 def sort_users_table():
 
     if request.form['sort_up'] == 'true':
-        users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(5)
+        users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
     else:
-        users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(5)
+        users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
 
-    string = '['
+    return jsonify({'users': users_in_json(users)})
 
-    for user in users:
-        string += '{"id":'
-        string += str(user.id)
-        string += ',"username":"'
-        string += str(user.username)
-        string += '","birthday":"'
-        string += str(user.birthday)
-        string += '","team":"'
-        string += str(user.team)
-        string += '",'
-        for i in range(5):
-            string += '"sum_grade_{}":'.format(i)
-            string += str(user.__dict__['sum_grade_{}'.format(i)])
-            string += ','
-        string += '"sum_grade_all":' + str(user.sum_grade_all)
-        string += '},'
 
-    string = string[:len(string) - 1] + ']'
+@bp.route('/show_more', methods=['POST'])
+# @login_required
+def show_more():
 
-    return jsonify({'users': string})
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+        else:
+            users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+    else:
+        users = User.query.order_by(User.id).limit(request.form['lim'])
+
+    return jsonify({'users': users_in_json(users)})
+
+
