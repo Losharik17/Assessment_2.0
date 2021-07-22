@@ -87,43 +87,43 @@
 
     <script>
 
-    sort.sort_up = true
-    sort.current_parameter = ''
+        sort.sort_up = true
+        sort.current_parameter = ''
 
-    function sort(parameter) {
-        if (sort.current_parameter === parameter.slice(1))
-            sort.sort_up = !sort.sort_up
-        else {
-            sort.current_parameter = parameter.slice(1)
-            sort.sort_up = true
+        function sort(parameter) {
+            if (sort.current_parameter === parameter.slice(1))
+                sort.sort_up = !sort.sort_up
+            else {
+                sort.current_parameter = parameter.slice(1)
+                sort.sort_up = true
+            }
+
+            $.post('/sort_users_table', {
+                parameter: parameter.slice(1),
+                sort_up: sort.sort_up
+            }).done(
+                function (response) {
+
+                    let users = JSON.parse(response['users'])
+                    let quantity = users.length
+
+                    for (let j = 0; j < quantity; j++) {
+                        document.getElementById('id' + j).innerHTML = users[j].id ? users[j].id : '-';
+                        document.getElementById('username' + j).innerHTML = users[j].username ? users[j].username : '-';
+                        document.getElementById('birthday' + j).innerHTML = users[j].birthday != 'None' ? users[j].birthday : '-';
+                        document.getElementById('team' + j).innerHTML = users[j].team != 'None' ? users[j].team : '-';
+
+                        for (let i = 0; i < 10; i++)
+                            if (document.getElementById('sum_grade_' + i + j))
+                                document.getElementById('sum_grade_' + i + j).innerHTML = users[j]['sum_grade_' + i] != 'None' ? users[j]['sum_grade_' + i] : '-'
+
+                        if (document.getElementById('sum_grade_all' + j))
+                            document.getElementById('sum_grade_all' + j).innerHTML = users[j]['sum_grade_all'] != 'None' ? users[j]['sum_grade_all'] : '-'
+                    }
+                }).fail(function () {
+                alert("Error AJAX request")
+            })
         }
-
-        $.post('/sort_users_table', {
-            parameter: parameter.slice(1),
-            sort_up: sort.sort_up
-        }).done(
-            function (response) {
-
-                let users = JSON.parse(response['users'])
-                let quantity = users.length
-
-                for (let j = 0; j < quantity; j++) {
-                    document.getElementById('id' + j).innerHTML = users[j].id ? users[j].id : '-';
-                    document.getElementById('username' + j).innerHTML = users[j].username ? users[j].username : '-';
-                    document.getElementById('birthday' + j).innerHTML = users[j].birthday != 'None' ? users[j].birthday : '-';
-                    document.getElementById('team' + j).innerHTML = users[j].team != 'None' ? users[j].team : '-';
-
-                    for (let i = 0; i < 10; i++)
-                        if (document.getElementById('sum_grade_' + i + j))
-                            document.getElementById('sum_grade_' + i + j).innerHTML = users[j]['sum_grade_' + i] != 'None' ? users[j]['sum_grade_' + i] : '-'
-
-                    if (document.getElementById('sum_grade_all' + j))
-                        document.getElementById('sum_grade_all' + j).innerHTML = users[j]['sum_grade_all'] != 'None' ? users[j]['sum_grade_all'] : '-'
-                }
-            }).fail(function () {
-            alert("Error AJAX request")
-        })
-    }
     </script>
 
 
