@@ -42,7 +42,7 @@ class UserModelCase(unittest.TestCase):
         e1 = Expert(username='dima')
         db.session.add(e1)
         db.session.commit()
-        print(e1.id - 10000)
+        print(e1.id)
         for i in range(100):
             g1 = Grade(user_id=u2.id, expert_id=e1.id)
 

@@ -19,13 +19,6 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.birth_date.label }}<br>
-            {{ form.birth_date }}<br>
-            {% for error in form.birth_date.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}<br>
             {% for error in form.password.errors %}

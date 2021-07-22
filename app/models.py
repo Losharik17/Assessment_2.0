@@ -10,15 +10,13 @@ from app import db, login
 from sqlalchemy import event, DDL
 
 
-
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
-    birth_date = db.Column(db.Date)
+    birthday = db.Column(db.Date)
     team = db.Column(db.String(32))
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     sum_grade_0 = db.Column(db.Float, default=0)
@@ -51,12 +49,12 @@ class User(UserMixin, db.Model):
         пока по неправильной формуле +-"""
         grades = self.grades.all()
         for grade in grades:
-            for i in range(5):  # должно быть кол-во параметров, а не цифра
+            for i in range(10):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
                     self.__dict__['sum_grade_{}'.format(i)] += \
                         grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
 
-        for i in range(5):  # должно быть кол-во параметров, а не цифра
+        for i in range(10):  # должно быть кол-во параметров, а не цифра
             self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
 
@@ -94,10 +92,10 @@ def load_user(id):
         return Viewer.query.get(int(id))
 
 
-
 class Expert(UserMixin, db.Model):
-    id = db.Column(db.Integer, db.Sequence('seq_reg_id', start=1000, increment=10), unique=True, primary_key=True)
-    username = db.Column(db.String(64), unique=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
     grades = db.relationship('Grade', backref='expert', lazy='dynamic')
     weight = db.Column(db.Float, default=1.0)
     quantity = db.Column(db.Integer, default=0)
@@ -135,7 +133,6 @@ class Grade(db.Model):
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
 
-
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
 
@@ -148,7 +145,8 @@ class Grade(db.Model):
 
 class Viewer(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -166,7 +164,8 @@ class Viewer(UserMixin, db.Model):
 
 class Admin(UserMixin, db.Model):
     admin_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    username = db.Column(db.String(64), unique=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
@@ -182,20 +181,19 @@ class Admin(UserMixin, db.Model):
             algorithm='HS256').decode('utf-8')
 
 
-event.listen(
-    Expert.__table__,
-    'after_create',
-    DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id
-)
+event.listen(Expert.__table__, 'after_create',
+             DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id
+             )
 
-event.listen(
-    Admin.__table__,
-    'after_create',
-    DDL("INSERT INTO admin (admin_id) VALUES (11000)")
-)
+event.listen(Admin.__table__, 'after_create',
+             DDL("INSERT INTO admin (admin_id) VALUES (11000)")
+             )
 
-event.listen(
-    Viewer.__table__,
-    'after_create',
-    DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
-)
+event.listen(Viewer.__table__, 'after_create',
+             DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
+             )
+
+
+class ParametersName(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    name = db.Column(db.String(32))

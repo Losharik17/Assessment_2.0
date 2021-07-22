@@ -3,8 +3,9 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, c
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
-from app.models import User, Expert, Grade, Viewer, Admin
+from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
+from app.main.functions import users_in_json
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -42,7 +43,8 @@ def expert_grade(expert_id, user_id):
     form = GradeForm()
     if form.validate_on_submit():
         grade = Grade(user_id=user_id, expert_id=current_user.id.data)
-        parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data, form.parameter_4.data]
+        parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
+                      form.parameter_4.data]
         grade.set_points(parameters)
         db.session.add(grade)
         grade.user.sum_grades()
@@ -85,15 +87,39 @@ def admin(admin_id):
 
 
 @bp.route('/admin_table/<admin_id>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def admin_table(admin_id):
-    admin = Admin.query.filter_by(id=admin_id).first()
-    page = request.args.get('page', 1, type=int)
-    users = User.query.paginate(page, current_app.config['USER_PER_PAGE'], False)
-    next_url = url_for('main.admin_table', page=users.next_num, admin_id=admin.id) \
-        if users.has_next else None
-    prev_url = url_for('main.admin_table', page=users.prev_num, admin_id=admin.id) \
-        if users.has_prev else None
+    admin = Admin.query.filter_by(admin_id=admin_id).first()
+    parameters_name = ParametersName.query.all()
+    users = User.query.order_by(User.id).limit(5)
     return render_template('admin_table.html', title='Rating', admin=admin,
-                           users=users.items, next_url=next_url,
-                           prev_url=prev_url)
+                           users=users, ParName=parameters_name)
+
+
+@bp.route('/sort_users_table', methods=['POST'])
+# @login_required
+def sort_users_table():
+
+    if request.form['sort_up'] == 'true':
+        users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+    else:
+        users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+
+    return jsonify({'users': users_in_json(users)})
+
+
+@bp.route('/show_more', methods=['POST'])
+# @login_required
+def show_more():
+
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+        else:
+            users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+    else:
+        users = User.query.order_by(User.id).limit(request.form['lim'])
+
+    return jsonify({'users': users_in_json(users)})
+
+
