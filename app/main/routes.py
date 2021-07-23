@@ -5,7 +5,7 @@ from app import db
 from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
-from app.main.functions import users_in_json
+from app.main.smth_in_json import users_in_json
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -23,7 +23,7 @@ def user(username):
 
 
 @bp.route('/expert/<expert_id>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def expert(expert_id):
     expert = Expert.query.filter_by(expert_id=expert_id).first()
     form = UserForm()
@@ -37,23 +37,27 @@ def expert(expert_id):
 
 
 @bp.route('/expert/<expert_id>/<user_id>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def expert_grade(expert_id, user_id):
-    expert = Expert.query.filter_by(expert_id=expert_id).first()
+    expert = Expert.query.filter_by(id=expert_id).first()
     form = GradeForm()
+    parameters = ParametersName.query.all()
     if form.validate_on_submit():
         grade = Grade(user_id=user_id, expert_id=current_user.id.data)
         parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
                       form.parameter_4.data]
         grade.set_points(parameters)
         db.session.add(grade)
+        db.session.commit()
         grade.user.sum_grades()
         expert.quantity_grade()
         db.session.commit()
 
         flash('Text')
         return redirect(url_for('main.expert'))
-    return render_template('expert_grade.html', expert=expert, form=form)
+
+    return render_template('expert_grade.html', expert=expert, form=form,
+                           user=user, parameters=parameters)
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])

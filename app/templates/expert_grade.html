@@ -1,0 +1,44 @@
+{% extends "main_0.html" %}
+
+{%  block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
+    <div class="photo">#Фото участника
+    </div>
+    <div class="data">
+        <table>#Данные участника
+            <tr>
+                {{ user.id }}
+            </tr>
+            <tr>
+                {{ user.username }}
+            </tr>
+            <tr>
+                {{ user.birthday }}
+            </tr>
+            <tr>
+                {{ user.team }}
+            </tr>
+        </table>
+    </div>
+    <div class="assessments">#Список критериев
+
+        <form  action="" method="post">
+            {% set i = namespace(a=0) %}
+            {% for parameter in parameters %}
+            <p>
+                    {{ parameter.name }}
+                    {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                        {{ value }}
+                        {{ value.label }}
+                    {% endfor %}
+                    {% set i.a = i.a + 1 %}
+            </p>
+            {% endfor %}
+        </form>
+
+
+
+    </div>
+
+
+{% endblock %}
