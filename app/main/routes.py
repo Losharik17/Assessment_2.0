@@ -1,18 +1,83 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
+from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
 from app.main.functions import users_in_json
-
+import pandas as pd
+from werkzeug.utils import secure_filename
+from sqlalchemy import create_engine
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 @login_required
 def index():
     return render_template('base.html')
+
+
+@bp.route('/download/')
+def dwn():
+    return render_template('download.html')
+
+
+def to_dict(row):
+    if row is None:
+        return None
+
+    rtn_dict = dict()
+    keys = row.__table__.columns.keys()
+    for key in keys:
+        rtn_dict[key] = getattr(row, key)
+    return rtn_dict
+
+
+def excell(filename):
+    df = pd.read_excel(filename)
+    engine = create_engine("sqlite:///T-park.db")
+    df.head
+    if filename == 'user':
+        df.to_sql(filename, con=engine, if_exists='append', index=False)
+    elif filename == 'admin':
+        df.to_sql(filename, con=engine, if_exists='append', index=False)
+    elif filename == 'expert':
+        df.to_sql(filename, con=engine, if_exists='append', index=False)
+    elif filename == 'viewer':
+        df.to_sql(filename, con=engine, if_exists='append', index=False)
+    else:
+        print('Неправильно выбран файл')
+
+
+@bp.route('/excel', methods=['GET', 'POST'])
+def exportexcel():
+    data = User.query.all()
+    data_list = [to_dict(item) for item in data]
+    df1 = pd.DataFrame(data_list)
+    data = Expert.query.all()
+    data_list = [to_dict(item) for item in data]
+    df2 = pd.DataFrame(data_list)
+    filename = "/Отчёт.xlsx"
+
+    writer = pd.ExcelWriter(filename)
+    df1.to_excel(writer, sheet_name='Пользователи', index=False)
+    df2.to_excel(writer, sheet_name='Эксперты', index=False)
+    writer.save()
+    return send_file(filename, as_attachment=True, cache_timeout=0)
+
+
+@bp.route('/upload')
+def upload_file1():
+    return render_template('upload.html')
+
+
+@bp.route('/uploader', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(secure_filename(f.filename.rsplit( ".", 1 )[ 0 ]))
+        excell(f.filename.rsplit( ".", 1 )[ 0 ])
+        return redirect(url_for('main.expert'))
 
 
 @bp.route('/user/<username>')
