@@ -28,14 +28,18 @@ class EmptyForm(FlaskForm):
 
 
 class GradeForm(FlaskForm):
-    parameter_0 = RadioField('{}'.format('1'), choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3')])
-    # подтянуть из БД название параметра
-    parameter_1 = RadioField('{}'.format('2'), choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3')])
-    parameter_2 = RadioField('{}'.format('3'), choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3')])
-    parameter_3 = RadioField('{}'.format('4'), choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3')])
-    parameter_4 = RadioField('{}'.format('5'), choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3')])
+    parameter_0 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+    parameter_1 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+    parameter_2 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+    parameter_3 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+    parameter_4 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
 
-    submit = SubmitField('Принять')
+    submit = SubmitField('Выставить оценки')
 
 
 class UserForm(FlaskForm):

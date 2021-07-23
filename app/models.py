@@ -49,12 +49,12 @@ class User(UserMixin, db.Model):
         пока по неправильной формуле +-"""
         grades = self.grades.all()
         for grade in grades:
-            for i in range(10):  # должно быть кол-во параметров, а не цифра
+            for i in range(5):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
                     self.__dict__['sum_grade_{}'.format(i)] += \
                         grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
 
-        for i in range(10):  # должно быть кол-во параметров, а не цифра
+        for i in range(5):  # должно быть кол-во параметров, а не цифра
             self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
 

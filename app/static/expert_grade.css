@@ -1,6 +1,41 @@
+@charset "windows-1251";
+
+
 button{
     border-radius: 100%;
     width:2px;
     height: 2px;
 
+}
+
+.form_radio_btn {
+    display: inline-block;
+    margin-right: 10px;
+}
+.form_radio_btn input[type=radio] {
+    display: none;
+}
+.form_radio_btn label {
+    display: inline-block;
+    cursor: pointer;
+    padding: 0px 15px;
+    line-height: 34px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    background: #c0a16b;
+    user-select: none;
+}
+
+.form_radio_btn input[type=radio]:checked + label {
+    background: #ffe0a6;
+}
+
+.form_radio_btn label:hover {
+    color: #666;
+    background: #8a6d3b;
+}
+
+.form_radio_btn input[type=radio]:disabled + label {
+    background: #efefef;
+    color: #666;
 }

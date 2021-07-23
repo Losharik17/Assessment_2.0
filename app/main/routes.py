@@ -25,10 +25,10 @@ def user(username):
 @bp.route('/expert/<expert_id>', methods=['GET', 'POST'])
 # @login_required
 def expert(expert_id):
-    expert = Expert.query.filter_by(expert_id=expert_id).first()
+    expert = Expert.query.filter_by(id=expert_id).first()
     form = UserForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(user_id=form.user_id.data).first()
+        user = User.query.filter_by(id=form.user_id.data).first()
         if user is None:
             flash('None User')
             return redirect(url_for('main.expert'))
@@ -39,11 +39,11 @@ def expert(expert_id):
 @bp.route('/expert/<expert_id>/<user_id>', methods=['GET', 'POST'])
 # @login_required
 def expert_grade(expert_id, user_id):
-    expert = Expert.query.filter_by(id=expert_id).first()
     form = GradeForm()
     parameters = ParametersName.query.all()
     if form.validate_on_submit():
-        grade = Grade(user_id=user_id, expert_id=current_user.id.data)
+        expert = Expert.query.filter_by(id=expert_id).first()
+        grade = Grade(user_id=user_id, expert_id=current_user.id)
         parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
                       form.parameter_4.data]
         grade.set_points(parameters)
@@ -54,9 +54,9 @@ def expert_grade(expert_id, user_id):
         db.session.commit()
 
         flash('Text')
-        return redirect(url_for('main.expert'))
+        return redirect(url_for('main.expert', expert_id=current_user.id))
 
-    return render_template('expert_grade.html', expert=expert, form=form,
+    return render_template('expert_grade.html', form=form,
                            user=user, parameters=parameters)
 
 
