@@ -2,23 +2,24 @@
 
 {%  block app_content %}
 
+    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <div>
         <table class="table_sort">
             <thead>
             <tr>
-                <th id="id" onclick="sort('#id')">№</th>
-                <th id="username" onclick="sort('#username')">Участник</th>
-                <th id="birthday" onclick="sort('#birthday')">Дата рождения</th>
-                <th id="team" onclick="sort('#team')">Команда</th>
+                <th id="id" data-order="0" onclick="sort('#id')">№</th>
+                <th id="username" data-order="0" onclick="sort('#username')">Участник</th>
+                <th id="birthday" data-order="0" onclick="sort('#birthday')">Дата рождения</th>
+                <th id="team" data-order="0" onclick="sort('#team')">Команда</th>
 
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
-                    <th id="sum_grade_{{ i.a }}" onclick="sort('#sum_grade_{{ i.a }}')">{{ parameter.name }}</th>
+                    <th id="sum_grade_{{ i.a }}" data-order="0" onclick="sort('#sum_grade_{{ i.a }}')">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
-                <th id="sum_grade_all" onclick="sort('#sum_grade_all')">Общая оценка</th>
+                <th id="sum_grade_all" data-order="0" onclick="sort('#sum_grade_all')">Общая оценка</th>
             </tr>
             </thead>
 
@@ -93,8 +94,10 @@
     <script>
 
         let limit = 5
-        sort.sort_up = true
-        sort.current_parameter = ''
+        sort.sort_up = false
+        sort.current_parameter = 'id'
+        sort.previous_parameter = ''
+        $("#" + sort.current_parameter).attr("data-order", "1")
 
         function show_more(new_field) {
 
@@ -159,11 +162,22 @@
 
 
         function sort(parameter) {
-            if (sort.current_parameter === parameter.slice(1))
+
+            if (sort.current_parameter === parameter.slice(1)) {
                 sort.sort_up = !sort.sort_up
+                $("#" + sort.current_parameter).attr("data-order") > 0 ?
+                    $("#" + sort.current_parameter).attr("data-order", "-1") :
+                    $("#" + sort.current_parameter).attr("data-order", "1")
+            }
             else {
+                sort.previous_parameter = sort.current_parameter
                 sort.current_parameter = parameter.slice(1)
                 sort.sort_up = true
+                $("#" + sort.previous_parameter).attr("data-order", "0")
+                $("#" + sort.current_parameter).attr("data-order") > 0 ?
+                    $("#" + sort.current_parameter).attr("data-order", "1") :
+                    $("#" + sort.current_parameter).attr("data-order", "-1")
+
             }
 
             $.post('/sort_users_table', {

@@ -1,4 +1,4 @@
-@charset "windows-1251";
+@charset "UTF-8";
 
 
 .shapka{
@@ -45,4 +45,24 @@ td {
 }
 th:first-child, td:first-child {
     text-align: left;
+}
+
+
+th[data-order="1"],
+th[data-order="-1"] {
+    position: relative;
+}
+
+th[data-order="1"]::after,
+th[data-order="-1"]::after {
+    right: 8px;
+    position: absolute;
+}
+
+th[data-order="-1"]::after {
+    content: url("arrowDown.png");
+}
+
+th[data-order="1"]::after {
+    content: url("arrowUp.png");
 }
