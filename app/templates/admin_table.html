@@ -1,25 +1,24 @@
-{% extends "base.html"%}
+{% extends "main_0.html"%}
 
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <div>
+    <div class="table-wrap">
         <table class="table_sort">
             <thead>
             <tr>
-                <th id="id" data-order="0" onclick="sort('#id')">№</th>
-                <th id="username" data-order="0" onclick="sort('#username')">Участник</th>
-                <th id="birthday" data-order="0" onclick="sort('#birthday')">Дата рождения</th>
-                <th id="team" data-order="0" onclick="sort('#team')">Команда</th>
+                <th id="id" class="sort" data-order="0" onclick="sort(this.id)">№</th>
+                <th id="username" class="sort" data-order="0" onclick="sort(this.id)">Участник</th>
+                <th id="birthday" class="sort" data-order="0" onclick="sort(this.id)">Дата рождения</th>
+                <th id="team" class="sort" data-order="0" onclick="sort(this.id)">Команда</th>
 
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
-                    <th id="sum_grade_{{ i.a }}" data-order="0" onclick="sort('#sum_grade_{{ i.a }}')">{{ parameter.name }}</th>
+                    <th id="sum_grade_{{ i.a }}" class="sort" data-order="0" onclick="sort(this.id)">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
-                {% endfor %}
-                <th id="sum_grade_all" data-order="0" onclick="sort('#sum_grade_all')">Общая оценка</th>
+                {% endfor %}```````````````1```````````dfffghghhhhjjiiuiiiuiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiooioiiiioooooooooooooooooooooooooooooooooooooooooooooopppppppppppppppppppppppppppp[p;;kkklllllllllll////////////hyyyyyyyyyyyyyyyyyyyyyuuuuyuyuuuuuuuuuuuuuuuuuuuujkjkkioooopoppppppppppppp[trttttttttttttttteedfgtytytyhhjhjhkaassdxcdffqaqaawwwaasqssssssssssssssssssssssssssssssssssaaAAAAAAAAQQQQQWDF
+                <th id="sum_grade_all" data-order="0" class="sort" onclick="sort(this.id)">Общая оценка</th>
             </tr>
             </thead>
 
@@ -163,7 +162,7 @@
 
         function sort(parameter) {
 
-            if (sort.current_parameter === parameter.slice(1)) {
+            if (sort.current_parameter === parameter) {
                 sort.sort_up = !sort.sort_up
                 $("#" + sort.current_parameter).attr("data-order") > 0 ?
                     $("#" + sort.current_parameter).attr("data-order", "-1") :
@@ -171,7 +170,7 @@
             }
             else {
                 sort.previous_parameter = sort.current_parameter
-                sort.current_parameter = parameter.slice(1)
+                sort.current_parameter = parameter
                 sort.sort_up = true
                 $("#" + sort.previous_parameter).attr("data-order", "0")
                 $("#" + sort.current_parameter).attr("data-order") > 0 ?
@@ -181,7 +180,7 @@
             }
 
             $.post('/sort_users_table', {
-                parameter: parameter.slice(1),
+                parameter: parameter,
                 sort_up: sort.sort_up,
                 lim: limit
             }).done(

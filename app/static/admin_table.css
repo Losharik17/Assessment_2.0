@@ -1,20 +1,21 @@
 @charset "UTF-8";
 
 
-.shapka{
+.shapka {
     background-color: rgb(255, 255, 255);
     width: auto;
 }
-.podval{
+
+.podval {
     position:fixed;
     left:0;
     bottom:0;
-    height:100px;
+    height: 5%;
     width:100%;
-    background-color:black;
+    background-color: black;
 }
 
-body{
+body {
     background: linear-gradient(30deg, #0088CC, #A6D9FF);
     margin:0;
 }
@@ -26,43 +27,51 @@ table {
     text-align: center;
     margin:auto;
 }
+
+.table-wrap {
+    overflow-x:auto;
+}
+
 th, td:first-child {
     background: #AFCDE7;
     color: white;
     padding: 10px 20px;
 }
+
 th {
     cursor: pointer;
     border-style: solid;
     border-width: 0 1px 1px 0;
     border-color: white;
 }
+
 td {
     border-style: solid;
     border-width: 0 1px 1px 0;
     border-color: white;
     background: #D8E6F3;
 }
+
 th:first-child, td:first-child {
     text-align: left;
 }
 
-
-th[data-order="1"],
-th[data-order="-1"] {
+th.sort[data-order="1"],
+th.sort[data-order="-1"] {
     position: relative;
 }
 
-th[data-order="1"]::after,
-th[data-order="-1"]::after {
-    right: 8px;
+th.sort[data-order="1"]::after,
+th.sort[data-order="-1"]::after {
     position: absolute;
+    right: 3px;
+    top: 41%; /* нужно выровнить */
 }
 
-th[data-order="-1"]::after {
+th.sort[data-order="-1"]::after {
     content: url("arrowDown.png");
 }
 
-th[data-order="1"]::after {
+th.sort[data-order="1"]::after {
     content: url("arrowUp.png");
 }
