@@ -41,6 +41,7 @@ table {
     border-collapse: collapse;
     text-align: center;
     margin:auto;
+    overflow-x:auto;
 }
 th, td:first-child {
     background: #AFCDE7;
