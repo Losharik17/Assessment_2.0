@@ -5,10 +5,10 @@ from app import db
 from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
-from app.main.functions import users_in_json
+from app.main.functions import users_in_json, excell, to_dict
 import pandas as pd
 from werkzeug.utils import secure_filename
-from sqlalchemy import create_engine
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
@@ -20,33 +20,6 @@ def index():
 @bp.route('/download/')
 def dwn():
     return render_template('download.html')
-
-
-def to_dict(row):
-    if row is None:
-        return None
-
-    rtn_dict = dict()
-    keys = row.__table__.columns.keys()
-    for key in keys:
-        rtn_dict[key] = getattr(row, key)
-    return rtn_dict
-
-
-def excell(filename):
-    df = pd.read_excel(filename)
-    engine = create_engine("sqlite:///T-park.db")
-    df.head
-    if filename == 'user':
-        df.to_sql(filename, con=engine, if_exists='append', index=False)
-    elif filename == 'admin':
-        df.to_sql(filename, con=engine, if_exists='append', index=False)
-    elif filename == 'expert':
-        df.to_sql(filename, con=engine, if_exists='append', index=False)
-    elif filename == 'viewer':
-        df.to_sql(filename, con=engine, if_exists='append', index=False)
-    else:
-        print('Неправильно выбран файл')
 
 
 @bp.route('/excel', methods=['GET', 'POST'])
