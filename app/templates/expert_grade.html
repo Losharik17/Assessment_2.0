@@ -1,46 +1,54 @@
 {% extends "main_0.html" %}
 
 {%  block app_content %}
-    <link rel="stylesheet"  href="expert_grade.css">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
     <div class="photo">#Фото участника
     </div>
     <div class="data">
-    <table>#Данные участника
-        <tr>
-        {{ user.fio }}
-        </tr>
-        <tr>
-        {{ user.mycelf }}
-        </tr>
-        <tr>
-        {{ user.team }}
-        </tr>
-        <tr>
-        {{ user.other }}
-        </tr>
-    </table>
+        <table>#Данные участника
+            <tr>
+                {{ user.id }}
+            </tr>
+            <tr>
+                {{ user.username }}
+            </tr>
+            <tr>
+                {{ user.birthday }}
+            </tr>
+            <tr>
+                {{ user.team }}
+            </tr>
+        </table>
     </div>
     <div class="assessments">#Список критериев
-        <table>#Таблица с критериями
-        <tbody>
-            {% for criterion in criterions %}#Критерии, поменяй на объект в routes
-            <tr>
-            <td>
-                {{ form.номер критерия в бд }}
-            </td>
-            <td>
-                <form action = ../forms.py>
-                    <input type="radio">-1
-                    <input type="radio">1
-                    <input type="radio">2
-                    <input type="radio">3
 
-                </form>
-            </td>
-            </tr>
+        <form  action="" method="post">
+            {{ form.hidden_tag() }}
+            {% set i = namespace(a=0) %}
+            {% for parameter in parameters %}
+            <p>
+                    {{ parameter.name }}
+                    {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                        <div class="form_radio_btn">
+                            {{ value }}
+                            {{ value.label }}
+                        </div>
+                        {% for error in form.value %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    {% endfor %}
+                    {% set i.a = i.a + 1 %}
+            </p>
             {% endfor %}
-        </tbody>
-        </table>
+            <p>
+                {{ form.submit }}
+            </p>
+
+            # для ошибок
+            {% if form.errors %}
+                {{ form.errors }}
+            {% endif %}
+        </form>
 
 
 
