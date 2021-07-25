@@ -1,5 +1,7 @@
 @charset "windows-1251";
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 /****место под стили лого под разные разреш****/
 /*под тесты на разрешение*******************************/
 @media screen and (min-device-width: 1440px){
@@ -9,7 +11,7 @@
     }
 
 }
-@media screen and (max-device-width: 720px){
+@media screen and (max-device-width: 1080px){
     img{
         width: 30%;
         height: 20%;
@@ -25,9 +27,9 @@
     position:fixed;
     left:0;
     bottom:0;
-    height:100px;
+    height:10%;
     width:100%;
-    background-color:black;
+    background-color: #1c1919;
 }
 
 .body{
@@ -36,7 +38,7 @@
 }
 
 table {
-    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 14px;
     border-collapse: collapse;
     text-align: center;

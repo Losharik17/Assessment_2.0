@@ -1,4 +1,16 @@
 @charset "windows-1251";
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    color: #01ada2;
+    text-decoration: underline;
+}
+
 /*под тесты на разрешение*******************************/
 @media screen and (min-device-width: 1440px){
     img{
@@ -7,7 +19,7 @@
     }
 
 }
-@media screen and (max-device-width: 720px){
+@media screen and (max-device-width: 1080px){
     img{
         width: 30%;
         height: 20%;
@@ -25,28 +37,27 @@
     position:fixed;
     left:0;
     bottom:0;
-    height:100px;
+    height:10%;
     width:100%;
-    background-color: #322e2e;
+    background-color: #1c1919;
     color: #ffffff;
 }
 
 body{
+    font-family: 'Roboto', sans-serif;
     background-color: #0088CC;
     margin:0;
 }
 
 .block_1{
     margin-left: 40%;
-
 }
 
 /*********Работа с полями ввода*********/
 input {
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid #000000;
     border-radius: 20px;
     padding: 4px 6px;
-
 }
 /******************/
 .div {
