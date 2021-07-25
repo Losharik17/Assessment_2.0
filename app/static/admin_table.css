@@ -1,0 +1,65 @@
+@charset "windows-1251";
+
+/****место под стили лого под разные разреш****/
+/*под тесты на разрешение*******************************/
+@media screen and (min-device-width: 1440px){
+    img{
+        width:397px;
+        height:123px;
+    }
+
+}
+@media screen and (max-device-width: 720px){
+    img{
+        width: 30%;
+        height: 20%;
+    }
+}
+/***************************************************/
+.shapka{
+    background-color: rgb(255, 255, 255);
+    width: auto;
+    position: sticky;
+}
+.podval{
+    position:fixed;
+    left:0;
+    bottom:0;
+    height:100px;
+    width:100%;
+    background-color:black;
+}
+
+.body{
+    background-color: #0088CC;
+    margin:0;
+}
+
+table {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-size: 14px;
+    border-collapse: collapse;
+    text-align: center;
+    margin:auto;
+}
+th, td:first-child {
+    background: #AFCDE7;
+    color: white;
+    padding: 10px 20px;
+}
+th {
+    cursor: pointer;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+}
+td {
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+    background: #D8E6F3;
+}
+th:first-child, td:first-child {
+    text-align: left;
+}
+

@@ -1,0 +1,62 @@
+@charset "windows-1251";
+/*под тесты на разрешение*******************************/
+@media screen and (min-device-width: 1440px){
+    img{
+        width:397px;
+        height:123px;
+    }
+
+}
+@media screen and (max-device-width: 720px){
+    img{
+        width: 30%;
+        height: 20%;
+    }
+}
+/***************************************************/
+.shapka{
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    position: sticky;
+}
+
+
+.podval{
+    position:fixed;
+    left:0;
+    bottom:0;
+    height:100px;
+    width:100%;
+    background-color: #322e2e;
+    color: #ffffff;
+}
+
+body{
+    background-color: #0088CC;
+    margin:0;
+}
+
+.block_1{
+    margin-left: 40%;
+
+}
+
+/*********Работа с полями ввода*********/
+input {
+    border-bottom: 2px solid black;
+    border-radius: 20px;
+    padding: 4px 6px;
+
+}
+/******************/
+.div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+h1{
+    text-align: center;
+}
