@@ -27,14 +27,21 @@ def exportexcel():
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
+    df1 = df1.drop(columns=['avatar', 'password_hash'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
+    df2 = df2.drop(columns=['password_hash'])
+    data = Grade.query.all()
+    data_list = [to_dict(item) for item in data]
+    df3 = pd.DataFrame(data_list)
+    df3 = df3.drop(columns=['id'])
     filename = "/Отчёт.xlsx"
 
     writer = pd.ExcelWriter(filename)
     df1.to_excel(writer, sheet_name='Пользователи', index=False)
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
+    df3.to_excel(writer, sheet_name='Оценки', index=False)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
 

@@ -46,15 +46,19 @@ def excell(filename):
     df.head
     if filename == 'user':
         delete(User)
+        df.columns = ['id', 'username', 'email', 'avatar', 'password_hash', 'birth_date', 'team']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     elif filename == 'admin':
         delete(Admin)
+        df.columns = ['admin_id', 'username', 'email']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     elif filename == 'expert':
         delete(Expert)
+        df.columns = ['id', 'username', 'email', 'weight', 'quantity']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     elif filename == 'viewer':
         delete(Viewer)
+        df.columns = ['id', 'username', 'email']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     else:
         print('Неправильно выбран файл')
