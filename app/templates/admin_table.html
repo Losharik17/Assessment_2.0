@@ -17,7 +17,7 @@
                 {% for parameter in ParName %}
                     <th id="sum_grade_{{ i.a }}" class="sort" data-order="0" onclick="sort(this.id)">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
-                {% endfor %}```````````````1```````````dfffghghhhhjjiiuiiiuiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiooioiiiioooooooooooooooooooooooooooooooooooooooooooooopppppppppppppppppppppppppppp[p;;kkklllllllllll////////////hyyyyyyyyyyyyyyyyyyyyyuuuuyuyuuuuuuuuuuuuuuuuuuuujkjkkioooopoppppppppppppp[trttttttttttttttteedfgtytytyhhjhjhkaassdxcdffqaqaawwwaasqssssssssssssssssssssssssssssssssssaaAAAAAAAAQQQQQWDF
+                {% endfor %}
                 <th id="sum_grade_all" data-order="0" class="sort" onclick="sort(this.id)">Общая оценка</th>
             </tr>
             </thead>
@@ -102,7 +102,7 @@
 
             limit += new_field
 
-            $.post('/show_more', {
+            $.post('/show_more_users', {
                 lim: limit,
                 parameter: sort.current_parameter,
                 sort_up: sort.sort_up

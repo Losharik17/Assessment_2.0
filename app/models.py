@@ -126,7 +126,7 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     parameter_0 = db.Column(db.Integer)
     parameter_1 = db.Column(db.Integer)
     parameter_2 = db.Column(db.Integer)

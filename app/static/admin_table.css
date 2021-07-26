@@ -21,7 +21,7 @@ body {
 }
 
 table {
-    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+    font-family: Tahoma, Arial, Helvetica, sans-serif;;
     font-size: 14px;
     border-collapse: collapse;
     text-align: center;
@@ -73,5 +73,6 @@ th.sort[data-order="-1"]::after {
 }
 
 th.sort[data-order="1"]::after {
-    content: url("arrowUp.png");
+    content: url("arrowDown.png");
+    transform: rotate(180deg);
 }

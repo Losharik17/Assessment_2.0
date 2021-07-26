@@ -5,18 +5,17 @@ from app import db
 from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
-from app.main.smth_in_json import users_in_json
+from app.main.smth_in_json import users_in_json, grades_in_json
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
-@login_required
 def index():
     return render_template('base.html')
 
 
 @bp.route('/user/<username>')
-@login_required
+# @login_required
 def user(username):
     user = User.query.filter_by(username=username).first()
     return render_template('user.html', user=user)
@@ -61,7 +60,7 @@ def expert_grade(expert_id, user_id):
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
@@ -84,7 +83,7 @@ def viewer(viewer_id):
 
 
 @bp.route('/admin/<admin_id>', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def admin(admin_id):
     admin = Admin.query.filter_by(admin_id=admin_id).first()
     return render_template('admin.html', admin=admin)
@@ -100,10 +99,18 @@ def admin_table(admin_id):
                            users=users, ParName=parameters_name)
 
 
+@bp.route('/user_grades_table/<user_id>', methods=['GET', 'POST'])
+# @login_required
+def user_grades_table(user_id):
+    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
+    parameters_name = ParametersName.query.all()
+    return render_template('user_grades_table.html', title='Rating', grades=grades,
+                           ParName=parameters_name, user_id=user_id)
+
+
 @bp.route('/sort_users_table', methods=['POST'])
 # @login_required
 def sort_users_table():
-
     if request.form['sort_up'] == 'true':
         users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
     else:
@@ -112,10 +119,9 @@ def sort_users_table():
     return jsonify({'users': users_in_json(users)})
 
 
-@bp.route('/show_more', methods=['POST'])
+@bp.route('/show_more_users', methods=['POST'])
 # @login_required
-def show_more():
-
+def show_more_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
             users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
@@ -127,3 +133,44 @@ def show_more():
     return jsonify({'users': users_in_json(users)})
 
 
+@bp.route('/sort_grades_table', methods=['POST'])
+# @login_required
+def sort_grades_table():
+    if request.form['sort_up'] == 'true':
+        grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
+            Grade.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+    else:
+        grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
+            Grade.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+
+    return jsonify({'grades': grades_in_json(grades)})
+
+
+@bp.route('/show_more_grades', methods=['POST'])
+# @login_required
+def show_more_grades():
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
+                Grade.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+        else:
+            grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
+                Grade.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+    else:
+        grades = Grade.query.order_by(Grade.id).limit(request.form['lim'])
+
+    return jsonify({'grades': grades_in_json(grades)})
+
+
+@bp.route('/save_grade', methods=['POST'])
+# @login_required
+def save_grade():
+    grade = Grade.query.filter_by(date=request.form['date'],
+                                  expert_id=request.form['expert_id']).first()
+
+    for i in range(5):
+        grade.__dict__['parameter_{}'.format(i)] = -1
+    db.session.add(grade)
+    db.session.commit()
+
+    return jsonify({'result': 'successfully'})

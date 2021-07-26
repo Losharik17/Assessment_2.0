@@ -31,3 +31,24 @@ def experts_in_json(experts):
     string = string[:len(string) - 1] + ']'
 
     return string
+
+
+def grades_in_json(grades):
+
+    string = '['
+    for grade in grades:
+        string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}"' \
+            .format(str(grade.id),
+                    str(grade.date.strftime('%H:%M %d.%m.%Y')),
+                    str(grade.expert_id),
+                    str(grade.user_id))
+
+        for i in range(5):
+            string += ',"parameter_{0}":"{1}"' \
+                .format(i, str(grade.__dict__['parameter_{}'.format(i)]))
+
+        string += '},'
+
+    string = string[:len(string) - 1] + ']'
+
+    return string

@@ -2,16 +2,17 @@
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='main_0.css') }}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
         <title>T-Park</title>
     {% endif %}
 </head>
-<body>
+<body id="body">
 
 <div id="p_prldr">
     <div class="contpre">
@@ -20,7 +21,7 @@
 </div>
 
 
-<div class="shapka" >
+<div id="shapka" class="shapka" >
     #Фото участника
 </div>
 <div class="podval">text</div>
