@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-{% block app_content %} {% endblock %}
-
-</body>
-</html>
+{% extends "main_log.html" %}
+<!--2 кнопки, вхд и регистрация-->
+{% block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='base.css')}}">
+    <h1>А</h1>
+    <div class="">
+        <a href="#" class="button">Вход</a>
+        <a href="#" class="button">Регистрация</a>
+    </div>
+{% endblock %}

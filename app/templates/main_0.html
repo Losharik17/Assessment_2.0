@@ -11,14 +11,28 @@
     <body>
     <div class="shapka" >
         <img src = "{{ url_for('static', filename='logo.jpg') }}">
+        <div class="drop">
+            <button onclick="myFunction()" class="dropbtn" src="{{ url_for('#')}}"><img src="{{ url_for('static', filename='logo.jpg')}}"></button>
+            <div id="myDropdown" class="dropdown-content">
+                <a href="#">Учетная запись</a>
+                <a href="#">Выход</a>
+            </div>
+        </div>
     </div>
-    <div>
+    <div class="table_main">
         {% block app_content %}{% endblock %}
     </div>
     <div class="podval">
-        <!--<p>img</p>-->#лого заказчика
-        <h2>sergeev@nspt.ru</h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
-
+        <table>
+            <tr>
+                <td>
+                    <img class="img" src = "{{ url_for('static',filename='logo_2.jpg')}}">
+                </td>
+                <td>
+                    <h2><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
+                </td>
+            </tr>
+        </table>
     </div>
 
     </body>
