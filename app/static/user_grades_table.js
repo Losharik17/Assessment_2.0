@@ -2,20 +2,49 @@ let limit = 5
 sort.sort_up = false
 sort.current_parameter = 'expert_id'
 sort.previous_parameter = ''
+
 $("#" + sort.current_parameter).attr("data-order", "1")
 
-delete_buttons()
 
-function delete_buttons() {
+const but = document.querySelectorAll(".btn");
+but.forEach((button) => {
+    button.onclick = function(e){
+        let x = e.clientX - e.target.offsetLeft;
+        let y = e.clientY - e.target.offsetTop;
+        let ripple = document.createElement("span");
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        this.appendChild(ripple);
+        setTimeout(function(){
+            ripple.remove();
+        }, 600);
+    }
+});
+
+
+function delete_buttons(user_id) {
     document.addEventListener('click', function (event) {
 
         for (let i = 0; i < limit; i++) {
-            if (event.target.tagName !== 'TD' && event.target.id.substring(0, event.target.id.length - 1) !== 'edit' &&
-                event.target.id.substring(0, event.target.id.length - 1) !== `delete`) {
-                console.log(event.target.id.substring(0, event.target.id.length - 1), event.target.tagName)
 
-                $('#buttons' + buttons.previous_str).fadeTo(300)
-                setTimeout(() => {$('#buttons' + buttons.previous_str).css("display", "none")})
+            if (event.target.tagName !== 'TD' &&
+                event.target.id.substring(0, event.target.id.length - 1) !== 'edit' &&
+                event.target.id.substring(0, event.target.id.length - 1) !== `delete` &&
+                event.target.tagName !== 'INPUT') {
+
+                $('#buttons' + buttons.previous_str).fadeOut(200)
+                setTimeout(() => {$('#buttons' + buttons.previous_str).css("display", "none")}, 200)
+                setTimeout(() => {$("#edit" + i + " :input").attr('value', 'Редактировать')}, 200)
+            }
+        }
+
+        console.log()
+
+        if (buttons.previous_str != event.target.id.substring(event.target.id.length - 1) ) {
+
+            for (let k = 0; k < 10; k++) {
+                if (document.getElementById(`parameter_${k}${buttons.previous_str}`))
+                    $(`#parameter_${k}${buttons.previous_str}`).html(edit_grade.old_value[k])
             }
         }
     })
@@ -29,51 +58,99 @@ function buttons(quantity) {
 
             if (buttons.previous_str !== '' && buttons.previous_str != i) {
                 $('#buttons' + buttons.previous_str).fadeTo(300, 0.0)
+
             }
             $('#buttons' + i).fadeTo(0)
             $('#buttons' + i).css({
-                display: 'flex', position: "absolute", width: "content-width",
-                background: "red", height: $('#number_str' + i).height()
+                display: 'inline-block', position: "absolute", width: "auto",
+                height: $('#number_str' + i).height()
             }).offset({
                 left: $('#number_str' + i).offset().left + $('#tbody').width(),
                 top: $('#number_str' + i).offset().top
             }).fadeTo(300, 1)
             buttons.previous_str = i
-
-            console.log($('#tbody').width)
         })
     }
 }
 
-function edit_grade(id, number_str) {
+function edit_grade(grade_id, user_id, number_str) {
 
-    if ($("#" + id).html() !== 'Сохранить') {
-        $("#" + id).html('Сохранить')
+    if ($("#edit" + number_str + " :input").attr('value') !== 'Сохранить') {
+        let width = $("#edit" + number_str + " :input").innerWidth()
+        edit_grade.old_value = Array()
+        $("#edit" + number_str + " :input").attr('value', 'Сохранить').css({width: width})
+
+        for (let i = 0; i < 10; i++) {
+            if (document.getElementById(`parameter_${i}${number_str}`)) {
+
+                let td = $(`#parameter_${i}${number_str}`)
+                let value = td.html()
+                edit_grade.old_value.push(value)
+                td.html(`<input id="p${i}" onchange="document.getElementById(this.id).setAttribute('value', this.value)" class="input" type="number" value="${value}" min="-1" max="3" step="1">`)
+            }
+        }
     } else {
-        $("#" + id).html('Редактировать')
+        let grades = Array(), save = true
 
-        let grades = Array()
-        for (let i = 0; i < 5; i++)
-            grades[i] = i
-        $.post('/save_grade', {
+        for (let i = 0; i < 10; i++) {
+            if (document.getElementById(`parameter_${i}${number_str}`)) {
+                if ($(`#parameter_${i}${number_str}` + " :input").attr('value') === '' ||
+                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '-' ||
+                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '–' ||
+                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '—' ||
+                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '0') {
+                    grades.push(0)
+                } else {
+                    if (-1 <= $(`#parameter_${i}${number_str}` + " :input").attr('value') &&
+                        $(`#parameter_${i}${number_str}` + " :input").attr('value') <= 3) {
+                        grades.push($(`#parameter_${i}${number_str}` + " :input").attr('value'))
+                    } else {
+                        save = false
+                        grades = Array()
+                        alert('Значения должны быть в пределах от -1 до 3')
+                        break
+                    }
+                }
+            }
+        }
 
-            val: `${grades[0]}`,
-            date: '2021-07-23 14:53:23.540060',
-            expert_id: 1
-
-        }).done(function (response) {
-
-
-        }).fail(function () {
-            alert("Error AJAX request")
-        })
+        if (save) {
+            $('#buttons' + buttons.previous_str).fadeOut(300)
+            setTimeout(() => {$('#buttons' + buttons.previous_str).css("display", "none")}, 300)
+            setTimeout(() => {$("#edit" + number_str + " :input").attr('value', 'Редактировать')}, 300)
+            $.post('/save_grade', {
+                grades: JSON.stringify(grades),
+                grade_id: grade_id
+            }).done(function (response) {
+                show_more(0, user_id)
+            }).fail(function () {
+                alert("Error AJAX request")
+            })
+        }
     }
 }
 
+function delete_grade(grade_id, user_id, number_str) {
 
-function delete_grade(number_str) {
+    $.post('/delete_grade', {
+        id: grade_id,
+        user_id: user_id,
+        lim: limit
+    }).done(function (response) {
 
+        document.getElementById(`buttons${number_str}`).style.transition = '0.3s';
+        document.getElementById(`buttons${number_str}`).style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById(`buttons${number_str}`).style.display = 'none'
+        }, 300)
+
+        show_more(0, user_id)
+
+    }).fail(function () {
+        alert("Error AJAX request")
+    })
 }
+
 
 function show_more(new_field, user_id) {
 
@@ -114,12 +191,11 @@ function show_more(new_field, user_id) {
             }
 
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="edit${i}" onClick="edit_grade(this.id, ${i})">` +
-                `Редактировать` + `</span>` +
-                `<span id="delete${i}" onClick="delete_grade(this.id, ${i})">` +
-                `Удалить оценку` + `</span>` + `</div>`)
+                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
+                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                `<input id="d${i}" type="button" value="Удалить" class="btn"></span></div>`)
         }
-
         delete_buttons()
         buttons(limit)
     }).fail(function () {
@@ -148,7 +224,7 @@ function sort(parameter, user_id) {
         parameter: parameter,
         sort_up: sort.sort_up,
         lim: limit,
-        user_id: 1
+        user_id: user_id
     }).done(
         function (response) {
             let grades = JSON.parse(response['grades'])
@@ -162,7 +238,8 @@ function sort(parameter, user_id) {
                     if ($(`#parameter_${j}${i}`))
                         $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ? grades[i][`parameter_${j}`] : '–')
             }
-
+            delete_buttons()
+            buttons(limit)
         }).fail(function () {
         alert("Error AJAX request")
     })

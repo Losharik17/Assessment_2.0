@@ -11,8 +11,8 @@
             <thead>
 
             <tr>
-                <th id="expert_id" class="sort" data-order="-1" onclick="sort(this.id)">ID Эксперта</th>
-                <th id="date" class="sort" data-order="0" onclick="sort(this.id)">Время</th>
+                <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
+                <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
                     <th id="parameter{{ i.a }}">{{ parameter.name }}</th>
@@ -45,34 +45,23 @@
                         {% endif %}
                     </td>
 
-                    {% for j in range(15) %}
+                    {% for j in range(10) %}
                         {% if grade.__dict__['parameter_{}'.format(j)] is defined %}
-                            <td id="parameter_{{ j }}{{ i.a }}">
-                                {% if grade.__dict__['parameter_{}'.format(j)] != 0 %}
-                                    {{ grade.__dict__['parameter_{}'.format(j)] }}
-                                {% else %}
-                                    –
-                                {% endif %}
-                            </td>
+                            <td id="parameter_{{ j }}{{ i.a }}">{% if grade.__dict__['parameter_{}'.format(j)] != 0 %}{{ grade.__dict__['parameter_{}'.format(j)] }}{% else %}–{% endif %}</td>
                         {% endif %}
                     {% endfor %}
 
                     <div id="buttons{{ i.a }}" class="buttons">
-                        <span id="edit{{ i.a }}" onclick="edit_grade(this.id, {{ i.a }})">
-                            Редактировать
+                        <span id="edit{{ i.a }}" onclick="edit_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
+                            <input id="e{{ i.a }}" type="button" value="Редактировать" class="btn">
                         </span>
-                        <span id="delete{{ i.a }}" onclick="delete_grade(this.id, {{ i.a }})">
-                            Удалить оценку
+                        <span id="delete{{ i.a }}" onclick="delete_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
+                            <input id="d{{ i.a }}" type="button" value="Удалить" class="btn">
                         </span>
                     </div>
                 </tr>
-
-
-
                 {% set i.a = i.a + 1 %}
-
             {% endfor %}
-
             </tbody>
         </table>
     </div>
@@ -83,6 +72,7 @@
 
     <script>
         buttons({{ i.a }})
+        delete_buttons({{ user_id }})
     </script>
 
 {% endblock %}

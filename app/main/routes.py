@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
 from flask_login import current_user, login_required
@@ -104,8 +105,9 @@ def admin_table(admin_id):
 def user_grades_table(user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
     parameters_name = ParametersName.query.all()
+    form = GradeForm()
     return render_template('user_grades_table.html', title='Rating', grades=grades,
-                           ParName=parameters_name, user_id=user_id)
+                           ParName=parameters_name, user_id=user_id, form=form)
 
 
 @bp.route('/sort_users_table', methods=['POST'])
@@ -165,12 +167,24 @@ def show_more_grades():
 @bp.route('/save_grade', methods=['POST'])
 # @login_required
 def save_grade():
-    grade = Grade.query.filter_by(date=request.form['date'],
-                                  expert_id=request.form['expert_id']).first()
+    grades = list(json.loads(request.form['grades']))
+    grade = Grade.query.filter_by(id=request.form['grade_id']).first()
 
-    for i in range(5):
-        grade.__dict__['parameter_{}'.format(i)] = -1
-    db.session.add(grade)
+    for i in range(len(grades)):
+        if getattr(grade, 'parameter_{}'.format(i)) != grades[i]:
+            setattr(grade, 'parameter_{}'.format(i), grades[i])
+    db.session.commit()
+    grade.user.sum_grades()
     db.session.commit()
 
     return jsonify({'result': 'successfully'})
+
+
+@bp.route('/delete_grade', methods=['POST'])
+# @login_required
+def delete_grade():
+    grade = Grade.query.get(request.form['id'])
+    db.session.delete(grade)
+    db.session.commit()
+
+    return jsonify({'result': 'Deleted'})

@@ -29,7 +29,8 @@ table {
 }
 
 .table-wrap {
-    overflow-x:auto;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 th, td:first-child {
