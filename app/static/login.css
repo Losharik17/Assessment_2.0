@@ -4,10 +4,11 @@
 
 a{
     text-decoration: none;
+    color: #0044ff;
 }
 
 a:hover{
-    color: #01ada2;
+    color: #00289e;
     text-decoration: underline;
 }
 
@@ -34,6 +35,7 @@ a:hover{
 
 
 .podval{
+    text-align: left;
     position:fixed;
     left:0;
     bottom:0;
@@ -45,13 +47,20 @@ a:hover{
 
 body{
     font-family: 'Roboto', sans-serif;
-    background-color: #0088CC;
+    background-color: #c3cef8;
     margin:0;
 }
 
 .block_1{
     margin-left: 40%;
 }
+
+.img{
+    width: 166px;
+    height:43px;
+
+}
+
 
 /*********Работа с полями ввода*********/
 input {
@@ -70,4 +79,9 @@ input {
 
 h1{
     text-align: center;
+}
+
+h2{
+    color: #cbc8c8;
+
 }
