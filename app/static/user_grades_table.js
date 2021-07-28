@@ -1,10 +1,11 @@
 let limit = 5
+
 sort.sort_up = false
 sort.current_parameter = 'expert_id'
 sort.previous_parameter = ''
-
 $("#" + sort.current_parameter).attr("data-order", "1")
 
+edit_grade.old_value = Array()
 
 const but = document.querySelectorAll(".btn");
 but.forEach((button) => {
@@ -32,19 +33,15 @@ function delete_buttons(user_id) {
                 event.target.id.substring(0, event.target.id.length - 1) !== `delete` &&
                 event.target.tagName !== 'INPUT') {
 
-                $('#buttons' + buttons.previous_str).fadeOut(200)
-                setTimeout(() => {$('#buttons' + buttons.previous_str).css("display", "none")}, 200)
-                setTimeout(() => {$("#edit" + i + " :input").attr('value', 'Редактировать')}, 200)
-            }
-        }
-
-        console.log()
-
-        if (buttons.previous_str != event.target.id.substring(event.target.id.length - 1) ) {
-
-            for (let k = 0; k < 10; k++) {
-                if (document.getElementById(`parameter_${k}${buttons.previous_str}`))
-                    $(`#parameter_${k}${buttons.previous_str}`).html(edit_grade.old_value[k])
+                $('#buttons' + buttons.previous_str).fadeOut(300)
+                setTimeout(() => {$('#buttons' + buttons.previous_str).css("display", "none")}, 300)
+                setTimeout(() => {$("#edit" + i + " :input").attr('value', 'Редактировать')}, 300)
+                for (let k = 0; k < 10; k++) {
+                    if (document.getElementById(`parameter_${k}${buttons.previous_str}`) &&
+                        edit_grade.old_value.length !== 0)
+                        $(`#parameter_${k}${buttons.previous_str}`).html(edit_grade.old_value[k])
+                    if (k === 10) edit_grade.old_value = Array()
+                }
             }
         }
     })
@@ -58,7 +55,18 @@ function buttons(quantity) {
 
             if (buttons.previous_str !== '' && buttons.previous_str != i) {
                 $('#buttons' + buttons.previous_str).fadeTo(300, 0.0)
-
+                if ($("#edit" + buttons.previous_str + " :input").attr('value') === 'Сохранить') {
+                    let x = buttons.previous_str
+                    $('#buttons' + x).fadeOut(300)
+                    setTimeout(() => {$('#buttons' + x).css("display", "none")}, 300)
+                    setTimeout(() => {$("#edit" + x + " :input").attr('value', 'Редактировать')}, 300)
+                    for (let k = 0; k < 10; k++) {
+                        if (document.getElementById(`parameter_${k}${x}`) &&
+                            edit_grade.old_value.length !== 0)
+                            $(`#parameter_${k}${x}`).html(edit_grade.old_value[k])
+                        if (k === 10) edit_grade.old_value = Array()
+                    }
+                }
             }
             $('#buttons' + i).fadeTo(0)
             $('#buttons' + i).css({
@@ -94,16 +102,12 @@ function edit_grade(grade_id, user_id, number_str) {
 
         for (let i = 0; i < 10; i++) {
             if (document.getElementById(`parameter_${i}${number_str}`)) {
-                if ($(`#parameter_${i}${number_str}` + " :input").attr('value') === '' ||
-                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '-' ||
-                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '–' ||
-                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '—' ||
-                    $(`#parameter_${i}${number_str}` + " :input").attr('value') === '0') {
+                let element_value = $(`#parameter_${i}${number_str}` + " :input").attr('value')
+                if ( element_value === '' || element_value === '-' || element_value === '–' || element_value === '—' || element_value === '0') {
                     grades.push(0)
                 } else {
-                    if (-1 <= $(`#parameter_${i}${number_str}` + " :input").attr('value') &&
-                        $(`#parameter_${i}${number_str}` + " :input").attr('value') <= 3) {
-                        grades.push($(`#parameter_${i}${number_str}` + " :input").attr('value'))
+                    if (-1 <= element_value && element_value <= 3) {
+                        grades.push(element_value)
                     } else {
                         save = false
                         grades = Array()

@@ -11,19 +11,20 @@ from app.main.smth_in_json import users_in_json, grades_in_json
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
+@login_required
 def index():
     return render_template('base.html')
 
 
-@bp.route('/user/<username>')
-# @login_required
-def user(username):
-    user = User.query.filter_by(username=username).first()
+@bp.route('/user/<id>')
+@login_required
+def user(id):
+    user = User.query.filter_by(username=id).first()
     return render_template('user.html', user=user)
 
 
 @bp.route('/expert/<expert_id>', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def expert(expert_id):
     expert = Expert.query.filter_by(id=expert_id).first()
     form = UserForm()
@@ -37,7 +38,7 @@ def expert(expert_id):
 
 
 @bp.route('/expert/<expert_id>/<user_id>', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def expert_grade(expert_id, user_id):
     form = GradeForm()
     parameters = ParametersName.query.all()
@@ -61,7 +62,7 @@ def expert_grade(expert_id, user_id):
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
@@ -84,14 +85,14 @@ def viewer(viewer_id):
 
 
 @bp.route('/admin/<admin_id>', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def admin(admin_id):
     admin = Admin.query.filter_by(admin_id=admin_id).first()
     return render_template('admin.html', admin=admin)
 
 
 @bp.route('/admin_table/<admin_id>', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def admin_table(admin_id):
     admin = Admin.query.filter_by(admin_id=admin_id).first()
     parameters_name = ParametersName.query.all()
@@ -101,7 +102,7 @@ def admin_table(admin_id):
 
 
 @bp.route('/user_grades_table/<user_id>', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def user_grades_table(user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
     parameters_name = ParametersName.query.all()
@@ -111,7 +112,7 @@ def user_grades_table(user_id):
 
 
 @bp.route('/sort_users_table', methods=['POST'])
-# @login_required
+@login_required
 def sort_users_table():
     if request.form['sort_up'] == 'true':
         users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
@@ -122,7 +123,7 @@ def sort_users_table():
 
 
 @bp.route('/show_more_users', methods=['POST'])
-# @login_required
+@login_required
 def show_more_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
@@ -136,7 +137,7 @@ def show_more_users():
 
 
 @bp.route('/sort_grades_table', methods=['POST'])
-# @login_required
+@login_required
 def sort_grades_table():
     if request.form['sort_up'] == 'true':
         grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
@@ -149,7 +150,7 @@ def sort_grades_table():
 
 
 @bp.route('/show_more_grades', methods=['POST'])
-# @login_required
+@login_required
 def show_more_grades():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
@@ -165,23 +166,28 @@ def show_more_grades():
 
 
 @bp.route('/save_grade', methods=['POST'])
-# @login_required
+@login_required
 def save_grade():
     grades = list(json.loads(request.form['grades']))
     grade = Grade.query.filter_by(id=request.form['grade_id']).first()
+    usl = False
 
     for i in range(len(grades)):
         if getattr(grade, 'parameter_{}'.format(i)) != grades[i]:
             setattr(grade, 'parameter_{}'.format(i), grades[i])
-    db.session.commit()
-    grade.user.sum_grades()
+            usl = True
     db.session.commit()
 
-    return jsonify({'result': 'successfully'})
+    if usl:
+        grade.user.sum_grades()
+        db.session.commit()
+        return jsonify({'result': 'successfully'})
+
+    return jsonify({'result': 'nothing'})
 
 
 @bp.route('/delete_grade', methods=['POST'])
-# @login_required
+@login_required
 def delete_grade():
     grade = Grade.query.get(request.form['id'])
     db.session.delete(grade)

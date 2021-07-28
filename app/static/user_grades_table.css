@@ -31,8 +31,6 @@
     appearance: none;
     touch-action: manipulation;
     z-index: 1;
-    width: auto;
-    transition: all 1s;
 }
 
 .btn span{
@@ -55,12 +53,14 @@
         opacity: 0;
     }
 }
+
 .btn:hover {
-    box-shadow: 0 1px 2px 0 rgb(26 115 232 / 45%), 0 1px 3px 1px rgb(26 115 232 / 30%);
+    box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 1px 3px 1px rgb(26 115 232);
     background-color: #297be6;
 }
+
 .btn:active {
-    box-shadow: 0 1px 2px 0 rgb(26 115 232 / 45%), 0 2px 6px 2px rgb(26 115 232 / 30%);
+    box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 2px 6px 2px rgb(26 115 232);
     background-color: #1a73e8 !important;
 }
 .btn:focus-visible {
@@ -77,5 +77,13 @@
     border-bottom: 1px solid #e0e0e0;
     outline: none;
     transition: 0.3s;
+}
+
+input:focus {
+    border-bottom: 1px solid #1a73a8;
+}
+
+input:hover{
+    background-color: rgb(197, 214, 255);
 }
 

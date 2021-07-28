@@ -48,6 +48,7 @@ class User(UserMixin, db.Model):
         """считает сумму всех оценок по каждому критерию
         пока по неправильной формуле +-"""
         grades = self.grades.all()
+        self.sum_grade_all = float(0)
         for grade in grades:
             for i in range(5):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
@@ -63,8 +64,8 @@ class User(UserMixin, db.Model):
         grades = self.grades.all()
         sum = float(0)
         for grade in grades:
-            if grade.__dict__['parameter_{}'.format(number_parameter)] is not None \
-                    and grade.__dict__['parameter_{}'.format(number_parameter)] != 0:
+            if getattr(grade, 'parameter_{}'.format(number_parameter)) is not None \
+                    and getattr(grade, 'parameter_{}'.format(number_parameter)) != 0:
                 sum += grade.expert.weight
         if sum:
             return sum

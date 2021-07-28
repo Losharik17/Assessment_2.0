@@ -1,37 +1,46 @@
 @charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
+/****ìåñòî ïîä ñòèëè ëîãî ïîä ðàçíûå ðàçðåø****/
+/*ïîä òåñòû íà ðàçðåøåíèå*******************************/
+@media screen and (min-device-width: 1440px){
+    img{
+        width:397px;
+        height:123px;
+    }
 
-.shapka {
-    background-color: rgb(255, 255, 255);
-    width: auto;
+}
+@media screen and (max-device-width: 1080px){
+    img{
+        width: 30%;
+        height: 20%;
+    }
 }
 
-.podval {
-    position:fixed;
-    left:0;
-    bottom:0;
-    height: 5%;
-    width:100%;
-    background-color: black;
-}
-
-body {
-    background: linear-gradient(30deg, #0088CC, #A6D9FF);
+.body{
+    background-color: #0088CC;
     margin:0;
 }
 
+a {
+    text-decoration: none;
+    color: #0044ff;
+}
+
+a:hover {
+    color: #00289e;
+    text-decoration: underline;
+}
+
 table {
-    font-family: Tahoma, Arial, Helvetica, sans-serif;;
+    font-family: 'Roboto', sans-serif;
     font-size: 14px;
     border-collapse: collapse;
     text-align: center;
     margin:auto;
+    overflow-x:auto;
 }
 
-.table-wrap {
-    overflow-x: auto;
-    overflow-y: auto;
-}
 
 th, td:first-child {
     background: #AFCDE7;
@@ -56,6 +65,63 @@ td {
 th:first-child, td:first-child {
     text-align: left;
 }
+
+.block_1 {
+    text-align: center;
+}
+
+.img {
+    width: 166px;
+    height:43px;
+
+}
+
+.drop {
+    float:right;
+}
+
+.mainmenubtn {
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding:20px;
+    margin-top:20px;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd
+}
+
+.show {
+    display:block;
+}
+
 
 th.sort[data-order="1"],
 th.sort[data-order="-1"] {

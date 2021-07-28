@@ -1,5 +1,24 @@
 @charset "UTF-8";
 
+.shapka {
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    position: sticky;
+}
+
+
+.podval {
+    text-align: left;
+    position:fixed;
+    left:0;
+    bottom:0;
+    height:10%;
+    width:100%;
+    background-color: #1c1919;
+    color: #ffffff;
+}
+
+
 #p_prldr {
     position: fixed;
     left: 0;

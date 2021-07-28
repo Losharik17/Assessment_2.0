@@ -1,37 +1,78 @@
-{% extends "base.html" %}
+{% extends "main_0.html" %}
 
 {% block app_content %}
-    <h1>Регистрация</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
-            {% for error in form.username.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=64) }}<br>
-            {% for error in form.email.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.password.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password2.label }}<br>
-            {{ form.password2(size=32) }}<br>
-            {% for error in form.password2.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+
+    <link rel="stylesheet"  href="{{ url_for('static', filename='login.css')}}">
+    <div class="content">
+
+        <h1>Регистрация</h1>
+        <form action="" method="post" class="form">
+            {{ form.hidden_tag() }}
+            <div class="form_group">
+                {{ form.username.label }}
+                {{ form.username(size=32) }}
+                {% for error in form.username.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div  class="form_group">
+                {{ form.email.label }}
+                {{ form.email(size=32) }}
+                {% for error in form.email.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="form_group">
+                {{ form.password.label }}
+                {{ form.password(size=32) }}
+                {% for error in form.password.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div  class="form_group">
+                {{ form.password2.label }}
+                {{ form.password2(size=32) }}
+                {% for error in form.password2.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+            <div class="submit">{{ form.submit() }}</div>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+
+        $('#submit').addClass('form_button')
+        $('label[for=username]').addClass('form_label')
+        $('label[for=email]').addClass('form_label')
+        $('label[for=password]').addClass('form_label')
+        $('label[for=password2]').addClass('form_label')
+        $('label[for=password2]').addClass('form_label')
+        $('#email').addClass('form_input').attr('placeholder', " ")
+        $('#email').focus(function () {
+            input('email', $('label[for=email]'))
+        })
+        $('#password').addClass('form_input').attr('placeholder', " ")
+        $('#password').focus(function () {
+            input('password', $('label[for=password]'))
+        })
+        $('#username').addClass('form_input').attr('placeholder', " ")
+        $('#username').focus(function () {
+            input('username', $('label[for=username]'))
+        })
+        $('#password2').addClass('form_input').attr('placeholder', " ")
+        $('#password2').focus(function () {
+            input('password2', $('label[for=password2]'))
+        })
+        function input(el, label) {
+            $('#' + el).css({
+                'border-bottom': '1px solid #1a73a8'
+            })
+            label.css({
+                top: '-18px',
+                'font-size': '12px',
+                'color': '#999999'
+            })
+        }
+    </script>
 {% endblock %}
