@@ -6,6 +6,13 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
     <script src="{{ url_for('static', filename='user_grades_table.js') }}"></script>
 
+    <div class="info">
+        <p>Номер участника {{ user.id }}</p>
+        <p>ФИО участнка {{ user.username }}</p>
+        <p>Дата рождения {{ user.birthday }}</p>
+        <p>Команда {{ user.team }}</p>
+    </div>
+
     <div class="table-wrap">
         <table class="table_sort">
             <thead>

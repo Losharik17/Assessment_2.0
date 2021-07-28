@@ -1,5 +1,8 @@
 @charset "UTF-8";
 
+.info {
+    float: left;
+}
 
 .buttons {
     display: none;

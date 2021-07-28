@@ -22,6 +22,14 @@
     margin:0;
 }
 
+.table-wrap {
+    overflow-x: auto;
+    margin: auto;
+    justify-content: center;
+    vertical-align: middle;
+    align-items: center;
+}
+
 a {
     text-decoration: none;
     color: #0044ff;
@@ -37,8 +45,7 @@ table {
     font-size: 14px;
     border-collapse: collapse;
     text-align: center;
-    margin:auto;
-    overflow-x:auto;
+    margin: auto;
 }
 
 
@@ -93,7 +100,7 @@ th:first-child, td:first-child {
     background-color: #2980B9;
 }
 
-.dropdown {
+.exit {
     position: relative;
     display: inline-block;
 }

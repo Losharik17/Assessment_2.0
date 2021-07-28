@@ -105,9 +105,10 @@ def admin_table(admin_id):
 @login_required
 def user_grades_table(user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
+    user = User.query.filter_by(id=user_id).first()
     parameters_name = ParametersName.query.all()
     form = GradeForm()
-    return render_template('user_grades_table.html', title='Rating', grades=grades,
+    return render_template('user_grades_table.html', title='Rating', grades=grades, user=user,
                            ParName=parameters_name, user_id=user_id, form=form)
 
 

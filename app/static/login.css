@@ -2,12 +2,12 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
-a {
+.down_block a {
     text-decoration: none;
     color: #0044ff;
 }
 
-a:hover {
+.down_block a:hover {
     color: #00289e;
     text-decoration: underline;
 }
@@ -29,15 +29,6 @@ a:hover {
         width: 30%;
         height: 20%;
     }
-}
-
-body {
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: 'Roboto', sans-serif;
-    background-color: #e8edff;
-    margin:0;
 }
 
 .block_1 {

@@ -11,18 +11,19 @@ from app.auth.email import send_password_reset_email
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.email.data).first()
-        if not user:
-            user = Expert.query.filter_by(username=form.email.data).first()
-            if not user:
-                user = Admin.query.filter_by(username=form.email.data).first()
-                if not user:
-                    user = Viewer.query.filter_by(username=form.email.data).first()
 
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            user = Expert.query.filter_by(email=form.email.data).first()
+            if not user:
+                user = Admin.query.filter_by(email=form.email.data).first()
+                if not user:
+                    user = Viewer.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Неправильный пароль или email')
             return redirect(url_for('auth.login'))

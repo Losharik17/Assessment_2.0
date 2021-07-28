@@ -1,9 +1,22 @@
 @charset "UTF-8";
 
+body {
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    background-color: #e8edff;
+    margin: 0;
+}
+
 .shapka {
     background-color: rgb(255, 255, 255);
     width: 100%;
     position: sticky;
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
+    align-items: center;
 }
 
 
@@ -16,6 +29,10 @@
     width:100%;
     background-color: #1c1919;
     color: #ffffff;
+}
+
+.content {
+    margin: 10px auto;
 }
 
 
@@ -49,4 +66,55 @@
     background: url(prldr.svg) center center no-repeat;
     background-size:41px;
     margin: -16px 0 0 -16px;
+}
+
+.exit {
+    margin-right: 25px;
+
+}
+
+.exit_button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.exit .exit_button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+.exit .exit_button:hover:before {
+    bottom: -50px;
+}
+
+.exit a {
+    color: crimson;
+}
+
+.exit .exit_button {
+    display: inline-block;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid crimson;
+    transition: color .5s;
+    text-decoration: none; !important;
+}
+
+.exit .exit_button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: crimson;
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+.exit .exit_button:hover {
+    color: #fff;
 }

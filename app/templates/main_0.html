@@ -3,7 +3,6 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-
     <link rel="stylesheet"  href="{{ url_for('static', filename='main_0.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
@@ -17,29 +16,19 @@
 <body id="body">
 
 <div class="shapka" >
-    <img src = "{{ url_for('static', filename='logo.jpg') }}">
-    <div class="drop">
-
-        <div id="myDropdown" class="dropdown-content">
-            <a href="#">Учетная запись</a>
-            <a href="#">Выход</a>
-        </div>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="">
+    <div class="exit">
+        <a class="exit_button" href="{{ url_for('auth.logout') }}">
+            Выйти
+        </a>
     </div>
 </div>
-<div class="table_main">
+<div class="content">
     {% block app_content %}{% endblock %}
 </div>
 <div class="podval">
-    <table>
-        <tr>
-            <td>
-                <img class="img" src = "{{ url_for('static',filename='logo_2.jpg')}}">
-            </td>
-            <td>
-                <h2><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
-            </td>
-        </tr>
-    </table>
+    <img class="img" src="{{ url_for('static',filename='logo_2.jpg')}}" alt="">
+    <h2><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
 </div>
 </body>
 

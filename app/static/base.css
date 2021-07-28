@@ -1,4 +1,4 @@
-.button{
+.exit_button{
     text-decoration: none;
     display: inline-block;
     width: 140px;
@@ -20,7 +20,7 @@
 
 }
 
-.button:hover{
+.exit_button:hover{
     background: #2ed6e5;
     box-shadow: 0 15px 20px rgba(108, 224, 219, 0.4);
     color: white;
