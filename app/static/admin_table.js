@@ -45,15 +45,15 @@ function show_more(new_field) {
             for(let j = 0; j < 10; j++) {
                 if (users[i][`sum_grade_${j}`]) {
                     if (users[i][`sum_grade_${j}`] === 0)
-                        $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">�</td>`)
+                        $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                     else
                         $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${users[i][`sum_grade_${j}`]}</td>`)
                 }
             }
 
             if (users[i]['sum_grade_all'] === 0)
-                $(`#number_str${i}`).append(`<td id="sum_grade_all">�</td>`)
-            else $(`#number_str${i}`).append(`<td id="sum_grade_all">${users[i]['sum_grade_all']}</td>`)
+                $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
+            else $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${users[i]['sum_grade_all']}</td>`)
 
 
             //$("#tbody").append('</tr>')
