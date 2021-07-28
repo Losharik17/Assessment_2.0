@@ -31,8 +31,8 @@ def expert(expert_id):
         user = User.query.filter_by(id=form.user_id.data).first()
         if user is None:
             flash('None User')
-            return redirect(url_for('main.expert'))
-        return redirect(url_for('main.expert_grade', expert_id=expert.id, user_id=user.id))
+            return redirect(url_for('main.expert', expert_id=current_user.id))
+        return redirect(url_for('main.expert_grade', expert_id=current_user.id, user_id=user.id))
     return render_template('expert.html', form=form, expert=expert)
 
 
@@ -58,22 +58,6 @@ def expert_grade(expert_id, user_id):
 
     return render_template('expert_grade.html', form=form,
                            user=user, parameters=parameters)
-
-
-@bp.route('/edit_profile', methods=['GET', 'POST'])
-@login_required
-def edit_profile():
-    form = EditProfileForm(current_user.username)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.about_me = form.about_me.data
-        db.session.commit()
-        flash('Your changes have been saved')
-        return redirect(url_for('main.edit_profile'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile', form=form)
 
 
 @bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])

@@ -1,7 +1,16 @@
 @charset "utf-8";
 
+.form {
+    margin: auto;
+    width: 500px;
+    padding: 32px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px #ccc;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
 
-button{
+button {
     border-radius: 100%;
     width:2px;
     height: 2px;
@@ -37,4 +46,32 @@ button{
 .form_radio_btn input[type=radio]:disabled + label {
     background: #efefef;
     color: #666;
+}
+
+.form_button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    font-size: 16px;
+    color :#fff ;
+    background-color: #0071f0;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.form_button:hover {
+    background-color: rgba(0, 113, 240, 0.7);
+}
+
+.form_button:focus {
+    background-color: rgba(0, 49, 111, 0.7);
+}
+
+.submit {
+    justify-content: center;
+    text-align: center;
+    margin: 10px auto;
 }

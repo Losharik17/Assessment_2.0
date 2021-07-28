@@ -22,11 +22,11 @@
     </div>
     <div class="assessments">#Список критериев
 
-        <form  action="" method="post">
+        <form  action="" method="post" class="form">
             {{ form.hidden_tag() }}
             {% set i = namespace(a=0) %}
             {% for parameter in parameters %}
-            <p>
+            <div>
                     {{ parameter.name }}
                     {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
                         <div class="form_radio_btn">
@@ -38,21 +38,18 @@
                         {% endfor %}
                     {% endfor %}
                     {% set i.a = i.a + 1 %}
-            </p>
+            </div>
             {% endfor %}
-            <p>
+            <div class="submit">
                 {{ form.submit }}
-            </p>
+            </div>
 
             # для ошибок
             {% if form.errors %}
                 {{ form.errors }}
             {% endif %}
         </form>
-
-
-
     </div>
-
+    <script src="{{ url_for('static', filename='expert_grade.js') }}"></script>
 
 {% endblock %}

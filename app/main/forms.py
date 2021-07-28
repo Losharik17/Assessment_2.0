@@ -44,7 +44,7 @@ class GradeForm(FlaskForm):
 
 class UserForm(FlaskForm):
     user_id = IntegerField('Номер участника')
-    submit = SubmitField('')
+    submit = SubmitField('Продолжить')
 
 
 class TableForm(FlaskForm):

@@ -20,7 +20,8 @@ function show_more(new_field) {
 
         for (let i = 0; i < quantity; i++) {
 
-            $("#tbody").append(`<tr id="number_str${i}"></tr>`)
+            $("#tbody").append(`<tr id="number_str${i}"` +
+                ` onclick="location.href='/user_grades_table/${i}'"></tr>`)
 
             if (users[i]['id'] === 'None')
                 $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
