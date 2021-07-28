@@ -37,8 +37,8 @@
     background: transparent;
     outline: none !important;
     cursor: pointer;
-    -webkit-transition: all 0.3s ease;
-    transition: all 0.3s ease;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
     position: relative;
     display: inline-block;
     border: 2px solid rgba(0, 64, 144, 0.7);
