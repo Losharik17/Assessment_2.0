@@ -14,7 +14,7 @@
     </div>
 
     <div class="table-wrap">
-        <table class="table_sort">
+        <table class="table-sort">
             <thead>
 
             <tr>
@@ -71,15 +71,19 @@
             {% endfor %}
             </tbody>
         </table>
+        <div class="show">
+            <a class="show_btn" href="javascript:show_more(2, {{ user_id }})">
+                Показать больше</a>
+            <a class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
+                Показать все</a>
+        </div>
     </div>
-
-    <a href="javascript:show_more(2, {{ user_id }})">Показать больше</a>
-
-    <a href="javascript:show_more(10000, {{ user_id }})">Показать все</a>
 
     <script>
         buttons({{ i.a }})
         delete_buttons({{ user_id }})
+
+
     </script>
 
 {% endblock %}

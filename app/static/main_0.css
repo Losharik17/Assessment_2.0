@@ -19,8 +19,10 @@ body {
     align-items: center;
 }
 
-
 .podval {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
     text-align: left;
     position:fixed;
     left:0;
@@ -32,9 +34,10 @@ body {
 }
 
 .content {
-    margin: 10px auto;
+    justify-content: center;
+    vertical-align: middle;
+    align-items: center;
 }
-
 
 #p_prldr {
     position: fixed;
@@ -70,7 +73,6 @@ body {
 
 .exit {
     margin-right: 25px;
-
 }
 
 .exit_button {
@@ -100,7 +102,7 @@ body {
     margin: 20px;
     position: relative;
     overflow: hidden;
-    border: 2px solid crimson;
+    border: 1px solid crimson;
     transition: color .5s;
     text-decoration: none; !important;
 }
@@ -118,3 +120,5 @@ body {
 .exit .exit_button:hover {
     color: #fff;
 }
+
+

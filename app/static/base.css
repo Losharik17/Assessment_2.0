@@ -1,28 +1,49 @@
-.exit_button{
-    text-decoration: none;
-    display: inline-block;
-    width: 140px;
-    height: 45px;
-    line-height: 45px;
-    border-radius: 45px;
-    margin: 10px 20px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 11px;
-    text-transform: uppercase;
-    text-align: center;
-    letter-spacing: 3px;
-    font-weight: 600;
-    color: #c0e05f;
-    background: #7da3d4;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, .1);
-    transition: .3s;
-
-
+.buttons {
+    margin-right: 25px;
 }
 
-.exit_button:hover{
-    background: #2ed6e5;
-    box-shadow: 0 15px 20px rgba(108, 224, 219, 0.4);
-    color: white;
-    transform: translateY(-7px);
+.exit_button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.buttons .exit_button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+.buttons .exit_button:hover:before {
+    bottom: -50px;
+}
+
+.buttons a {
+    color: rgba(0, 86, 189, 0.7);
+}
+
+.buttons .exit_button {
+    display: inline-block;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 86, 189, 0.7);
+    transition: color .5s;
+    text-decoration: none; !important;
+}
+
+.buttons .exit_button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: rgba(0, 86, 189, 0.7);
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+.buttons .exit_button:hover {
+    color: #fff;
 }

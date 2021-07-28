@@ -233,6 +233,7 @@ function sort(parameter, user_id) {
         function (response) {
             let grades = JSON.parse(response['grades'])
             let quantity = grades.length
+            limit=quantity
 
             for (let i = 0; i < quantity; i++) {
                 $(`#expert_id${i}`).html(grades[i]['expert_id'] ? grades[i]['expert_id'] : '–');

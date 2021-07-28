@@ -1,53 +1,80 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
-/****ìåñòî ïîä ñòèëè ëîãî ïîä ðàçíûå ðàçðåø****/
-/*ïîä òåñòû íà ðàçðåøåíèå*******************************/
 @media screen and (min-device-width: 1440px){
-    img{
+    img {
         width:397px;
         height:123px;
     }
 
 }
 @media screen and (max-device-width: 1080px){
-    img{
+    img {
         width: 30%;
         height: 20%;
     }
 }
 
-.body{
-    background-color: #0088CC;
-    margin:0;
-}
-
 .table-wrap {
     overflow-x: auto;
+}
+
+.table-sort {
+    overflow-x: auto;
     margin: auto;
-    justify-content: center;
+    justify-content: space-around;
     vertical-align: middle;
     align-items: center;
 }
 
-a {
+.show_btn {
+    margin: 0 15px;
     text-decoration: none;
-    color: #0044ff;
+    padding: 10px 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: rgba(0, 64, 144, 0.7);
+    background: transparent;
+    outline: none !important;
+    cursor: pointer;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    border: 2px solid rgba(0, 64, 144, 0.7);
+    border-radius: 10px;
 }
 
-a:hover {
-    color: #00289e;
-    text-decoration: underline;
+.show_btn:hover {
+    background: rgba(0, 64, 144, 0.7);
+    color: #fff;
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
 }
+
+.show_btn:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.show_btn:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+
+.show {
+    text-align: center;
+    margin: 20px auto;
+}
+
 
 table {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     border-collapse: collapse;
     text-align: center;
-    margin: auto;
 }
-
 
 th, td:first-child {
     background: #AFCDE7;
@@ -98,11 +125,6 @@ th:first-child, td:first-child {
 
 .dropbtn:hover, .dropbtn:focus {
     background-color: #2980B9;
-}
-
-.exit {
-    position: relative;
-    display: inline-block;
 }
 
 .dropdown-content {

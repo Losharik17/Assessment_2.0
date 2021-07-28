@@ -1,7 +1,10 @@
 @charset "UTF-8";
 
+
 .info {
+    position: absolute;
     float: left;
+    margin-left: 5%;
 }
 
 .buttons {

@@ -1,15 +1,52 @@
 <html lang="ru">
-    <head>
+<head>
+
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='main_0.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
         <title>T-Park</title>
     {% endif %}
-    </head>
-    <body>
+</head>
+<body id="body">
 
-    {% block app_content %}{% endblock %}
+<div class="shapka" >
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="">
+    <div class="buttons">
+        <a class="exit_button" href="{{ url_for('auth.login') }}">
+            Вход
+        </a>
+        <a class="exit_button" href="{{ url_for('auth.register') }}">
+            Регистрация
+        </a>
 
-    </body>
-</html>
+    </div>
+</div>
+<div class="content">
+    <h1>Система оценки</h1>
+</div>
+<div class="podval">
+    <img class="img" src="{{ url_for('static',filename='logo_2.webp')}}" alt="">
+    <h2><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
+</div>
+</body>
+
+
+<script type="text/javascript">
+
+    $(window).on('load', function () {
+        let $preloader = $('#p_prldr'),
+            $svg_anm   = $preloader.find('.svg_anm');
+        $svg_anm.fadeOut();
+        $preloader.delay(500).fadeOut('slow');
+    });
+
+</script>
+
+</html

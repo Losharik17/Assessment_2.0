@@ -11,7 +11,6 @@ from app.main.smth_in_json import users_in_json, grades_in_json
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
-@login_required
 def index():
     return render_template('base.html')
 
