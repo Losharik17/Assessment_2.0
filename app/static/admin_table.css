@@ -25,6 +25,7 @@
     justify-content: space-around;
     vertical-align: middle;
     align-items: center;
+    cursor: pointer;
 }
 
 .show_btn {
@@ -80,6 +81,7 @@ th, td:first-child {
     background: #AFCDE7;
     color: white;
     padding: 10px 20px;
+    margin: auto;
 }
 
 th {
@@ -94,10 +96,11 @@ td {
     border-width: 0 1px 1px 0;
     border-color: white;
     background: #D8E6F3;
+    margin: auto;
 }
 
 th:first-child, td:first-child {
-    text-align: left;
+    text-align: center;
 }
 
 .block_1 {

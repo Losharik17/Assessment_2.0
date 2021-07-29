@@ -21,7 +21,7 @@ function show_more(new_field) {
         for (let i = 0; i < quantity; i++) {
 
             $("#tbody").append(`<tr id="number_str${i}"` +
-                ` onclick="location.href='/user_grades_table/${i}'"></tr>`)
+                ` onclick="location.href='/user_grades_table/${users[i]['id']}'"></tr>`)
 
             if (users[i]['id'] === 'None')
                 $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
@@ -48,13 +48,13 @@ function show_more(new_field) {
                     if (users[i][`sum_grade_${j}`] === 0)
                         $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                     else
-                        $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${users[i][`sum_grade_${j}`]}</td>`)
+                        $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.floor(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
                 }
             }
 
             if (users[i]['sum_grade_all'] === 0)
                 $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
-            else $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${users[i]['sum_grade_all']}</td>`)
+            else $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.floor(users[i]['sum_grade_all'] * 100) / 100}</td>`)
 
 
             //$("#tbody").append('</tr>')
@@ -104,16 +104,52 @@ function sort(parameter) {
 
                 for (let j = 0; j < 10; j++)
                     if ($(`#sum_grade_${j}${i}`))
-                        $(`#sum_grade_${j}${i}`).html(users[i][`sum_grade_${j}`] !== 'None' ? users[i][`sum_grade_${j}`] : '–')
+                        $(`#sum_grade_${j}${i}`).html(users[i][`sum_grade_${j}`] !== 'None' ? Math.floor(users[i][`sum_grade_${j}`] * 100) / 100 : '–')
 
                 if ($(`#sum_grade_all${i}`))
-                    $(`#sum_grade_all${i}`).html(users[i]['sum_grade_all'] !== 'None' ? users[i]['sum_grade_all'] : '–')
+                    $(`#sum_grade_all${i}`).html(users[i]['sum_grade_all'] !== 'None' ? Math.floor(users[i]['sum_grade_all'] * 100) / 100 : '–')
             }
         }).fail(function () {
         alert("Error AJAX request")
     })
 }
 
-function user_profile() {
 
-}
+
+$(function () {
+    let timer = null;
+    let xhr = null;
+    $('.user_popup').hover(
+        function(event) {
+            // mouse in event handler
+            let elem = $(event.currentTarget);
+            timer = setTimeout(function() {
+                timer = null;
+                xhr = $.post('/user_popup', {
+                    user_id: 3,
+                }).done(
+                    function(data) {
+                        xhr = null;
+                        $('#number_str0').popover({title:'Title',content:'Content'});
+                        console.log(123);
+                    }
+                );
+            }, 1000);
+        },
+        function(event) {
+            // mouse out event handler
+            let elem = $(event.currentTarget);
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+            else if (xhr) {
+                xhr.abort();
+                xhr = null;
+            }
+            else {
+                elem.popover('destroy');
+            }
+        }
+    );
+});

@@ -241,7 +241,8 @@ function sort(parameter, user_id) {
 
                 for (let j = 0; j < 15; j++)
                     if ($(`#parameter_${j}${i}`))
-                        $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ? grades[i][`parameter_${j}`] : '–')
+                        $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ?
+                            grades[i][`parameter_${j}`] : '–')
             }
             delete_buttons()
             buttons(limit)

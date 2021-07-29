@@ -74,7 +74,7 @@
                         {% if user.sum_grade_all == 0 %}
                             —
                         {% else %}
-                            {{ user.sum_grade_all }}
+                            {{ user.sum_grade_all|round(2) }}
                         {% endif %}
                     </td>
                 </tr>
@@ -93,5 +93,9 @@
     </div>
 
     <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
+    <script>
+        show_more(0)
+
+    </script>
 
 {% endblock %}

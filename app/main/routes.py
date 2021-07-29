@@ -178,3 +178,11 @@ def delete_grade():
     db.session.commit()
 
     return jsonify({'result': 'Deleted'})
+
+
+@bp.route('/user_popup', methods=['POST'])
+@login_required
+def user_popup():
+    user = User.query.filter_by(id=request.form['user_id']).first()
+    user = users_in_json([user])
+    return jsonify({'result': 'Deleted'})

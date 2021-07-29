@@ -39,7 +39,7 @@ def grades_in_json(grades):
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}"' \
             .format(str(grade.id),
-                    str(grade.date.strftime('%H:%M %d.%m.%Y')),
+                    str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert_id),
                     str(grade.user_id))
 
