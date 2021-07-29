@@ -40,28 +40,31 @@ body {
     align-items: center;
 }
 
-#p_prldr {
+#p_prldr{
     position: fixed;
     left: 0;
     top: 0;
     right:0;
     bottom:0;
-    background: #AFCDE7;
-    z-index: 30;
+    background: rgba(176, 205, 255, 0.6);
+    z-index: 30;}
+
+.contpre small  {
+    font-size:25px;
 }
 
-.contpre {
+.contpre{
     width: 250px;
     height: 100px;
     position: absolute;
-    left: 50%; top: 48%;
-    margin-left: -125px;
-    margin-top: -75px;
-    color: #fff;
-    font-size: 25px;
-    letter-spacing: -2px;
-    text-align: center;
-    line-height: 35px;}
+    left: 50%;top: 48%;
+    margin-left:-125px;
+    margin-top:-75px;
+    color:#fff;
+    font-size:40px;
+    letter-spacing:-2px;
+    text-align:center;
+    line-height:35px;}
 
 #p_prldr .svg_anm {
     position: absolute;
@@ -69,8 +72,7 @@ body {
     height: 41px;
     background: url(prldr.svg) center center no-repeat;
     background-size:41px;
-    margin: -16px 0 0 -16px;
-}
+    margin: -16px 0 0 -16px;}
 
 .exit {
     margin-right: 25px;
@@ -119,6 +121,56 @@ body {
 }
 
 .exit .exit_button:hover {
+    color: #fff;
+}
+
+.buttons {
+    margin-right: 25px;
+}
+
+.button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.buttons .button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+.buttons .button:hover:before {
+    bottom: -50px;
+}
+
+.buttons a {
+    color: rgba(0, 86, 189, 0.7);
+}
+
+.buttons .button {
+    display: inline-block;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 86, 189, 0.7);
+    transition: color .5s;
+    text-decoration: none; !important;
+}
+
+.buttons .button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: rgba(0, 86, 189, 0.7);
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+.buttons .button:hover {
     color: #fff;
 }
 

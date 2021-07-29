@@ -12,9 +12,7 @@ from app.main.smth_in_json import users_in_json, grades_in_json
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
-    if current_user.is_authenticated:
-        return render_template('base.html', user=current_user)
-    return render_template('base.html', user=None)
+    return render_template('base.html', auth=current_user.is_authenticated)
 
 
 @bp.route('/user/<id>')

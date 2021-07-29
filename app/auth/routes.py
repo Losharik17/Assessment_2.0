@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 def login():
     # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
-        return redirect(url_for('main.index', user=current_user))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
 
@@ -40,7 +40,7 @@ def login():
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index', user=None))
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/register', methods=['GET', 'POST'])

@@ -6,18 +6,27 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='main_0.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
         <title>T-Park</title>
     {% endif %}
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            let $preloader = $('#p_prldr'),
+                $svg_anm   = $preloader.find('.svg_anm');
+            $svg_anm.fadeOut();
+            $preloader.delay(500).fadeOut('slow');
+        });
+    </script>
+
 </head>
 <body id="body">
 
 <div class="shapka" >
     <img src="{{ url_for('static', filename='logo.png') }}" alt="">
-    {% if title != 'Sign In' and title != 'Register'%}
+    {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
         <div class="exit">
             <a class="exit_button" href="{{ url_for('auth.logout') }}">
                 Выйти
@@ -25,10 +34,10 @@
         </div>
     {% else %}
         <div class="buttons">
-            <a class="exit_button" href="{{ url_for('auth.login') }}">
+            <a class="button" href="{{ url_for('auth.login') }}">
                 Вход
             </a>
-            <a class="exit_button" href="{{ url_for('auth.register') }}">
+            <a class="button" href="{{ url_for('auth.register') }}">
                 Регистрация
             </a>
         </div>
@@ -42,17 +51,5 @@
     <h2><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
 </div>
 </body>
-
-
-<script type="text/javascript">
-
-    $(window).on('load', function () {
-        let $preloader = $('#p_prldr'),
-            $svg_anm   = $preloader.find('.svg_anm');
-        $svg_anm.fadeOut();
-        $preloader.delay(500).fadeOut('slow');
-    });
-
-</script>
 
 </html>
