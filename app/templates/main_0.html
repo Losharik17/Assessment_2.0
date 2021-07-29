@@ -17,11 +17,22 @@
 
 <div class="shapka" >
     <img src="{{ url_for('static', filename='logo.png') }}" alt="">
-    <div class="exit">
-        <a class="exit_button" href="{{ url_for('auth.logout') }}">
-            Выйти
-        </a>
-    </div>
+    {% if title != 'Sign In' and title != 'Register'%}
+        <div class="exit">
+            <a class="exit_button" href="{{ url_for('auth.logout') }}">
+                Выйти
+            </a>
+        </div>
+    {% else %}
+        <div class="buttons">
+            <a class="exit_button" href="{{ url_for('auth.login') }}">
+                Вход
+            </a>
+            <a class="exit_button" href="{{ url_for('auth.register') }}">
+                Регистрация
+            </a>
+        </div>
+    {% endif %}
 </div>
 <div class="content">
     {% block app_content %}{% endblock %}

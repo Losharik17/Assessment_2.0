@@ -14,7 +14,6 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
-    avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
     birthday = db.Column(db.Date)
     team = db.Column(db.String(32))

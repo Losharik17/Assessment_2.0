@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm, GradeForm, UserForm, TableForm
+from app.main.forms import EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
 from app.main.smth_in_json import users_in_json, grades_in_json
@@ -12,7 +12,9 @@ from app.main.smth_in_json import users_in_json, grades_in_json
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
-    return render_template('base.html')
+    if current_user.is_authenticated:
+        return render_template('base.html', user=current_user)
+    return render_template('base.html', user=None)
 
 
 @bp.route('/user/<id>')

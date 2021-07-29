@@ -7,13 +7,15 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Expert, Admin, Viewer
 from app.auth.email import send_password_reset_email
+import os
+from werkzeug.utils import secure_filename
 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index', user=current_user))
     form = LoginForm()
     if form.validate_on_submit():
 
@@ -38,27 +40,31 @@ def login():
 @bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.index', user=None))
 
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.index', user=current_user))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, avatar=form.avatar.data)
-        if User.query.filter_by(email=form.email.data) or \
-                Expert.query.filter_by(email=form.email.data) or \
-                Admin.query.filter_by(email=form.email.data) or \
-                Viewer.query.filter_by(email=form.email.data):
+        if User.query.filter_by(email=form.email.data) is None or \
+                Expert.query.filter_by(email=form.email.data) is None or \
+                Admin.query.filter_by(email=form.email.data) is None or \
+                Viewer.query.filter_by(email=form.email.data) is None:
             flash('Данная почта уже используется одним из пользователей<br>'
                   'Пожалуйста изпользуйте другой email адрес')
+            return redirect(url_for('auth.register'))
+
+        path = os.path.join('/WEB/T-Park/app/static/images')
+        form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
+        user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Регистрация прошла успешно.')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('main.index'))
     return render_template('auth/register.html', title='Register', form=form)
 
 

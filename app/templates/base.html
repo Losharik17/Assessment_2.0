@@ -18,15 +18,22 @@
 
 <div class="shapka" >
     <img src="{{ url_for('static', filename='logo.png') }}" alt="">
-    <div class="buttons">
-        <a class="exit_button" href="{{ url_for('auth.login') }}">
-            Вход
-        </a>
-        <a class="exit_button" href="{{ url_for('auth.register') }}">
-            Регистрация
-        </a>
-
-    </div>
+    {% if user is defined %}
+        <div class="buttons">
+            <a class="exit_button" href="{{ url_for('auth.login') }}">
+                Вход
+            </a>
+            <a class="exit_button" href="{{ url_for('auth.register') }}">
+                Регистрация
+            </a>
+        </div>
+    {% else %}
+        <div class="exit">
+            <a class="exit_button" href="{{ url_for('auth.logout') }}">
+                Выйти
+            </a>
+        </div>
+    {% endif %}
 </div>
 <div class="content">
     <h1>Система оценки</h1>
@@ -49,4 +56,4 @@
 
 </script>
 
-</html
+</html>
