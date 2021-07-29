@@ -1,12 +1,15 @@
 import json
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app
+from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
 from app.main.smth_in_json import users_in_json, grades_in_json
+from app.main.functions import users_in_json, excell, to_dict
+import pandas as pd
+from werkzeug.utils import secure_filename
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -15,10 +18,53 @@ def index():
     return render_template('base.html', auth=current_user.is_authenticated)
 
 
-@bp.route('/user/<id>')
+@bp.route('/download/')
+def dwn():
+    return render_template('download.html')
+
+
+@bp.route('/excel', methods=['GET', 'POST'])
+def exportexcel():
+    data = User.query.all()
+    data_list = [to_dict(item) for item in data]
+    df1 = pd.DataFrame(data_list)
+    df1 = df1.drop(columns=['avatar', 'password_hash'])
+    data = Expert.query.all()
+    data_list = [to_dict(item) for item in data]
+    df2 = pd.DataFrame(data_list)
+    df2 = df2.drop(columns=['password_hash'])
+    data = Grade.query.all()
+    data_list = [to_dict(item) for item in data]
+    df3 = pd.DataFrame(data_list)
+    df3 = df3.drop(columns=['id'])
+    filename = "/Отчёт.xlsx"
+
+    writer = pd.ExcelWriter(filename)
+    df1.to_excel(writer, sheet_name='Пользователи', index=False)
+    df2.to_excel(writer, sheet_name='Эксперты', index=False)
+    df3.to_excel(writer, sheet_name='Оценки', index=False)
+    writer.save()
+    return send_file(filename, as_attachment=True, cache_timeout=0)
+
+
+@bp.route('/upload')
+def upload_file1():
+    return render_template('upload.html')
+
+
+@bp.route('/uploader', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(secure_filename(f.filename.rsplit( ".", 1 )[ 0 ]))
+        excell(f.filename.rsplit( ".", 1 )[ 0 ])
+        return redirect(url_for('main.expert'))
+
+
+@bp.route('/user/<user_id>')
 @login_required
-def user(id):
-    user = User.query.filter_by(username=id).first()
+def user(user_id):
+    user = User.query.filter_by(id=user_id).first()
     return render_template('user.html', user=user)
 
 
