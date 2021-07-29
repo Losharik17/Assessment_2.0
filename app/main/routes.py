@@ -6,8 +6,7 @@ from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm, TableForm
 from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
 from app.main import bp
-from app.main.smth_in_json import users_in_json, grades_in_json
-from app.main.functions import users_in_json, excell, to_dict
+from app.main.functions import users_in_json, grades_in_json, excell, to_dict
 import pandas as pd
 from werkzeug.utils import secure_filename
 
@@ -18,7 +17,7 @@ def index():
     return render_template('base.html', auth=current_user.is_authenticated)
 
 
-@bp.route('/download/')
+@bp.route('/download')
 def dwn():
     return render_template('download.html')
 
@@ -28,7 +27,7 @@ def exportexcel():
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
-    df1 = df1.drop(columns=['avatar', 'password_hash'])
+    df1 = df1.drop(columns=['password_hash'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
@@ -59,6 +58,7 @@ def upload_file():
         f.save(secure_filename(f.filename.rsplit( ".", 1 )[ 0 ]))
         excell(f.filename.rsplit( ".", 1 )[ 0 ])
         return redirect(url_for('main.expert'))
+    return render_template('upload.html')
 
 
 @bp.route('/user/<user_id>')

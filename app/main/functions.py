@@ -101,4 +101,4 @@ def excell(filename):
         df.columns = ['id', 'username', 'email']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     else:
-        print('Неправильно выбран файл')
+        print('123')
