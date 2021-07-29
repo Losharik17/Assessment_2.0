@@ -14,7 +14,6 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
-    avatar = db.Column(db.BLOB)
     password_hash = db.Column(db.String(128))
     birthday = db.Column(db.Date)
     team = db.Column(db.String(32))
@@ -48,13 +47,14 @@ class User(UserMixin, db.Model):
         """считает сумму всех оценок по каждому критерию
         пока по неправильной формуле +-"""
         grades = self.grades.all()
+        self.sum_grade_all = float(0)
         for grade in grades:
-            for i in range(10):  # должно быть кол-во параметров, а не цифра
+            for i in range(5):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
                     self.__dict__['sum_grade_{}'.format(i)] += \
                         grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
 
-        for i in range(10):  # должно быть кол-во параметров, а не цифра
+        for i in range(5):  # должно быть кол-во параметров, а не цифра
             self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
 
@@ -63,8 +63,8 @@ class User(UserMixin, db.Model):
         grades = self.grades.all()
         sum = float(0)
         for grade in grades:
-            if grade.__dict__['parameter_{}'.format(number_parameter)] is not None \
-                    and grade.__dict__['parameter_{}'.format(number_parameter)] != 0:
+            if getattr(grade, 'parameter_{}'.format(number_parameter)) is not None \
+                    and getattr(grade, 'parameter_{}'.format(number_parameter)) != 0:
                 sum += grade.expert.weight
         if sum:
             return sum
@@ -126,7 +126,7 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
     parameter_0 = db.Column(db.Integer)
     parameter_1 = db.Column(db.Integer)
     parameter_2 = db.Column(db.Integer)

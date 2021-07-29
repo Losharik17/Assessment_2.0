@@ -1,0 +1,57 @@
+<html lang="ru">
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='main_0.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+    {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>T-Park</title>
+    {% endif %}
+
+<script>
+    $(window).on('load', function () {
+        $('.preloader').addClass("preloader-remove");
+    });
+</script>
+
+</head>
+<body id="body">
+
+<div class="preloader">
+    <div class="preloader-5"></div>
+</div>
+
+
+<div class="shapka" >
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="">
+    {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
+        <div class="exit">
+            <a class="exit_button" href="{{ url_for('auth.logout') }}">
+                Выйти
+            </a>
+        </div>
+    {% else %}
+        <div class="buttons">
+            <a class="button" href="{{ url_for('auth.login') }}">
+                Вход
+            </a>
+            <a class="button" href="{{ url_for('auth.register') }}">
+                Регистрация
+            </a>
+        </div>
+    {% endif %}
+</div>
+<div class="content">
+    {% block app_content %}{% endblock %}
+</div>
+<div class="podval">
+    <img class="img" src="{{ url_for('static',filename='logo_2.webp')}}" alt="">
+    <h2><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h2><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
+</div>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+{% extends "main_0.html" %}
+
+{%  block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
+    <div class="photo"></div>
+    <div class="data">
+        <table>#Данные участника
+            <tr>
+                {{ user.id }}
+            </tr>
+            <tr>
+                {{ user.username }}
+            </tr>
+            <tr>
+                {{ user.birthday }}
+            </tr>
+            <tr>
+                {{ user.team }}
+            </tr>
+        </table>
+    </div>
+    <div class="assessments">#Список критериев
+
+        <form  action="" method="post" class="form">
+            {{ form.hidden_tag() }}
+            {% set i = namespace(a=0) %}
+            {% for parameter in parameters %}
+            <div>
+                    {{ parameter.name }}
+                    {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                        <div class="form_radio_btn">
+                            {{ value }}
+                            {{ value.label }}
+                        </div>
+                        {% for error in form.value %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    {% endfor %}
+                    {% set i.a = i.a + 1 %}
+            </div>
+            {% endfor %}
+            <div class="submit">
+                {{ form.submit }}
+            </div>
+
+            # для ошибок
+            {% if form.errors %}
+                {{ form.errors }}
+            {% endif %}
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='expert_grade.js') }}"></script>
+
+{% endblock %}

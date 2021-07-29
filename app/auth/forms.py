@@ -5,6 +5,7 @@ from app.models import User
 from wtforms.fields.html5 import DateField
 
 
+
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Пароль', validators=[DataRequired()])
@@ -14,22 +15,17 @@ class LoginForm(FlaskForm):
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
+    avatar = FileField('Фото', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    avatar = FileField('Фото', validators=[])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
         'Повторите пароль', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Зарегистрироваться')
 
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError('Пожалуйса измените имя.')
-
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Данная почта уже используется другим пользоваьелем.')
+            raise ValidationError('Данная почта уже используется другим пользователем.')
 
 
 class ResetPasswordRequestForm(FlaskForm):

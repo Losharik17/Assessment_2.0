@@ -13,5 +13,7 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['tankustvotnucke@yandex.ru']
     USER_PER_PAGE = 15
+    UPLOAD_FOLDER = '/app/static/images'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 

@@ -1,0 +1,177 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+@media screen and (min-device-width: 1440px){
+    img {
+        width:397px;
+        height:123px;
+    }
+
+}
+@media screen and (max-device-width: 1080px){
+    img {
+        width: 30%;
+        height: 20%;
+    }
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table-sort {
+    overflow-x: auto;
+    margin: auto;
+    justify-content: space-around;
+    vertical-align: middle;
+    align-items: center;
+    cursor: pointer;
+}
+
+.show_btn {
+    margin: 0 15px;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: rgba(0, 64, 144, 0.7);
+    background: transparent;
+    outline: none !important;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-block;
+    border: 2px solid rgba(0, 64, 144, 0.7);
+    border-radius: 10px;
+}
+
+.show_btn:hover {
+    background: rgba(0, 64, 144, 0.7);
+    color: #fff;
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
+}
+
+.show_btn:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.show_btn:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+
+.show {
+    text-align: center;
+    margin: 20px auto;
+}
+
+
+table {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th, td:first-child {
+    background: #AFCDE7;
+    color: white;
+    padding: 10px 20px;
+    margin: auto;
+}
+
+th {
+    cursor: pointer;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+}
+
+td {
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+    background: #D8E6F3;
+    margin: auto;
+}
+
+th:first-child, td:first-child {
+    text-align: center;
+}
+
+.block_1 {
+    text-align: center;
+}
+
+.img {
+    width: 166px;
+    height:43px;
+
+}
+
+.drop {
+    float:right;
+}
+
+.mainmenubtn {
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding:20px;
+    margin-top:20px;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #2980B9;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd
+}
+
+.show {
+    display:block;
+}
+
+
+th.sort[data-order="1"],
+th.sort[data-order="-1"] {
+    position: relative;
+}
+
+th.sort[data-order="1"]::after,
+th.sort[data-order="-1"]::after {
+    position: absolute;
+    right: 3px;
+    top: 41%; /* нужно выровнить */
+}
+
+th.sort[data-order="-1"]::after {
+    content: url("arrowDown.png");
+}
+
+th.sort[data-order="1"]::after {
+    content: url("arrowDown.png");
+    transform: rotate(180deg);
+}
