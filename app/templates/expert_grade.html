@@ -4,57 +4,55 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
 
-    <div>
-        <div class="container">
-            <div class="data">
-                <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
-                <table style="margin: 10px;">
-                    <tr>
-                        <td>ID: {{ user.id }}</td>
-                    </tr>
-                    <tr>
-                        <td>ФИО: {{ user.username }}</td>
-                    </tr>
-                    <tr>
-                        <td>Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
-                    </tr>
-                    <tr>
-                        <td>Команда: {{ user.team }}</td>
-                    </tr>
-                </table>
-            </div>
+    <div class="container">
+        <div class="data">
+            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
+            <table style="margin: 10px;">
+                <tr>
+                    <td>ID: {{ user.id }}</td>
+                </tr>
+                <tr>
+                    <td>ФИО: {{ user.username }}</td>
+                </tr>
+                <tr>
+                    <td>Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
+                </tr>
+                <tr>
+                    <td>Команда: {{ user.team }}</td>
+                </tr>
+            </table>
         </div>
-        <br>
-        <div class="assessments">
+    </div>
+    <br>
+    <div class="assessments">
 
-            <form  action="" method="post" class="form">
-                {{ form.hidden_tag() }}
-                {% set i = namespace(a=0) %}
-                {% for parameter in parameters %}
-                    <div class="crit">
-                        <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
-                        <div style="justify-content: space-between; display: flex">
-                            {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
-                                <div class="form_radio_btn">
-                                    {{ value }}
-                                    {{ value.label }}
-                                </div>
-                                {% for error in form.value %}
-                                    <span style="color: red;">{{ error }}</span>
-                                {% endfor %}
+        <form  action="" method="post" class="form">
+            {{ form.hidden_tag() }}
+            {% set i = namespace(a=0) %}
+            {% for parameter in parameters %}
+                <div class="crit">
+                    <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
+                    <div style="justify-content: space-between; display: flex">
+                        {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                            <div class="form_radio_btn">
+                                {{ value }}
+                                {{ value.label }}
+                            </div>
+                            {% for error in form.value %}
+                                <span style="color: red;">{{ error }}</span>
                             {% endfor %}
-                            {% set i.a = i.a + 1 %}
-                        </div>
+                        {% endfor %}
+                        {% set i.a = i.a + 1 %}
                     </div>
-                {% endfor %}
-                <div class="submit">
-                    {{ form.submit }}
-                    <a class="form_button_cancel" href="{{ url_for('main.expert', expert_id=expert_id) }}">
-                        Отменить
-                    </a>
                 </div>
-            </form>
-        </div>
+            {% endfor %}
+            <div class="submit">
+                {{ form.submit }}
+                <a class="form_button_cancel" href="{{ url_for('main.expert', expert_id=expert_id) }}">
+                    Отменить
+                </a>
+            </div>
+        </form>
     </div>
 
     <script src="{{ url_for('static', filename='expert_grade.js') }}"></script>

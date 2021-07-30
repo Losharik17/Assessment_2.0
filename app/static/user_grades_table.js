@@ -198,7 +198,7 @@ function show_more(new_field, user_id) {
                 `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
                 `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
                 `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                `<input id="d${i}" type="button" value="Удалить" class="btn"></span></div>`)
+                `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
         delete_buttons()
         buttons(limit)
@@ -247,7 +247,7 @@ function sort(parameter, user_id) {
                 $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
                     `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
                     `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                    `<input id="d${i}" type="button" value="Удалить" class="btn"></span>`)
+                    `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
 
         }).fail(function () {

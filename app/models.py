@@ -46,8 +46,14 @@ class User(UserMixin, db.Model):
     def sum_grades(self):  # в принципе это надо оптимизировать я полагаю
         """считает сумму всех оценок по каждому критерию
         пока по неправильной формуле +-"""
+
         grades = self.grades.all()
+
         self.sum_grade_all = float(0)
+
+        for i in range(5):
+            self.__dict__['sum_grade_{}'.format(i)] = 0
+
         for grade in grades:
             for i in range(5):  # должно быть кол-во параметров, а не цифра
                 if self.__dict__['sum_grade_{}'.format(i)] is None:
@@ -142,7 +148,7 @@ class Grade(db.Model):
         """ устанавливает баллы для критериев """
         for i in range(len(grades)):
             if grades[i] is not None:
-                self.__dict__['parameter_{}'.format(i)] = grades[i]
+                setattr(self, 'parameter_{}'.format(i), grades[i])
 
 
 class Viewer(UserMixin, db.Model):

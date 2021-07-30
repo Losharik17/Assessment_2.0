@@ -122,10 +122,7 @@ input:active {
     background-color: #e8edff;
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
 }
-
-
 
 .photo {
     display: flex;

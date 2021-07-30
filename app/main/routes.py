@@ -216,7 +216,10 @@ def save_grade():
 @login_required
 def delete_grade():
     grade = Grade.query.get(request.form['id'])
+    user = User.query.get(grade.user.id)
     db.session.delete(grade)
+    db.session.commit()
+    user.sum_grades()
     db.session.commit()
 
     return jsonify({'result': 'Deleted'})

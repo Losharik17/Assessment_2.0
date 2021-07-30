@@ -14,8 +14,9 @@
 
 @media not handheld {
     .logo {
-        width: 18%;
-        height: 12%;
+        max-width: 300px;
+        width: 24%;
+        height: 15%;
     }
     * {
 
@@ -243,5 +244,3 @@ body {
         transform: rotate(360deg);
     }
 }
-
-

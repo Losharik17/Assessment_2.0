@@ -69,7 +69,6 @@ function show_more(new_field) {
 
 }
 
-
 function sort(parameter) {
 
     if (sort.current_parameter === parameter) {
@@ -86,7 +85,6 @@ function sort(parameter) {
         $("#" + sort.current_parameter).attr("data-order") > 0 ?
             $("#" + sort.current_parameter).attr("data-order", "1") :
             $("#" + sort.current_parameter).attr("data-order", "-1")
-
     }
 
     $.post('/sort_users_table', {
@@ -100,6 +98,11 @@ function sort(parameter) {
             let quantity = users.length
 
             for (let i = 0; i < quantity; i++) {
+
+                $(`#number_str${i}`).click(function () {
+                    document.location.href=`/user_grades_table/${users[i].id}`
+                })
+
                 $(`#id${i}`).html(users[i]['id'] ? users[i]['id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
                 $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ? users[i]['birthday'] : '–')
