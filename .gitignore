@@ -1,7 +1,6 @@
 /logs/
 *.pyc
 /venv
-/migrations
 /.idea/
 *.iml
 /__pycache__
