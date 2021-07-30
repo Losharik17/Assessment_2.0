@@ -32,16 +32,18 @@
             {% for parameter in parameters %}
                 <div class="crit">
                     <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
-                    {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
-                        <div class="form_radio_btn">
-                            {{ value }}
-                            {{ value.label }}
-                        </div>
-                        {% for error in form.value %}
-                            <span style="color: red;">{{ error }}</span>
+                    <div style="justify-content: space-between; display: flex">
+                        {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                            <div class="form_radio_btn">
+                                {{ value }}
+                                {{ value.label }}
+                            </div>
+                            {% for error in form.value %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                    {% set i.a = i.a + 1 %}
+                        {% set i.a = i.a + 1 %}
+                    </div>
                 </div>
             {% endfor %}
             <div class="submit">

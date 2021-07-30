@@ -50,6 +50,8 @@ class User(UserMixin, db.Model):
         self.sum_grade_all = float(0)
         for grade in grades:
             for i in range(5):  # должно быть кол-во параметров, а не цифра
+                if self.__dict__['sum_grade_{}'.format(i)] is None:
+                    self.__dict__['sum_grade_{}'.format(i)] = 0
                 if grade.__dict__['parameter_{}'.format(i)]:
                     self.__dict__['sum_grade_{}'.format(i)] += \
                         grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
