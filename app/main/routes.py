@@ -97,7 +97,8 @@ def expert_grade(expert_id, user_id):
         flash('Text')
         return redirect(url_for('main.expert', expert_id=current_user.id))
 
-    return render_template('expert_grade.html', form=form,
+    user = User.query.filter_by(id=user_id).first()
+    return render_template('expert_grade.html', form=form, expert_id=current_user.id,
                            user=user, parameters=parameters)
 
 

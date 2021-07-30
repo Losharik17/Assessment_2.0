@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 .table-wrap {
-    overflow-x: auto;
+    overflow: scroll;
 }
 
 .table-sort {
@@ -13,55 +13,17 @@
     cursor: pointer;
 }
 
-.show_btn {
-    margin: 0 15px;
-    text-decoration: none;
-    padding: 10px 25px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    color: rgba(0, 64, 144, 0.7);
-    background: transparent;
-    outline: none !important;
-    cursor: pointer;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-    position: relative;
-    display: inline-block;
-    border: 2px solid rgba(0, 64, 144, 0.7);
-    border-radius: 10px;
+.tbody-table {
+    overflow-x: auto;
+    height: 300px;
 }
-
-@media(hover: hover) {
-    .show_btn:hover {
-        background: rgba(0, 64, 144, 0.7);
-        color: #fff;
-        box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
-        transform: scale(1.03)
-    }
-}
-
-.show_btn:active {
-    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
-    transform: scale(.98);
-}
-
-.show_btn:not(active) {
-    box-shadow: 0 0 0 0;
-    transform: scale(1);
-}
-
-
-.show {
-    text-align: center;
-    margin: 20px auto;
-}
-
 
 table {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     border-collapse: collapse;
     text-align: center;
+    table-layout: fixed;
 }
 
 th, td:first-child {
@@ -90,66 +52,6 @@ th:first-child, td:first-child {
     text-align: center;
 }
 
-.block_1 {
-    text-align: center;
-}
-
-.img {
-    width: 166px;
-    height:43px;
-
-}
-
-.drop {
-    float:right;
-}
-
-.mainmenubtn {
-    background-color: red;
-    color: white;
-    border: none;
-    cursor: pointer;
-    padding:20px;
-    margin-top:20px;
-}
-
-@media(hover: hover) {
-    .dropbtn:hover{
-        background-color: #2980B9;
-    }
-}
-
-.dropbtn:focus {
-    background-color: #2980B9;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-@media(hover: hover) {
-    .dropdown-content a:hover {
-        background-color: #ddd
-    }
-}
-
-.show {
-    display:block;
-}
-
-
 th.sort[data-order="1"],
 th.sort[data-order="-1"] {
     position: relative;
@@ -170,3 +72,57 @@ th.sort[data-order="1"]::after {
     content: url("arrowDown.png");
     transform: rotate(180deg);
 }
+
+.block_1 {
+    text-align: center;
+}
+
+.img {
+    width: 166px;
+    height:43px;
+
+}
+
+.show_btn {
+    margin: 0 15px;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: rgba(0, 64, 144, 0.7);
+    background: transparent;
+    outline: none !important;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-block;
+    border: 2px solid rgba(0, 64, 144, 0.7);
+    border-radius: 10px;
+}
+
+.show {
+    text-align: center;
+    margin: 20px auto;
+}
+
+@media(hover: hover) {
+    .show_btn:hover {
+        background: rgba(0, 64, 144, 0.7);
+        color: #fff;
+        box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+        transform: scale(1.03)
+    }
+}
+
+.show_btn:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.show_btn:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+

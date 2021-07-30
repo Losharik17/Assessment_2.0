@@ -45,16 +45,19 @@ function show_more(new_field) {
 
             for(let j = 0; j < 10; j++) {
                 if (users[i][`sum_grade_${j}`]) {
-                    if (users[i][`sum_grade_${j}`] === 0 || isNaN(users[i][`sum_grade_${j}`]))
+                    if (users[i][`sum_grade_${j}`] == 0 || isNaN(users[i][`sum_grade_${j}`]) ||
+                        users[i][`sum_grade_${j}`] === 'None')
                         $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                     else
                         $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.floor(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
                 }
             }
 
-            if (users[i]['sum_grade_all'] === 0 || isNaN(users[i][`sum_grade_all`]))
+            if (users[i]['sum_grade_all'] == 0 || isNaN(users[i][`sum_grade_all`]) ||
+                users[i]['sum_grade_all'] === 'None')
                 $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
-            else $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.floor(users[i]['sum_grade_all'] * 100) / 100}</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.floor(users[i]['sum_grade_all'] * 100) / 100}</td>`)
 
 
             //$("#tbody").append('</tr>')
@@ -103,13 +106,13 @@ function sort(parameter) {
                 $(`#team${i}`).html(users[i]['team'] !== 'None' ? users[i]['team'] : '–')
 
                 for (let j = 0; j < 10; j++)
-                    if ($(`#sum_grade_${j}${i}`) !== '0' && isNaN(users[i][`sum_grade_${j}`]) &&
+                    if ($(`#sum_grade_${j}${i}`) !== 0 && isNaN(users[i][`sum_grade_${j}`]) &&
                         users[i][`sum_grade_${j}`] !== 'None')
                         $(`#sum_grade_${j}${i}`).html(Math.floor(users[i][`sum_grade_${j}`] * 100) / 100)
                     else
                         $(`#sum_grade_${j}${i}`).html('–')
 
-                if ($(`#sum_grade_all${i}`) !== '0' && isNaN(users[i][`sum_grade_all`]) &&
+                if ($(`#sum_grade_all${i}`) !== 0 && isNaN(users[i][`sum_grade_all`]) &&
                     users[i]['sum_grade_all'] !== 'None')
                     $(`#sum_grade_all${i}`).html(Math.floor(users[i]['sum_grade_all'] * 100) / 100)
                 else

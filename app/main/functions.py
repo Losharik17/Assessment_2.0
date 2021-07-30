@@ -5,12 +5,18 @@ from sqlalchemy import create_engine
 
 
 def users_in_json(users):
+
     string = '['
     for user in users:
+
+        if user.birthday:
+            birthday = user.birthday.strftime('%d.%m.%Y')
+        else:
+            birthday = '-'
         string += '{' + '"id":{0},"username":"{1}","birthday":"{2}","team":"{3}",' \
             .format(str(user.id),
                     str(user.username),
-                    str(user.birthday),
+                    str(birthday),
                     str(user.team))
 
         for i in range(5):
@@ -77,7 +83,6 @@ def delete(Model):
         db.session.commit()
     except:
         db.session.rollback()
-
 
 
 def excell(filename):

@@ -8,16 +8,17 @@
         height:123px;
     }
     * {
-        font-size: 24px;
+
     }
 }
-@media not handheld{
+
+@media not handheld {
     .logo {
-        width: 30%;
-        height: 20%;
+        width: 18%;
+        height: 12%;
     }
     * {
-        font-size: 18px;
+
     }
 }
 
@@ -34,6 +35,13 @@ body {
     margin: 0;
 }
 
+.container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
 .shapka {
     background-color: rgb(255, 255, 255);
     width: 100%;
@@ -45,6 +53,7 @@ body {
 }
 
 .podval {
+    max-height: 50px;
     display: flex;
     position: fixed;
     vertical-align: middle;

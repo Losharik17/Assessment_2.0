@@ -22,7 +22,7 @@
             </tr>
             </thead>
 
-            <tbody id="tbody">
+            <tbody id="tbody" class="tbody-table">
             {% set i.a = 0 %}
             {% for user in users %}
 
@@ -45,7 +45,7 @@
 
                     <td id="birthday{{ i.a }}">
                         {% if user.birthday %}
-                            {{ user.birthday }}
+                            {{ user.birthday.strftime('%d.%m.%Y') }}
                         {% else %}
                             –
                         {% endif %}
