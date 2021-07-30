@@ -1,0 +1,214 @@
+@charset "UTF-8";
+
+
+body {
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+    background-color: #e8edff;
+    margin: 0;
+}
+
+.shapka {
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
+    align-items: center;
+}
+
+.footer {
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    text-align: left;
+    position:fixed;
+    clear: both;
+    height: 10%;
+    width: 100%;
+    background-color: #1c1919;
+    color: #ffffff;
+    right:0;
+    bottom: 0;
+}
+
+body {
+    height:100%;
+
+}
+.content {
+margin-bottom: 5%;
+}
+.maket {
+
+
+}
+
+
+.exit {
+    margin-right: 25px;
+}
+
+.exit_button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.exit .exit_button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+.exit .exit_button:hover:before {
+    bottom: -50px;
+}
+
+.exit a {
+    color: crimson;
+}
+
+.exit .exit_button {
+    display: inline-block;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid crimson;
+    transition: color .5s;
+    text-decoration: none; !important;
+}
+
+.exit .exit_button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: crimson;
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+.exit .exit_button:hover {
+    color: #fff;
+}
+
+.buttons {
+    margin-right: 25px;
+}
+
+.button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.buttons .button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+.buttons .button:hover:before {
+    bottom: -50px;
+}
+
+.buttons a {
+    color: rgba(0, 86, 189, 0.7);
+}
+
+.buttons .button {
+    display: inline-block;
+    width: 130px;
+    height: 40px;
+    line-height: 40px;
+    margin: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 86, 189, 0.7);
+    transition: color .5s;
+    text-decoration: none; !important;
+}
+
+.buttons .button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: rgba(0, 86, 189, 0.7);
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+.buttons .button:hover {
+    color: #fff;
+}
+
+.preloader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    transition: all 0.5s;
+    opacity: 1;
+}
+
+.preloader-remove {
+    opacity: 0;
+    z-index: -10;
+}
+
+.preloader-5 {
+    display: block;
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 30px auto;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #337AB7;
+    animation: preloader-5-spin 2s linear infinite;
+}
+.preloader-5:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #BFE2FF;
+    animation: preloader-5-spin 3s linear infinite;
+}
+.preloader-5:after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #337AB7;
+    animation: preloader-5-spin 1.5s linear infinite;
+}
+@keyframes preloader-5-spin {
+    0%   {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
