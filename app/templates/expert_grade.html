@@ -30,19 +30,19 @@
             {{ form.hidden_tag() }}
             {% set i = namespace(a=0) %}
             {% for parameter in parameters %}
-            <div>
-                    {{ parameter.name }}
+                <div class="crit">
+                    <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
                     {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
                         <div class="form_radio_btn">
                             {{ value }}
                             {{ value.label }}
                         </div>
                         {% for error in form.value %}
-                            <span style="color: red;">[{{ error }}]</span>
+                            <span style="color: red;">{{ error }}</span>
                         {% endfor %}
                     {% endfor %}
                     {% set i.a = i.a + 1 %}
-            </div>
+                </div>
             {% endfor %}
             <div class="submit">
                 {{ form.submit }}

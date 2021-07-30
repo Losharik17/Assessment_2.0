@@ -8,7 +8,7 @@ button {
 
 .form_radio_btn {
     display: inline-block;
-    margin: 10px 7px;
+    margin: 6px 4px;
     background-color: rgba(199, 206, 255, 0);
 }
 
@@ -123,6 +123,7 @@ input:active {
     background-color: #e8edff;
     display: flex;
     justify-content: space-between;
+    margin-top: 10px;
 }
 
 
@@ -151,4 +152,9 @@ input:active {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/*Поле выставления оценки*/
+.crit {
+    margin: 10px auto;
 }
