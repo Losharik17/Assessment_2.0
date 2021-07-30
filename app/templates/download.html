@@ -1,15 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div class="container" align="left">
-    <a href="/excel" target="_blank"><button class='btn'>
+{% extends "main_0.html" %}
+
+
+{% block app_content%}
+    <a href="{{ url_for('main.exportexcel') }}" target="_blank"><button class='btn'>
         Download
     </button>
     </a>
-</div>
-</body>
-</html>
+{% endblock %}

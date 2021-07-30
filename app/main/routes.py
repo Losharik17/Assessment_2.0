@@ -46,18 +46,13 @@ def exportexcel():
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
 
-@bp.route('/upload')
-def upload_file1():
-    return render_template('upload.html')
-
-
 @bp.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         f.save(secure_filename(f.filename.rsplit( ".", 1 )[ 0 ]))
         excell(f.filename.rsplit( ".", 1 )[ 0 ])
-        return redirect(url_for('main.expert'))
+        return redirect(url_for('main.index'))
     return render_template('upload.html')
 
 
