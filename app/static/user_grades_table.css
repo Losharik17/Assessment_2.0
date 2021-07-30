@@ -1,10 +1,17 @@
 @charset "UTF-8";
 
+@media handheld {
+    .info {
+        justify-content: center;
+    }
+}
 
-.info {
-    position: absolute;
-    float: left;
-    margin-left: 5%;
+@media not handheld {
+    .info {
+        position: absolute;
+        float: left;
+        margin-left: 5%;
+    }
 }
 
 .buttons {

@@ -82,7 +82,7 @@ function buttons(quantity) {
 }
 
 function edit_grade(grade_id, user_id, number_str) {
-
+    console.log(grade_id)
     if ($("#edit" + number_str + " :input").attr('value') !== 'Сохранить') {
         let width = $("#edit" + number_str + " :input").innerWidth()
         edit_grade.old_value = Array()
@@ -167,7 +167,7 @@ function show_more(new_field, user_id) {
         user_id: user_id
     }).done(function (response) {
 
-        document.getElementById('tbody').innerHTML = ''
+        $("#tbody").html('')
         let grades = JSON.parse(response['grades'])
         let quantity = grades.length
         limit = quantity
@@ -243,9 +243,13 @@ function sort(parameter, user_id) {
                     if ($(`#parameter_${j}${i}`))
                         $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ?
                             grades[i][`parameter_${j}`] : '–')
+
+                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
+                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<input id="d${i}" type="button" value="Удалить" class="btn"></span>`)
             }
-            delete_buttons()
-            buttons(limit)
+
         }).fail(function () {
         alert("Error AJAX request")
     })
