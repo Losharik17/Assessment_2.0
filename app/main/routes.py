@@ -36,7 +36,7 @@ def export_excel():
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
     df3 = df3.drop(columns=['id'])
-    filename = "Отчёт.xlsx"
+    filename = "/Отчёт.xlsx"
 
     writer = pd.ExcelWriter(filename)
     df1.to_excel(writer, sheet_name='Пользователи', index=False)
