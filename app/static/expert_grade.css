@@ -60,6 +60,7 @@ input:active{
     width: 100%;
 }
 .container {
+    background-color: #e8edff;
     display: flex;
     justify-content: space-between;
 }
@@ -71,10 +72,11 @@ input:active{
     margin: auto;
     background-color: #e8edff;
     vertical-align: center;
-    justify-content: center;
+    justify-content: left;
 
 }
 .data {
+    margin-right: 40%;
     display: flex;
     vertical-align: center;
     justify-content: center;
