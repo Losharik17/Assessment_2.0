@@ -7,9 +7,11 @@
     color: #0044ff;
 }
 
-.down_block a:hover {
-    color: #00289e;
-    text-decoration: underline;
+@media(hover: hover) {
+    .down_block a:hover {
+        color: #00289e;
+        text-decoration: underline;
+    }
 }
 
 .content {
@@ -98,8 +100,10 @@ h2 {
     transition: 0.3s;
 }
 
-.form_button:hover {
-    background-color: rgba(0, 113, 240, 0.7);
+@media(hover: hover) {
+    .form_button:hover {
+        background-color: rgba(0, 113, 240, 0.7);
+    }
 }
 
 .form_button:focus {
@@ -153,8 +157,10 @@ h2 {
 }
 
 /* стили при наведении курсора на checkbox */
-.custom-checkbox:not(:disabled):not(:checked)+label:hover::before {
-    border-color: #b3d7ff;
+@media(hover: hover) {
+    .custom-checkbox:not(:disabled):not(:checked) + label:hover::before {
+        border-color: #b3d7ff;
+    }
 }
 
 /* стили для активного чекбокса (при нажатии на него) */

@@ -7,4 +7,18 @@
         <h1 style="font-size: 3.5em">Система оценки</h1>
     </div>
 
+
+    <!--Временный ссылки-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <div class="buttons">
+        <a class="button" href="{{ url_for('main.admin_table', admin_id=1) }}">Таблица участников</a>
+        <a class="button" href="{{ url_for('main.expert', expert_id=1) }}">Выставление оценки</a>
+        <a class="button" href="{{ url_for('main.export_excel') }}" target="_blank">Скачать отчёт</a>
+    </div>
+
+    <form action="{{ url_for('main.upload_file') }}" method="POST"
+          enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input class="form_button submit" type="submit" value="Загрузить пользователей"/>
+    </form>
 {% endblock %}

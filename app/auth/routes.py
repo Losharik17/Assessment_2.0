@@ -46,7 +46,7 @@ def logout():
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index', user=current_user))
+        return redirect(url_for('auth.login'))
     form = RegistrationForm()
     if form.validate_on_submit():
         if User.query.filter_by(email=form.email.data) is None or \
@@ -57,7 +57,7 @@ def register():
                   'Пожалуйста изпользуйте другой email адрес')
             return redirect(url_for('auth.register'))
 
-        path = os.path.join('/WEB/T-Park/app/static/images')
+        path = os.path.join('../T-Park/app/static/images')
         form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)

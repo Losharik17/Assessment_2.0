@@ -27,7 +27,7 @@
 
 
 <div class="shapka" >
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="">
+    <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="">
     {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
         <div class="exit">
             <a class="exit_button" href="{{ url_for('auth.logout') }}">

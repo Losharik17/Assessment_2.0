@@ -60,9 +60,11 @@
     }
 }
 
-.btn:hover {
-    box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 1px 3px 1px rgb(26 115 232);
-    background-color: #297be6;
+@media(hover: hover) {
+    .btn:hover {
+        box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 1px 3px 1px rgb(26 115 232);
+        background-color: #297be6;
+    }
 }
 
 .btn:active {
@@ -89,7 +91,9 @@ input:focus {
     border-bottom: 1px solid #1a73a8;
 }
 
-input:hover{
-    background-color: rgb(197, 214, 255);
+@media(hover: hover) {
+    input:hover {
+        background-color: rgb(197, 214, 255);
+    }
 }
 

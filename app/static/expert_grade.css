@@ -38,9 +38,11 @@ button {
     background: #ffe0a6;
 }
 
-.form_radio_btn label:hover {
-    color: #666;
-    background: #8a6d3b;
+@media(hover: hover) {
+    .form_radio_btn label:hover {
+        color: #666;
+        background: #8a6d3b;
+    }
 }
 
 .form_radio_btn input[type=radio]:disabled + label {
@@ -62,8 +64,10 @@ button {
     transition: 0.3s;
 }
 
-.form_button:hover {
-    background-color: rgba(0, 113, 240, 0.7);
+@media(hover: hover) {
+    .form_button:hover {
+        background-color: rgba(0, 113, 240, 0.7);
+    }
 }
 
 .form_button:focus {

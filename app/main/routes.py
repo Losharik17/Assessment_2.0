@@ -23,7 +23,7 @@ def dwn():
 
 
 @bp.route('/excel', methods=['GET', 'POST'])
-def exportexcel():
+def export_excel():
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
