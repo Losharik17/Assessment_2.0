@@ -18,7 +18,6 @@ def login():
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-
         user = User.query.filter_by(email=form.email.data).first()
         if not user:
             user = Expert.query.filter_by(email=form.email.data).first()
