@@ -6,11 +6,24 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
     <script src="{{ url_for('static', filename='user_grades_table.js') }}"></script>
 
-    <div class="info">
-        <p>Номер участника {{ user.id }}</p>
-        <p>ФИО участнка {{ user.username }}</p>
-        <p>Дата рождения {{ user.birthday }}</p>
-        <p>Команда {{ user.team }}</p>
+    <div class="container">
+        <div class="data">
+            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
+            <table style="margin: 10px;">
+                <tr>
+                    <td style="text-align: left">ID: {{ user.id }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">ФИО: {{ user.username }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">Команда: {{ user.team }}</td>
+                </tr>
+            </table>
+        </div>
     </div>
 
     <div class="table-wrap">

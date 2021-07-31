@@ -32,7 +32,7 @@
             {% for parameter in parameters %}
                 <div class="crit">
                     <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
-                    <div style="justify-content: space-between; display: flex">
+                    <div style="justify-content: space-evenly; display: flex">
                         {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
                             <div class="form_radio_btn">
                                 {{ value }}

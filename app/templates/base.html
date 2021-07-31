@@ -3,12 +3,13 @@
 {% block app_content%}
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
 
-    <div class="content">
+    <div class="text">
         <h1 style="font-size: 3.5em">Система оценки</h1>
     </div>
 
 
     <!--Временный ссылки-->
+    <div class="content">
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
     <div class="buttons">
         <a class="button" href="{{ url_for('main.admin_table', admin_id=1) }}">Таблица участников</a>
@@ -21,4 +22,5 @@
         <input type="file" name="file" />
         <input class="form_button submit" type="submit" value="Загрузить пользователей"/>
     </form>
+    </div>
 {% endblock %}

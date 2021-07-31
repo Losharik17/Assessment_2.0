@@ -45,6 +45,7 @@ button {
 }
 
 .form_button {
+    margin: 7px 7px 10px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -56,7 +57,6 @@ button {
     outline: none;
     cursor: pointer;
     transition: 0.3s;
-    margin: 7px;
 }
 
 @media(hover: hover) {
@@ -66,13 +66,13 @@ button {
 }
 
 .form_button:focus {
-    background-color: rgba(0, 49, 111, 0.7);
+    background-color: rgb(0, 33, 77);
 }
 
 
 .form_button_cancel {
     padding: 10px 20px;
-    margin: 7px;
+    margin: 7px 7px 10px;
     border: none;
     border-radius: 5px;
     font-family: sans-serif;
@@ -82,7 +82,7 @@ button {
     background-color: crimson;
     outline: none;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.1s ease;
     text-decoration: none; !important;
 }
 
@@ -93,7 +93,7 @@ button {
 }
 
 .form_button_cancel:focus {
-    background-color: rgba(129, 13, 36, 0.7);
+    background-color: rgb(129, 13, 36);
 }
 
 .submit {
@@ -118,6 +118,7 @@ input:active {
     background-color: #e8edff;
     width: 100%;
 }
+
 .container {
     background-color: #e8edff;
     display: flex;
@@ -130,7 +131,6 @@ input:active {
     background-color: #e8edff;
     vertical-align: center;
     justify-content: left;
-
 }
 
 .data {
@@ -155,7 +155,6 @@ input:active {
 .crit {
     margin: 10px auto;
 }
-
 
 .comment {
     /* = Убираем скролл */

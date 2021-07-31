@@ -2,22 +2,40 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
-@media handheld {
+@media screen and (max-width: 768px) {
     .logo {
-        width:397px;
-        height:123px;
+        width: 30%;
+        height: 20%;
     }
+
+    .content {
+        justify-content: center;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 60px;
+    }
+
     * {
 
     }
 }
 
-@media not handheld {
+@media screen and (min-width: 768px) {
     .logo {
         max-width: 300px;
         width: 24%;
         height: 15%;
     }
+
+    .content {
+        justify-content: center;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 55px;
+    }
+
     * {
 
     }
@@ -36,7 +54,7 @@ body {
     margin: 0;
 }
 
-.container {
+.maket {
     flex: 1 1 auto;
     display: flex;
     flex-flow: column;
@@ -56,22 +74,18 @@ body {
 .podval {
     max-height: 50px;
     display: flex;
-    position: fixed;
     vertical-align: middle;
     align-items: center;
     text-align: left;
-    left: 0;
-    bottom: 0;
-    height: 7%;
+    position:fixed;
+    clear: both;
+    height: 10%;
     width: 100%;
     background-color: #1c1919;
     color: #ffffff;
-}
-
-.content {
-    justify-content: center;
-    vertical-align: middle;
-    align-items: center;
+    right:0;
+    bottom: 0;
+    margin-top: 10px;
 }
 
 .exit {
@@ -128,6 +142,17 @@ body {
     }
 }
 
+.exit .exit_button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.exit .exit_button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+
 .buttons {
     margin-right: 25px;
 }
@@ -166,6 +191,7 @@ body {
     text-decoration: none; !important;
 }
 
+
 .buttons .button:before {
     content: "";
     position: absolute;
@@ -181,6 +207,17 @@ body {
         color: #fff;
     }
 }
+
+.buttons .button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.buttons .button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
 .preloader {
     position: fixed;
     left: 0px;
