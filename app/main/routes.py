@@ -84,7 +84,7 @@ def expert_grade(expert_id, user_id):
     parameters = ParametersName.query.all()
     if form.validate_on_submit():
         expert = Expert.query.filter_by(id=expert_id).first()
-        grade = Grade(user_id=user_id, expert_id=current_user.id)
+        grade = Grade(user_id=user_id, expert_id=current_user.id, comment=form.comment.data)
         parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
                       form.parameter_4.data]
         grade.set_points(parameters)

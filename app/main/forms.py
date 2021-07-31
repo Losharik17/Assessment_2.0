@@ -21,7 +21,7 @@ class GradeForm(FlaskForm):
                              choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
     parameter_4 = RadioField('{}'.format(''), default=0,
                              choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
-
+    comment = TextAreaField('Комментарий к оценке', validators=[Length(max=200)])
     submit = SubmitField('Выставить оценки')
 
 

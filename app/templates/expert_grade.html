@@ -42,10 +42,13 @@
                                 <span style="color: red;">{{ error }}</span>
                             {% endfor %}
                         {% endfor %}
-                        {% set i.a = i.a + 1 %}
                     </div>
                 </div>
+                {% set i.a = i.a + 1 %}
             {% endfor %}
+
+            {{ form.comment }}
+
             <div class="submit">
                 {{ form.submit }}
                 <a class="form_button_cancel" href="{{ url_for('main.expert', expert_id=expert_id) }}">

@@ -43,28 +43,32 @@ class User(UserMixin, db.Model):
             current_app.config['SECRET_KEY'],
             algorithm='HS256').decode('utf-8')
 
-    def sum_grades(self):  # в принципе это надо оптимизировать я полагаю
+    def sum_grades(self):
         """считает сумму всех оценок по каждому критерию
         пока по неправильной формуле +-"""
 
         grades = self.grades.all()
 
-        self.sum_grade_all = float(0)
-
+        setattr(self, 'sum_grade_all', float(0))
         for i in range(5):
-            self.__dict__['sum_grade_{}'.format(i)] = 0
+            setattr(self, 'sum_grade_{}'.format(i), 0)
 
         for grade in grades:
             for i in range(5):  # должно быть кол-во параметров, а не цифра
-                if self.__dict__['sum_grade_{}'.format(i)] is None:
-                    self.__dict__['sum_grade_{}'.format(i)] = 0
                 if grade.__dict__['parameter_{}'.format(i)]:
-                    self.__dict__['sum_grade_{}'.format(i)] += \
-                        grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
+                    setattr(self, 'sum_grade_{}'.format(i),
+                            (float(self.__dict__['sum_grade_{}'.format(i)]) +
+                             grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight))
 
         for i in range(5):  # должно быть кол-во параметров, а не цифра
-            self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
+            setattr(self, 'sum_grade_{}'.format(i),
+                    self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
+        db.session.commit()
+
+    def sum_weight_parameters(self):
+        pass
+
 
     def sum_weight_experts(self, number_parameter):
         """делит на сумму весов экспертов по критерию"""
@@ -140,6 +144,7 @@ class Grade(db.Model):
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
+    comment = db.Column(db.Text(200))
 
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
