@@ -57,8 +57,8 @@ def register():
                   'Пожалуйста изпользуйте другой email адрес')
             return redirect(url_for('auth.register'))
 
-        path = os.path.join('/app/static/images')
-        form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
+        #path = os.path.join('/app/static/images')
+        #form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
