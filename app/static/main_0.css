@@ -74,9 +74,10 @@ body {
 .podval {
     max-height: 50px;
     display: flex;
+    justify-content: space-around;
     vertical-align: middle;
     align-items: center;
-    text-align: left;
+    text-align: center;
     position:fixed;
     clear: both;
     height: 10%;
