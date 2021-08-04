@@ -71,7 +71,8 @@ def expert(project_number, expert_id):
     expert = Expert.query.filter_by(id=expert_id).first()
     form = UserForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(id=form.user_id.data).first()
+        user = User.query.filter_by(project_number=project_number,
+                                    project_id=form.user_id.data).first()
         if user is None:
             flash('None User')
             return redirect(url_for('main.expert', expert_id=current_user.id))
