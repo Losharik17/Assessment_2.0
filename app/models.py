@@ -65,11 +65,19 @@ class User(UserMixin, db.Model):
             setattr(self, 'sum_grade_{}'.format(i),
                     self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
             self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
+        self.sum_grade_all /= self.sum_weight_parameters(parameters)
         db.session.commit()
 
-    def sum_weight_parameters(self):
-        pass
-
+    def sum_weight_parameters(self, parameters):
+        sum = 0
+        i = 0
+        for parameter in parameters:
+            if self.__dict__['sum_grade_{}'.format(i)] != 0:
+                sum += parameter.weight
+            i += 1
+        if sum:
+            return sum
+        return 1
 
     def sum_weight_experts(self, number_parameter):
         """делит на сумму весов экспертов по критерию"""
