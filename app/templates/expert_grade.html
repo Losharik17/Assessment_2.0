@@ -9,7 +9,7 @@
             <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
             <table style="margin: 10px;">
                 <tr>
-                    <td>ID: {{ user.id }}</td>
+                    <td>ID: {{ user.project_id }}</td>
                 </tr>
                 <tr>
                     <td>ФИО: {{ user.username }}</td>
@@ -51,7 +51,8 @@
 
             <div class="submit">
                 {{ form.submit }}
-                <a class="form_button_cancel" href="{{ url_for('main.expert', expert_id=expert_id) }}">
+                <a class="form_button_cancel" href="{{ url_for('main.expert',
+                project_number=project_number, expert_id=expert_id) }}">
                     Отменить
                 </a>
             </div>

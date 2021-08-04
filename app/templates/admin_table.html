@@ -8,17 +8,23 @@
         <table class="table-sort">
             <thead>
             <tr>
-                <th id="id" class="sort" data-order="0" onclick="sort(this.id)">№</th>
-                <th id="username" class="sort" data-order="0" onclick="sort(this.id)">Участник</th>
-                <th id="birthday" class="sort" data-order="0" onclick="sort(this.id)">Дата рождения</th>
-                <th id="team" class="sort" data-order="0" onclick="sort(this.id)">Команда</th>
+                <th id="project_id" class="sort" data-order="0"
+                    onclick="sort(this.id, {{ project_number }})">ID</th>
+                <th id="username" class="sort" data-order="0"
+                    onclick="sort(this.id, {{ project_number }})">ФИО</th>
+                <th id="birthday" class="sort" data-order="0"
+                    onclick="sort(this.id, {{ project_number }})">Дата рождения</th>
+                <th id="team" class="sort" data-order="0"
+                    onclick="sort(this.id, {{ project_number }})">Команда</th>
 
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
-                    <th id="sum_grade_{{ i.a }}" class="sort" data-order="0" onclick="sort(this.id)">{{ parameter.name }}</th>
+                    <th id="sum_grade_{{ i.a }}" class="sort" data-order="0"
+                        onclick="sort(this.id, {{ project_number }})">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
-                <th id="sum_grade_all" data-order="0" class="sort" onclick="sort(this.id)">Общая оценка</th>
+                <th id="sum_grade_all" data-order="0" class="sort"
+                    onclick="sort(this.id, {{ project_number }})">Общая оценка</th>
             </tr>
             </thead>
 
@@ -26,10 +32,12 @@
             {% set i.a = 0 %}
             {% for user in users %}
 
-                <tr id="number_str{{ i.a }}" onclick="location.href='{{ url_for('main.user_grades_table', user_id=user.id) }}'">
+                <tr id="number_str{{ i.a }}" onclick="location.href='{{ url_for(
+                'main.user_grades_table', project_number=project_number, user_id=user.id) }}'">
+
                     <td id="id{{ i.a }}">
-                        {% if user.id %}
-                            {{ user.id }}
+                        {% if user.project_id %}
+                            {{ user.project_id }}
                         {% else %}
                             –
                         {% endif %}
@@ -87,16 +95,15 @@
     </div>
 
     <div class="show">
-        <a class="show_btn" href="javascript:show_more(2)">
+        <a class="show_btn" href="javascript:show_more(2, {{ project_number }})">
             Показать больше</a>
-        <a class="show_btn" href="javascript:show_more(10000)">
+        <a class="show_btn" href="javascript:show_more(10000, {{ project_number }})">
             Показать все</a>
     </div>
 
     <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
     <script>
-        show_more(0)
-
+        show_more(0, {{ project_number }})
     </script>
 
 {% endblock %}

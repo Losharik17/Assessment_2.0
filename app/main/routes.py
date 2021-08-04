@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, c
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm, TableForm
-from app.models import User, Expert, Grade, Viewer, Admin, ParametersName
+from app.models import User, Expert, Grade, Viewer, Admin, Parameter
 from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excell, to_dict
 import pandas as pd
@@ -50,12 +50,13 @@ def export_excel():
 def upload_file():
     if request.method == 'POST':
         f = request.files['file']
-        f.save(secure_filename(f.filename.rsplit( ".", 1 )[ 0 ]))
-        excell(f.filename.rsplit( ".", 1 )[ 0 ])
+        f.save(secure_filename(f.filename.rsplit(".", 1)[0]))
+        excell(f.filename.rsplit(".", 1)[0])
         return redirect(url_for('main.index'))
     return render_template('upload.html')
 
 
+# профиль пользователя
 @bp.route('/user/<user_id>')
 @login_required
 def user(user_id):
@@ -63,9 +64,10 @@ def user(user_id):
     return render_template('user.html', user=user)
 
 
-@bp.route('/expert/<expert_id>', methods=['GET', 'POST'])
+# ввод номера участника для перехода к выставлению оценки
+@bp.route('/expert/<project_number>/<expert_id>', methods=['GET', 'POST'])
 @login_required
-def expert(expert_id):
+def expert(project_number, expert_id):
     expert = Expert.query.filter_by(id=expert_id).first()
     form = UserForm()
     if form.validate_on_submit():
@@ -73,21 +75,23 @@ def expert(expert_id):
         if user is None:
             flash('None User')
             return redirect(url_for('main.expert', expert_id=current_user.id))
-        return redirect(url_for('main.expert_grade', expert_id=current_user.id, user_id=user.id))
+        return redirect(url_for('main.expert_grade', project_number=project_number,
+                                expert_id=current_user.id, user_id=user.id))
     return render_template('expert.html', form=form, expert=expert)
 
 
-@bp.route('/expert/<expert_id>/<user_id>', methods=['GET', 'POST'])
+# выставление оценки участнику
+@bp.route('/expert/<project_number>/<expert_id>/<user_id>', methods=['GET', 'POST'])
 @login_required
-def expert_grade(expert_id, user_id):
+def expert_grade(project_number, expert_id, user_id):
     form = GradeForm()
-    parameters = ParametersName.query.all()
+
     if form.validate_on_submit():
         expert = Expert.query.filter_by(id=expert_id).first()
         grade = Grade(user_id=user_id, expert_id=current_user.id, comment=form.comment.data)
-        parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
-                      form.parameter_4.data]
-        grade.set_points(parameters)
+        grade_parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
+                            form.parameter_4.data]
+        grade.set_points(grade_parameters)
         db.session.add(grade)
         db.session.commit()
         grade.user.sum_grades()
@@ -95,13 +99,22 @@ def expert_grade(expert_id, user_id):
         db.session.commit()
 
         flash('Text')
-        return redirect(url_for('main.expert', expert_id=current_user.id))
+        return redirect(url_for('main.expert', project_number=project_number,
+                                expert_id=current_user.id))
 
     user = User.query.filter_by(id=user_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    # проверка, что эксперт и усастник с одного проекта
+    if (user.project_number == Expert.query.filter_by(id=current_user.id)
+            .first().project_number):
+        pass
+
     return render_template('expert_grade.html', form=form, expert_id=current_user.id,
-                           user=user, parameters=parameters)
+                           user=user, parameters=parameters, project_number=project_number)
 
 
+# главня страница наблюдателя
 @bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def viewer(viewer_id):
@@ -109,6 +122,7 @@ def viewer(viewer_id):
     return render_template('viewer.html', viever=viewer)
 
 
+# главная страница админа
 @bp.route('/admin/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin(admin_id):
@@ -116,52 +130,67 @@ def admin(admin_id):
     return render_template('admin.html', admin=admin)
 
 
-@bp.route('/admin_table/<admin_id>', methods=['GET', 'POST'])
+# таблица всех участников из проекта
+@bp.route('/admin_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
 @login_required
-def admin_table(admin_id):
+def admin_table(project_number, admin_id):
     admin = Admin.query.filter_by(admin_id=admin_id).first()
-    parameters_name = ParametersName.query.all()
-    users = User.query.order_by(User.id).limit(5)
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
     return render_template('admin_table.html', title='Rating', admin=admin,
-                           users=users, ParName=parameters_name)
+                           users=users, ParName=parameters, project_number=project_number)
 
 
-@bp.route('/user_grades_table/<user_id>', methods=['GET', 'POST'])
+# таблица личных оценок участника (для админа)
+@bp.route('/user_grades_table/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
-def user_grades_table(user_id):
+def user_grades_table(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
     user = User.query.filter_by(id=user_id).first()
-    parameters_name = ParametersName.query.all()
+    parameters = Parameter.query.all()
     form = GradeForm()
     return render_template('user_grades_table.html', title='Rating', grades=grades, user=user,
-                           ParName=parameters_name, user_id=user_id, form=form)
+                           project_number=project_number, ParName=parameters,
+                           user_id=user_id, form=form)
 
 
+# сортировка таблицы учвтников
 @bp.route('/sort_users_table', methods=['POST'])
 @login_required
 def sort_users_table():
     if request.form['sort_up'] == 'true':
-        users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+        users = User.query.filter_by(project_number=request.form['project_number'])\
+            .order_by(User.__dict__[request.form['parameter']].desc())\
+            .limit(request.form['lim'])
     else:
-        users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+        users = User.query.filter_by(project_number=request.form['project_number'])\
+            .order_by(User.__dict__[request.form['parameter']].asc())\
+            .limit(request.form['lim'])
 
     return jsonify({'users': users_in_json(users)})
 
 
+# добавление участников в таблицу
 @bp.route('/show_more_users', methods=['POST'])
 @login_required
 def show_more_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
-            users = User.query.order_by(User.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+            users = User.query.filter_by(project_number=request.form['project_number'])\
+                .order_by(User.__dict__[request.form['parameter']].desc())\
+                .limit(request.form['lim'])
         else:
-            users = User.query.order_by(User.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+            users = User.query.filter_by(project_number=request.form['project_number'])\
+                .order_by(User.__dict__[request.form['parameter']].asc())\
+                .limit(request.form['lim'])
     else:
-        users = User.query.order_by(User.id).limit(request.form['lim'])
+        users = User.query.filter_by(project_number=request.form['project_number'])\
+            .order_by(User.id).limit(request.form['lim'])
 
     return jsonify({'users': users_in_json(users)})
 
 
+# сортировка личных оценок участника
 @bp.route('/sort_grades_table', methods=['POST'])
 @login_required
 def sort_grades_table():
@@ -175,6 +204,7 @@ def sort_grades_table():
     return jsonify({'grades': grades_in_json(grades)})
 
 
+# добавление личных оценок участника в таблицу
 @bp.route('/show_more_grades', methods=['POST'])
 @login_required
 def show_more_grades():
@@ -191,6 +221,7 @@ def show_more_grades():
     return jsonify({'grades': grades_in_json(grades)})
 
 
+# сохранение изменений оценки
 @bp.route('/save_grade', methods=['POST'])
 @login_required
 def save_grade():
@@ -212,6 +243,7 @@ def save_grade():
     return jsonify({'result': 'nothing'})
 
 
+# удаление оценки
 @bp.route('/delete_grade', methods=['POST'])
 @login_required
 def delete_grade():
@@ -222,12 +254,4 @@ def delete_grade():
     user.sum_grades()
     db.session.commit()
 
-    return jsonify({'result': 'Deleted'})
-
-
-@bp.route('/user_popup', methods=['POST'])
-@login_required
-def user_popup():
-    user = User.query.filter_by(id=request.form['user_id']).first()
-    user = users_in_json([user])
     return jsonify({'result': 'Deleted'})
