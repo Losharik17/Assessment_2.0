@@ -12,15 +12,15 @@ class EmptyForm(FlaskForm):
 
 class GradeForm(FlaskForm):
     parameter_0 = RadioField('{}'.format(''), default=0,
-                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     parameter_1 = RadioField('{}'.format(''), default=0,
-                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     parameter_2 = RadioField('{}'.format(''), default=0,
-                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     parameter_3 = RadioField('{}'.format(''), default=0,
-                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     parameter_4 = RadioField('{}'.format(''), default=0,
-                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, 'Ничего')])
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     comment = TextAreaField('Комментарий к оценке', validators=[Length(max=200)])
     submit = SubmitField('Выставить оценки')
 
@@ -29,6 +29,3 @@ class UserForm(FlaskForm):
     user_id = IntegerField('Номер участника')
     submit = SubmitField('Продолжить')
 
-
-class TableForm(FlaskForm):
-    pass

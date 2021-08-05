@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EmptyForm, GradeForm, UserForm, TableForm
+from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter
 from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excell, to_dict
@@ -86,12 +86,16 @@ def expert(project_number, expert_id):
 @login_required
 def expert_grade(project_number, expert_id, user_id):
     form = GradeForm()
-
     if form.validate_on_submit():
-        expert = Expert.query.filter_by(id=expert_id).first()
-        grade = Grade(user_id=user_id, expert_id=current_user.id, comment=form.comment.data)
-        grade_parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data, form.parameter_3.data,
-                            form.parameter_4.data]
+        if 11000 < current_user.id <= 12000:
+            expert = Admin.query.filter_by(id=current_user.id).first()
+        elif 12000 < current_user.id:
+            expert = Viewer.query.filter_by(id=current_user.id).first()
+        else:
+            expert = Expert.query.filter_by(id=current_user.id).first()
+        grade = Grade(user_id=user_id, expert_id=expert.id, comment=form.comment.data)
+        grade_parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data,
+                            form.parameter_3.data, form.parameter_4.data]
         grade.set_points(grade_parameters)
         db.session.add(grade)
         db.session.commit()
@@ -106,11 +110,8 @@ def expert_grade(project_number, expert_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
-    # проверка, что эксперт и усастник с одного проекта
-    if (user.project_number == Expert.query.filter_by(id=current_user.id)
-            .first().project_number):
+    if (user.project_number == Expert.query.filter_by(id=current_user.id).first().project_number):
         pass
-
     return render_template('expert_grade.html', form=form, expert_id=current_user.id,
                            user=user, parameters=parameters, project_number=project_number)
 
@@ -127,7 +128,7 @@ def viewer(viewer_id):
 @bp.route('/admin/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin(admin_id):
-    admin = Admin.query.filter_by(admin_id=admin_id).first()
+    admin = Admin.query.filter_by(id=admin_id).first()
     return render_template('admin.html', admin=admin)
 
 
@@ -135,10 +136,10 @@ def admin(admin_id):
 @bp.route('/admin_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin_table(project_number, admin_id):
-    admin = Admin.query.filter_by(admin_id=admin_id).first()
+    admin = Admin.query.filter_by(id=admin_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
     users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
-    return render_template('admin_table.html', title='Rating', admin=admin,
+    return render_template('admin_table.html', title='Table', admin=admin,
                            users=users, ParName=parameters, project_number=project_number)
 
 
@@ -149,13 +150,12 @@ def user_grades_table(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.all()
-    form = GradeForm()
     return render_template('user_grades_table.html', title='Rating', grades=grades, user=user,
                            project_number=project_number, ParName=parameters,
-                           user_id=user_id, form=form)
+                           user_id=user_id)
 
 
-# сортировка таблицы учвтников
+# сортировка таблицы участников
 @bp.route('/sort_users_table', methods=['POST'])
 @login_required
 def sort_users_table():

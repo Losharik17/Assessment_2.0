@@ -149,7 +149,7 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now())
     parameter_0 = db.Column(db.Integer)
     parameter_1 = db.Column(db.Integer)
     parameter_2 = db.Column(db.Integer)
@@ -201,7 +201,7 @@ class Parameter(db.Model):
 
 
 class Admin(UserMixin, db.Model):
-    admin_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
@@ -224,7 +224,7 @@ event.listen(Expert.__table__, 'after_create',
              )
 
 event.listen(Admin.__table__, 'after_create',
-             DDL("INSERT INTO admin (admin_id) VALUES (11000)")
+             DDL("INSERT INTO admin (id) VALUES (11000)")
              )
 
 event.listen(Viewer.__table__, 'after_create',

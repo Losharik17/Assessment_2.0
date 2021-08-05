@@ -1,5 +1,4 @@
 <html lang="ru">
-
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
@@ -13,11 +12,11 @@
         <title>T-Park</title>
     {% endif %}
 
-    <script>
-        $(window).on('load', function () {
-            $('.preloader').addClass("preloader-remove");
-        });
-    </script>
+<script>
+    $(window).on('load', function () {
+        $('.preloader').addClass("preloader-remove");
+    });
+</script>
 
 </head>
 <body id="body">
@@ -26,9 +25,11 @@
     <div class="preloader-5"></div>
 </div>
 
+
+
 <div class="maket">
     <div class="shapka" >
-        <img class="logo" src="{{ url_for('static', filename='logo_21.webp') }}" alt="" >
+        <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="">
         {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
             <div class="exit">
                 <a class="exit_button" href="{{ url_for('auth.logout') }}">
@@ -46,9 +47,13 @@
             </div>
         {% endif %}
     </div>
-
-    {% block app_content %}{% endblock %}
-
+    <div class="content">
+        {% block app_content %}{% endblock %}
+    </div>
+    <div class="podval">
+        <img class="img" src="{{ url_for('static',filename='logo_2.webp')}}" width="100px" alt="">
+        <h4 style="margin-left: 15px;"><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h4><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
+    </div>
 </div>
 
 </body>

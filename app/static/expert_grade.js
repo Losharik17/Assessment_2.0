@@ -3,7 +3,7 @@ $('#comment').addClass('comment')
 $('#comment').attr('placeholder', 'Комментарий к оценке')
 
 // отмена оценки при втором клике
-$(":input").on("click", function (e) {
+$(":input[id^='parameter']").on("click", function (e) {
     e.preventDefault();
 
     setTimeout(
@@ -13,10 +13,5 @@ $(":input").on("click", function (e) {
 
 // скрытие нулевых полей
 $(`[value='0']`).each(function (index, element) {
-    $(element).css('display', 'none')
-})
-
-$(`[for^='parameter']`).each(function (index, element) {
-    if ($(element).html() === '')
-        $(element).css('display', 'none')
+    $(element).parent().css({display: 'none'});
 })

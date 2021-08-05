@@ -18,21 +18,6 @@
 
 }
 
-/*ïîä òåñòû íà ðàçðåøåíèå*******************************/
-@media screen and (min-device-width: 1440px) {
-    img {
-        width:397px;
-        height:123px;
-    }
-}
-
-@media screen and (max-device-width: 1080px) {
-    img {
-        width: 30%;
-        height: 20%;
-    }
-}
-
 .block_1 {
     margin-top: 10px;
     margin-left: auto;
