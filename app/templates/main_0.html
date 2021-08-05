@@ -49,7 +49,28 @@
 
     {% block app_content %}{% endblock %}
 
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message"><h4>{{ message }}</h4></div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
+
+    <div id="notification" class="kdnotification main">
+        <div class="kdnotification-title"></div>
+    </div>
+
 </div>
+
+<script type="text/javascript">
+    setTimeout(() => {
+        $('.message').fadeOut(300)
+    }, 3000)
+
+</script>
 
 </body>
 

@@ -74,8 +74,10 @@ def expert(project_number, expert_id):
         user = User.query.filter_by(project_number=project_number,
                                     project_id=form.user_id.data).first()
         if user is None:
-            flash('None User')
-            return redirect(url_for('main.expert', expert_id=current_user.id))
+            flash('Участник с введённым номером не зарегистрирован')
+            return redirect(url_for('main.expert', project_number=project_number,
+                                    expert_id=current_user.id))
+
         return redirect(url_for('main.expert_grade', project_number=project_number,
                                 expert_id=current_user.id, user_id=user.id))
     return render_template('expert.html', form=form, expert=expert)

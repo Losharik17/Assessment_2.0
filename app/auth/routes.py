@@ -9,6 +9,7 @@ from app.models import User, Expert, Admin, Viewer
 from app.auth.email import send_password_reset_email
 import os
 from werkzeug.utils import secure_filename
+import time
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -26,7 +27,7 @@ def login():
                 if not user:
                     user = Viewer.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Неправильный пароль или email')
+            flash('Неверный пароль или email')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
