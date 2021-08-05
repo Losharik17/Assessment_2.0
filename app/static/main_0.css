@@ -1,0 +1,328 @@
+@charset "UTF-8";
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+@media screen and (max-width: 768px) {
+    .logo {
+        width: 30%;
+        height: 20%;
+    }
+
+    .content {
+        justify-content: center;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 60px;
+    }
+
+    * {
+
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .logo {
+        max-width: 300px;
+        width: 24%;
+        height: 15%;
+    }
+
+    .content {
+        justify-content: center;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 55px;
+    }
+
+    * {
+
+    }
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body {
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    background-color: #e8edff;
+    margin: 0;
+}
+
+.maket {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+.shapka {
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    vertical-align: middle;
+    align-items: center;
+}
+
+.podval {
+    max-height: 50px;
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
+    align-items: center;
+    text-align: center;
+    position:fixed;
+    clear: both;
+    height: 10%;
+    width: 100%;
+    background-color: #1c1919;
+    color: #ffffff;
+    right:0;
+    bottom: 0;
+    margin-top: 10px;
+}
+
+.exit_button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.exit .exit_button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+@media(hover: hover) {
+    .exit .exit_button:hover:before {
+        bottom: -50px;
+    }
+}
+
+.exit a {
+    color: crimson;
+}
+
+@media screen and (min-width: 768px) {
+    .exit .exit_button {
+        display: inline-block;
+        width: 130px;
+        height: 40px;
+        line-height: 40px;
+        margin: 20px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid crimson;
+        transition: color .5s;
+        text-decoration: none; !important;
+    }
+    .exit {
+        margin-right: 25px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .exit .exit_button {
+        display: inline-block;
+        width: 110px;
+        height: 30px;
+        line-height: 30px;
+        margin: 5px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid crimson;
+        transition: color .5s;
+        text-decoration: none; !important;
+    }
+
+    .exit {
+        margin-right: 7px;
+        width: min-content;
+    }
+}
+
+.exit .exit_button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: crimson;
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+@media(hover: hover) {
+    .exit .exit_button:hover {
+        color: #fff;
+    }
+}
+
+.exit .exit_button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.exit .exit_button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+
+.button {
+    text-align: center;
+    border-radius: 20px;
+}
+
+.buttons .button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+@media(hover: hover) {
+    .buttons .button:hover:before {
+        bottom: -50px;
+    }
+}
+
+.buttons a {
+    color: rgba(0, 86, 189, 0.7);
+}
+
+@media screen and (min-width: 768px) {
+    .buttons .button {
+        display: inline-block;
+        width: 130px;
+        height: 40px;
+        line-height: 40px;
+        margin: 20px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 86, 189, 0.7);
+        transition: color .5s;
+        text-decoration: none; !important;
+    }
+
+    .buttons {
+        margin-right: 25px;
+    }
+
+}
+
+@media screen and (max-width: 768px) {
+    .buttons .button {
+        display: inline-block;
+        width: 110px;
+        height: 30px;
+        line-height: 30px;
+        margin: 5px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 86, 189, 0.7);
+        transition: color .5s;
+        text-decoration: none; !important;
+    }
+
+    .buttons {
+        margin-right: 7px;
+        width: min-content;
+    }
+}
+
+
+.buttons .button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: rgba(0, 86, 189, 0.7);
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+@media(hover: hover) {
+    .buttons .button:hover {
+        color: #fff;
+    }
+}
+
+.buttons .button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.buttons .button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+.preloader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    transition: all 0.5s;
+    opacity: 1;
+}
+
+.preloader-remove {
+    opacity: 0;
+    z-index: -10;
+}
+
+.preloader-5 {
+    display: block;
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 30px auto;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #337AB7;
+    animation: preloader-5-spin 2s linear infinite;
+}
+.preloader-5:before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #BFE2FF;
+    animation: preloader-5-spin 3s linear infinite;
+}
+.preloader-5:after {
+    content: "";
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: #337AB7;
+    animation: preloader-5-spin 1.5s linear infinite;
+}
+@keyframes preloader-5-spin {
+    0%   {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

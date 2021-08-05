@@ -1,0 +1,15 @@
+@charset "UTF-8";
+
+
+.content {
+    display:block;
+    margin:  0 auto;
+
+    text-align:center;
+}
+
+
+.text {
+    margin-bottom:1%;
+    text-align:center;
+}

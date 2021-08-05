@@ -1,0 +1,126 @@
+@charset "UTF-8";
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.table-sort {
+    margin: auto;
+    justify-content: space-around;
+    vertical-align: middle;
+    align-items: center;
+    cursor: pointer;
+}
+
+.tbody-table {
+    height: 300px;
+}
+
+table {
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    border-collapse: collapse;
+    text-align: center;
+    table-layout: fixed;
+}
+
+th, td:first-child {
+    background: #AFCDE7;
+    color: white;
+    padding: 10px 20px;
+    margin: auto;
+}
+
+th {
+    cursor: pointer;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+}
+
+td {
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    border-color: white;
+    background: #D8E6F3;
+    margin: auto;
+}
+
+th:first-child, td:first-child {
+    text-align: center;
+}
+
+th.sort[data-order="1"],
+th.sort[data-order="-1"] {
+    position: relative;
+}
+
+th.sort[data-order="1"]::after,
+th.sort[data-order="-1"]::after {
+    position: absolute;
+    right: 3px;
+    top: 41%; /* нужно выровнить */
+}
+
+th.sort[data-order="-1"]::after {
+    content: url("arrowDown.png");
+}
+
+th.sort[data-order="1"]::after {
+    content: url("arrowDown.png");
+    transform: rotate(180deg);
+}
+
+.block_1 {
+    text-align: center;
+}
+
+.img {
+    width: 166px;
+    height:43px;
+
+}
+
+.show_btn {
+    margin: 10px 15px;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: rgba(0, 64, 144, 0.7);
+    background: transparent;
+    outline: none !important;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-block;
+    border: 2px solid rgba(0, 64, 144, 0.7);
+    border-radius: 10px;
+}
+
+.show {
+    text-align: center;
+    margin: 20px auto;
+}
+
+@media(hover: hover) {
+    .show_btn:hover {
+        background: rgba(0, 64, 144, 0.7);
+        color: #fff;
+        box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+        transform: scale(1.03)
+    }
+}
+
+.show_btn:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.show_btn:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+

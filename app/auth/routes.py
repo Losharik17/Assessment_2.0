@@ -7,22 +7,24 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Expert, Admin, Viewer
 from app.auth.email import send_password_reset_email
+import os
+from werkzeug.utils import secure_filename
 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if not user:
-            user = Expert.query.filter_by(username=form.email.data).first()
+            user = Expert.query.filter_by(email=form.email.data).first()
             if not user:
-                user = Admin.query.filter_by(username=form.email.data).first()
+                user = Admin.query.filter_by(email=form.email.data).first()
                 if not user:
-                    user = Viewer.query.filter_by(username=form.email.data).first()
-
+                    user = Viewer.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Неправильный пароль или email')
             return redirect(url_for('auth.login'))
@@ -43,21 +45,25 @@ def logout():
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('auth.login'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, avatar=form.avatar.data)
-        if User.query.filter_by(email=form.email.data) or \
-                Expert.query.filter_by(email=form.email.data) or \
-                Admin.query.filter_by(email=form.email.data) or \
-                Viewer.query.filter_by(email=form.email.data):
+        if User.query.filter_by(email=form.email.data) is None or \
+                Expert.query.filter_by(email=form.email.data) is None or \
+                Admin.query.filter_by(email=form.email.data) is None or \
+                Viewer.query.filter_by(email=form.email.data) is None:
             flash('Данная почта уже используется одним из пользователей<br>'
                   'Пожалуйста изпользуйте другой email адрес')
+            return redirect(url_for('auth.register'))
+
+        #path = os.path.join('/app/static/images')
+        #form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
+        user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Регистрация прошла успешно.')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('main.index'))
     return render_template('auth/register.html', title='Register', form=form)
 
 

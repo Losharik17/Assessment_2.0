@@ -1,9 +1,9 @@
 /logs/
 *.pyc
 /venv
-/migrations
 /.idea/
 *.iml
 /__pycache__
 .gradle
 *.flaskenv
+.vagrant
