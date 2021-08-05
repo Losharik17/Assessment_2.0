@@ -1,87 +1,169 @@
-@charset "windows-1251";
+@charset "UTF-8";
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
-a{
+.down_block a {
     text-decoration: none;
     color: #0044ff;
 }
 
-a:hover{
-    color: #00289e;
-    text-decoration: underline;
-}
-
-/*��� ����� �� ����������*******************************/
-@media screen and (min-device-width: 1440px){
-    img{
-        width:397px;
-        height:123px;
-    }
-
-}
-@media screen and (max-device-width: 1080px){
-    img{
-        width: 30%;
-        height: 20%;
+@media(hover: hover) {
+    .down_block a:hover {
+        color: #00289e;
+        text-decoration: underline;
     }
 }
-/***************************************************/
-.shapka{
-    background-color: rgb(255, 255, 255);
-    width: 100%;
-    position: sticky;
+
+.content {
+
 }
 
 
-.podval{
-    text-align: left;
-    position:fixed;
-    left:0;
-    bottom:0;
-    height:10%;
-    width:100%;
-    background-color: #1c1919;
-    color: #ffffff;
+
+.block_1 {
+    margin-top: 10px;
+    margin-left: auto;
 }
 
-body{
-    font-family: 'Roboto', sans-serif;
-    background-color: #c3cef8;
-    margin:0;
-}
-
-.block_1{
-    margin-left: 40%;
-}
-
-.img{
+.img {
     width: 166px;
     height:43px;
 
 }
 
-
-/*********������ � ������ �����*********/
-input {
-    border-bottom: 2px solid #000000;
-    border-radius: 20px;
-    padding: 4px 6px;
-}
-/******************/
-.div {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-h1{
+h1 {
     text-align: center;
+    margin: 5px auto;
 }
 
-h2{
+h2 {
     color: #cbc8c8;
+}
 
+.form {
+    margin: auto;
+    width: 300px;
+    padding: 32px;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px #ccc;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+}
+
+.form_button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    font-size: 16px;
+    color :#fff ;
+    background-color: #0071f0;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.form_group {
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.form_input {
+    width: 100%;
+    padding: 0 0 10px 0;
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: transparent;
+    outline: none;
+    transition: 0.3s;
+}
+
+.form_label {
+    position: absolute;
+    top: 0;
+    z-index: -1;
+    color: #9e9e9e;
+    transition: 0.3s;
+}
+
+@media(hover: hover) {
+    .form_button:hover {
+        background-color: rgba(0, 113, 240, 0.7);
+    }
+}
+
+.form_button:focus {
+    background-color: rgba(0, 49, 111, 0.7);
+}
+
+.down_block {
+    display: block;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: auto;
+    padding: 32px;
+    letter-spacing: 1px;
+}
+
+.submit {
+    justify-content: center;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.custom-checkbox {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+/* для элемента label, связанного с .custom-checkbox */
+.custom-checkbox+label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+}
+
+/* создание в label псевдоэлемента before со следующими стилями */
+.custom-checkbox+label::before {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 1px solid #adb5bd;
+    border-radius: 0.25em;
+    margin-right: 0.5em;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50% 50%;
+}
+
+/* стили при наведении курсора на checkbox */
+@media(hover: hover) {
+    .custom-checkbox:not(:disabled):not(:checked) + label:hover::before {
+        border-color: #b3d7ff;
+    }
+}
+
+/* стили для активного чекбокса (при нажатии на него) */
+.custom-checkbox:not(:disabled):active+label::before {
+    background-color: #b3d7ff;
+    border-color: #b3d7ff;
+}
+
+/* стили для чекбокса, находящегося в состоянии checked */
+.custom-checkbox:checked+label::before {
+    border-color: #0b76ef;
+    background-color: #0b76ef;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+}
+
+/* стили для чекбокса, находящегося в состоянии disabled */
+.custom-checkbox:disabled+label::before {
+    background-color: #e9ecef;
 }
