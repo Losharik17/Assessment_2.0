@@ -1,0 +1,87 @@
+{% extends "main_1.html"%}
+
+{%  block app_content %}
+
+    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
+    <script src="{{ url_for('static', filename='user_grades_table.js') }}"></script>
+
+    <div class="info">
+        <p>Номер участника {{ user.id }}</p>
+        <p>ФИО участнка {{ user.username }}</p>
+        <p>Дата рождения {{ user.birthday }}</p>
+        <p>Команда {{ user.team }}</p>
+    </div>
+
+    <div class="table-wrap">
+        <table class="table-sort">
+            <thead>
+
+            <tr>
+                <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
+                <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
+                {% set i = namespace(a=0) %}
+                {% for parameter in ParName %}
+                    <th id="parameter{{ i.a }}">{{ parameter.name }}</th>
+                    {% set i.a = i.a + 1 %}
+                {% endfor %}
+
+            </tr>
+
+            </thead>
+
+            <tbody id="tbody">
+            {% set i.a = 0 %}
+            {% for grade in grades %}
+
+                <tr id="number_str{{ i.a }}">
+
+                    <td id="expert_id{{ i.a }}">
+                        {% if grade.expert_id %}
+                            {{ grade.expert_id }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    <td id="date{{ i.a }}">
+                        {% if grade.date %}
+                            {{ grade.date.strftime('%H:%M %d.%m.%y') }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    {% for j in range(10) %}
+                        {% if grade.__dict__['parameter_{}'.format(j)] is defined %}
+                            <td id="parameter_{{ j }}{{ i.a }}">{% if grade.__dict__['parameter_{}'.format(j)] != 0 %}{{ grade.__dict__['parameter_{}'.format(j)] }}{% else %}–{% endif %}</td>
+                        {% endif %}
+                    {% endfor %}
+
+                    <div id="buttons{{ i.a }}" class="buttons">
+                        <span id="edit{{ i.a }}" onclick="edit_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
+                            <input id="e{{ i.a }}" type="button" value="Редактировать" class="btn">
+                        </span>
+                        <span id="delete{{ i.a }}" onclick="delete_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
+                            <input id="d{{ i.a }}" type="button" value="Удалить" class="btn">
+                        </span>
+                    </div>
+                </tr>
+                {% set i.a = i.a + 1 %}
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="show">
+            <a class="show_btn" href="javascript:show_more(2, {{ user_id }})">
+                Показать больше</a>
+            <a class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
+                Показать все</a>
+        </div>
+    </div>
+
+    <script>
+        buttons({{ i.a }})
+        delete_buttons({{ user_id }})
+    </script>
+
+{% endblock %}
