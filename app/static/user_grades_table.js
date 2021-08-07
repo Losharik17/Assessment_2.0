@@ -193,7 +193,10 @@ function show_more(new_field, user_id) {
                         $(`#number_str${i}`).append(`<td id="parameter_${j}${i}">${grades[i][`parameter_${j}`]}</td>`)
                 }
             }
-
+            if (grades[i]['comment'] === 'None' || grades[i]['comment'] === '')
+                $(`#number_str${i}`).append(`<td id="comment${i}">–</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
                 `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
                 `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
@@ -233,7 +236,7 @@ function sort(parameter, user_id) {
         function (response) {
             let grades = JSON.parse(response['grades'])
             let quantity = grades.length
-            limit=quantity
+            limit = quantity
 
             for (let i = 0; i < quantity; i++) {
                 $(`#expert_id${i}`).html(grades[i]['expert_id'] ? grades[i]['expert_id'] : '–');
@@ -243,6 +246,8 @@ function sort(parameter, user_id) {
                     if ($(`#parameter_${j}${i}`))
                         $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ?
                             grades[i][`parameter_${j}`] : '–')
+
+                $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
 
                 $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
                     `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +

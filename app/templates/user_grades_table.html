@@ -39,6 +39,9 @@
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
 
+                <th id="comment" class="sort">Комментарий</th>
+
+
             </tr>
 
             </thead>
@@ -70,6 +73,14 @@
                             <td id="parameter_{{ j }}{{ i.a }}">{% if grade.__dict__['parameter_{}'.format(j)] != 0 %}{{ grade.__dict__['parameter_{}'.format(j)] }}{% else %}–{% endif %}</td>
                         {% endif %}
                     {% endfor %}
+
+                    <td id="comment{{ i.a }}">
+                        {% if grade.comment %}
+                            {{ grade.comment }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
 
                     <div id="buttons{{ i.a }}" class="buttons">
                         <span id="edit{{ i.a }}" onclick="edit_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">

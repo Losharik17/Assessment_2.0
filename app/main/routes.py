@@ -4,10 +4,9 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, c
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm
-from app.models import User, Expert, Grade, Viewer, Admin, Parameter
+from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project
 from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excell, to_dict
-import pandas as pd
 from werkzeug.utils import secure_filename
 
 
@@ -105,7 +104,7 @@ def expert_grade(project_number, expert_id, user_id):
         expert.quantity_grade()
         db.session.commit()
 
-        flash('Text')
+        flash('Оценка сохранена')
         return redirect(url_for('main.expert', project_number=project_number,
                                 expert_id=current_user.id))
 
@@ -122,8 +121,40 @@ def expert_grade(project_number, expert_id, user_id):
 @bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def viewer(viewer_id):
-    viewer = Viewer.query.filter_by(viewer_id=viewer_id).first()
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
     return render_template('viewer.html', viever=viewer)
+
+
+# страница для создания нового проекта
+@bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
+@login_required
+def create_project(viewer_id):
+    viewer = Viewer.query.filter_by(id=current_user.id).first()
+
+    if request.method == 'POST':
+        project = Project(viewer_id=current_user.id)
+        result = request.form
+
+        for i in range(request.form.get('quantity')):
+            Parameter(name=result.get('name{}'.format(i)),
+                      weight=result.get('weight{}'.format(i)),
+                      project_number=project.number)
+            db.session.commit()
+
+        users = request.files['users']
+        users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
+        excell(users.filename.rsplit(".", 1)[0])
+
+        experts = request.files['experts']
+        experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
+        excell(experts.filename.rsplit(".", 1)[0])
+
+        db.session.commit()  # наверное не нужна
+
+        return redirect(url_for('main.project', project_number=project.number,
+                                viewer_id=current_user.id))
+
+    return render_template('create_project.html', viewer=viewer)
 
 
 # главная страница админа
