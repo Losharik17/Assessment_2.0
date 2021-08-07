@@ -10,18 +10,23 @@
             <form action="{{ url_for('main.create_project', viewer_id = viewer.id) }}" method="POST"
                   enctype="multipart/form-data">
 
-                <input type="file" name="logo" /> <br>
+                <input type="file" name="logo" />
 
-                <label for="name0"></label>
-                <input id="name0" name="name0" size="16" type="text" value="" class="form_input"
-                       placeholder="Критерий 1"/>
-
-                <span id="minus0">-</span>
-                <input type="number" id="weight0" value="1.0" step="0.1" max="2.0" min="0.1" />
-                <span id="plus0">+</span><br>
+                <div id="parameter0">
+                    <label for="name0"></label>
+                    <input id="name0" name="name0" size="16" type="text" value="" class="form_input"
+                           placeholder="Критерий 1"/>
+                    <span id="minus0">-</span>
+                    <input type="number" id="weight0" value="1.0" step="0.1" max="2.0" min="0.1" />
+                    <span id="plus0">+</span>
+                </div>
 
                 <label id="button_add">
                     Нормальная кнопка для добавления. Главное id не меняй
+                </label>
+                <br>
+                <label id="button_delete">
+                    Кнопка для удаления
                 </label>
                 <br>
                 <input type="file" name="users" />

@@ -87,7 +87,7 @@ def delete(Model):
         db.session.rollback()
 
 
-def excell(filename):
+def excel(filename):
     df = pd.read_excel(filename)
     engine = create_engine("sqlite:///T_park.db")
     df.head

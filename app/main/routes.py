@@ -6,7 +6,7 @@ from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project
 from app.main import bp
-from app.main.functions import users_in_json, grades_in_json, excell, to_dict
+from app.main.functions import users_in_json, grades_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
 
 
@@ -50,7 +50,7 @@ def upload_file():
     if request.method == 'POST':
         f = request.files['file']
         f.save(secure_filename(f.filename.rsplit(".", 1)[0]))
-        excell(f.filename.rsplit(".", 1)[0])
+        excel(f.filename.rsplit(".", 1)[0])
         return redirect(url_for('main.index'))
     return render_template('upload.html')
 
@@ -111,7 +111,8 @@ def expert_grade(project_number, expert_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
-    if (user.project_number == Expert.query.filter_by(id=current_user.id).first().project_number):
+    if (user.project_number == Expert.query.filter_by(
+            id=current_user.id).first().project_number):
         pass
     return render_template('expert_grade.html', form=form, expert_id=current_user.id,
                            user=user, parameters=parameters, project_number=project_number)
@@ -143,11 +144,11 @@ def create_project(viewer_id):
 
         users = request.files['users']
         users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
-        excell(users.filename.rsplit(".", 1)[0])
+        excel(users.filename.rsplit(".", 1)[0])
 
         experts = request.files['experts']
         experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
-        excell(experts.filename.rsplit(".", 1)[0])
+        excel(experts.filename.rsplit(".", 1)[0])
 
         db.session.commit()  # наверное не нужна
 
