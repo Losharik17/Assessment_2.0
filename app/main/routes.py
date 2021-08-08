@@ -8,6 +8,7 @@ from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project
 from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
+import os
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -136,11 +137,15 @@ def create_project(viewer_id):
         project = Project(viewer_id=current_user.id)
         result = request.form
 
-        for i in range(request.form.get('quantity')):
+        for i in range(result.get('quantity')):
             Parameter(name=result.get('name{}'.format(i)),
                       weight=result.get('weight{}'.format(i)),
                       project_number=project.number)
             db.session.commit()
+
+        logo = request.files['logo']
+        path = os.path.join('/app/static/images')
+        logo.save(os.path.join(path, '{}.webp'.format(project.number)))
 
         users = request.files['users']
         users.save(secure_filename(users.filename.rsplit(".", 1)[0]))

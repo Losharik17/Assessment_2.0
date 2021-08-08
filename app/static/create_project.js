@@ -9,6 +9,7 @@ function activate_buttons(index) {
     })
 
     $(`#plus${index}`).click(function () {
+
         let value = Math.round((+$(`#weight${index}`).attr('value') + 0.1) * 10) / 10
 
         if (value <= 2)
@@ -50,7 +51,7 @@ function addField(number) {
                                 for="name${number + 1}"></label>
                                 <input id="name${number + 1}" name="name${number + 1}"
                                 size="16" type="text" value="" class="form_input" 
-                                placeholder="Критерий ${+number + 2}"/>
+                                placeholder="Критерий ${number + 2}"/>
                                 <span id="minus${number + 1}">-</span>
                                 <input type="number" id="weight${number + 1}" 
                                 value="1.0" step="0.1" max="2.0" min="0.1" />

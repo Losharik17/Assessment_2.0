@@ -97,9 +97,8 @@ function sort(parameter, project_number) {
 
             for (let i = 0; i < quantity; i++) {
 
-                $(`#number_str${i}`).click(function () {
-                    document.location.href=`/user_grades_table/${users[i].id}`
-                })
+                $(`#number_str${i}`).attr('onclick',
+                    `location.href='/user_grades_table/${project_number}/${users[i]["id"]}'`)
 
                 $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')

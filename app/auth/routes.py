@@ -27,7 +27,7 @@ def login():
                 if not user:
                     user = Viewer.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Неверный пароль или email')
+            flash('Неверный пароль или email', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -54,7 +54,7 @@ def register():
                 Admin.query.filter_by(email=form.email.data) is None or \
                 Viewer.query.filter_by(email=form.email.data) is None:
             flash('Данная почта уже используется одним из пользователей<br>'
-                  'Пожалуйста изпользуйте другой email адрес')
+                  'Пожалуйста изпользуйте другой email адрес', 'warning')
             return redirect(url_for('auth.register'))
 
         #path = os.path.join('/app/static/images')
@@ -63,7 +63,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Регистрация прошла успешно')
+        flash('Регистрация прошла успешно', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register', form=form)
 
@@ -77,7 +77,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-        flash('Проверьте вашу почту и следуйте дальнейшим инструкциям')
+        flash('Проверьте вашу почту и следуйте дальнейшим инструкциям', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
                            title='Сбросить пароль', form=form)
@@ -94,6 +94,6 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Ваш пароль был изменён')
+        flash('Ваш пароль был изменён', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)

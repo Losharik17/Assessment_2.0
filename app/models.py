@@ -64,7 +64,8 @@ class User(UserMixin, db.Model):
         for i in range(5):  # должно быть кол-во параметров, а не цифра
             setattr(self, 'sum_grade_{}'.format(i),
                     self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
-            self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
+            if len(parameters) > i:  # нужен тест
+                self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
         self.sum_grade_all /= self.sum_weight_parameters(parameters)
         db.session.commit()
 
@@ -116,7 +117,7 @@ def load_user(id):
 class Expert(UserMixin, db.Model):
     project_id = db.Column(db.Integer)
     username = db.Column(db.String(64))
-    email = db.Column(db.String(128), index=True, unique=True)
+    email = db.Column(db.String(128), index=True)
     weight = db.Column(db.Float, default=1.0)
     project_number = db.Column(db.Integer)
     id = db.Column(db.Integer, unique=True, primary_key=True)

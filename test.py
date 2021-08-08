@@ -52,7 +52,7 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
         u2.sum_grades()
         db.session.commit()
-        print(u2.sum_grade_all)
+        print(e1.id)
         self.assertTrue(True)
 
 

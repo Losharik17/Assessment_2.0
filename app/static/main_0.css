@@ -268,10 +268,11 @@ body {
     transform: scale(1);
 }
 
+/* прелоадер */
 .preloader {
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     z-index: 999999;
@@ -335,11 +336,8 @@ body {
     }
 }
 
-/* всплывающие уведомления */
-
-
+/* всплывающие уведомления и цвета для разных категорий */
 .message {
-    background-color: #ffeb3b;
     width: max-content;
     height: 30px;
     padding: 5px;
@@ -348,15 +346,43 @@ body {
     align-items: center;
     border-radius: 5px;
 
+
+
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.warning {
+    background-color: #ffeb3b;
+
     box-shadow:
             inset 0 7em 10em -5em rgba(255,255,255,0.6),
             0 0.3em 0.5em -0.2em rgb(175, 189, 47),
             0 1em 2em -0.75em rgba(175, 189, 47, 0.75),
             0 1em 3em -0.5em rgba(163, 189, 47, 0.5),
             0 3em 3em -0.25em rgba(175, 189, 47, 0.2);
+}
 
-    position: fixed;
-    top: 15%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.success {
+    background-color: #a0ff3b;
+
+    box-shadow:
+            inset 0 7em 10em -5em rgba(255,255,255,0.6),
+            0 0.3em 0.5em -0.2em rgb(125, 189, 47),
+            0 1em 2em -0.75em rgba(125, 189, 47, 0.75),
+            0 1em 3em -0.5em rgba(125, 189, 47, 0.5),
+            0 3em 3em -0.25em rgba(125, 189, 47, 0.2);
+}
+
+.danger {
+    background-color: #ff3b3b;
+
+    box-shadow:
+            inset 0 7em 10em -5em rgba(255,255,255,0.6),
+            0 0.3em 0.5em -0.2em rgb(189, 47, 47),
+            0 1em 2em -0.75em rgba(189, 47, 47, 0.7),
+            0 1em 3em -0.5em rgba(125, 47, 47, 0.5),
+            0 3em 3em -0.25em rgba(125, 47, 47, 0.2);
 }
