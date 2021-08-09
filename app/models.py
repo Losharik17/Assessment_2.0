@@ -117,7 +117,7 @@ def load_user(id):
 class Expert(UserMixin, db.Model):
     project_id = db.Column(db.Integer)
     username = db.Column(db.String(64))
-    email = db.Column(db.String(128), index=True)
+    email = db.Column(db.String(128), index=True, unique=True)
     weight = db.Column(db.Float, default=1.0)
     project_number = db.Column(db.Integer)
     id = db.Column(db.Integer, unique=True, primary_key=True)
@@ -199,6 +199,18 @@ class Parameter(db.Model):
     name = db.Column(db.String(32))
     weight = db.Column(db.Float, default=1.0)
     project_number = db.Column(db.Integer, db.ForeignKey('project.number'))
+
+
+# содержит данные о только что зарегистрированных пользователях
+# после определения роли пользователь удаляется из данной таблицы
+class WaitingUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
 
 class Admin(UserMixin, db.Model):

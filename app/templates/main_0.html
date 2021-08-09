@@ -29,7 +29,7 @@
 <div class="maket">
     <div class="shapka" >
         <img class="logo" src="{{ url_for('static', filename='logo_21.webp') }}" alt="" >
-        {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
+        {% if title != 'Авторизация' and title != 'Регистрация' and (auth or auth is not defined) %}
             <div class="exit">
                 <a class="exit_button" href="{{ url_for('auth.logout') }}">
                     Выйти

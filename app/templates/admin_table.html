@@ -5,11 +5,20 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
 
     <div class="table-wrap">
+
+        <label for="teams">Выберите команду</label>
+        <select name="teams" id="teams"
+                onchange="show_more(0, {{ project_number}}, this.value)">
+            {% for team in teams %}
+                <option value="{{ team }}">{{ team }}</option>
+            {% endfor %}
+        </select>
+
         <table class="table-sort">
             <thead>
             <tr>
-                <th id="project_id" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">ID</th>
+                <th id="project_id" class="sort" data-order="0" onclick="sort(this.id,
+                        {{ project_number }})">ID</th>
                 <th id="username" class="sort" data-order="0"
                     onclick="sort(this.id, {{ project_number }})">ФИО</th>
                 <th id="birthday" class="sort" data-order="0"

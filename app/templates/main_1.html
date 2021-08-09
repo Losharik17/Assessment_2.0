@@ -14,18 +14,29 @@
 
 <script>
     $(window).on('load', function () {
-        $('.preloader').addClass("preloader-remove");
+        setTimeout( () => { $('.preloader').addClass("preloader-remove") }, 3000);
     });
 </script>
+
+<style>
+    .preloader-text {
+        position: fixed;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        top: 20%;
+    }
+</style>
 
 </head>
 <body id="body">
 
 <div class="preloader">
+    <div class="preloader-text">
+        Наш текст
+    </div>
     <div class="preloader-5"></div>
 </div>
-
-
 
 <div class="maket">
     <div class="shapka" >

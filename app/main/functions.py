@@ -25,9 +25,7 @@ def users_in_json(users):
                 .format(i, str(user.__dict__['sum_grade_{}'.format(i)]))
 
         string += '"sum_grade_all":"{0}"'.format(str(user.sum_grade_all)) + '},'
-
     string = string[:len(string) - 1] + ']'
-
     return string
 
 

@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, url_for, request, jsonify, c
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm
-from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project
+from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
@@ -178,7 +178,14 @@ def admin_table(project_number, admin_id):
     admin = Admin.query.filter_by(id=admin_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
     users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
-    return render_template('admin_table.html', title='Table', admin=admin,
+
+    users_team = User.query.filter_by(project_number=project_number).all()
+    teams = ['Все команды']
+    for user in users_team:
+        if user.team not in teams:
+            teams.append(user.team)
+
+    return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
                            users=users, ParName=parameters, project_number=project_number)
 
 
@@ -198,34 +205,67 @@ def user_grades_table(project_number, user_id):
 @bp.route('/sort_users_table', methods=['POST'])
 @login_required
 def sort_users_table():
-    if request.form['sort_up'] == 'true':
-        users = User.query.filter_by(project_number=request.form['project_number'])\
-            .order_by(User.__dict__[request.form['parameter']].desc())\
-            .limit(request.form['lim'])
+    if request.form['team'] == '' or request.form['team'] == 'Все команды':
+        if request.form['sort_up'] == 'true':
+            users = User.query.filter_by(project_number=request.form['project_number']) \
+                .order_by(User.__dict__[request.form['parameter']].desc()) \
+                .limit(request.form['lim'])
+        else:
+            users = User.query.filter_by(project_number=request.form['project_number']) \
+                .order_by(User.__dict__[request.form['parameter']].asc()) \
+                .limit(request.form['lim'])
     else:
-        users = User.query.filter_by(project_number=request.form['project_number'])\
-            .order_by(User.__dict__[request.form['parameter']].asc())\
-            .limit(request.form['lim'])
+        if request.form['sort_up'] == 'true':
+            users = User.query.filter_by(project_number=request.form['project_number'],
+                                         team=request.form['team']) \
+                .order_by(User.__dict__[request.form['parameter']].desc()) \
+                .limit(request.form['lim'])
+        else:
+            users = User.query.filter_by(project_number=request.form['project_number'],
+                                         team=request.form['team']) \
+                .order_by(User.__dict__[request.form['parameter']].asc()) \
+                .limit(request.form['lim'])
 
     return jsonify({'users': users_in_json(users)})
 
 
-# добавление участников в таблицу
+# увелечение количества отображаемых участников в таблице
 @bp.route('/show_more_users', methods=['POST'])
 @login_required
 def show_more_users():
-    if request.form['parameter'] != '':
-        if request.form['sort_up'] == 'true':
-            users = User.query.filter_by(project_number=request.form['project_number'])\
-                .order_by(User.__dict__[request.form['parameter']].desc())\
-                .limit(request.form['lim'])
+    if request.form['team'] == '' or request.form['team'] == 'Все команды':
+        if request.form['parameter'] != '':
+            if request.form['sort_up'] == 'true':
+
+                users = User.query.filter_by(project_number=request.form['project_number']) \
+                    .order_by(User.__dict__[request.form['parameter']].desc()) \
+                    .limit(request.form['lim'])
+
+            else:
+                users = User.query.filter_by(project_number=request.form['project_number']) \
+                    .order_by(User.__dict__[request.form['parameter']].asc()) \
+                    .limit(request.form['lim'])
         else:
-            users = User.query.filter_by(project_number=request.form['project_number'])\
-                .order_by(User.__dict__[request.form['parameter']].asc())\
-                .limit(request.form['lim'])
+            users = User.query.filter_by(project_number=request.form['project_number']) \
+                .order_by(User.project_id).limit(request.form['lim'])
     else:
-        users = User.query.filter_by(project_number=request.form['project_number'])\
-            .order_by(User.id).limit(request.form['lim'])
+        if request.form['parameter'] != '':
+            if request.form['sort_up'] == 'true':
+
+                users = User.query.filter_by(project_number=request.form['project_number'],
+                                             team=request.form['team']) \
+                    .order_by(User.__dict__[request.form['parameter']].desc()) \
+                    .limit(request.form['lim'])
+
+            else:
+                users = User.query.filter_by(project_number=request.form['project_number'],
+                                             team=request.form['team']) \
+                    .order_by(User.__dict__[request.form['parameter']].asc()) \
+                    .limit(request.form['lim'])
+        else:
+            users = User.query.filter_by(project_number=request.form['project_number'],
+                                         team=request.form['team']) \
+                .order_by(User.project_id).limit(request.form['lim'])
 
     return jsonify({'users': users_in_json(users)})
 
@@ -284,14 +324,77 @@ def save_grade():
 
 
 # удаление оценки
+# нужен аргумент Id
 @bp.route('/delete_grade', methods=['POST'])
 @login_required
 def delete_grade():
     grade = Grade.query.get(request.form['id'])
+
+    grade.expert_id.quantity -= 1
     user = User.query.get(grade.user.id)
+
     db.session.delete(grade)
     db.session.commit()
+
     user.sum_grades()
     db.session.commit()
 
     return jsonify({'result': 'Deleted'})
+
+
+# назначение роли администратора или наблюдателя
+# нужен аргумент Id
+@bp.route('/add_waiting_user', methods=['POST'])
+@login_required
+def add_waiting_user():
+    if WaitingUser.query.filter_by(id=request.form['id']).first():
+
+        waiting_user = WaitingUser.query.filter_by(id=request.form['id']).first()
+
+        if request.form['role'] == 'admin':
+            user = Admin(username=waiting_user.username, email=waiting_user.email,
+                         password_hash=waiting_user.password_hash)
+        elif request.form['role'] == 'viewer':
+            user = Viewer(username=waiting_user.username, email=waiting_user.email,
+                          password_hash=waiting_user.password_hash)
+        else:
+            return jsonify({'result': 'error'})
+
+        expert = Expert(username=waiting_user.username, email=waiting_user.email,
+                        password_hash=waiting_user.password_hash)
+
+        db.session.add(user)
+        db.session.add(expert)
+        db.session.delete(waiting_user)
+        db.session.commit()
+        return jsonify({'result': 'success'})
+
+    return jsonify({'result': 'User not found'})
+
+
+# удаление пользователя с любым уровенем доступа
+# нужны аргументы Role и Id
+@bp.route('/delete_user', methods=['POST'])
+@login_required
+def delete_user():
+    role = request.form['role'].lower()
+
+    if role == 'user':
+        user = User.query.filter_by(id=request.form['id']).first()
+    elif role == 'expert':
+        user = Expert.query.filter_by(id=request.form['id']).first()
+    elif role == 'waiting_user':
+        user = WaitingUser.query.filter_by(id=request.form['id']).first()
+    elif role == 'viewer':
+        user = Viewer.query.filter_by(id=request.form['id']).first()
+    elif role == 'admin':
+        user = Admin.query.filter_by(id=request.form['id']).first()
+    else:
+        return jsonify({'result': 'User not found'})
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'result': 'success'})
+
+
+
