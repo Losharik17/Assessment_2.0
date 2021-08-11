@@ -144,7 +144,7 @@ def create_project(viewer_id):
             db.session.commit()
 
         logo = request.files['logo']
-        path = os.path.join('/app/static/images')
+        path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
         logo.save(os.path.join(path, '{}.webp'.format(project.number)))
 
         users = request.files['users']
@@ -155,7 +155,10 @@ def create_project(viewer_id):
         experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
         excel(experts.filename.rsplit(".", 1)[0])
 
-        db.session.commit()  # наверное не нужна
+        path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
+        photos = request.files.getlist("photos")
+        for photo in photos:
+            photo.save(os.path.join(path, photo.filename))  # указать другое название файла
 
         return redirect(url_for('main.project', project_number=project.number,
                                 viewer_id=current_user.id))
@@ -324,13 +327,13 @@ def save_grade():
 
 
 # удаление оценки
-# нужен аргумент Id
+# нужен аргумент Id оценки
 @bp.route('/delete_grade', methods=['POST'])
 @login_required
 def delete_grade():
     grade = Grade.query.get(request.form['id'])
 
-    grade.expert_id.quantity -= 1
+    grade.expert.quantity -= 1
     user = User.query.get(grade.user.id)
 
     db.session.delete(grade)
@@ -343,7 +346,7 @@ def delete_grade():
 
 
 # назначение роли администратора или наблюдателя
-# нужен аргумент Id
+# нужен аргумент Id пользователя
 @bp.route('/add_waiting_user', methods=['POST'])
 @login_required
 def add_waiting_user():

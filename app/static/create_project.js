@@ -2,7 +2,8 @@ function activate_buttons(index) {
     // делает кнопки + и - активными
 
     $(`#minus${index}`).click(function () {
-        let value = Math.round(($(`#weight${index}`).attr('value') - 0.1) * 10) / 10
+        let value = (Math.round(($(`#weight${index}`).attr('value') - 0.1) * 10) / 10)
+            .toFixed(1)
 
         if (value > 0)
             $(`#weight${index}`).attr('value', value)
@@ -10,7 +11,8 @@ function activate_buttons(index) {
 
     $(`#plus${index}`).click(function () {
 
-        let value = Math.round((+$(`#weight${index}`).attr('value') + 0.1) * 10) / 10
+        let value = (Math.round((+$(`#weight${index}`).attr('value') + 0.1) * 10) / 10)
+            .toFixed(1)
 
         if (value <= 2)
             $(`#weight${index}`).attr('value', value)
@@ -50,12 +52,12 @@ function addField(number) {
     $(`#button_add`).before(`<div id="parameter${number + 1}"><label 
                                 for="name${number + 1}"></label>
                                 <input id="name${number + 1}" name="name${number + 1}"
-                                size="16" type="text" value="" class="form_input" 
-                                placeholder="Критерий ${number + 2}"/>
-                                <span id="minus${number + 1}">-</span>
+                                size="16" type="text" value="" class="input_text" 
+                                placeholder="Критерий ${number + 2}" />
+                                <span id="minus${number + 1}" class="button">-</span>
                                 <input type="number" id="weight${number + 1}" 
-                                value="1.0" step="0.1" max="2.0" min="0.1" />
-                                <span id="plus${number + 1}">+</span></div>`)
+                                value="1.0" step="0.1" max="2.0" min="0.1" class="crit"/>
+                                <span id="plus${number + 1}" class="button">+</span></div>`)
 
     activate_buttons(number + 1)
     $('#button_add').unbind()
@@ -67,3 +69,12 @@ function addField(number) {
         deleteField(number + 1)
     })
 }
+
+$('[id^="name"]').each(function (index, element) {
+
+    $(element).focus(function () {
+
+        $(element).addClass('placeholder_activate')
+
+    })
+})

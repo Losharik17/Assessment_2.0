@@ -8,7 +8,7 @@
 
     <div class="container">
         <div class="data">
-            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
+            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/4.webp') }}" alt="">
             <table style="margin: 10px;">
                 <tr>
                     <td style="text-align: left">ID: {{ user.project_id }}</td>
@@ -38,12 +38,8 @@
                     <th id="parameter{{ i.a }}">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
-
                 <th id="comment" class="sort">Комментарий</th>
-
-
             </tr>
-
             </thead>
 
             <tbody id="tbody">

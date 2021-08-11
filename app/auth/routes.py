@@ -61,7 +61,7 @@ def register():
                   'Пожалуйста изпользуйте другой email адрес', 'warning')
             return redirect(url_for('auth.register'))
 
-        # path = os.path.join('/app/static/images')
+        # path = os.path.join('../T-Park/app/static/images')
         # form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
         waiting_user = WaitingUser(username=form.username.data, email=form.email.data)
         waiting_user.set_password(form.password.data)

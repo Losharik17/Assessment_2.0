@@ -7,3 +7,4 @@
 .gradle
 *.flaskenv
 .vagrant
+!/app/templates/test.html

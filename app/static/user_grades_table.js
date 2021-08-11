@@ -136,23 +136,24 @@ function edit_grade(grade_id, user_id, number_str) {
 
 function delete_grade(grade_id, user_id, number_str) {
 
-    $.post('/delete_grade', {
-        id: grade_id,
-        user_id: user_id,
-        lim: limit
-    }).done(function (response) {
+    if (confirm('Удалить оценку?'))
+        $.post('/delete_grade', {
+            id: grade_id,
+            user_id: user_id,
+            lim: limit
+        }).done(function (response) {
 
-        document.getElementById(`buttons${number_str}`).style.transition = '0.3s';
-        document.getElementById(`buttons${number_str}`).style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById(`buttons${number_str}`).style.display = 'none'
-        }, 300)
+            document.getElementById(`buttons${number_str}`).style.transition = '0.3s';
+            document.getElementById(`buttons${number_str}`).style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById(`buttons${number_str}`).style.display = 'none'
+            }, 300)
 
-        show_more(0, user_id)
+            show_more(0, user_id)
 
-    }).fail(function () {
-        alert("Error AJAX request")
-    })
+        }).fail(function () {
+            alert("Error AJAX request")
+        })
 }
 
 

@@ -6,7 +6,10 @@
 
     <div class="container">
         <div class="data">
-            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
+
+            {% set path='/images/'+ project_number|string +'/'+ user.project_id|string +'.webp' %}
+            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+
             <table style="margin: 10px;">
                 <tr>
                     <td>ID: {{ user.project_id }}</td>
