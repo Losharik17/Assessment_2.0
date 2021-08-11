@@ -1,11 +1,15 @@
 @charset "UTF-8";
 
+html {
+    font-family: 'Roboto', sans-serif !important;
+
+}
+
 
 body {
     justify-content: center;
     align-items: center;
     height: 100%;
-    font-family: 'Roboto', sans-serif;
     background-color: #e8edff;
     margin: 0;
 }
@@ -135,8 +139,6 @@ body {
 
 .preloader {
     position: fixed;
-    left: 0px;
-    top: 0px;
     width: 100%;
     height: 100%;
     z-index: 999999;
@@ -199,17 +201,23 @@ body {
 
 
 
-@media (max-width: 1200px){
+@media screen{
     img {
-        width: 40%;
+        width: 25%;
 
 }
 }
 
-@media (min-width: 768px){
+@media handheld{
     img {
-        width: 20%;
+        width: 15%;
 
     }
 }
+
+input[type="text"]::-webkit-input-placeholder {font-family: Roboto, sans-serif}
+input[type="text"]:-ms-input-placeholder { font-family: Roboto, sans-serif}
+input[type="text"]::-ms-input-placeholder {font-family: Roboto, sans-serif}
+input[type="text"]::placeholder {font-family: Roboto, sans-serif}
+
 
