@@ -1,0 +1,84 @@
+{% extends "main_0.html" %}
+
+{% block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='viewer.css') }}">
+    <div class="content">
+
+        <h1 class="title">Создание проекта</h1>
+            <br>
+            <form action="{{ url_for('main.create_project', viewer_id = viewer.id) }}" method="POST"
+                  enctype="multipart/form-data">
+
+                        <div class="block_1">
+
+                <lable>
+                    <input id="name" type="text" placeholder="Название проекта" class="input_text">
+                </lable>
+                <br>
+                    <br>
+                    <div class="add_new">
+                        <div>
+                        <label for="name0"></label>
+                        <input id="name0" name="name0" size="16" type="text" value="" class="input_text"
+                               placeholder="Критерий 1"/>
+
+                            <div class="block_4">
+                        <input id="minus0" class="button" type="button" value="-">
+                            <input class="crit" type="number" id="weight0" value="1.0" step="0.1" max="2.0" min="0.1"  />
+                        <input id="plus0" class="button" type="button" value="+">
+                            </div>
+                        </div>
+
+
+                        <input type="button"  class="add" id="button_add" value="Добавить">
+                        <input type="button"  class="add" id="button_delete" value="Удалить">
+
+
+                        <br>
+
+                        <div class="container">
+                            <input type="submit" value="Создать проект" class="btn btn-5" >
+                        </div>
+                    </div>
+
+                </div>
+
+                        <div class="block_2">
+
+
+
+
+                <div class="input__wrapper">
+                    <input  type="file" name="logo" id="input__file_1" class="input input__file">
+                    <label for="input__file" class="input__file-button">
+                        <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
+                        <span class="input__file-button-text">Загрузить Логотип</span>
+                    </label>
+                </div>
+
+
+
+
+                <div class="input__wrapper">
+                    <input  type="file" name="users" id="input__file_2" class="input input__file">
+                    <label for="input__file" class="input__file-button">
+                        <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
+                        <span class="input__file-button-text">Загрузить Участников</span>
+                    </label>
+                </div>
+                <div class="input__wrapper">
+                    <input  type="file" name="experts" id="input__file_3" class="input input__file">
+                    <label for="input__file" class="input__file-button">
+                        <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
+                        <span class="input__file-button-text">Загрузить Экспертов</span>
+                    </label>
+
+                </div>
+                        </div>
+            </form>
+
+        </div>
+
+    <script src="{{ url_for('static', filename='create_project.js') }}"></script>
+
+{% endblock %}
