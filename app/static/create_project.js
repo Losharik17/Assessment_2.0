@@ -32,7 +32,7 @@ $('#button_delete').click(function () {
 function deleteField(number) {
     if (number === 0)
         return alert('Извините. У вас должен быть хотя бы один критерий')
-    console.log($(`#parameter${number}`))
+
     $(`#parameter${number}`).remove()
 
     $('#button_delete').unbind()
@@ -49,15 +49,20 @@ function deleteField(number) {
 function addField(number) {
     if (number === 9)
         return alert('Извините. Вы не можете создать более 10 критериев')
-    $(`#button_add`).before(`<div id="parameter${number + 1}"><label 
-                                for="name${number + 1}"></label>
-                                <input id="name${number + 1}" name="name${number + 1}"
-                                size="16" type="text" value="" class="input_text" 
-                                placeholder="Критерий ${number + 2}" />
-                                <span id="minus${number + 1}" class="button">-</span>
-                                <input type="number" id="weight${number + 1}" 
-                                value="1.0" step="0.1" max="2.0" min="0.1" class="crit"/>
-                                <span id="plus${number + 1}" class="button">+</span></div>`)
+    $(`#button_add`).before(`<div id="parameter${number + 1}">
+                                 <label for="name${number + 1}"></label>
+                                 <input id="name${number + 1}" name="name${number + 1}"
+                                 size="16" type="text" value="" class="input_text" 
+                                 placeholder="Критерий ${number + 2}"/>
+                                 <div class="block_4">
+                                     <input type="button" id="minus${number + 1}" 
+                                     class="button" value="-">
+                                     <input type="number" id="weight${number + 1}" 
+                                     value="1.0" step="0.1" max="2.0" min="0.1" class="crit"/>
+                                     <input type="button"  id="plus${number + 1}" class="button" 
+                                     value="+">
+                                 </div>
+                             </div>`)
 
     activate_buttons(number + 1)
     $('#button_add').unbind()

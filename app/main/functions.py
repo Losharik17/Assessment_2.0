@@ -1,6 +1,12 @@
-from app import db
-from app.models import User, Expert, Viewer, Admin, Parameter
+import random
+import string
+
 from sqlalchemy import create_engine
+import pandas as pd
+
+from app import db
+from app.auth.email import send_password_mail
+from app.models import User, Expert, Viewer, Admin
 import pandas as pd
 
 
@@ -26,7 +32,9 @@ def users_in_json(users):
                 .format(i, str(user.__dict__['sum_grade_{}'.format(i)]))
 
         string += '"sum_grade_all":"{0}"'.format(str(user.sum_grade_all)) + '},'
+
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
@@ -35,27 +43,25 @@ def experts_in_json(experts):
 
     for expert in experts:
         string += '{' + '"id":{0},"username":"{1}","weight":"{2}","quantity":"{3}},' \
-                        '"project_number":{4}, "project_id":{5},'.format(str(expert.id),
-                                                                         str(expert.username),
-                                                                         str(expert.weight),
-                                                                         str(expert.quantity),
-                                                                         str(expert.project_number),
-                                                                         str(expert.project_id)) + '},'
-
-    string = string[:len(string) - 1] + ']'
-
-    return string
+                        '"project_number":{4}, "project_id":{5},' \
+            .format(str(expert.id),
+                    str(expert.username),
+                    str(expert.weight),
+                    str(expert.quantity),
+                    str(expert.project_number),
+                    str(expert.project_id)) + '},'
 
 
 def grades_in_json(grades):
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"'.format(str(grade.id),
-                                                 str(grade.date.strftime('%H:%M %d.%m.%y')),
-                                                 str(grade.expert_id),
-                                                 str(grade.user_id),
-                                                 str(grade.comment))
+                        '"comment":"{4}"'\
+            .format(str(grade.id),
+                    str(grade.date.strftime('%H:%M %d.%m.%y')),
+                    str(grade.expert_id),
+                    str(grade.user_id),
+                    str(grade.comment))
 
         for i in range(5):
             string += ',"parameter_{0}":"{1}"' \
@@ -66,6 +72,7 @@ def grades_in_json(grades):
     string = string[:len(string) - 1] + ']'
 
     return string
+
 
 def to_dict(row):
     if row is None:
@@ -86,22 +93,45 @@ def delete(Model):
         db.session.rollback()
 
 
+def password_generator():
+    length = 8
+    all = string.ascii_letters + string.digits
+    password = "".join(random.sample(all, length))
+    return password
+
+
 def excel(filename):
     df = pd.read_excel(filename)
     engine = create_engine("sqlite:///T_park.db")
     df.head
     if filename == 'user':
         delete(User)
-        df.columns = ['id', 'username', 'email', 'avatar', 'password_hash', 'birth_date', 'team']
-        df.to_sql(filename, con=engine, if_exists='append', index=False)
+        df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'place']
+        index = df.index
+        for i in range(len(index)):
+            df.loc[[i]].to_sql(filename, con=engine, if_exists='append', index=False)
+            a = password_generator()
+            user = User.query.filter_by(id=i + 1).first()
+            user.set_password(a)
+            db.session.add(user)
+            db.session.commit()
+            send_password_mail(user, a)
     elif filename == 'admin':
         delete(Admin)
-        df.columns = ['admin_id', 'username', 'email']
+        df.columns = ['id', 'username', 'email']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     elif filename == 'expert':
         delete(Expert)
-        df.columns = ['id', 'username', 'email', 'weight', 'quantity']
-        df.to_sql(filename, con=engine, if_exists='append', index=False)
+        df.columns = ['project_id', 'username', 'email']
+        index = df.index
+        for i in range(len(index)):
+            df.loc[[i]].to_sql(filename, con=engine, if_exists='append', index=False)
+            a = password_generator()
+            expert = Expert.query.filter_by(id=i + 1).first()
+            expert.set_password(a)
+            db.session.add(expert)
+            db.session.commit()
+            send_password_mail(expert, a)
     elif filename == 'viewer':
         delete(Viewer)
         df.columns = ['id', 'username', 'email']

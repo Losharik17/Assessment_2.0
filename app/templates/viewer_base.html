@@ -1,0 +1,65 @@
+{% extends "main_0.html" %}
+
+{% block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='viewer.css') }}">
+    <div class="content">
+
+        <h1>Введите id пользователя</h1>
+        <div class="block_1">
+            <form action="" method="post" class="form" >
+                {{ form.hidden_tag() }}
+                <div class="form_group">
+                    {{ form.project_name.label }}
+                    {{ form.project_name(size=8) }}
+                    {% for error in form.project_name.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                    {% endfor %}
+                            <!--downloading logo********************************-->
+                        <form action="{{ url_for('main.upload_file') }}" method="POST"
+                            enctype="multipart/form-data">
+                            <input type="file" name="file" />
+                        </form>
+                    {{ form.paramenter_extra.lable }}
+                    {{ form.paramenter_extra(size=10) }}
+                    <!--Вот эту форму необходимо допилить, хз как оформить концепцию (- Число +) в виде формы************
+                    <form  action="" method="post" class="form">
+                        {{ form.hidden_tag() }}
+                        {% set i = namespace(a=0) %}
+                        {% for parameter in parameters %}
+                            <div class="#">
+                                <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
+                                <div style="justify-content: space-between; display: flex">
+                                    {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                                        <div class="form_radio_btn">
+                                            {{ value }}
+                                            {{ value.label }}
+                                        </div>
+                                        {% for error in form.value %}
+                                            <span style="color: red;">{{ error }}</span>
+                                        {% endfor %}
+                                    {% endfor %}
+                                    {% set i.a = i.a + 1 %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </form>
+                    -->
+                <!--downloading excel file**************************-->
+                    <form action="{{ url_for('main.upload_file') }}" method="POST"
+                          enctype="multipart/form-data">
+                        <input type="file" name="file" />
+                    </form>
+                    {% for error in form.project_name.errors %}
+                        <span style="color: red;">{{ error }}</span>
+                    {% endfor %}
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='viewer.js') }}"></script>
+
+{% endblock %}

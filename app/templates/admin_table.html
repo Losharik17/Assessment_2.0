@@ -6,14 +6,20 @@
 
     <div class="table-wrap">
 
-        <label for="teams">Выберите команду</label>
-        <select name="teams" id="teams"
-                onchange="show_more(0, {{ project_number}}, this.value)">
-            {% for team in teams %}
-                <option value="{{ team }}">{{ team }}</option>
-            {% endfor %}
-        </select>
+        <div class="choice">
+            <label for="teams">Выберите команду</label>
 
+            <div class="wrapper_dropdown">
+                <div class="dropdown"></div>
+                <select name="teams" id="teams" class="select"
+                        onchange="show_more(0, {{ project_number}}, this.value)">
+                    {% for team in teams %}
+                        <option value="{{ team }}">{{ team }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <br>
         <table class="table-sort">
             <thead>
             <tr>

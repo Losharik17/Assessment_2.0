@@ -1,0 +1,30 @@
+{% extends "main_log.html" %}
+<!--Тут тебе в основном нужно добавить js в поля, кнопку и анимации. Плюс ссылки на переадресацию-->
+{% block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='login.css')}}">
+    <h1>Авторизация</h1>
+    <div class="block_1">
+        <form action="" method="post"  >
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.project_name.label }}<br>
+                {{ form.project_name(size=32) }}<br>
+                {% for error in form.email.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+        <!--Дим, вот тут должна быть форма для отправки изоюражения заказчика.
+            <p>
+                {{ form.password.label }}<br>
+                {{ form.password(size=32) }}<br>
+
+                !!!!!!!!!!!!!!!!-->
+                {% for error in form.password.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
+{% endblock %}

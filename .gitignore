@@ -8,3 +8,4 @@
 *.flaskenv
 .vagrant
 !/app/templates/test.html
+
