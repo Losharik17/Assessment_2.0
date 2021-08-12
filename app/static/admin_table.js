@@ -57,6 +57,7 @@ function show_more(new_field, project_number) {
 
     limit += new_field
 
+
     $.post('/show_more_users', {
         lim: limit,
         parameter: sort.current_parameter,
@@ -64,6 +65,16 @@ function show_more(new_field, project_number) {
         project_number: project_number,
         team: $('#teams').val()
     }).done(function(response) {
+
+
+        if (limit > JSON.parse(response['users']).length) {
+            $('#show_more').css('display', 'none')
+            $('#show_all').css('display', 'none')
+        }
+        else {
+            $('#show_more').css('display', 'inline-block')
+            $('#show_all').css('display', 'inline-block')
+        }
 
         draw_table(response, project_number)
 

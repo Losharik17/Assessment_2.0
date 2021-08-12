@@ -71,7 +71,7 @@ function buttons(quantity) {
             $('#buttons' + i).fadeTo(0)
             $('#buttons' + i).css({
                 display: 'inline-block', position: "absolute", width: "auto",
-                height: $('#number_str' + i).height()
+                'max-height': $('#number_str' + i).height()
             }).offset({
                 left: $('#number_str' + i).offset().left + $('#tbody').width(),
                 top: $('#number_str' + i).offset().top
@@ -94,7 +94,10 @@ function edit_grade(grade_id, user_id, number_str) {
                 let td = $(`#parameter_${i}${number_str}`)
                 let value = td.html()
                 edit_grade.old_value.push(value)
-                td.html(`<input id="p${i}" onchange="document.getElementById(this.id).setAttribute('value', this.value)" class="input" type="number" value="${value}" min="-1" max="3" step="1">`)
+                td.html(`<input id="p${i}" onchange="
+                                document.getElementById(this.id).setAttribute('value', this.value)" 
+                                class="input" type="number" value="${value}" min="-1" max="3" 
+                                step="1">`)
             }
         }
     } else {

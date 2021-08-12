@@ -155,7 +155,9 @@ input:active {
 
 /*Поле выставления оценки*/
 .crit {
-    margin: 10px auto;
+    margin: 4px auto;
+    border-bottom: 1px dotted;
+    border-radius: 3px;
 }
 
 .comment {

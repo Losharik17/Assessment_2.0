@@ -34,8 +34,9 @@
             {% set i = namespace(a=0) %}
             {% for parameter in parameters %}
                 <div class="crit">
-                    <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
-                    <div style="justify-content: space-evenly; display: flex">
+                    <div style="text-align: left; margin-top: 12px; margin-left: 35px;
+                         margin-bottom: 10px">{{ parameter.name }}</div>
+                    <div style="justify-content: space-evenly; display: flex; margin-bottom: 8px">
                         {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
                             <div class="form_radio_btn">
                                 {{ value }}
@@ -63,6 +64,5 @@
     </div>
 
     <script src="{{ url_for('static', filename='expert_grade.js') }}"></script>
-
 
 {% endblock %}
