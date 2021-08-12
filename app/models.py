@@ -11,12 +11,15 @@ from sqlalchemy import event, DDL
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)
+    project_id = db.Column(db.Integer)  # id в данном проете
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
     birthday = db.Column(db.Date)
-    team = db.Column(db.String(32))
+    team = db.Column(db.String(32))  # команда, класс иди что-то подобное
+    place = db.Column(db.String(64))  # локация, регион или что-то подобное
+    project_number = db.Column(db.Integer)  # номер проекта к которму относится
+    id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)  # общий id
+    password_hash = db.Column(db.String(128))
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     sum_grade_0 = db.Column(db.Float, default=0)
     sum_grade_1 = db.Column(db.Float, default=0)
@@ -24,9 +27,6 @@ class User(UserMixin, db.Model):
     sum_grade_3 = db.Column(db.Float, default=0)
     sum_grade_4 = db.Column(db.Float, default=0)
     sum_grade_all = db.Column(db.Float, default=0)
-
-    # grade = db.relationship('Expert', secondary='grade', /
-    # backref=db.backref('user', lazy='dynamic'), lazy='dynamic')
 
     def __repr__(self):
         return '<Пользователь {}>'.format(self.username)
@@ -43,20 +43,42 @@ class User(UserMixin, db.Model):
             current_app.config['SECRET_KEY'],
             algorithm='HS256').decode('utf-8')
 
-    def sum_grades(self):  # в принципе это надо оптимизировать я полагаю
+    def sum_grades(self):
         """считает сумму всех оценок по каждому критерию
         пока по неправильной формуле +-"""
+
         grades = self.grades.all()
-        self.sum_grade_all = float(0)
+        parameters = Parameter.query.filter_by(project_number=self.project_number).all()
+
+        setattr(self, 'sum_grade_all', float(0))
+        for i in range(5):
+            setattr(self, 'sum_grade_{}'.format(i), 0)
+
         for grade in grades:
             for i in range(5):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
-                    self.__dict__['sum_grade_{}'.format(i)] += \
-                        grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight
+                    setattr(self, 'sum_grade_{}'.format(i),
+                            (float(self.__dict__['sum_grade_{}'.format(i)]) +
+                             grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight))
 
         for i in range(5):  # должно быть кол-во параметров, а не цифра
-            self.__dict__['sum_grade_{}'.format(i)] /= self.sum_weight_experts(i)
-            self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)]
+            setattr(self, 'sum_grade_{}'.format(i),
+                    self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
+            if len(parameters) > i:  # нужен тест
+                self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
+        self.sum_grade_all /= self.sum_weight_parameters(parameters)
+        db.session.commit()
+
+    def sum_weight_parameters(self, parameters):
+        sum = 0
+        i = 0
+        for parameter in parameters:
+            if self.__dict__['sum_grade_{}'.format(i)] != 0:
+                sum += parameter.weight
+            i += 1
+        if sum:
+            return sum
+        return 1
 
     def sum_weight_experts(self, number_parameter):
         """делит на сумму весов экспертов по критерию"""
@@ -93,11 +115,13 @@ def load_user(id):
 
 
 class Expert(UserMixin, db.Model):
-    id = db.Column(db.Integer, unique=True, primary_key=True)
+    project_id = db.Column(db.Integer)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
-    grades = db.relationship('Grade', backref='expert', lazy='dynamic')
     weight = db.Column(db.Float, default=1.0)
+    project_number = db.Column(db.Integer)
+    id = db.Column(db.Integer, unique=True, primary_key=True)
+    grades = db.relationship('Grade', backref='expert', lazy='dynamic')
     quantity = db.Column(db.Integer, default=0)
     password_hash = db.Column(db.String(128))
 
@@ -126,12 +150,13 @@ class Grade(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     expert_id = db.Column(db.String(64), db.ForeignKey('expert.id'))
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=datetime.now())
     parameter_0 = db.Column(db.Integer)
     parameter_1 = db.Column(db.Integer)
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
+    comment = db.Column(db.Text(200))
 
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
@@ -140,7 +165,7 @@ class Grade(db.Model):
         """ устанавливает баллы для критериев """
         for i in range(len(grades)):
             if grades[i] is not None:
-                self.__dict__['parameter_{}'.format(i)] = grades[i]
+                setattr(self, 'parameter_{}'.format(i), grades[i])
 
 
 class Viewer(UserMixin, db.Model):
@@ -148,6 +173,7 @@ class Viewer(UserMixin, db.Model):
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    projects = db.relationship('Project', backref='viewer', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -162,8 +188,33 @@ class Viewer(UserMixin, db.Model):
             algorithm='HS256').decode('utf-8')
 
 
+class Project(db.Model):
+    number = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
+    parameters = db.relationship('Parameter', backref='project', lazy='dynamic')
+
+
+class Parameter(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    name = db.Column(db.String(32))
+    weight = db.Column(db.Float, default=1.0)
+    project_number = db.Column(db.Integer, db.ForeignKey('project.number'))
+
+
+# содержит данные о только что зарегистрированных пользователях
+# после определения роли пользователь удаляется из данной таблицы
+class WaitingUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+
 class Admin(UserMixin, db.Model):
-    admin_id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     password_hash = db.Column(db.String(128))
@@ -186,14 +237,9 @@ event.listen(Expert.__table__, 'after_create',
              )
 
 event.listen(Admin.__table__, 'after_create',
-             DDL("INSERT INTO admin (admin_id) VALUES (11000)")
+             DDL("INSERT INTO admin (id) VALUES (11000)")
              )
 
 event.listen(Viewer.__table__, 'after_create',
              DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
              )
-
-
-class ParametersName(db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    name = db.Column(db.String(32))

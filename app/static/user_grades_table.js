@@ -71,7 +71,7 @@ function buttons(quantity) {
             $('#buttons' + i).fadeTo(0)
             $('#buttons' + i).css({
                 display: 'inline-block', position: "absolute", width: "auto",
-                height: $('#number_str' + i).height()
+                'max-height': $('#number_str' + i).height()
             }).offset({
                 left: $('#number_str' + i).offset().left + $('#tbody').width(),
                 top: $('#number_str' + i).offset().top
@@ -82,7 +82,7 @@ function buttons(quantity) {
 }
 
 function edit_grade(grade_id, user_id, number_str) {
-
+    console.log(grade_id)
     if ($("#edit" + number_str + " :input").attr('value') !== 'Сохранить') {
         let width = $("#edit" + number_str + " :input").innerWidth()
         edit_grade.old_value = Array()
@@ -94,7 +94,10 @@ function edit_grade(grade_id, user_id, number_str) {
                 let td = $(`#parameter_${i}${number_str}`)
                 let value = td.html()
                 edit_grade.old_value.push(value)
-                td.html(`<input id="p${i}" onchange="document.getElementById(this.id).setAttribute('value', this.value)" class="input" type="number" value="${value}" min="-1" max="3" step="1">`)
+                td.html(`<input id="p${i}" onchange="
+                                document.getElementById(this.id).setAttribute('value', this.value)" 
+                                class="input" type="number" value="${value}" min="-1" max="3" 
+                                step="1">`)
             }
         }
     } else {
@@ -136,23 +139,24 @@ function edit_grade(grade_id, user_id, number_str) {
 
 function delete_grade(grade_id, user_id, number_str) {
 
-    $.post('/delete_grade', {
-        id: grade_id,
-        user_id: user_id,
-        lim: limit
-    }).done(function (response) {
+    if (confirm('Удалить оценку?'))
+        $.post('/delete_grade', {
+            id: grade_id,
+            user_id: user_id,
+            lim: limit
+        }).done(function (response) {
 
-        document.getElementById(`buttons${number_str}`).style.transition = '0.3s';
-        document.getElementById(`buttons${number_str}`).style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById(`buttons${number_str}`).style.display = 'none'
-        }, 300)
+            document.getElementById(`buttons${number_str}`).style.transition = '0.3s';
+            document.getElementById(`buttons${number_str}`).style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById(`buttons${number_str}`).style.display = 'none'
+            }, 300)
 
-        show_more(0, user_id)
+            show_more(0, user_id)
 
-    }).fail(function () {
-        alert("Error AJAX request")
-    })
+        }).fail(function () {
+            alert("Error AJAX request")
+        })
 }
 
 
@@ -167,7 +171,7 @@ function show_more(new_field, user_id) {
         user_id: user_id
     }).done(function (response) {
 
-        document.getElementById('tbody').innerHTML = ''
+        $("#tbody").html('')
         let grades = JSON.parse(response['grades'])
         let quantity = grades.length
         limit = quantity
@@ -193,12 +197,15 @@ function show_more(new_field, user_id) {
                         $(`#number_str${i}`).append(`<td id="parameter_${j}${i}">${grades[i][`parameter_${j}`]}</td>`)
                 }
             }
-
+            if (grades[i]['comment'] === 'None' || grades[i]['comment'] === '')
+                $(`#number_str${i}`).append(`<td id="comment${i}">–</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
                 `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
                 `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
                 `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                `<input id="d${i}" type="button" value="Удалить" class="btn"></span></div>`)
+                `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
         delete_buttons()
         buttons(limit)
@@ -233,7 +240,7 @@ function sort(parameter, user_id) {
         function (response) {
             let grades = JSON.parse(response['grades'])
             let quantity = grades.length
-            limit=quantity
+            limit = quantity
 
             for (let i = 0; i < quantity; i++) {
                 $(`#expert_id${i}`).html(grades[i]['expert_id'] ? grades[i]['expert_id'] : '–');
@@ -243,9 +250,15 @@ function sort(parameter, user_id) {
                     if ($(`#parameter_${j}${i}`))
                         $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ?
                             grades[i][`parameter_${j}`] : '–')
+
+                $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
+
+                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
+                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
-            delete_buttons()
-            buttons(limit)
+
         }).fail(function () {
         alert("Error AJAX request")
     })

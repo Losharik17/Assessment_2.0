@@ -1,22 +1,22 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, PasswordField, BooleanField, SubmitField, FileField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, Length
 from app.models import User
 from wtforms.fields.html5 import DateField
 
 
 
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
+    password = PasswordField('Пароль', validators=[DataRequired(message="Неверный пароль")])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
-    avatar = FileField('Фото', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    #avatar = FileField('Фото', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
         'Повторите пароль', validators=[DataRequired(), EqualTo('password')])
@@ -29,7 +29,7 @@ class RegistrationForm(FlaskForm):
 
 
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
     submit = SubmitField('Сбросить пароль?')
 
 

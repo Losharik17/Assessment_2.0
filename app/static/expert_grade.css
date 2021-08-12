@@ -1,15 +1,5 @@
 @charset "utf-8";
 
-.form {
-    margin: auto;
-    width: 500px;
-    padding: 32px;
-    border-radius: 10px;
-    box-shadow: 0 4px 16px #ccc;
-    font-family: sans-serif;
-    letter-spacing: 1px;
-}
-
 button {
     border-radius: 100%;
     width:2px;
@@ -18,37 +8,45 @@ button {
 
 .form_radio_btn {
     display: inline-block;
-    margin-right: 10px;
+    background-color: rgba(199, 206, 255, 0);
 }
+
 .form_radio_btn input[type=radio] {
     display: none;
 }
+
 .form_radio_btn label {
+    color: black;
     display: inline-block;
     cursor: pointer;
     padding: 0px 15px;
     line-height: 34px;
     border: 2px solid #999;
-    border-radius: 50%;
-    background: #c0a16b;
+    border-radius: 10px;
+    background: rgba(142, 193, 255, 0.73);
     user-select: none;
+    transition: all 0.2s linear;
 }
 
 .form_radio_btn input[type=radio]:checked + label {
-    background: #ffe0a6;
+    background: #0084e5;
 }
 
-.form_radio_btn label:hover {
-    color: #666;
-    background: #8a6d3b;
+@media(hover: hover) {
+    .form_radio_btn label:hover {
+        color: #000000;
+        background: #00679d;
+    }
 }
 
 .form_radio_btn input[type=radio]:disabled + label {
-    background: #efefef;
+    background: #0088CC;
     color: #666;
 }
 
 .form_button {
+    display: inline-block;
+    margin: 7px 7px 10px;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -62,16 +60,118 @@ button {
     transition: 0.3s;
 }
 
-.form_button:hover {
-    background-color: rgba(0, 113, 240, 0.7);
+@media(hover: hover) {
+    .form_button:hover {
+        background-color: rgba(0, 113, 240, 0.7);
+    }
 }
 
 .form_button:focus {
-    background-color: rgba(0, 49, 111, 0.7);
+    background-color: rgb(0, 33, 77);
+}
+
+
+.form_button_cancel {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 7px 7px 10px;
+    border: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    font-size: 16px;
+    color :#fff ;
+    background-color: crimson;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    text-decoration: none; !important;
+}
+
+@media(hover: hover) {
+    .form_button_cancel:hover {
+        background-color: rgba(199, 55, 86, 0.7);
+    }
+}
+
+.form_button_cancel:focus {
+    background-color: rgb(129, 13, 36);
 }
 
 .submit {
     justify-content: center;
     text-align: center;
     margin: 10px auto;
+}
+
+input {
+    background-color: #1a73e8;
+    border: 1px ;
+    border-radius: 5px;
+}
+
+input:active {
+    background-color: #2a7aee;
+    box-shadow: 0 1px 5px #9e9e9e;
+}
+
+.content {
+    display: inline-block;
+    background-color: #e8edff;
+    width: 100%;
+}
+
+.container {
+    background-color: #e8edff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.photo {
+    display: flex;
+    margin: auto;
+    background-color: #e8edff;
+    vertical-align: center;
+    justify-content: left;
+}
+
+.data {
+    display: flex;
+    margin: 0 auto;
+    justify-content: center;
+    vertical-align: center;
+    align-items: center;
+    background-color: #e8edff;
+}
+
+.assessments {
+    background-color: #e8edff;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: center;
+}
+
+/*Поле выставления оценки*/
+.crit {
+    margin: 4px auto;
+    border-bottom: 1px dotted;
+    border-radius: 3px;
+}
+
+.comment {
+    /* = Убираем скролл */
+    overflow: auto;
+    /* = Убираем увеличение */
+    resize: none;
+    margin-left: 5%;
+    width: 90%;
+    height: 90px;
+
+    /* = Добавим фон, рамку, отступ*/
+    background: #f6f6f6;
+    border: 1px solid #cecece;
+    border-radius: 8px 0 0 0;
+    padding: 8px 0 8px 10px;
 }

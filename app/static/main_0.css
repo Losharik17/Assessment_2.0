@@ -1,5 +1,49 @@
 @charset "UTF-8";
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+@media screen and (max-width: 768px) {
+    .logo {
+        width: 30%;
+        height: 20%;
+    }
+
+    .content {
+        justify-content: center;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 60px;
+    }
+
+    * {
+
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .logo {
+        max-width: 300px;
+        width: 24%;
+        height: 15%;
+    }
+
+    .content {
+        justify-content: center;
+        vertical-align: middle;
+        align-items: center;
+        margin-top: 10px;
+        margin-bottom: 55px;
+    }
+
+    * {
+
+    }
+}
+
+* {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
 
 body {
     justify-content: center;
@@ -8,6 +52,13 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #e8edff;
     margin: 0;
+}
+
+.maket {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
 }
 
 .shapka {
@@ -21,27 +72,21 @@ body {
 }
 
 .podval {
+    max-height: 50px;
     display: flex;
-    vertical-align: middle;
-    align-items: center;
-    text-align: left;
-    position:fixed;
-    left:0;
-    bottom:0;
-    height:10%;
-    width:100%;
-    background-color: #1c1919;
-    color: #ffffff;
-}
-
-.content {
     justify-content: center;
     vertical-align: middle;
     align-items: center;
-}
-
-.exit {
-    margin-right: 25px;
+    text-align: center;
+    position: fixed;
+    clear: both;
+    height: 10%;
+    width: 100%;
+    background-color: #1c1919;
+    color: #ffffff;
+    right: 0;
+    bottom: 0;
+    margin-top: 10px;
 }
 
 .exit_button {
@@ -55,25 +100,55 @@ body {
     transition: all .7s;
 }
 
-.exit .exit_button:hover:before {
-    bottom: -50px;
+@media (hover: hover) {
+    .exit .exit_button:hover:before {
+        bottom: -50px;
+    }
 }
 
 .exit a {
     color: crimson;
 }
 
-.exit .exit_button {
-    display: inline-block;
-    width: 130px;
-    height: 40px;
-    line-height: 40px;
-    margin: 20px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid crimson;
-    transition: color .5s;
-    text-decoration: none; !important;
+@media screen and (min-width: 768px) {
+    .exit .exit_button {
+        display: inline-block;
+        width: 130px;
+        height: 40px;
+        line-height: 40px;
+        margin: 20px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid crimson;
+        transition: color .5s;
+        text-decoration: none;
+    !important;
+    }
+
+    .exit {
+        margin-right: 25px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .exit .exit_button {
+        display: inline-block;
+        width: 110px;
+        height: 30px;
+        line-height: 30px;
+        margin: 5px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid crimson;
+        transition: color .5s;
+        text-decoration: none;
+    !important;
+    }
+
+    .exit {
+        margin-right: 7px;
+        width: min-content;
+    }
 }
 
 .exit .exit_button:before {
@@ -86,13 +161,22 @@ body {
     border-radius: 50%;
 }
 
-.exit .exit_button:hover {
-    color: #fff;
+@media (hover: hover) {
+    .exit .exit_button:hover {
+        color: #fff;
+    }
 }
 
-.buttons {
-    margin-right: 25px;
+.exit .exit_button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
 }
+
+.exit .exit_button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
 
 .button {
     text-align: center;
@@ -105,26 +189,58 @@ body {
     transition: all .7s;
 }
 
-.buttons .button:hover:before {
-    bottom: -50px;
+@media (hover: hover) {
+    .buttons .button:hover:before {
+        bottom: -50px;
+    }
 }
 
 .buttons a {
     color: rgba(0, 86, 189, 0.7);
 }
 
-.buttons .button {
-    display: inline-block;
-    width: 130px;
-    height: 40px;
-    line-height: 40px;
-    margin: 20px;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(0, 86, 189, 0.7);
-    transition: color .5s;
-    text-decoration: none; !important;
+@media screen and (min-width: 768px) {
+    .buttons .button {
+        display: inline-block;
+        width: 130px;
+        height: 40px;
+        line-height: 40px;
+        margin: 20px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 86, 189, 0.7);
+        transition: color .5s;
+        text-decoration: none;
+    !important;
+    }
+
+    .buttons {
+        margin-right: 25px;
+    }
+
 }
+
+@media screen and (max-width: 768px) {
+    .buttons .button {
+        display: inline-block;
+        width: 110px;
+        height: 30px;
+        line-height: 30px;
+        margin: 5px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(0, 86, 189, 0.7);
+        transition: color .5s;
+        text-decoration: none;
+    !important;
+    }
+
+    .buttons {
+        margin-right: 7px;
+        width: min-content;
+    }
+}
+
 
 .buttons .button:before {
     content: "";
@@ -136,17 +252,30 @@ body {
     border-radius: 50%;
 }
 
-.buttons .button:hover {
-    color: #fff;
+@media (hover: hover) {
+    .buttons .button:hover {
+        color: #fff;
+    }
 }
 
+.buttons .button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.buttons .button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
+/* прелоадер */
 .preloader {
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    z-index: 999999;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,6 +300,7 @@ body {
     border-top-color: #337AB7;
     animation: preloader-5-spin 2s linear infinite;
 }
+
 .preloader-5:before {
     content: "";
     position: absolute;
@@ -183,6 +313,7 @@ body {
     border-top-color: #BFE2FF;
     animation: preloader-5-spin 3s linear infinite;
 }
+
 .preloader-5:after {
     content: "";
     position: absolute;
@@ -195,8 +326,9 @@ body {
     border-top-color: #337AB7;
     animation: preloader-5-spin 1.5s linear infinite;
 }
+
 @keyframes preloader-5-spin {
-    0%   {
+    0% {
         transform: rotate(0deg);
     }
     100% {
@@ -204,4 +336,53 @@ body {
     }
 }
 
+/* всплывающие уведомления и цвета для разных категорий */
+.message {
+    width: max-content;
+    height: 30px;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
 
+
+
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.warning {
+    background-color: #ffeb3b;
+
+    box-shadow:
+            inset 0 7em 10em -5em rgba(255,255,255,0.6),
+            0 0.3em 0.5em -0.2em rgb(175, 189, 47),
+            0 1em 2em -0.75em rgba(175, 189, 47, 0.75),
+            0 1em 3em -0.5em rgba(163, 189, 47, 0.5),
+            0 3em 3em -0.25em rgba(175, 189, 47, 0.2);
+}
+
+.success {
+    background-color: #a0ff3b;
+
+    box-shadow:
+            inset 0 7em 10em -5em rgba(255,255,255,0.6),
+            0 0.3em 0.5em -0.2em rgb(125, 189, 47),
+            0 1em 2em -0.75em rgba(125, 189, 47, 0.75),
+            0 1em 3em -0.5em rgba(125, 189, 47, 0.5),
+            0 3em 3em -0.25em rgba(125, 189, 47, 0.2);
+}
+
+.danger {
+    background-color: #ff3b3b;
+
+    box-shadow:
+            inset 0 7em 10em -5em rgba(255,255,255,0.6),
+            0 0.3em 0.5em -0.2em rgb(189, 47, 47),
+            0 1em 2em -0.75em rgba(189, 47, 47, 0.7),
+            0 1em 3em -0.5em rgba(125, 47, 47, 0.5),
+            0 3em 3em -0.25em rgba(125, 47, 47, 0.2);
+}
