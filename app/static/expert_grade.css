@@ -29,15 +29,8 @@ button{
     user-select: none;
 }
 
-@media(hover: hover) {
-    .form_radio_btn label:hover {
-        color: #000000;
-        background: #00679d;
-    }
-}
-
 .form_radio_btn input[type=radio]:checked + label {
-    background: #0094e5
+    background: rgb(0, 114, 180)
 }
 
 .form_radio_btn input[type=radio]:disabled + label {
@@ -61,11 +54,6 @@ button{
     transition: 0.3s;
 }
 
-@media(hover: hover) {
-    .form_button:hover {
-        background-color: rgba(0, 113, 240, 0.7);
-    }
-}
 
 .form_button:focus {
     background-color: rgb(0, 33, 77);
@@ -89,11 +77,6 @@ button{
     text-decoration: none; !important;
 }
 
-@media(hover: hover) {
-    .form_button_cancel:hover {
-        background-color: rgba(199, 55, 86, 0.7);
-    }
-}
 
 .form_button_cancel:focus {
     background-color: rgb(129, 13, 36);
@@ -125,7 +108,9 @@ input:active{
 .container {
     background-color: #e8edff;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    vertical-align: center;
+    align-items: center;
 }
 
 .photo {
@@ -137,10 +122,11 @@ input:active{
 }
 
 .data {
-    margin-right: 40%;
+    margin: auto;
     display: flex;
-    vertical-align: center;
     justify-content: center;
+    vertical-align: center;
+    align-items: center;
     background-color: #e8edff;
 }
 

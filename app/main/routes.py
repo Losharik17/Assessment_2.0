@@ -42,7 +42,7 @@ def export_excel():
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
     df3 = df3.drop(columns=['id'])
-    filename = "/Name.xlsx"
+    filename = "/Отчёт.xlsx"
 
     writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
