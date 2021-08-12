@@ -9,6 +9,7 @@ from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
 import os
+import pandas as pd
 
 
 @bp.route('/', methods=['GET', 'POST'])
