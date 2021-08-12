@@ -1,5 +1,6 @@
 {% extends "main_0.html" %}
 
+
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
@@ -24,6 +25,7 @@
                 </tr>
             </table>
         </div>
+
     </div>
 
     <div class="table-wrap">
@@ -40,6 +42,7 @@
                 {% endfor %}
                 <th id="comment" class="sort">Комментарий</th>
             </tr>
+
             </thead>
 
             <tbody id="tbody">
@@ -91,15 +94,15 @@
             {% endfor %}
             </tbody>
         </table>
-    </div>
 
-    <div class="show">
-        <a class="show_btn" href="javascript:show_more(2, {{ user_id }})">
-            Показать больше</a>
-        <a class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
-            Показать все</a>
+        <div class="show">
+            <a class="show_btn" href="javascript:show_more(2, {{ user_id }})">
+                Показать больше</a>
+            <a class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
+                Показать все</a>
+        </div>
     </div>
-
+    
     <script>
         buttons({{ i.a }})
         delete_buttons({{ user_id }})

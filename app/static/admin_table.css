@@ -142,3 +142,64 @@ th.sort[data-order="1"]::after {
 }
 
 
+.choice {
+    border: 2px solid rgba(0, 64, 144, 0.7);
+    width: 150px;
+    height: 40px;
+}
+
+.select {
+    width: 130px;
+    margin: 0 auto;
+}
+
+.wrapper_dropdown  select{
+    width: 150px;
+    border-radius: 3px;
+    appearance: none;            /* remove arrow        */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border:0;
+    background-color: #AFCDE7;
+}
+
+.wrapper_dropdown:hover {
+    box-shadow: 0px 0px 3px gray;
+}
+
+.wrapper_dropdown select::-ms-expand{
+    display: none;
+}
+
+.dropdown {
+    width: 8px;
+    height: 0px;
+    background: #AFCDE7;
+    position: absolute;
+    z-index: -9999;
+    right: 6px;
+    top: 14px;
+    text-align: center;
+}
+
+.dropdown:before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    border: 1px solid darkblue;
+
+    border-top: 0
+}
+
+.dropdown:after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    border: 1px solid transparent;
+    border-top-color: #AFCDE7;
+    border-bottom: 0;
+}
+
+.select {
+    text-align: center;
+}
