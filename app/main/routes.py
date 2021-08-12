@@ -8,6 +8,7 @@ from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, W
 from app.main import bp
 from app.main.functions import users_in_json, grades_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
+import pandas as pd
 import os
 
 
@@ -27,21 +28,34 @@ def export_excel():
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
-    df1 = df1.drop(columns=['password_hash'])
+    df1 = df1.rename(columns={"sum_grade_0": "Критерий 1", "sum_grade_1": "Критерий 2", "sum_grade_2": "Критерий 3",
+                              "sum_grade_3": "Критерий 4", "sum_grade_4": "Критерий 5",
+                              "sum_grade_all": "Итоговая оценка"}) # надо будет добавить изменение имен через формы
+    df1 = df1.fillna('-')
+    df1 = df1[df1.project_number == 1]
+    df1 = df1.drop(columns=['password_hash', 'project_id', 'project_number'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2 = df2.drop(columns=['password_hash'])
+    df2 = df2.drop(columns=['password_hash','project_id'])
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
     df3 = df3.drop(columns=['id'])
     filename = "/Name.xlsx"
 
-    writer = pd.ExcelWriter(filename)
-    df1.to_excel(writer, sheet_name='Пользователи', index=False)
+    writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm')
+    df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
+    workbook = writer.book
+    new_format = workbook.add_format({'align': 'center'})
+    worksheet = writer.sheets['Пользователи']
+    worksheet.set_column('A:L', 17, new_format)
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
+    worksheet = writer.sheets['Эксперты']
+    worksheet.set_column('A:F', 17, new_format)
     df3.to_excel(writer, sheet_name='Оценки', index=False)
+    worksheet = writer.sheets['Оценки']
+    worksheet.set_column('A:I', 17, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
@@ -112,6 +126,7 @@ def expert_grade(project_number, expert_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
+
     if (user.project_number == Expert.query.filter_by(
             id=current_user.id).first().project_number):
         pass
@@ -181,7 +196,6 @@ def admin_table(project_number, admin_id):
     admin = Admin.query.filter_by(id=admin_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
     users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
-
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
     for user in users_team:
@@ -398,6 +412,3 @@ def delete_user():
     db.session.delete(user)
     db.session.commit()
     return jsonify({'result': 'success'})
-
-
-
