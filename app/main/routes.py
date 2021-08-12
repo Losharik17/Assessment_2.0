@@ -10,7 +10,6 @@ from app.main.functions import users_in_json, grades_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
 import pandas as pd
 import os
-import pandas as pd
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -89,7 +88,7 @@ def expert(project_number, expert_id):
         user = User.query.filter_by(project_number=project_number,
                                     project_id=form.user_id.data).first()
         if user is None:
-            flash('Участник с введённым номером не зарегистрирован')
+            flash('Участник с введённым номером не зарегистрирован', 'warning')
             return redirect(url_for('main.expert', project_number=project_number,
                                     expert_id=current_user.id))
 
@@ -120,7 +119,7 @@ def expert_grade(project_number, expert_id, user_id):
         expert.quantity_grade()
         db.session.commit()
 
-        flash('Оценка сохранена')
+        flash('Оценка сохранена', 'success')
         return redirect(url_for('main.expert', project_number=project_number,
                                 expert_id=current_user.id))
 

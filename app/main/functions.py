@@ -1,9 +1,6 @@
 import random
 import string
-
 from sqlalchemy import create_engine
-import pandas as pd
-
 from app import db
 from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer, Admin
