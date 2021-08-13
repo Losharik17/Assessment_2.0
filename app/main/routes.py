@@ -6,7 +6,8 @@ from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
-from app.main.functions import users_in_json, grades_in_json, excel, to_dict
+from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
+    waiting_users_in_json, excel, to_dict
 from werkzeug.utils import secure_filename
 import pandas as pd
 import os
@@ -30,14 +31,14 @@ def export_excel():
     df1 = pd.DataFrame(data_list)
     df1 = df1.rename(columns={"sum_grade_0": "Критерий 1", "sum_grade_1": "Критерий 2", "sum_grade_2": "Критерий 3",
                               "sum_grade_3": "Критерий 4", "sum_grade_4": "Критерий 5",
-                              "sum_grade_all": "Итоговая оценка"}) # надо будет добавить изменение имен через формы
+                              "sum_grade_all": "Итоговая оценка"})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1[df1.project_number == 1]
     df1 = df1.drop(columns=['password_hash', 'project_id', 'project_number'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2 = df2.drop(columns=['password_hash','project_id'])
+    df2 = df2.drop(columns=['password_hash', 'project_id'])
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -126,7 +127,6 @@ def expert_grade(project_number, expert_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
-
     if (user.project_number == Expert.query.filter_by(
             id=current_user.id).first().project_number):
         pass
@@ -139,7 +139,18 @@ def expert_grade(project_number, expert_id, user_id):
 @login_required
 def viewer(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-    return render_template('viewer.html', viever=viewer)
+    projects = Project.query.filter_by(viewer_id=viewer_id).all()
+    users_in_project = []
+    experts_in_project = []
+    for project in projects:
+        users_in_project.append(User.query.filter_by(project_number=project.number)
+                                .all().length())
+        experts_in_project.append(Expert.query.filter_by(project_number=project.number)
+                                  .all().length())
+
+    return render_template('viewer.html', viever=viewer, projects=projects,
+                           users_in_project=users_in_project,
+                           experts_in_project=experts_in_project)
 
 
 # страница для создания нового проекта
@@ -204,6 +215,15 @@ def admin_table(project_number, admin_id):
 
     return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
                            users=users, ParName=parameters, project_number=project_number)
+
+
+# страница для выдачи ролей
+@bp.route('/admin_waiting_users/<admin_id>', methods=['GET', 'POST'])
+@login_required
+def admin_waiting_users(admin_id):
+    waiting_users = WaitingUser.query.limit(15)
+
+    return render_template('admin_waiting_users.html', waiting_users=waiting_users)
 
 
 # таблица личных оценок участника (для админа)
@@ -361,19 +381,23 @@ def delete_grade():
 
 # назначение роли администратора или наблюдателя
 # нужен аргумент Id пользователя
-@bp.route('/add_waiting_user', methods=['POST'])
+@bp.route('/give_role', methods=['POST'])
 @login_required
-def add_waiting_user():
+def give_role():
     if WaitingUser.query.filter_by(id=request.form['id']).first():
 
         waiting_user = WaitingUser.query.filter_by(id=request.form['id']).first()
 
-        if request.form['role'] == 'admin':
+        if request.form['role'] == 'Администратор':
             user = Admin(username=waiting_user.username, email=waiting_user.email,
                          password_hash=waiting_user.password_hash)
-        elif request.form['role'] == 'viewer':
+        elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
                           password_hash=waiting_user.password_hash)
+        elif request.form['role'] == 'Удалить':
+            db.session.delete(waiting_user)
+            db.session.commit()
+            return jsonify({'result': 'deleted'})
         else:
             return jsonify({'result': 'error'})
 
@@ -412,3 +436,41 @@ def delete_user():
     db.session.delete(user)
     db.session.commit()
     return jsonify({'result': 'success'})
+
+
+# увелечение количества отображаемых пользователей в таблице раздачи ролей
+@bp.route('/show_more_waiting_users', methods=['POST'])
+@login_required
+def show_more_waiting_users():
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+
+            waiting_users = WaitingUser.query\
+                .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
+                .limit(request.form['lim'])
+
+        else:
+            waiting_users = WaitingUser.query\
+                .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
+                .limit(request.form['lim'])
+    else:
+        waiting_users = WaitingUser.query\
+            .order_by(WaitingUser.project_id).limit(request.form['lim'])
+
+    return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
+
+
+# сортировка таблицы зарегистрированных пользователей
+@bp.route('/sort_waiting_users', methods=['POST'])
+@login_required
+def sort_waiting_users():
+    if request.form['sort_up'] == 'true':
+        waiting_users = WaitingUser.query\
+            .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
+            .limit(request.form['lim'])
+    else:
+        waiting_users = WaitingUser.query\
+            .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
+            .limit(request.form['lim'])
+
+    return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})

@@ -71,6 +71,20 @@ def grades_in_json(grades):
     return string
 
 
+def waiting_users_in_json(waiting_users):
+    string = '['
+    for waiting_user in waiting_users:
+        string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}"'\
+            .format(str(waiting_user.id),
+                    str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
+                    str(waiting_user.email),
+                    str(waiting_user.username))
+        string += '},'
+    string = string[:len(string) - 1] + ']'
+
+    return string
+
+
 def to_dict(row):
     if row is None:
         return None

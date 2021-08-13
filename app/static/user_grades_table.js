@@ -174,7 +174,20 @@ function show_more(new_field, user_id) {
         $("#tbody").html('')
         let grades = JSON.parse(response['grades'])
         let quantity = grades.length
-        limit = quantity
+
+        if (limit > quantity) {
+            limit = quantity
+            $('body').append(
+                `<div class="message warning"><h4>
+                В таблице присутствуют все оценки участника</h4></div>`)
+            $('#show_more').css('display', 'none')
+            $('#show_all').css('display', 'none')
+        }
+        else {
+            $('#show_more').css('display', 'inline-block')
+            $('#show_all').css('display', 'inline-block')
+        }
+
         for (let i = 0; i < quantity; i++) {
 
             $("#tbody").append(`<tr id="number_str${i}"></tr>`)

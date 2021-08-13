@@ -10,6 +10,19 @@ function draw_table(response, project_number) {
     let users = JSON.parse(response['users'])
     let quantity = users.length
 
+    if (limit > quantity) {
+        limit = quantity
+        $('body').append(
+            `<div class="message warning"><h4>
+                В таблице присутствуют все участники</h4></div>`)
+        $('#show_more').css('display', 'none')
+        $('#show_all').css('display', 'none')
+    }
+    else {
+        $('#show_more').css('display', 'inline-block')
+        $('#show_all').css('display', 'inline-block')
+    }
+
     for (let i = 0; i < quantity; i++) {
 
         $("#tbody").append(`<tr id="number_str${i}"` +
@@ -65,16 +78,6 @@ function show_more(new_field, project_number) {
         project_number: project_number,
         team: $('#teams').val()
     }).done(function(response) {
-
-
-        if (limit > JSON.parse(response['users']).length) {
-            $('#show_more').css('display', 'none')
-            $('#show_all').css('display', 'none')
-        }
-        else {
-            $('#show_more').css('display', 'inline-block')
-            $('#show_all').css('display', 'inline-block')
-        }
 
         draw_table(response, project_number)
 

@@ -1,0 +1,66 @@
+{% extends "main_0.html" %}
+
+{%  block app_content %}
+
+    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_waiting_users.css')}}">
+    <script src="{{ url_for('static', filename='admin_waiting_users.js') }}"></script>
+
+    <div class="container">
+        <h1 style="margin: 10px auto; text-align: center;">Выдача ролей</h1>
+
+        <div class="table-wrap">
+            <table class="table-sort">
+                <thead>
+                <tr>
+                    <th id="username" class="sort" data-order="0"
+                        onclick="sort(this.id)">ФИО</th>
+                    <th id="email" class="sort" data-order="0"
+                        onclick="sort(this.id)">Email</th>
+                    <th id="registration_date" class="sort" data-order="1"
+                        onclick="sort(this.id)">Дата регистрации</th>
+                </tr>
+                </thead>
+
+                <tbody id="tbody" class="tbody-table">
+                {% set i = namespace(a=0) %}
+                {% for waiting_user in waiting_users %}
+
+                    <tr id="number_str{{ i.a }}">
+
+                        <td id="username{{ i.a }}">{% if waiting_user.username %}{{ waiting_user.username }}{% else %}–{% endif %}</td>
+                        <td id="email{{ i.a }}">
+                            {% if waiting_user.email %}
+                                {{ waiting_user.email }}
+                            {% else %}
+                                –
+                            {% endif %}
+                        </td>
+                        <td id="registration_date{{ i.a }}">
+                            {% if waiting_user.registration_date %}
+                                {{ waiting_user.registration_date }}
+                            {% else %}
+                                –
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% set i.a = i.a + 1 %}
+
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="show">
+            <a id="show_more" class="show_btn" href="javascript:show_more(2)">
+                Показать больше</a>
+            <a id="show_all" class="show_btn" href="javascript:show_more(10000)">
+                Показать все</a>
+        </div>
+    </div>
+
+    <script>
+        show_more(0)
+    </script>
+
+{% endblock %}
