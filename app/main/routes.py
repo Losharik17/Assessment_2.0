@@ -140,17 +140,15 @@ def expert_grade(project_number, expert_id, user_id):
 def viewer(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
     projects = Project.query.filter_by(viewer_id=viewer_id).all()
-    users_in_project = []
+    '''users_in_project = []
     experts_in_project = []
     for project in projects:
         users_in_project.append(User.query.filter_by(project_number=project.number)
                                 .all().length())
         experts_in_project.append(Expert.query.filter_by(project_number=project.number)
-                                  .all().length())
+                                  .all().length())'''
 
-    return render_template('viewer.html', viever=viewer, projects=projects,
-                           users_in_project=users_in_project,
-                           experts_in_project=experts_in_project)
+    return render_template('viewer_main.html', viever=viewer, projects=projects)
 
 
 # страница для создания нового проекта
