@@ -11,14 +11,14 @@
     float:left;
     display: inline;
     width: 45%;
-
+    justify-content:space-around;
 }
 
 .block_2 {
     float:right;
     display: inline;
     width: 45%;
-
+    justify-content:space-around;
 }
 
 
@@ -28,16 +28,19 @@
 }
 
 .block_4 {
-    width: 90px;
+    width: 60%;
     background: #0071f0;
-    line-height: 40px;
+    line-height: 30px;
     border-width: 0;
     border-radius: 20px;
     margin-bottom:20px;
     color: #fff;
     display:inline-block;
-
+    height: 30px;
 }
+
+
+
 
 /*****************************************************/
 .content {
@@ -97,6 +100,7 @@ input::-webkit-inner-spin-button {
     border-radius: 7px;
     color: #fff;
     cursor: pointer;
+    transform: scale(1.5)
 }
 
 
@@ -114,17 +118,26 @@ input::-webkit-inner-spin-button {
 
 
 
-.input_text {
-    width: 50%;
+.input_text_1 {
+    width: 60%;
     padding: 0 20px;
     background: #0071f0;
-    line-height: 40px;
+    height: 30px;
     border-width: 0;
     border-radius: 20px;
     color: #fff;
     margin-bottom: 20px;
 }
 
+.input_text_2 {
+    width: 50%;
+    margin-left: 20px;
+    background: #0071f0;
+    border-width: 0;
+    border-radius: 20px;
+    color: #fff;
+    margin-bottom: 20px;
+}
 
 .form_input {
     border: 2px solid black;
@@ -165,7 +178,7 @@ input::-webkit-inner-spin-button {
     line-height: 1;
     margin-top: 1px;
     font-family: Roboto sans-serif;
-
+    font-size: 16px;
 }
 
 .input__file-button {
@@ -244,26 +257,24 @@ input::-webkit-inner-spin-button {
 /*submit***************************/
 
 .container {
-    width:100%;
-    text-align: center;
-    margin: 0 auto;
+    justify-content: center;
+    display: block;
 }
 
 .btn {
+    display:block;
     background-color: #0071f0;
     cursor: pointer;
-/ / display: block;
     font-size: 16px;
     font-family: Roboto sans-serif;
     font-weight: 400;
     line-height: 45px;
-    margin: 0 0 2em;
     max-width: 160px;
     position: relative;
     text-decoration: none;
     text-transform: uppercase;
-    width: 100%;
     color: white;
+    margin: auto;
 }
 
 .btn-5 {
@@ -274,7 +285,8 @@ input::-webkit-inner-spin-button {
     transition: all 1000ms cubic-bezier(0.19, 1,0.22, 1);
 }
 
-.add {
+.add_1 {
+    font-size:16px;
     width: 120px;
     height: 40px;
     margin: 10px auto auto;
@@ -285,6 +297,22 @@ input::-webkit-inner-spin-button {
     color: #fff;
     cursor: pointer;
     display: block;
+
+}
+
+
+.add_2 {
+    width: 120px;
+    height: 40px;
+    margin: 10px auto auto;
+    border: 0;
+    background-color: #f00000;
+    font-family: Roboto sans-serif;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    font-size:16px;
 
 }
 @media screen {
