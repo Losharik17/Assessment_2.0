@@ -146,7 +146,10 @@ input:active{
     border-radius: 3px;
 }
 
-.comment {
+.comment,
+.comment:not(focus) {
+    margin-top: 10px;
+    transition: all 0.5s ease;
     /* = Убираем скролл */
     overflow: auto;
     /* = Убираем увеличение */
@@ -156,9 +159,24 @@ input:active{
     height: 90px;
 
     /* = Добавим фон, рамку, отступ*/
-    background: #f6f6f6;
+    background: #c5c5c5;
     border: 1px solid #cecece;
     border-radius: 8px 0 0 0;
     padding: 8px 0 8px 10px;
+}
+
+.comment:focus {
+    outline: none;
+    background: #f1f1f1;
+}
+
+.comment:focus::placeholder {
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.comment:not(focus)::placeholder {
+    transition: all 0.2s ease;
+    opacity: 1;
 }
 

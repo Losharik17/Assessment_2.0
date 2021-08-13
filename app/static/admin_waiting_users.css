@@ -243,17 +243,17 @@ th.sort[data-order="1"]::after {
 
 @media(hover: hover) {
     .btn_delete:hover {
-        box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 1px 3px 1px rgb(26 115 232);
+        box-shadow: 0 1px 2px 0 rgb(230 41 41), 0 1px 3px 1px rgb(230 41 41);
         background-color: #e62929;
     }
 }
 
 .btn_delete:active {
-    box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 2px 6px 2px rgb(26 115 232);
+    box-shadow: 0 1px 2px 0 rgb(230 41 41), 0 2px 6px 2px rgb(230 41 41);
     background-color: #e81a1a !important;
 }
 .btn_delete:focus-visible {
-    box-shadow: 0 0 0 3px #fa8787;
+    box-shadow: 0 0 0 3px #ff6161;
 }
 .btn_delete:disabled {
     pointer-events: none;

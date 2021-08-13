@@ -50,6 +50,7 @@
                     </div>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
+                {{ form.comment(class="comment") }}
                 <div class="submit">
                     {{ form.submit() }}
                     <a class="form_button_cancel" href="{{ url_for('main.expert',
