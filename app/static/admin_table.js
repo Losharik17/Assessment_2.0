@@ -10,6 +10,23 @@ function draw_table(response, project_number) {
     let users = JSON.parse(response['users'])
     let quantity = users.length
 
+    if (limit > quantity) {
+        limit = quantity
+        $('body').append(
+            `<div class="message warning"><h4>
+                В таблице присутствуют все участники</h4></div>`)
+        setTimeout( ()=> {
+            $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+        setTimeout( ()=> {
+            $('.message').css({display: 'none'})}, 2300)
+        $('#show_more').css('display', 'none')
+        $('#show_all').css('display', 'none')
+    }
+    else {
+        $('#show_more').css('display', 'inline-block')
+        $('#show_all').css('display', 'inline-block')
+    }
+
     for (let i = 0; i < quantity; i++) {
 
         $("#tbody").append(`<tr id="number_str${i}"` +
@@ -34,6 +51,12 @@ function draw_table(response, project_number) {
             $(`#number_str${i}`).append(`<td id="team${i}">–</td>`)
         else
             $(`#number_str${i}`).append(`<td id="team${i}">${users[i]['team']}</td>`)
+
+        if (users[i]['place'] === 'None')
+            $(`#number_str${i}`).append(`<td id="place${i}">–</td>`)
+        else
+            $(`#number_str${i}`).append(`<td id="place${i}">${users[i]['place']}</td>`)
+
 
         for(let j = 0; j < 10; j++) {
             if (users[i][`sum_grade_${j}`]) {
@@ -65,16 +88,6 @@ function show_more(new_field, project_number) {
         project_number: project_number,
         team: $('#teams').val()
     }).done(function(response) {
-
-
-        if (limit > JSON.parse(response['users']).length) {
-            $('#show_more').css('display', 'none')
-            $('#show_all').css('display', 'none')
-        }
-        else {
-            $('#show_more').css('display', 'inline-block')
-            $('#show_all').css('display', 'inline-block')
-        }
 
         draw_table(response, project_number)
 
@@ -123,6 +136,7 @@ function sort(parameter, project_number) {
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
                 $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ? users[i]['birthday'] : '–')
                 $(`#team${i}`).html(users[i]['team'] !== 'None' ? users[i]['team'] : '–')
+                $(`#place${i}`).html(users[i]['place'] !== 'None' ? users[i]['place'] : '–')
 
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&

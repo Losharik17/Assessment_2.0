@@ -45,3 +45,5 @@ openpyxl==3.0.7
 # requirements for Heroku
 #
 #
+
+APScheduler~=3.7.0

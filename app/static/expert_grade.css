@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 
-button{
+button {
     border-radius: 100%;
     width:2px;
     height: 2px;
@@ -9,33 +9,26 @@ button{
 
 .form_radio_btn {
     display: inline-block;
-    margin-right: 10px;
     background-color: #e8edff;
 }
+
 .form_radio_btn input[type=radio] {
     display: none;
 }
+
 .form_radio_btn label {
     display: inline-block;
     cursor: pointer;
-    padding: 0 15px;
+    padding:  0 15px;
     line-height: 34px;
-    border: 2px solid #999;
-    border-radius: 10px;
-    //background: rgba(142, 193, 255, 0.73);
-    user-select: none;
+    border: 2px solid #0071f0;
+    border-radius: 50%;
     transition: all 0.2s linear;
-    background: #4fbeff;
-    user-select: none;
 }
 
 .form_radio_btn input[type=radio]:checked + label {
-    background: rgb(0, 114, 180)
-}
-
-.form_radio_btn input[type=radio]:disabled + label {
-    background: #0088CC;
-    color: #666;
+    background: #0071f0;
+    color: white;
 }
 
 .form_button {
@@ -128,6 +121,9 @@ input:active{
     vertical-align: center;
     align-items: center;
     background-color: #e8edff;
+    padding: 8px 6px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 4px 2px #c5c5c5;
 }
 
 .assessments {
@@ -141,12 +137,17 @@ input:active{
 
 /*Поле выставления оценки*/
 .crit {
-    margin: 4px auto;
-    border-bottom: 1px dotted;
-    border-radius: 3px;
+    justify-content: space-around;
+    margin: 8px auto;
+    padding: 8px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 4px 2px #c5c5c5;
 }
 
-.comment {
+.comment,
+.comment:not(focus) {
+    margin-top: 10px;
+    transition: all 0.5s ease;
     /* = Убираем скролл */
     overflow: auto;
     /* = Убираем увеличение */
@@ -156,9 +157,24 @@ input:active{
     height: 90px;
 
     /* = Добавим фон, рамку, отступ*/
-    background: #f6f6f6;
+    background: #c5c5c5;
     border: 1px solid #cecece;
     border-radius: 8px 0 0 0;
     padding: 8px 0 8px 10px;
+}
+
+.comment:focus {
+    outline: none;
+    background: #f1f1f1;
+}
+
+.comment:focus::placeholder {
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.comment:not(focus)::placeholder {
+    transition: all 0.2s ease;
+    opacity: 1;
 }
 

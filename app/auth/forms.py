@@ -30,14 +30,14 @@ class RegistrationForm(FlaskForm):
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
-    submit = SubmitField('Сбросить пароль?')
+    submit = SubmitField('Сбросить пароль')
 
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField('Повторите пароль', validators=[DataRequired(),
                                                               EqualTo('password')])
-    submit = SubmitField('Сбросить пароль')
+    submit = SubmitField('Установить пароль')
 
 #     birth_date = DateField('Дата рождения', format='%Y-%m-%d',
 #                            validators=[DataRequired()])

@@ -10,6 +10,7 @@ from app.auth.email import send_password_reset_email
 import os
 from werkzeug.utils import secure_filename
 import time
+from flask_bootstrap import Bootstrap
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -66,9 +67,10 @@ def register():
         waiting_user.set_password(form.password.data)
         db.session.add(waiting_user)
         db.session.commit()
-        flash('Регистрация прошла успешно.<br>Когда администратор проверит вашу заявку,'
-              '<br>вам придет уведомление на почту.', 'success')
-        return redirect(url_for('main.index'))
+        flash('Регистрация прошла успешно.'
+              'Когда администратор проверит вашу заявку,'
+              'вам придет уведомление на почту.', 'success')
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
@@ -81,6 +83,10 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
+
+        expert = Expert.query.filter_by(email=form.email.data).first()
+        if expert:
+            send_password_reset_email(expert)
         flash('Проверьте вашу почту и следуйте дальнейшим инструкциям', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
@@ -93,10 +99,13 @@ def reset_password(token):
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        return redirect(url_for('main.index'))
+        user = Expert.verify_reset_password_token(token)
+        if not user:
+            return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
+
         db.session.commit()
         flash('Ваш пароль был изменён', 'success')
         return redirect(url_for('auth.login'))
