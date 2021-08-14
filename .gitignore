@@ -6,3 +6,4 @@
 *.iml
 /__pycache__
 *.flaskenv
+.vagrant/machines/default/virtualbox/private_key
