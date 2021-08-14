@@ -14,7 +14,7 @@ class Config(object):
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    ADMINS = ['tankustvotnucke@yandex.ru']
+    ADMINS = ['tankustvotnuske@gmail.com']
     USER_PER_PAGE = 15
     UPLOAD_FOLDER = '/app/static/images'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}

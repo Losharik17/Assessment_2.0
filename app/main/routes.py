@@ -26,22 +26,26 @@ def dwn():
     return render_template('download.html')
 
 
-@bp.route('/excel', methods=['GET', 'POST'])
+@bp.route('/excel/<project_number>', methods=['GET', 'POST'])
 @login_required
-def export_excel():
+def export_excel(project_number):
     """if current_user.id <= 11000:
         return redirects()"""
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
+
+    parameters = Project.query.filter_by(number=project_number).first().parameters.all()
+    i = 0
+    for parameter in parameters:
+        df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
+        i += 1
+
     df1 = df1.rename(columns={"place": "Регион", "team": "Команда", "username": "ФИО", "birthday":"Дата рождения",
-                              "sum_grade_0": "Критерий 1", "id": "ID",
-                              "sum_grade_1": "Критерий 2", "sum_grade_2": "Критерий 3",
-                              "sum_grade_3": "Критерий 4", "sum_grade_4": "Критерий 5",
                               "sum_grade_all": "Итоговая оценка"})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
-    # df1 = df1.loc[df1['project_number'].isin(1)]"
-    df1 = df1.drop(columns=['password_hash', 'project_id', 'project_number'])
+    df1 = df1.loc[df1['project_number'] == int(project_number)]
+    df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
@@ -55,7 +59,7 @@ def export_excel():
     writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
     workbook = writer.book
-    new_format = workbook.add_format({'align': 'center'})  #pip install xlsxwriter - надо установить, чтобы заработало, если нет, то хз если честн, у меня всё робит
+    new_format = workbook.add_format({'align': 'center'})
     worksheet = writer.sheets['Пользователи']
     worksheet.set_column('A:L', 19, new_format)
     df2.to_excel(writer, sheet_name='Эксперты', index=False)

@@ -129,7 +129,7 @@ def excel(filename):
     df.head
     if filename == 'user':
         df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'place']
-        prev_user = User.query.order_by(User.id.desc()).first()
+        prev_user = User.query.order_by(User.id).first()
         index = df.index
         if prev_user != None:
             c = prev_user.project_id
