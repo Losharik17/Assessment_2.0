@@ -41,19 +41,29 @@ def export_excel(project_number):
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
 
-    df1 = df1.rename(columns={"place": "Регион", "team": "Команда", "username": "ФИО", "birthday":"Дата рождения",
-                              "sum_grade_all": "Итоговая оценка"})  # надо будет добавить изменение имен через формы
+    df1 = df1.rename(columns={"place": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+                              "sum_grade_all": "Итоговая оценка", 'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
     df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
+
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2 = df2.drop(columns=['password_hash', 'project_id', 'project_number'])
+    df2 = df2.loc[df2['project_number'] == int(project_number)]
+    df2 = df2.drop(columns=['password_hash', 'id', 'project_number', 'quantity'])
+    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
     df3 = df3.drop(columns=['id'])
+    df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта',
+                        'date': 'Дата выставления оценки', 'comment': 'Комментарий'}, inplace=True)
+    i = 0
+    for parameter in parameters:
+        df3 = df3.rename(columns={"parameter_{}".format(i): parameter.name})
+        i += 1
+
     filename = "/Отчёт.xlsx"
 
     writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
@@ -68,6 +78,7 @@ def export_excel(project_number):
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:H', 19, new_format)
+    worksheet.set_column('C:C', 24, new_format)
     worksheet.set_column('I:I', 30, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
@@ -175,7 +186,6 @@ def viewer(viewer_id):
 @bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def create_project(viewer_id):
-
     viewer = Viewer.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
@@ -470,16 +480,16 @@ def show_more_waiting_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
 
-            waiting_users = WaitingUser.query\
+            waiting_users = WaitingUser.query \
                 .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
                 .limit(request.form['lim'])
 
         else:
-            waiting_users = WaitingUser.query\
+            waiting_users = WaitingUser.query \
                 .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
                 .limit(request.form['lim'])
     else:
-        waiting_users = WaitingUser.query\
+        waiting_users = WaitingUser.query \
             .order_by(WaitingUser.project_id).limit(request.form['lim'])
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
@@ -490,11 +500,11 @@ def show_more_waiting_users():
 @login_required
 def sort_waiting_users():
     if request.form['sort_up'] == 'true':
-        waiting_users = WaitingUser.query\
+        waiting_users = WaitingUser.query \
             .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
             .limit(request.form['lim'])
     else:
-        waiting_users = WaitingUser.query\
+        waiting_users = WaitingUser.query \
             .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
             .limit(request.form['lim'])
 
