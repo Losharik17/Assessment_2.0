@@ -32,20 +32,37 @@ def export_excel():
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
-    df1 = df1.rename(columns={"sum_grade_0": "Критерий 1", "sum_grade_1": "Критерий 2", "sum_grade_2": "Критерий 3",
-                              "sum_grade_3": "Критерий 4", "sum_grade_4": "Критерий 5",
-                              "sum_grade_all": "Итоговая оценка"}) # надо будет добавить изменение имен через формы
+    df1 = df1.drop(columns=['password_hash', 'project_id', 'project_number'])
+    rows = Parameter.query.count()
+    row = Parameter.query.filter_by(project_number=1).first()
+    i = row.id
+    f = 1
+    for i in range(i, rows+1):
+        parameter = Parameter.query.filter_by(id = i).first()
+        df1.rename(columns={df1.columns[f + 5]: parameter.name}, inplace=True)
+        f += 1 # 5 - это костыль, но позиция sum_grade_0 у нас вроде как постоянная поэтому менять пока не буду
+    df1.rename(columns={'sum_grade_all': 'Сумма критериев', 'username': 'ФИО',
+                        'birthday': 'Дата рождения', "team": "Команда",
+                        "place": "Регион", "id": "ID"}, inplace=True)
     df1 = df1.fillna('-')
     # df1 = df1.loc[df1['project_number'].isin(1)]"
-    df1 = df1.drop(columns=['password_hash', 'project_id', 'project_number'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2 = df2.drop(columns=['password_hash', 'project_id', 'project_number'])
+    df2 = df2.drop(columns=['password_hash', 'project_id', 'project_number', 'quantity'])
+    df2.rename(columns={'username':'ФИО', 'weight':'Вес', 'id':'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
     df3 = df3.drop(columns=['id'])
+    df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта',
+                        'date': 'Дата выставления оценки', 'comment':'Комментарий'}, inplace=True)
+    f = 1
+    i = row.id
+    for i in range(i, rows+1):
+        parameter = Parameter.query.filter_by(id = i).first()
+        df3.rename(columns={df3.columns[f + 2]: parameter.name}, inplace=True) # 2 - то же самое, что и 5
+        f += 1
     filename = "/Отчёт.xlsx"
 
     writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
@@ -60,6 +77,7 @@ def export_excel():
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:H', 19, new_format)
+    worksheet.set_column('C:C', 24, new_format)
     worksheet.set_column('I:I', 30, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
