@@ -1,0 +1,46 @@
+{% extends "main_1.html" %}
+
+
+{% block app_content %}
+    <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_main.css') }}">
+    <div class="content">
+        <h1 class="title">Проекты</h1>
+        <br>
+        <div class="block_new">
+            <div class="text_new">
+                <span class="text">Создать новый проект</span>
+            </div>
+        </div>
+        <br>
+
+
+        <div class="block">
+
+
+
+            <div class="block_logo">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="profil_image">
+            </div>
+
+            <div class="block_empty"></div>
+
+            <div class="data">
+            <span>
+                 Данные, число участников.
+            </span>
+
+
+                <div class="block_data">
+                    <span class="date_start">{{ date_start }}</span>
+                    <span class="date_end">{{ date_end }}</span>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <script src="{{ url_for('static', filename='viewer_main.js') }}"></script>
+
+{% endblock %}
