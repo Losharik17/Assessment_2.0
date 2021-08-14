@@ -7,8 +7,7 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Expert, Admin, Viewer
 from app.auth.email import send_password_reset_email
-import os
-from werkzeug.utils import secure_filename
+from flask_bootstrap import Bootstrap
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -76,6 +75,9 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
+        expert = Expert.query.filter_by(email=form.email.data).first()
+        if expert:
+            send_password_reset_email(expert)
         flash('Проверьте вашу почту и следуйте дальнейшим инструкциям')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
@@ -88,10 +90,15 @@ def reset_password(token):
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        return redirect(url_for('main.index'))
+        expert = Expert.verify_reset_password_token(token)
+        if not expert:
+            return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        user.set_password(form.password.data)
+        if user:
+            user.set_password(form.password.data)
+        else:
+            expert.set_password(form.password.data)
         db.session.commit()
         flash('Ваш пароль был изменён')
         return redirect(url_for('auth.login'))
