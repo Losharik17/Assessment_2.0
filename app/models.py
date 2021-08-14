@@ -103,23 +103,23 @@ class User(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    if int(id) < 10000:
+    if int(id) <= 10000:
         return User.query.get(int(id))
-    if 10000 < int(id) < 11000:
+    if 10000 < int(id) <= 11000:
         return Expert.query.get(int(id))
-    if 11000 < int(id) < 12000:
+    if 11000 < int(id) <= 12000:
         return Admin.query.get(int(id))
     if 12000 < int(id):
         return Viewer.query.get(int(id))
 
 
 class Expert(UserMixin, db.Model):
-    project_id = db.Column(db.Integer)
+    project_id = db.Column(db.Integer, default = 0)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     weight = db.Column(db.Float, default=1.0)
     project_number = db.Column(db.Integer)
-    id = db.Column(db.Integer, unique=True, primary_key=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True, default = 10000)
     grades = db.relationship('Grade', backref='expert', lazy='dynamic')
     quantity = db.Column(db.Integer, default=0)
     password_hash = db.Column(db.String(128))
@@ -190,6 +190,7 @@ class Viewer(UserMixin, db.Model):
 class Project(db.Model):
     number = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
+    end_date = db.Column(db.Date)
     parameters = db.relationship('Parameter', backref='project', lazy='dynamic')
 
 
@@ -230,3 +231,4 @@ event.listen(Admin.__table__, 'after_create',
 event.listen(Viewer.__table__, 'after_create',
              DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
              )
+

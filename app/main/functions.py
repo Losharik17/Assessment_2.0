@@ -1,10 +1,16 @@
 from app import db
-from app.models import User, Expert, Viewer, Admin
+from app.models import User, Expert
+from flask import redirect, url_for
 import pandas as pd
 from sqlalchemy import create_engine
 from app.auth.email import send_password_mail
-import random, string
+import random
+import string
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask_login import current_user
 
+
+engine = create_engine("sqlite:///T_park.db")
 
 def users_in_json(users):
     string = '['
@@ -85,10 +91,16 @@ def to_dict(row):
 
 def delete(Model):
     try:
-        x = db.session.query(Model).delete()
+        db.session.query(Model).delete()
         db.session.commit()
     except:
         db.session.rollback()
+
+
+def delete_project(project_number):
+    db.session.query(User).filter_by(project_number = project_number).delete()
+    db.session.query(Expert).filter_by(project_number = project_number).delete()
+    db.session.commit()
 
 
 def password_generator():
@@ -98,41 +110,101 @@ def password_generator():
     return password
 
 
-def excell(filename):
+def excel(filename):
     df = pd.read_excel(filename)
-    engine = create_engine("sqlite:///T_park.db")
     df.head
     if filename == 'user':
-        delete(User)
         df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'place']
+        prev_user = User.query.order_by(User.id.desc()).first()
         index = df.index
-        for i in range(len(index)):
-            df.loc[[i]].to_sql(filename, con=engine, if_exists='append', index=False)
+        if prev_user != None:
+            c = prev_user.project_id
+            i = c
+            b = len(index) + c
+        else:
+            c = 0
+            i = 0
+            b = len(index)
+        for i in range(i, b):
+            df.loc[[i - c]].to_sql(filename, con=engine, if_exists='append', index=False)
             a = password_generator()
             user = User.query.filter_by(id=i + 1).first()
+            user.project_id = i + 1
             user.set_password(a)
             db.session.add(user)
             db.session.commit()
+            print(a)
             send_password_mail(user, a)
     elif filename == 'admin':
-        delete(Admin)
         df.columns = ['id', 'username', 'email']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     elif filename == 'expert':
-        delete(Expert)
-        df.columns = ['project_id', 'username', 'email']
+        df.columns = ['project_id', 'username', 'email', 'weight']
+        prev_expert = Expert.query.order_by(Expert.id.desc()).first()
         index = df.index
-        for i in range(len(index)):
-            df.loc[[i]].to_sql(filename, con=engine, if_exists='append', index=False)
+        if prev_expert != None:
+            i = c = prev_expert.project_id
+            b = len(index) + c
+        else:
+            c = 0
+            i = 0
+            b = len(index)
+            me = Expert()
+            db.session.add(me)
+            db.session.commit()
+        for i in range(i, b):
+            df.loc[[i - c]].to_sql(filename, con=engine, if_exists='append', index=False)
             a = password_generator()
-            expert = Expert.query.filter_by(id=i + 1).first()
+            expert = Expert.query.filter_by(id=i + 10001).first()
+            if expert.project_id == None:
+                expert.project_id = i + 1
+            if expert.weight == None:
+                expert.weight = 1
+            expert.quantity = 0
             expert.set_password(a)
             db.session.add(expert)
             db.session.commit()
             send_password_mail(expert, a)
+        me = Expert.query.filter_by(project_id='0').first()
+        if me != None:
+            db.session.delete(me)
+            db.session.commit()
     elif filename == 'viewer':
-        delete(Viewer)
         df.columns = ['id', 'username', 'email']
         df.to_sql(filename, con=engine, if_exists='append', index=False)
     else:
         print('123')
+
+
+def delete_function():
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 month')")
+    a = a.fetchall()
+    if a != []:
+        for rows in a:
+            b = engine.execute("SELECT id FROM user WHERE project_number = ?", rows[0])
+            b = b.fetchall()
+            for row in b:
+                engine.execute("DELETE FROM grade WHERE user_id = ?", row[0])
+            engine.execute("DELETE FROM user WHERE project_number = ?", row[0])
+            engine.execute("DELETE FROM expert WHERE project_number = ?", row[0])
+            engine.execute("DELETE FROM project WHERE number = ?", row[0])
+
+
+def delete_timer():
+    shed = BackgroundScheduler(daemon=True)
+    shed.add_job(delete_function, 'interval', days=1)
+    shed.start()
+
+
+def redirects():
+    if current_user.is_anonymous:
+        return redirect(url_for('auth.login'))
+    if current_user.id < 10000:
+        return redirect(url_for('main.user', user_id=current_user.id))
+    if 10000 < current_user.id < 11000:
+        return redirect(url_for('main.expert', expert_id=current_user.id))
+    if 11000 < current_user.id < 12000:
+        return redirect(url_for('main.admin', admin_id=current_user.id))
+    if 12000 < current_user.id:
+        return redirect(url_for('main.viewer', viewer_id=current_user.id))
+

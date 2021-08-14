@@ -1,12 +1,11 @@
 import json
-from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
 from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter
 from app.main import bp
-from app.main.functions import users_in_json, grades_in_json, excell, to_dict
+from app.main.functions import users_in_json, grades_in_json, excel, to_dict, delete_timer, redirects
 import pandas as pd
 from werkzeug.utils import secure_filename
 
@@ -18,12 +17,18 @@ def index():
 
 
 @bp.route('/download')
+@login_required
 def dwn():
+    """if current_user.id <= 11000:
+        return redirects()"""
     return render_template('download.html')
 
 
 @bp.route('/excel', methods=['GET', 'POST'])
+@login_required
 def export_excel():
+    """if current_user.id <= 11000:
+        return redirects()"""
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
@@ -31,40 +36,43 @@ def export_excel():
                               "sum_grade_3": "Критерий 4", "sum_grade_4": "Критерий 5",
                               "sum_grade_all": "Итоговая оценка"}) # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
-    df1 = df1[df1.project_number == 1]
+    # df1 = df1.loc[df1['project_number'].isin(1)]"
     df1 = df1.drop(columns=['password_hash', 'project_id', 'project_number'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2 = df2.drop(columns=['password_hash','project_id'])
+    df2 = df2.drop(columns=['password_hash', 'project_id', 'project_number'])
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
     df3 = df3.drop(columns=['id'])
     filename = "/Отчёт.xlsx"
 
-    writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm')
+    writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
     workbook = writer.book
-    new_format = workbook.add_format({'align': 'center'})
+    new_format = workbook.add_format({'align': 'center'})  #pip install xlsxwriter - надо установить, чтобы заработало, если нет, то хз если честн, у меня всё робит
     worksheet = writer.sheets['Пользователи']
-    worksheet.set_column('A:L', 17, new_format)
+    worksheet.set_column('A:L', 19, new_format)
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
-    worksheet.set_column('A:F', 17, new_format)
+    worksheet.set_column('A:F', 19, new_format)
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
-    worksheet.set_column('A:I', 17, new_format)
+    worksheet.set_column('A:H', 19, new_format)
+    worksheet.set_column('I:I', 30, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
 
 @bp.route('/uploader', methods=['GET', 'POST'])
 def upload_file():
+    """if current_user.id <= 11000:
+        return redirects()"""
     if request.method == 'POST':
         f = request.files['file']
         f.save(secure_filename(f.filename.rsplit(".", 1)[0]))
-        excell(f.filename.rsplit(".", 1)[0])
+        excel(f.filename.rsplit(".", 1)[0])
         return redirect(url_for('main.index'))
     return render_template('upload.html')
 
@@ -74,6 +82,8 @@ def upload_file():
 @login_required
 def user(user_id):
     user = User.query.filter_by(id=user_id).first()
+    """if current_user.id <= 10000 and current_user.id != user.id:
+        return redirects()"""
     return render_template('user.html', user=user)
 
 
@@ -82,6 +92,8 @@ def user(user_id):
 @login_required
 def expert(project_number, expert_id):
     expert = Expert.query.filter_by(id=expert_id).first()
+    """if current_user.id <= 11000 and current_user.id != expert.id:
+        return redirects()"""
     form = UserForm()
     if form.validate_on_submit():
         user = User.query.filter_by(project_number=project_number,
@@ -98,6 +110,8 @@ def expert(project_number, expert_id):
 @bp.route('/expert/<project_number>/<expert_id>/<user_id>', methods=['GET', 'POST'])
 @login_required
 def expert_grade(project_number, expert_id, user_id):
+    """if current_user.id <= 10000:
+        return redirects()"""
     form = GradeForm()
     if form.validate_on_submit():
         if 11000 < current_user.id <= 12000:
@@ -133,6 +147,8 @@ def expert_grade(project_number, expert_id, user_id):
 @bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def viewer(viewer_id):
+    if current_user.id <= 11000:
+        return redirects()
     viewer = Viewer.query.filter_by(viewer_id=viewer_id).first()
     return render_template('viewer.html', viever=viewer)
 
@@ -141,6 +157,8 @@ def viewer(viewer_id):
 @bp.route('/admin/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin(admin_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
     return render_template('admin.html', admin=admin)
 
@@ -149,6 +167,8 @@ def admin(admin_id):
 @bp.route('/admin_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin_table(project_number, admin_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
     users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
@@ -160,6 +180,8 @@ def admin_table(project_number, admin_id):
 @bp.route('/user_grades_table/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
 def user_grades_table(project_number, user_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.all()
@@ -269,3 +291,6 @@ def delete_grade():
     db.session.commit()
 
     return jsonify({'result': 'Deleted'})
+
+
+# delete_timer()
