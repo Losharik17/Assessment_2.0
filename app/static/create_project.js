@@ -52,7 +52,7 @@ function addField(number) {
     $(`#button_add`).before(`<div id="parameter${number + 1}">
                                  <label for="name${number + 1}"></label>
                                  <input id="name${number + 1}" name="name${number + 1}"
-                                 size="16" type="text" value="" class="input_text" 
+                                 size="16" type="text" value="" class="input_text_1" 
                                  placeholder="Критерий ${number + 2}"/>
                                  <div class="block_4">
                                      <input type="button" id="minus${number + 1}" 
