@@ -169,9 +169,6 @@ def viewer(viewer_id):
 @bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def create_project(viewer_id):
-    if current_user.id <= 11000:
-        flash('Вам отказано в доступе', 'danger')
-        return redirect('main.index')
 
     viewer = Viewer.query.filter_by(id=current_user.id).first()
 
@@ -399,6 +396,7 @@ def delete_grade():
     db.session.commit()
 
     return jsonify({'result': 'Deleted'})
+
 
 # назначение роли администратора или наблюдателя
 # нужен аргумент Id пользователя
