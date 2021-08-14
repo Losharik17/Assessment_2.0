@@ -10,7 +10,8 @@
 }
 
 .block_new {
-    border: 4px dotted;
+    border: 4px;
+    border-style: dotted;
     width: 80%;
     height: 40%;
     cursor: pointer;
@@ -28,7 +29,7 @@
     background-color: rgb(131, 140, 160);
     color: white;
 
-}
+ }
 
 
 
@@ -78,4 +79,5 @@
     margin:0;
 
 }
+
 

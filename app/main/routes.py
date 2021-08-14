@@ -34,7 +34,9 @@ def export_excel():
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
-    df1 = df1.rename(columns={"sum_grade_0": "Критерий 1", "sum_grade_1": "Критерий 2", "sum_grade_2": "Критерий 3",
+    df1 = df1.rename(columns={"place": "Регион", "team": "Команда", "username": "ФИО", "birthday":"Дата рождения",
+                              "sum_grade_0": "Критерий 1", "id": "ID",
+                              "sum_grade_1": "Критерий 2", "sum_grade_2": "Критерий 3",
                               "sum_grade_3": "Критерий 4", "sum_grade_4": "Критерий 5",
                               "sum_grade_all": "Итоговая оценка"})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
@@ -169,9 +171,6 @@ def viewer(viewer_id):
 @bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def create_project(viewer_id):
-    if current_user.id <= 11000:
-        flash('Вам отказано в доступе', 'danger')
-        return redirect('main.index')
 
     viewer = Viewer.query.filter_by(id=current_user.id).first()
 
@@ -399,6 +398,7 @@ def delete_grade():
     db.session.commit()
 
     return jsonify({'result': 'Deleted'})
+
 
 # назначение роли администратора или наблюдателя
 # нужен аргумент Id пользователя
