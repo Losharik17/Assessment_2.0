@@ -67,9 +67,10 @@ def register():
         waiting_user.set_password(form.password.data)
         db.session.add(waiting_user)
         db.session.commit()
-        flash('Регистрация прошла успешно.<br>Когда администратор проверит вашу заявку,'
-              '<br>вам придет уведомление на почту.', 'success')
-        return redirect(url_for('main.index'))
+        flash('Регистрация прошла успешно.'
+              'Когда администратор проверит вашу заявку,'
+              'вам придет уведомление на почту.', 'success')
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
@@ -98,15 +99,13 @@ def reset_password(token):
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        expert = Expert.verify_reset_password_token(token)
-        if not expert:
+        user = Expert.verify_reset_password_token(token)
+        if not user:
             return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        if user:
-            user.set_password(form.password.data)
-        else:
-            expert.set_password(form.password.data)
+        user.set_password(form.password.data)
+
         db.session.commit()
         flash('Ваш пароль был изменён', 'success')
         return redirect(url_for('auth.login'))

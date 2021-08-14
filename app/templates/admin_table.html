@@ -31,6 +31,8 @@
                     onclick="sort(this.id, {{ project_number }})">Дата рождения</th>
                 <th id="team" class="sort" data-order="0"
                     onclick="sort(this.id, {{ project_number }})">Команда</th>
+                <th id="place" class="sort" data-order="0"
+                    onclick="sort(this.id, {{ project_number }})">Регион</th>
 
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
@@ -77,6 +79,14 @@
                     <td id="team{{ i.a }}">
                         {% if user.team %}
                             {{ user.team }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
+                    <td id="place{{ i.a }}">
+                        {% if user.place %}
+                            {{ user.place }}
                         {% else %}
                             –
                         {% endif %}

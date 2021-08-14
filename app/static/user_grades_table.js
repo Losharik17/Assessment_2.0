@@ -178,12 +178,12 @@ function show_more(new_field, user_id) {
         if (limit > quantity) {
             limit = quantity
             $('body').append(
-                `<div id="message" class="message warning"><h4>
+                `<div class="message warning"><h4>
                 В таблице присутствуют все оценки участника</h4></div>`)
             setTimeout( ()=> {
-                $('#message').css({transition: 'all 0.3s ease', opacity: 0})}, 4000)
+                $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 4000)
             setTimeout( ()=> {
-                $('#message').css({display: 'none'})}, 4100)
+                $('.message').css({display: 'none'})}, 4100)
             $('#show_more').css('display', 'none')
             $('#show_all').css('display', 'none')
         }

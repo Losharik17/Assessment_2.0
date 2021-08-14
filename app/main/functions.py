@@ -16,6 +16,7 @@ from flask_login import current_user
 
 engine = create_engine("sqlite:///T_park.db")
 
+
 def users_in_json(users):
     string = '['
     for user in users:
@@ -25,13 +26,10 @@ def users_in_json(users):
         else:
             birthday = '-'
         string += '{' + '"id":{0},"username":"{1}","birthday":"{2}","team":"{3}",' \
-                        '"project_number":{4}, "project_id":{5},' \
-            .format(str(user.id),
-                    str(user.username),
-                    str(birthday),
-                    str(user.team),
-                    str(user.project_number),
-                    str(user.project_id))
+                        '"project_number":{4}, "project_id":{5},"place":"{6}",' \
+            .format(str(user.id), str(user.username), str(birthday),
+                    str(user.team), str(user.project_number),
+                    str(user.project_id), str(user.place))
 
         for i in range(5):
             string += '"sum_grade_{0}":"{1}",' \
