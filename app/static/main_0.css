@@ -75,8 +75,11 @@ body {
     height:15%;
 }
 
-.footer {
+
+.podval {
+    max-height: 50px;
     display: flex;
+    justify-content: center;
     vertical-align: middle;
     align-items: center;
     text-align: left;
@@ -93,7 +96,6 @@ body {
 
 body {
     height:100%;
-
 }
 .content {
     margin-bottom: 8%;
@@ -106,6 +108,9 @@ body {
 /********* Новые стили под кнопку *************************************************/
 .exit {
     margin-right: 25px;
+    right: 0;
+    bottom: 0;
+    margin-top: 10px;
 }
 
 .exit_button {
@@ -113,7 +118,6 @@ body {
     border-radius: 20px;
     color: crimson;
 }
-
 
 .exit .exit_button {
     display: inline-block;
@@ -128,16 +132,86 @@ body {
     text-decoration: none; !important;
 }
 
+.exit .exit_button:before {
+    left: -30px;
+    bottom: 100%;
+    transition: all .7s;
+}
+
+@media (hover: hover) {
+    .exit .exit_button:hover:before {
+        bottom: -50px;
+    }
+}
+
+.exit a {
+    color: crimson;
+}
+
+@media screen and (min-width: 768px) {
+    .exit .exit_button {
+        display: inline-block;
+        width: 130px;
+        height: 40px;
+        line-height: 40px;
+        margin: 20px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid crimson;
+        transition: color .5s;
+        text-decoration: none;
+    !important;
+    }
+
+    .exit {
+        margin-right: 25px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .exit .exit_button {
+        display: inline-block;
+        width: 110px;
+        height: 30px;
+        line-height: 30px;
+        margin: 5px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid crimson;
+        transition: color .5s;
+        text-decoration: none;
+    !important;
+    }
+
+    .exit {
+        margin-right: 7px;
+        width: min-content;
+    }
+}
+
 
 .exit .exit_button:active {
     background-color: rgb(217, 66, 94);
     color:white;
 
 }
-/***************************************************************************/
-.buttons {
-    margin-right: 25px;
+
+@media (hover: hover) {
+    .exit .exit_button:hover {
+        color: #fff;
+    }
 }
+
+.exit .exit_button:active {
+    box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
+    transform: scale(.98);
+}
+
+.exit .exit_button:not(active) {
+    box-shadow: 0 0 0 0;
+    transform: scale(1);
+}
+
 
 .button {
     text-align: center;
@@ -149,7 +223,6 @@ body {
     bottom: 100%;
     transition: all .7s;
 }
-
 
 @media (hover: hover) {
     .buttons .button:hover:before {
@@ -179,7 +252,6 @@ body {
     .buttons {
         margin-right: 25px;
     }
-
 }
 
 @media screen and (max-width: 768px) {
@@ -203,6 +275,7 @@ body {
     }
 }
 
+
 .buttons .button:before {
     content: "";
     position: absolute;
@@ -223,6 +296,7 @@ body {
     box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
     transform: scale(.98);
 }
+
 
 .buttons .button:not(active) {
     box-shadow: 0 0 0 0;
@@ -290,7 +364,7 @@ body {
 }
 
 @keyframes preloader-5-spin {
-    0%   {
+    0% {
         transform: rotate(0deg);
     }
     100% {
@@ -308,8 +382,6 @@ body {
     align-items: center;
     border-radius: 5px;
     z-index: 100;
-
-
     position: fixed;
     top: 15%;
     left: 50%;
@@ -318,7 +390,6 @@ body {
 
 .warning {
     background-color: #ffeb3b;
-
     box-shadow:
             inset 0 7em 10em -5em rgba(255,255,255,0.6),
             0 0.3em 0.5em -0.2em rgb(175, 189, 47),
@@ -353,4 +424,3 @@ input[type="text"]::-webkit-input-placeholder {font-family: Roboto, sans-serif}
 input[type="text"]:-ms-input-placeholder { font-family: Roboto, sans-serif}
 input[type="text"]::-ms-input-placeholder {font-family: Roboto, sans-serif}
 input[type="text"]::placeholder {font-family: Roboto, sans-serif}
-

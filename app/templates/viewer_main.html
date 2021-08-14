@@ -8,39 +8,32 @@
         <br>
         <div class="block_new">
             <div class="text_new">
-                <span>Создать новый проект</span>
+                <span class="text">Создать новый проект</span>
             </div>
         </div>
+        <br>
 
 
         <div class="block">
-
-
-
             <div class="block_logo">
-                <span class="">
-                 project.name
-            </span>
+                <img src="{{ url_for('static', filename='logo.png') }}" class="profil_image" alt="">
             </div>
-            <div class="text">
-            <span>
-                 project.name
-            </span>
+
+            <div class="block_empty"></div>
+            <div class="data">
+                <span>
+                    Данные, число участников.
+                </span>
 
 
                 <div class="block_data">
-                <span class="">
-                 project.name
-            </span>
+                    <span class="date_start">{{ date_start }}</span>
+                    <span class="date_end">{{ date_end }}</span>
                 </div>
-
             </div>
         </div>
-
-
     </div>
 
     <script src="{{ url_for('static', filename='viewer_main.js') }}"></script>
 
-    >>>>>>> origin/Egor
 {% endblock %}

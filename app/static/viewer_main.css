@@ -11,7 +11,7 @@
 
 .block_new {
     border: 4px;
-    border-style: dotted;
+
     width: 80%;
     height: 40%;
     cursor: pointer;
@@ -22,20 +22,31 @@
     margin: 0 auto;
     background-color: #d4e0ff;
     transition: all 500ms;
-    color: #716b6b;
+    color: gray;
+    box-shadow: 2px 4px 8px 4px #c5c5c5;
 }
 
 .block_new:hover {
-    background-color: rgb(131, 140, 160);
+    background-color: #aeb1bf;
     color: white;
 
- }
+}
+
+.img_back {
+    color: #d4e0ff;
+    width: max-content;
+    height: max-content;
+}
+
+.text_new {
+    display: block;
 
 
+}
 
 .text {
     display: block;
-
+    font-size:32px;
 }
 
 .block {
@@ -43,29 +54,37 @@
     height: 40%;
     cursor: pointer;
     margin: 0 auto;
-    background-color: #b0c3fa;
+    background-color: #c1d0f8;
     transition: all 500ms;
-    border-radius: 10px;
-    border: 4px #0044ff;
+    border: 5px #0044ff;
     color: black;
     display:flex;
     align-items: center;
+    border-radius: 5px;
+    box-shadow: 2px 4px 8px 4px #c5c5c5;
+
 }
 
 .block:hover {
-    background-color: #8ea1d4;
+    background-color: #8d9cdb;
     color: white;
 
 }
 
 .block_logo {
-    justify-content: flex-start;
+    justify-content: left;
+    width: 200px;
+    height:150px;
+}
+
+.profil_image {
+    width: 200px;
+    height:150px;
 
 }
 
 .block_data {
-
-
+    float: left;
 }
 
 
@@ -77,7 +96,4 @@
     font-size:20px;
     position: absolute;
     margin:0;
-
 }
-
-
