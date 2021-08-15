@@ -1,9 +1,7 @@
 @charset "utf-8";
-div {
-    background-color: white;
-}
 
-button{
+
+button {
     border-radius: 100%;
     width:2px;
     height: 2px;
@@ -11,42 +9,82 @@ button{
 
 .form_radio_btn {
     display: inline-block;
-    margin-right: 10px;
     background-color: #e8edff;
 }
+
 .form_radio_btn input[type=radio] {
     display: none;
 }
+
 .form_radio_btn label {
     display: inline-block;
     cursor: pointer;
-    padding: 0px 15px;
+    padding:  0 15px;
     line-height: 34px;
-    border: 2px solid #999;
-    border-radius: 10px;
-    background: #4fbeff;
-    user-select: none;
+    border: 2px solid #0071f0;
+    border-radius: 50%;
+    transition: all 0.2s linear;
 }
 
 .form_radio_btn input[type=radio]:checked + label {
-    background: #0094e5
+    background: #0071f0;
+    color: white;
 }
 
-.form_radio_btn label:hover {
-    color: #666;
-    background: #0094e5;
+.form_button {
+    display: inline-block;
+    margin: 7px 7px 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    font-size: 16px;
+    color :#fff ;
+    background-color: #0071f0;
+    outline: none;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.form_radio_btn input[type=radio]:disabled + label {
-    background: #0088CC;
-    color: #666;
+
+.form_button:focus {
+    background-color: rgb(0, 33, 77);
 }
 
-input{
+
+.form_button_cancel {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 7px 7px 10px;
+    border: none;
+    border-radius: 5px;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    font-size: 16px;
+    color :#fff ;
+    background-color: crimson;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    text-decoration: none; !important;
+}
+
+
+.form_button_cancel:focus {
+    background-color: rgb(129, 13, 36);
+}
+
+.submit {
+    justify-content: center;
+    text-align: center;
+    margin: 10px auto;
+}
+
+input {
     background-color: #1a73e8;
     border: 1px ;
     border-radius: 5px;
-
 }
 
 input:active{
@@ -59,13 +97,14 @@ input:active{
     background-color: #e8edff;
     width: 100%;
 }
+
 .container {
     background-color: #e8edff;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    vertical-align: center;
+    align-items: center;
 }
-
-
 
 .photo {
     display: flex;
@@ -73,20 +112,69 @@ input:active{
     background-color: #e8edff;
     vertical-align: center;
     justify-content: left;
+}
 
-}
 .data {
-    margin-right: 40%;
+    margin: auto;
     display: flex;
-    vertical-align: center;
     justify-content: center;
+    vertical-align: center;
+    align-items: center;
     background-color: #e8edff;
+    padding: 8px 6px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 4px 2px #c5c5c5;
 }
+
 .assessments {
     background-color: #e8edff;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    vertical-align: center;
+}
+
+/*Поле выставления оценки*/
+.crit {
+    justify-content: space-around;
+    margin: 8px auto;
+    padding: 8px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 4px 2px #c5c5c5;
+}
+
+.comment,
+.comment:not(focus) {
+    margin-top: 10px;
+    transition: all 0.5s ease;
+    /* = Убираем скролл */
+    overflow: auto;
+    /* = Убираем увеличение */
+    resize: none;
+    margin-left: 5%;
+    width: 90%;
+    height: 90px;
+
+    /* = Добавим фон, рамку, отступ*/
+    background: #c5c5c5;
+    border: 1px solid #cecece;
+    border-radius: 8px 0 0 0;
+    padding: 8px 0 8px 10px;
+}
+
+.comment:focus {
+    outline: none;
+    background: #f1f1f1;
+}
+
+.comment:focus::placeholder {
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.comment:not(focus)::placeholder {
+    transition: all 0.2s ease;
+    opacity: 1;
 }
 

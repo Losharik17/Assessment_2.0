@@ -2,31 +2,40 @@ import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
 from flask import Flask, request, current_app
+from flask_json import FlaskJSON
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
 from config import Config
+from flask_bootstrap import Bootstrap
+
 
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
 login.login_view = 'auth.login'
-login.login_message = 'Please log in to access this page.'
+login.login_message = 'Пожалуйста, авторизируйтесь для доступа к данной странице.'
+login.login_message_category = 'warning'
+bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
+json = FlaskJSON()
 
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='templates',
+                static_folder='static',)
     app.config.from_object(config_class)
 
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
+    bootstrap.init_app(app)
     moment.init_app(app)
+    json.init_app(app)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

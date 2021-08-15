@@ -1,4 +1,5 @@
-{% extends "main_1.html"%}
+{% extends "main_0.html" %}
+
 
 {%  block app_content %}
 
@@ -6,11 +7,28 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
     <script src="{{ url_for('static', filename='user_grades_table.js') }}"></script>
 
-    <div class="info">
-        <p>Номер участника {{ user.id }}</p>
-        <p>ФИО участнка {{ user.username }}</p>
-        <p>Дата рождения {{ user.birthday }}</p>
-        <p>Команда {{ user.team }}</p>
+    <div class="container">
+        <div class="data">
+            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/4.webp') }}" alt="">
+            <table style="margin: 10px;">
+                <tr>
+                    <td style="text-align: left">ID: {{ user.project_id }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">ФИО: {{ user.username }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">Команда: {{ user.team }}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: left">Регион: {{ user.place }}</td>
+                </tr>
+            </table>
+        </div>
+
     </div>
 
     <div class="table-wrap">
@@ -25,7 +43,7 @@
                     <th id="parameter{{ i.a }}">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
-
+                <th id="comment" class="sort">Комментарий</th>
             </tr>
 
             </thead>
@@ -58,12 +76,20 @@
                         {% endif %}
                     {% endfor %}
 
+                    <td id="comment{{ i.a }}">
+                        {% if grade.comment %}
+                            {{ grade.comment }}
+                        {% else %}
+                            –
+                        {% endif %}
+                    </td>
+
                     <div id="buttons{{ i.a }}" class="buttons">
                         <span id="edit{{ i.a }}" onclick="edit_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
                             <input id="e{{ i.a }}" type="button" value="Редактировать" class="btn">
                         </span>
                         <span id="delete{{ i.a }}" onclick="delete_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
-                            <input id="d{{ i.a }}" type="button" value="Удалить" class="btn">
+                            <input id="d{{ i.a }}" type="button" value="Удалить" class="btn_delete">
                         </span>
                     </div>
                 </tr>
@@ -71,6 +97,7 @@
             {% endfor %}
             </tbody>
         </table>
+
         <div class="show">
             <a class="show_btn" href="javascript:show_more(2, {{ user_id }})">
                 Показать больше</a>

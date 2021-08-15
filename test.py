@@ -38,25 +38,21 @@ class UserModelCase(unittest.TestCase):
         db.session.add(u2)
         db.session.commit()
 
+
         e1 = Expert(username='dima')
         db.session.add(e1)
         db.session.commit()
-
         g1 = Grade(user_id=u2.id, expert_id=e1.id)
-        g1.parameter_1 = -1
-        g1.parameter_2 = 3
 
         g2 = Grade(user_id=u2.id, expert_id=e1.id)
-        g2.parameter_1 = -1
-        g2.parameter_2 = 3
 
+        g1.set_points([1, 2, 3, 2])
+        g2.set_points([1, 0, -1, 1])
         db.session.add_all([g1, g2])
         db.session.commit()
-
-        grades = Grade.query.filter_by(user_id=u2.id).all()
-
-        print(g1.expert)
-
+        u2.sum_grades()
+        db.session.commit()
+        print(e1.id)
         self.assertTrue(True)
 
 

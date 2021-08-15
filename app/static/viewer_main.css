@@ -1,88 +1,170 @@
 @charset "UTF-8";
 
 .content {
-    max-width: 92%;
-    background-color: #d4e0ff;
+    max-width: 1600px;
     margin: auto;
     height:100%;
     border-radius:20px;
 
 }
 
-.block_new {
-    border: 4px;
-    border-style: dotted;
-    width: 80%;
-    height: 40%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    margin: 0 auto;
-    background-color: #d4e0ff;
-    transition: all 500ms;
-    color: #716b6b;
+@media screen and (min-width: 768px) {
+    .block_new {
+        border: 4px;
+        width: 60%;
+        height: 30%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin: 0 auto;
+        background-color: #d4e0ff;
+        transition: all 500ms;
+        color: gray;
+        box-shadow: 2px 4px 8px 4px #c5c5c5;
+    }
+
+    .block_new:hover {
+        background-color: #8d9cdb;
+        color: white;
+
+    }
+
+    .img_back {
+        color: #d4e0ff;
+        width: max-content;
+        height: max-content;
+    }
+
+    .text_new {
+        display: block;
+    }
+
+    .text {
+        display: block;
+        font-size: 32px;
+    }
+
+    .block {
+        padding: 10px;
+        box-sizing: border-box;
+        width: 60%;
+        height: 30%;
+        cursor: pointer;
+        margin: 20px auto;
+        background-color: #d4e0ff;
+        transition: all 500ms;
+        border: 5px #0044ff;
+        color: black;
+        display: flex;
+        align-items: center;
+        border-radius: 5px;
+        box-shadow: 2px 4px 8px 4px #c5c5c5;
+    }
+
+    .block:hover {
+        background-color: #8d9cdb;
+        color: white;
+
+    }
+
+    .block_logo {
+        justify-content: flex-start;
+    }
+
+    .profil_image {
+        max-width: 300px;
+    }
+
+    .data {
+
+        margin: 15px auto auto;
+        display: inline-block;
+    }
+
+    .date {
+        margin: auto 5px 5px auto;
+        vertical-align: bottom;
+    }
+
+    .title {
+        text-align: center;
+    }
+
+    .text_new {
+        font-size: 20px;
+        position: absolute;
+        margin:0;
+    }
+
 }
 
-.block_new:hover {
-    background-color: rgb(131, 140, 160);
-    color: white;
+@media screen and (max-width: 768px) {
 
- }
+    .block_new {
+        display: none;
+    }
+
+    .img_back {
+        color: #d4e0ff;
+        width: max-content;
+        height: max-content;
+    }
+
+    .text {
+        display: block;
+        font-size: 16px;
+    }
+
+    .block {
+        padding: 10px;
+        box-sizing: border-box;
+        width: 75%;
+        height: 25%;
+        cursor: pointer;
+        margin: 20px auto;
+        background-color: #d4e0ff;
+        transition: all 500ms;
+        border: 5px #0044ff;
+        color: black;
+        align-items: center;
+        border-radius: 5px;
+        box-shadow: 2px 4px 8px 4px #c5c5c5;
+        position: relative;
+    }
 
 
+    .block_logo {
+        width: fit-content;
+        align-content: center;
+        margin: 0 auto;
+    }
 
-.text {
-    display: block;
+    .data {
+        display: block;
+        margin: 15px auto;
+        max-width: max-content;
+    }
 
+    .date {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin: 5px;
+        vertical-align: bottom;
+    }
+
+    .title {
+        text-align: center;
+    }
+
+
+    .profil_image {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 70%;
+        max-height: 95%;
+    }
 }
-
-.block {
-    width: 80%;
-    height: 40%;
-    cursor: pointer;
-    margin: 0 auto;
-    background-color: #b0c3fa;
-    transition: all 500ms;
-    border-radius: 10px;
-    border: 4px #0044ff;
-    color: black;
-    display:flex;
-    align-items: center;
-}
-
-.block:hover {
-    background-color: #8ea1d4;
-    color: white;
-
-}
-
-.block_logo {
-    justify-content: flex-start;
-
-}
-
-.block_data {
-
-
-}
-
-
-.title {
-    text-align: center;
-}
-
-.text_new {
-    font-size:20px;
-    position: absolute;
-    margin:0;
-
-}
-
-
-
-/*
-
-
-****/
