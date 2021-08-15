@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     avatar = FileField('Фото')
-    phone = FileField('Номер Телефона')
+    phone = StringField('Номер Телефона')
     email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
@@ -28,15 +28,12 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Данная почта уже используется другим пользователем.')
 
     def validate_phone_number(self, phone_number):
+        user = User.query.filter_by(phone=phone_number.data).first()
         for i in enumerate(phone_number):
             if not i.isdigit():
                 raise ValidationError('Неверно введен телефонный номер')
             elif i[0] > 10:
                 raise ValidationError('Номер телефона слишком длинный')
-
-
-
-
 
 
 class ResetPasswordRequestForm(FlaskForm):
