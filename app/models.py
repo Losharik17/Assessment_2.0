@@ -200,8 +200,8 @@ class Viewer(UserMixin, db.Model):
 class Project(db.Model):
     number = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
-    start = db.Column(db.Date, default=datetime.now())
-    end = db.Column(db.Date, default=datetime.now())
+    start = db.Column(db.Date)
+    end = db.Column(db.Date)
     parameters = db.relationship('Parameter', backref='project', lazy='dynamic')
 
 

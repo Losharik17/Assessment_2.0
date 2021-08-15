@@ -1,8 +1,7 @@
 @charset "UTF-8";
 
 .content {
-    max-width: 92%;
-    background-color: #d4e0ff;
+    max-width: 1600px;
     margin: auto;
     height:100%;
     border-radius:20px;
@@ -11,9 +10,8 @@
 
 .block_new {
     border: 4px;
-
-    width: 80%;
-    height: 40%;
+    width: 60%;
+    height: 30%;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -27,7 +25,7 @@
 }
 
 .block_new:hover {
-    background-color: #aeb1bf;
+    background-color: #8d9cdb;
     color: white;
 
 }
@@ -40,8 +38,6 @@
 
 .text_new {
     display: block;
-
-
 }
 
 .text {
@@ -50,11 +46,13 @@
 }
 
 .block {
-    width: 80%;
-    height: 40%;
+    padding: 10px;
+    box-sizing: border-box;
+    width: 60%;
+    height: 30%;
     cursor: pointer;
-    margin: 0 auto;
-    background-color: #c1d0f8;
+    margin: 20px auto;
+    background-color: #d4e0ff;
     transition: all 500ms;
     border: 5px #0044ff;
     color: black;
@@ -62,7 +60,6 @@
     align-items: center;
     border-radius: 5px;
     box-shadow: 2px 4px 8px 4px #c5c5c5;
-
 }
 
 .block:hover {
@@ -72,21 +69,31 @@
 }
 
 .block_logo {
-    justify-content: left;
-    width: 200px;
-    height:150px;
+    justify-content: flex-start;
 }
 
-.profil_image {
-    width: 200px;
-    height:150px;
-
+@media screen and (max-width: 768px) {
+    .profil_image {
+        max-width: 100px;
+    }
 }
 
-.block_data {
-    float: left;
+@media screen and (min-width: 768px) {
+    .profil_image {
+        max-width: 300px;
+    }
 }
 
+.data {
+
+    margin: 15px auto auto;
+    display: inline-block;
+}
+
+.date {
+    margin: auto 5px 5px auto;
+    vertical-align: bottom;
+}
 
 .title {
     text-align: center;

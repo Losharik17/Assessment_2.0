@@ -182,6 +182,25 @@ def viewer(viewer_id):
     return render_template('viewer_main.html', viever=viewer, projects=projects)
 
 
+# таблица всех участников из проекта для наблюдателя
+@bp.route('/viewer_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@login_required
+def viewer_table(project_number, viewer_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
+    users_team = User.query.filter_by(project_number=project_number).all()
+    teams = ['Все команды']
+    for user in users_team:
+        if user.team not in teams:
+            teams.append(user.team)
+
+    return render_template('viewer_table.html', title='Table', viewer=viewer, teams=teams,
+                           users=users, ParName=parameters, project_number=project_number)
+
+
 # страница для создания нового проекта
 @bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
@@ -231,7 +250,7 @@ def admin(admin_id):
     return render_template('admin.html', admin=admin)
 
 
-# таблица всех участников из проекта
+# таблица всех участников из проекта для админа
 @bp.route('/admin_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin_table(project_number, admin_id):

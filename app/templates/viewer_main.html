@@ -11,27 +11,30 @@
                 <span class="text">Создать новый проект</span>
             </div>
         </div>
-        <br>
 
+        {% for project in projects %}
+            <div class="block" onclick="location.href='{{ url_for('main.viewer_table', project_number=project.number, viewer_id=project.viewer_id) }}'">
 
-        <div class="block">
-            <div class="block_logo">
-                <img src="{{ url_for('static', filename='logo.png') }}" class="profil_image" alt="">
-            </div>
-
-            <div class="block_empty"></div>
-            <div class="data">
-                <span>
-                    Данные, число участников.
-                </span>
-
-
-                <div class="block_data">
-                    <span class="date_start">{{ date_start }}</span>
-                    <span class="date_end">{{ date_end }}</span>
+                <div class="block_logo">
+                    {% set path = 'images/' + project.number|string + '/logo.webp' %}
+                    <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                 </div>
+
+                <div class="data">
+                    <span>
+                        Название организации или проекта
+                    </span>
+                </div>
+
+                <div class="date">
+                    <span >{{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}</span>
+                </div>
+
             </div>
-        </div>
+    {% endfor %}
+    </div>
+
+
     </div>
 
     <script src="{{ url_for('static', filename='viewer_main.js') }}"></script>

@@ -50,11 +50,11 @@ function addField(number) {
     if (number === 9)
         return alert('Извините. Вы не можете создать более 10 критериев')
     $(`#button_add`).before(`<div id="parameter${number + 1}">
-                                 <label for="name${number + 1}"></label>
-                                 <input id="name${number + 1}" name="name${number + 1}"
-                                 size="16" type="text" value="" class="input_text_1" 
-                                 placeholder="Критерий ${number + 2}"/>
                                  <div class="block_4">
+                                     <label for="name${number + 1}"></label>
+                                     <input id="name${number + 1}" name="name${number + 1}"
+                                     size="16" type="text" value="" class="input_text_2" 
+                                     placeholder="Критерий ${number + 2}"/>
                                      <input type="button" id="minus${number + 1}" 
                                      class="button" value="-">
                                      <input type="number" id="weight${number + 1}" 

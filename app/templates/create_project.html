@@ -6,18 +6,20 @@
 
         <h1 class="title">Создание проекта</h1>
         <br>
-        <form action="{{ url_for('main.create_project', viewer_id = viewer.id) }}" method="POST"
+        <form style="position:relative;" action="{{ url_for('main.create_project', viewer_id = viewer.id) }}" method="POST"
               enctype="multipart/form-data">
             <div class="block">
                 <div class="block_1">
 
-                    <lable>
-                        <input id="name" type="text" placeholder="Название проекта" class="input_text_1">
-                    </lable>
-
                     <div class="add_new">
                         <div>
                             <div class="block_4">
+                                <lable>
+                                    <input id="name" type="text" placeholder="Название проекта" class="input_text_1">
+                                </lable>
+                            </div>
+                            <div id="block_4_1" class="block_4">
+
                                 <label for="name0"></label>
                                 <input id="name0" name="name0" size="16" type="text" value="" class="input_text_2"
                                        placeholder="Критерий 1"/>
@@ -26,16 +28,15 @@
                                 <input id="plus0" class="button" type="button" value="+">
                             </div>
                         </div>
-
                         <input type="button"  class="add_1" id="button_add" value="Добавить">
                         <input type="button"  class="add_2" id="button_delete" value="Удалить">
                         <br>
                     </div>
-
                 </div>
+
                 <div class="block_2">
                     <div class="input__wrapper">
-                        <input  type="file" name="logo" id="input__file_1" class="input input__file">
+                        <input name="file" type="file" id="input__file" class="input input__file" multiple>
                         <label for="input__file" class="input__file-button">
                             <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
                             <span class="input__file-button-text">Загрузить Логотип</span>
@@ -70,15 +71,17 @@
                         </label>
                     </div>
                 </div>
+                <div class="container">
+                    <input type="submit" value="Создать проект" class="btn btn-5" >
+                </div>
             </div>
-            <div class="container">
-                <input type="submit" value="Создать проект" class="btn btn-5" >
-            </div>
+
+
         </form>
 
 
     </div>
 
     <script src="{{ url_for('static', filename='create_project.js') }}"></script>
-
+    <script>$('#name').css('width', $('#block_4_1').width())</script>
 {% endblock %}

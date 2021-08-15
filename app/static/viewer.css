@@ -3,19 +3,27 @@
 .title {
     text-align: center;
     margin:auto;
+
+
+}
+
+.block {
+    justify-content: space-between;
+    margin: 0 auto;
+    vertical-align: top;
+    align-items: center;
 }
 
 .block_1 {
-    float:left;
-    display: inline;
     width: 45%;
-    justify-content:space-around;
+    display: inline-block;
+    justify-content: center;
+    vertical-align: top;
 }
 
 .block_2 {
-    float:right;
-    display: inline;
     width: 45%;
+    display: inline-block;
     justify-content:space-around;
 }
 
@@ -31,10 +39,9 @@
     line-height: 30px;
     border-width: 0;
     border-radius: 20px;
-    margin-bottom:20px;
     color: #fff;
-    display:inline-block;
     height: 30px;
+    margin: 15px auto;
 }
 
 
@@ -43,6 +50,7 @@
 /*****************************************************/
 .content {
     width: 80%;
+    max-width: 1600px;
     margin: auto;
 }
 
@@ -88,6 +96,8 @@ input::-webkit-inner-spin-button {
 .add_new {
     width: 100%;
     margin: 0 auto;
+    display: block;
+    justify-content: center;
 }
 
 .button {
@@ -108,10 +118,11 @@ input::-webkit-inner-spin-button {
 
 .crit {
     width: 30px;
+    margin: 0 auto;
     background: #0071f0;
     border-width: 0;
     color: #fff;
-    text-align: center;
+    text-align: right;
 }
 
 
@@ -124,7 +135,7 @@ input::-webkit-inner-spin-button {
     border-width: 0;
     border-radius: 20px;
     color: #fff;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .input_text_2 {
@@ -242,31 +253,20 @@ input::-webkit-inner-spin-button {
     height: 35px;
 }
 
-.input__file-icon:hover {
-    border: 1px solid;
-    box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-    outline-color: rgba(255, 255, 255, 0);
-    outline-offset: 15px;
-    text-shadow: 1px 1px 2px #427388;
-}
 /*****************************************************/
 
 
 /*submit***************************/
 
 .container {
+    vertical-align:bottom;
     justify-content: center;
     text-align: center;
     margin: 0 auto;
-    display:block;
-}
-
-.block {
     display: block;
-    margin: 0 auto;
-
-
 }
+
+
 
 
 .btn {

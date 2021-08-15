@@ -55,25 +55,41 @@ th:first-child, td:first-child {
     text-align: center;
 }
 
-th.sort[data-order="1"],
-th.sort[data-order="-1"] {
+th.sort,
+th.sort {
     position: relative;
+}
+
+th.sort[data-order="0"]::after {
+    content: url("arrowDown.png");
+    position: absolute;
+    opacity: 0.2;
+    right: 3px;
+    transition: all 0.2s ease;
+    transform: rotate(0deg);
 }
 
 th.sort[data-order="1"]::after,
 th.sort[data-order="-1"]::after {
+    transition: all 0.2s ease;
     position: absolute;
     right: 3px;
-    top: 41%; /* нужно выровнить */
+    opacity: 1;
+    content: url("arrowDown.png");
 }
 
 th.sort[data-order="-1"]::after {
-    content: url("arrowDown.png");
+    transform: rotate(360deg);
 }
 
 th.sort[data-order="1"]::after {
-    content: url("arrowDown.png");
     transform: rotate(180deg);
+}
+
+@media(hover: hover) {
+    th.sort:hover {
+        opacity: 0.7;
+    }
 }
 
 .block_1 {
@@ -147,46 +163,6 @@ th.sort[data-order="1"]::after {
     text-align: center;
 }
 
-th.sort,
-th.sort {
-    position: relative;
-}
-
-th.sort[data-order="0"]::after {
-    content: url("arrowDown.png");
-    position: absolute;
-    opacity: 0.2;
-    right: 3px;
-    transition: all 0.2s ease;
-    transform: rotate(0deg);
-}
-
-th.sort[data-order="1"]::after,
-th.sort[data-order="-1"]::after {
-    transition: all 0.2s ease;
-    position: absolute;
-    right: 3px;
-    opacity: 1;
-    content: url("arrowDown.png");
-}
-
-th.sort[data-order="-1"]::after {
-    transform: rotate(360deg);
-}
-
-th.sort[data-order="1"]::after {
-    transform: rotate(180deg);
-}
-
-@media(hover: hover) {
-    th.sort:hover {
-        opacity: 0.7;
-    }
-}
-
-.block_1 {
-    text-align: center;
-}
 
 .wrapper-dropdown-5:focus {
     border-radius: 5px 5px 0 0;
