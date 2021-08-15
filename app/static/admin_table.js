@@ -4,6 +4,32 @@ sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
+
+$('.dropdown_2').click(function () {
+    $(this).attr('tabindex', 1).focus();
+    $(this).toggleClass('active');
+    $(this).find('.dropdown-menu').slideToggle(300);
+});
+$('.dropdown_2').focusout(function () {
+    $(this).removeClass('active');
+    $(this).find('.dropdown-menu').slideUp(300);
+});
+
+$('.dropdown_2 .dropdown-menu li').click(function () {
+    $(this).parents('.dropdown_2').find('span').text($(this).text());
+    $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'));
+    show_more(0, $(this).attr('project_number'))
+});
+/*End Dropdown Menu*/
+
+$('.dropdown-menu li').click(function () {
+    let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
+        msg = '<span class="msg">Hidden input value: ';
+    $('.msg').html(msg + input + '</span>');
+});
+
+
+
 function draw_table(response, project_number) {
 
     document.getElementById('tbody').innerHTML = ''
@@ -86,7 +112,7 @@ function show_more(new_field, project_number) {
         parameter: sort.current_parameter,
         sort_up: sort.sort_up,
         project_number: project_number,
-        team: $('#teams').val()
+        team: $('#teams').html()
     }).done(function(response) {
 
         draw_table(response, project_number)

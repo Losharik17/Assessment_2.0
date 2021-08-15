@@ -4,22 +4,21 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
 
+    <div class="dropdown_2">
+        <div class="select_2">
+            <span id="teams">Все команды</span>
+            <i class="fa fa-chevron-left"></i>
+        </div>
+        <input type="hidden" name="teams" id="teams">
+        <ul class="dropdown-menu">
+            {% for team in teams %}
+                <li project_number="{{ project_number }}">{{ team }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <div class="table-wrap">
 
-        <div class="choice">
-            <label for="teams">Выберите команду</label>
-
-            <div class="wrapper_dropdown">
-                <div class="dropdown"></div>
-                <select name="teams" id="teams" class="select"
-                        onchange="show_more(0, {{ project_number}}, this.value)">
-                    {% for team in teams %}
-                        <option value="{{ team }}">{{ team }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-        <br>
         <table class="table-sort">
             <thead>
             <tr>

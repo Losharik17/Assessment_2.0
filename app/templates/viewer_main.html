@@ -5,7 +5,6 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_main.css') }}">
     <div class="content">
         <h1 class="title">Проекты</h1>
-        <br>
         <div class="block_new">
             <div class="text_new">
                 <span class="text">Создать новый проект</span>
@@ -22,7 +21,7 @@
 
                 <div class="data">
                     <span>
-                        Название организации или проекта
+                        {{ project.name }}
                     </span>
                 </div>
 

@@ -13,13 +13,14 @@
 
     <!--Временный ссылки-->
     <div class="content">
-    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-    <div class="buttons">
-        <a class="button" href="{{ url_for('main.admin_table', project_number=1, admin_id=1) }}">Таблица участников</a>
-        <a class="button" href="{{ url_for('main.expert', project_number=1, expert_id=1) }}">Выставление оценки</a>
-        <a class="button" href="{{ url_for('main.export_excel', project_number=1) }}" target="_blank">Скачать отчёт</a>
-        <a class="button" href="{{ url_for('main.create_project', viewer_id=1) }}" target="_blank">Создание проекта</a>
-    </div>
+        <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+        <div class="buttons">
+            <a class="button" href="{{ url_for('main.admin_table', project_number=1, admin_id=1) }}">Таблица участников</a>
+            <a class="button" href="{{ url_for('main.expert', project_number=1, expert_id=1) }}">Выставление оценки</a>
+            <a class="button" href="{{ url_for('main.export_excel', project_number=1) }}" target="_blank">Скачать отчёт</a>
+            <a class="button" href="{{ url_for('main.create_project', viewer_id=1) }}">Создание проекта</a>
+            <a class="button" href="{{ url_for('main.admin_waiting_users', admin_id=1) }}">Распределение</a>
+        </div>
 
     </div>
 {% endblock %}
