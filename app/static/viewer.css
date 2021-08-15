@@ -229,6 +229,10 @@ input::-webkit-inner-spin-button {
     }
 }
 
+.input__file-icon {
+    width: 35px;
+    height: 35px;
+}
 
 /*
 .input__file-button:active {
@@ -248,10 +252,7 @@ input::-webkit-inner-spin-button {
 
 
 
-.input__file-icon {
-    width: 35px;
-    height: 35px;
-}
+
 
 /*****************************************************/
 
