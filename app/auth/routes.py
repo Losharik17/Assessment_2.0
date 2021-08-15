@@ -61,6 +61,9 @@ def register():
                   'Пожалуйста изпользуйте другой email адрес', 'warning')
             return redirect(url_for('auth.register'))
 
+        #if user is None or not user.check_phone(form.phone.data):
+        #    flash('Неверный номер телефона', 'warning')
+
         # path = os.path.join('../T-Park/app/static/images')
         # form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
         waiting_user = WaitingUser(username=form.username.data, email=form.email.data)
