@@ -42,7 +42,8 @@ def export_excel(project_number):
         i += 1
 
     df1 = df1.rename(columns={"place": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
-                              "sum_grade_all": "Итоговая оценка", 'project_id': 'ID'})  # надо будет добавить изменение имен через формы
+                              "sum_grade_all": "Итоговая оценка",
+                              'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
     df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
@@ -182,8 +183,10 @@ def viewer(viewer_id):
     return render_template('viewer_main.html', viever=viewer, projects=projects)
 
 
-# Настройки
-@bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])
+
+
+# страница Настройки проектов + доступ к юзерам и экспертам.
+@bp.route('/viewer/settings/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def viewer(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()

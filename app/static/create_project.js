@@ -55,12 +55,14 @@ function addField(number) {
                                      <input id="name${number + 1}" name="name${number + 1}"
                                      size="16" type="text" value="" class="input_text_2" 
                                      placeholder="Критерий ${number + 2}"/>
+                                     <div class="block_5">
                                      <input type="button" id="minus${number + 1}" 
                                      class="button" value="-">
                                      <input type="number" id="weight${number + 1}" 
                                      value="1.0" step="0.1" max="2.0" min="0.1" class="crit"/>
                                      <input type="button"  id="plus${number + 1}" class="button" 
                                      value="+">
+                                     </div>
                                  </div>
                              </div>`)
 

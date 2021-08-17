@@ -95,7 +95,7 @@ h2 {
 
     /*Download avatar*/
 .input__wrapper {
-    width: 60%;
+    width: max-content;
     position: relative;
     margin: 0 auto;
 }
@@ -105,7 +105,7 @@ h2 {
     visibility: hidden;
     position: absolute;
 }
-
+/*
 .input__file-icon-wrapper {
     height: 60px;
     width: 60px;
@@ -121,18 +121,17 @@ h2 {
     justify-content: center;
     border-right: 1px solid #fff;
 }
-
+*/
 .input__file-button-text {
     line-height: 1;
-    margin-top: 1px;
-    margin-left: 10px;
     font: 600 16px Roboto;
+    padding: 10px 20px;
 }
 
 .input__file-button {
     width: 100%;
     max-width: 290px;
-    height: 50px;
+    height: 40px;
     background: #0071f0;
     color: #fff;
     font-size: 1.125rem;
@@ -146,7 +145,7 @@ h2 {
     -webkit-box-pack: start;
     -ms-flex-pack: start;
     justify-content: flex-start;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
     margin-bottom: 10px;
     border: 0 solid;
