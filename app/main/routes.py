@@ -182,6 +182,16 @@ def viewer(viewer_id):
     return render_template('viewer_main.html', viever=viewer, projects=projects)
 
 
+# Настройки
+@bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])
+@login_required
+def viewer(viewer_id):
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
+    projects = Project.query.filter_by(viewer_id=viewer_id).all()
+
+    return render_template('viewer_settings.html', viever=viewer, projects=projects)
+
+
 # таблица всех участников из проекта для наблюдателя
 @bp.route('/viewer_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
 @login_required
