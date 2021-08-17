@@ -3,7 +3,7 @@
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-
+    <h1 style="text-align:center">{{ project.name }}<br>Участники</h1>
     <div class="table-wrap">
 
         <table class="table-sort">
@@ -13,8 +13,22 @@
                         {{ project_number }})">ID</th>
                 <th id="username" class="sort" data-order="0"
                     onclick="sort(this.id, {{ project_number }})">ФИО</th>
-                <th id="birthday" class="sort dropdown_2" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Возраст
+                <th id="birthday" class="sort dropdown_2" data-order="0">Возраст
+                    <input type="hidden" name="birthdays" id="birthdays" value="–">
+                    <ul class="dropdown-menu">
+                        <li project_number="{{ project_number }}" id="age_sort" type_sort="age"
+                            onclick="age_sort({{ project_number }})">По убыванию</li>
+                        <li project_number="{{ project_number }}" id="min_age" type_sort="age">
+                            <label for="min_age_value">От&nbsp;&nbsp;</label>
+                            <input type="number" id="min_age_value" min="0" max="200"
+                                   step="1" class="age"></li>
+                        <li project_number="{{ project_number }}" id="max_age" type_sort="age">
+                            <label for="max_age_value">До&nbsp;&nbsp;</label><input type="number" id="max_age_value" min="0"
+                                                                                    max="200" step="1" class="age"></li>
+                        <li project_number="{{ project_number }}" id="max_age" type_sort="age">
+                            <div>Сортировать</div></li>
+
+                    </ul>
                 </th>
                 <th id="team" class="sort dropdown_2" data-order="0">Команда
                     <input type="hidden" name="teams" id="teams" value="Все команды">
@@ -37,7 +51,7 @@
                     </ul>
                 </th>
 
-                {% set i = namespace(a=0) %}
+                {% set i=namespace(a=0) %}
                 {% for parameter in ParName %}
                     <th id="sum_grade_{{ i.a }}" class="sort" data-order="0"
                         onclick="sort(this.id, {{ project_number }})">{{ parameter.name }}</th>
@@ -49,8 +63,8 @@
             </thead>
 
             <tbody id="tbody" class="tbody-table">
-
             </tbody>
+
         </table>
 
     </div>

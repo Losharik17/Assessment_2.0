@@ -38,7 +38,6 @@ def users_in_json(users):
         string += '"sum_grade_all":"{0}"'.format(str(user.sum_grade_all)) + '},'
 
     string = string[:len(string) - 1] + ']'
-
     return string
 
 

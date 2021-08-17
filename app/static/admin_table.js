@@ -35,31 +35,44 @@ document.addEventListener('click', function (event) {
     if ($('#regions').attr('value') === '–' &&
         event.target.id !== 'region')
         $('#region').attr('data-order', 0)
+
+    let x = event.target.tagName
+    console.log(x)
+    $('.dropdown_2').focusout(function (event) {
+        if (x !== 'TH' && x !== 'INPUT' && x !== 'LABEL' && x !== 'LI') {
+            $(this).removeClass('active');
+            $(this).find('.dropdown-menu').slideUp(300);
+        }
+    });
 })
 
 $('.dropdown_2').click(function (event) {
-    $(this).attr('tabindex', 1).focus();
-    $(this).toggleClass('active');
-    $(this).find('.dropdown-menu').slideToggle(300);
+    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
+        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
+        console.log(123)
+        $(this).attr('tabindex', 1).focus();
+        $(this).toggleClass('active');
+        $(this).find('.dropdown-menu').slideToggle(300);
+    }
 });
 
-$('.dropdown_2').focusout(function (event) {
-    $(this).removeClass('active');
-    $(this).find('.dropdown-menu').slideUp(300);
-});
 
-$('.dropdown_2 .dropdown-menu li').click(function (event) {4
-    console.log($('#min_age').is(":focus"), 3)
-    $(this).parents('.dropdown_2').find('span').text($(this).text());
-    $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'))
-    show_more(0, $(this).attr('project_number'))
+$('.dropdown_2 .dropdown-menu li').click(function (event) {
+    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
+        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
+        $(this).parents('.dropdown_2').find('span').text($(this).text());
+        $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'))
+    }
 });
 /*End Dropdown Menu*/
 
-$('.dropdown-menu li').click(function () {
-    let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
-        msg = '<span class="msg">Hidden input value: ';
-    $('.msg').html(msg + input + '</span>');
+$('.dropdown-menu li').click(function (event) {
+    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
+        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
+        let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
+            msg = '<span class="msg">Hidden input value: ';
+        $('.msg').html(msg + input + '</span>');
+}
 });
 
 
@@ -139,10 +152,24 @@ function draw_table(response, project_number) {
     }
 }
 
+function age_sort(project_number) {
+    //if (min_age > max_age) {
+    //    let t = min_age
+    //    min_age = max_age
+    //    max_age = t
+    //}
+
+    if ($('#age_sort').html() === 'По возрастанию')
+        setTimeout( ()=> { $('#age_sort').html('По убыванию') }, 300)
+    else
+        setTimeout( ()=> { $('#age_sort').html('По возрастанию') }, 300)
+
+    sort('birthday', project_number)
+}
+
 function show_more(new_field, project_number) {
 
     limit += new_field
-
 
     $.post('/show_more_users', {
         lim: limit,
@@ -151,6 +178,8 @@ function show_more(new_field, project_number) {
         project_number: project_number,
         team: $('#teams').attr('value'),
         region: $('#regions').attr('value'),
+        min_age: arguments[2] || '',
+        max_age: arguments[3] || ''
     }).done(function(response) {
 
         draw_table(response, project_number)

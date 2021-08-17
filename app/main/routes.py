@@ -258,6 +258,7 @@ def admin_table(project_number, admin_id):
     """if current_user.id <= 11000:
         return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
+    project = Project.query.filter_by(number=project_number).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
@@ -269,7 +270,8 @@ def admin_table(project_number, admin_id):
             regions.append(user.region)
 
     return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
-                           ParName=parameters, project_number=project_number, regions=regions)
+                           ParName=parameters, project_number=project_number, regions=regions,
+                           project=project)
 
 
 # страница для выдачи ролей
@@ -314,9 +316,15 @@ def users_table():
             users = users.filter_by(region=request.form['region'])
 
         if request.form['sort_up'] == 'true':
-            users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
+            if request.form['parameter'] == 'birthday':
+                users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
+            else:
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
         else:
-            users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
+            if request.form['parameter'] == 'birthday':
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
+            else:
+                users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
     else:
         users = users.order_by(User.project_id).limit(limit)
 
