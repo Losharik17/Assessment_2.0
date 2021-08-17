@@ -1,9 +1,41 @@
-let limit = 5
+let limit = 10
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
+document.addEventListener('click', function (event) {
+    if (event.target.id === 'team') {
+        if ($('#team').attr('data-order') === '0' ||
+            $('#team').attr('data-order') === '1')
+            $('#team').attr('data-order', -1)
+        else
+            $('#team').attr('data-order', 0)
+    }
+
+    if (event.target.id === 'region') {
+        if ($('#region').attr('data-order') === '0' ||
+            $('#region').attr('data-order') === '1')
+            $('#region').attr('data-order', -1)
+        else
+            $('#region').attr('data-order', 0)
+    }
+    console.log(event.target.getAttribute('type_sort'))
+    if (event.target.tagName === 'LI') {
+        if (event.target.getAttribute('type_sort') === 'team')
+            $('#team').attr('data-order', 1)
+        if (event.target.getAttribute('type_sort') === 'region')
+            $('#region').attr('data-order', 1)
+    }
+
+    if ($('#teams').attr('value') === 'Все команды' &&
+        event.target.id !== 'team')
+        $('#team').attr('data-order', 0)
+
+    if ($('#regions').attr('value') === '–' &&
+        event.target.id !== 'region')
+        $('#region').attr('data-order', 0)
+})
 
 $('.dropdown_2').click(function () {
     $(this).attr('tabindex', 1).focus();
@@ -37,7 +69,10 @@ function draw_table(response, project_number) {
     let quantity = users.length
 
     if (limit > quantity) {
-        limit = quantity
+        if (quantity < 10)
+            limit = 10
+        else
+            limit = quantity
         $('body').append(
             `<div class="message warning"><h4>
                 В таблице присутствуют все участники</h4></div>`)
@@ -78,10 +113,10 @@ function draw_table(response, project_number) {
         else
             $(`#number_str${i}`).append(`<td id="team${i}">${users[i]['team']}</td>`)
 
-        if (users[i]['place'] === 'None')
-            $(`#number_str${i}`).append(`<td id="place${i}">–</td>`)
+        if (users[i]['region'] === 'None')
+            $(`#number_str${i}`).append(`<td id="region${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="place${i}">${users[i]['place']}</td>`)
+            $(`#number_str${i}`).append(`<td id="region${i}">${users[i]['region']}</td>`)
 
 
         for(let j = 0; j < 10; j++) {
@@ -112,7 +147,8 @@ function show_more(new_field, project_number) {
         parameter: sort.current_parameter,
         sort_up: sort.sort_up,
         project_number: project_number,
-        team: $('#teams').html()
+        team: $('#teams').attr('value'),
+        region: $('#regions').attr('value'),
     }).done(function(response) {
 
         draw_table(response, project_number)
@@ -141,12 +177,14 @@ function sort(parameter, project_number) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
+
     $.post('/sort_users_table', {
         parameter: parameter,
         sort_up: sort.sort_up,
         lim: limit,
         project_number: project_number,
-        team: $('#teams').val()
+        team: $('#teams').attr('value'),
+        region: $('#regions').attr('value'),
     }).done(
         function (response) {
 
@@ -162,7 +200,7 @@ function sort(parameter, project_number) {
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
                 $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ? users[i]['birthday'] : '–')
                 $(`#team${i}`).html(users[i]['team'] !== 'None' ? users[i]['team'] : '–')
-                $(`#place${i}`).html(users[i]['place'] !== 'None' ? users[i]['place'] : '–')
+                $(`#region${i}`).html(users[i]['region'] !== 'None' ? users[i]['region'] : '–')
 
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&
@@ -177,6 +215,7 @@ function sort(parameter, project_number) {
                 else
                     $(`#sum_grade_all${i}`).html('–')
             }
+
         }).fail(function () {
         alert("Error AJAX request")
     })

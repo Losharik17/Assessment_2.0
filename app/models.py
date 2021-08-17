@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     birthday = db.Column(db.Date)
     team = db.Column(db.String(32))  # команда, класс иди что-то подобное
-    place = db.Column(db.String(64))  # локация, регион или что-то подобное
+    region = db.Column(db.String(64))  # локация, регион или что-то подобное
     project_number = db.Column(db.Integer)  # номер проекта к которму относится
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)  # общий id
     password_hash = db.Column(db.String(128))

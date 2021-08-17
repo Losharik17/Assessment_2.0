@@ -4,19 +4,6 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
 
-    <div class="dropdown_2">
-        <div class="select_2">
-            <span id="teams">Все команды</span>
-            <i class="fa fa-chevron-left"></i>
-        </div>
-        <input type="hidden" name="teams" id="teams">
-        <ul class="dropdown-menu">
-            {% for team in teams %}
-                <li project_number="{{ project_number }}">{{ team }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-
     <div class="table-wrap">
 
         <table class="table-sort">
@@ -28,10 +15,26 @@
                     onclick="sort(this.id, {{ project_number }})">ФИО</th>
                 <th id="birthday" class="sort" data-order="0"
                     onclick="sort(this.id, {{ project_number }})">Дата рождения</th>
-                <th id="team" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Команда</th>
-                <th id="place" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Регион</th>
+                <th id="team" class="sort dropdown_2" data-order="0">Команда
+                    <input type="hidden" name="teams" id="teams" value="Все команды">
+                    <ul class="dropdown-menu"
+                        onclick="show_more(0, {{ project_number }})">
+                        {% for team in teams %}
+                            <li project_number="{{ project_number }}" type_sort="team"
+                                onclick="$('#teams').attr('value', `{{ team }}`)">{{ team }}</li>
+                        {% endfor %}
+                    </ul>
+                </th>
+                <th id="region" class="sort dropdown_2" data-order="0">Регион
+                    <input type="hidden" name="regions" id="regions" value="–">
+                    <ul class="dropdown-menu"
+                        onclick="show_more(0, {{ project_number }})">
+                        {% for region in regions %}
+                            <li project_number="{{ project_number }}" type_sort="region"
+                                onclick="$('#regions').attr('value', `{{ region }}`)">{{ region }}</li>
+                        {% endfor %}
+                    </ul>
+                </th>
 
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
@@ -116,7 +119,9 @@
             {% endfor %}
             </tbody>
         </table>
+
     </div>
+
 
     <div class="show">
         <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ project_number }})">
@@ -128,6 +133,7 @@
     <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
     <script>
         show_more(0, {{ project_number }})
+        $('.dropdown_2 .dropdown-menu').css({'top': $('#team').outerHeight() - 15})
     </script>
 
 {% endblock %}

@@ -1,4 +1,4 @@
-let limit = 5
+let limit = 10
 
 sort.sort_up = false
 sort.current_parameter = 'expert_id'
