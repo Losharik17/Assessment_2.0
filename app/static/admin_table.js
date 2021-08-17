@@ -20,7 +20,7 @@ document.addEventListener('click', function (event) {
         else
             $('#region').attr('data-order', 0)
     }
-    console.log(event.target.getAttribute('type_sort'))
+
     if (event.target.tagName === 'LI') {
         if (event.target.getAttribute('type_sort') === 'team')
             $('#team').attr('data-order', 1)
@@ -37,19 +37,21 @@ document.addEventListener('click', function (event) {
         $('#region').attr('data-order', 0)
 })
 
-$('.dropdown_2').click(function () {
+$('.dropdown_2').click(function (event) {
     $(this).attr('tabindex', 1).focus();
     $(this).toggleClass('active');
     $(this).find('.dropdown-menu').slideToggle(300);
 });
-$('.dropdown_2').focusout(function () {
+
+$('.dropdown_2').focusout(function (event) {
     $(this).removeClass('active');
     $(this).find('.dropdown-menu').slideUp(300);
 });
 
-$('.dropdown_2 .dropdown-menu li').click(function () {
+$('.dropdown_2 .dropdown-menu li').click(function (event) {4
+    console.log($('#min_age').is(":focus"), 3)
     $(this).parents('.dropdown_2').find('span').text($(this).text());
-    $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'));
+    $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'))
     show_more(0, $(this).attr('project_number'))
 });
 /*End Dropdown Menu*/
@@ -106,8 +108,8 @@ function draw_table(response, project_number) {
         if (users[i]['birthday'] === 'None')
             $(`#number_str${i}`).append(`<td id="birthday${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="birthday${i}">${users[i]['birthday']}</td>`)
-
+            $(`#number_str${i}`).append(`<td id="birthday${i}">${Math.floor((new Date() - new Date(users[i]['birthday']))
+            / (24 * 3600 * 365.25 * 1000))}</td>`)
         if (users[i]['team'] === 'None')
             $(`#number_str${i}`).append(`<td id="team${i}">–</td>`)
         else
@@ -125,7 +127,7 @@ function draw_table(response, project_number) {
                     users[i][`sum_grade_${j}`] === 'None')
                     $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                 else
-                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.floor(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
+                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.ceil(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
             }
         }
 
@@ -133,7 +135,7 @@ function draw_table(response, project_number) {
             users[i]['sum_grade_all'] === 'None')
             $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.floor(users[i]['sum_grade_all'] * 100) / 100}</td>`)
+            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.ceil(users[i]['sum_grade_all'] * 100) / 100}</td>`)
     }
 }
 
@@ -198,7 +200,11 @@ function sort(parameter, project_number) {
 
                 $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
-                $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ? users[i]['birthday'] : '–')
+
+                $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ?
+                    Math.floor((new Date() - new Date(users[i]['birthday'])) / (24 * 3600 * 365.25 * 1000)) :
+                    '–')
+
                 $(`#team${i}`).html(users[i]['team'] !== 'None' ? users[i]['team'] : '–')
                 $(`#region${i}`).html(users[i]['region'] !== 'None' ? users[i]['region'] : '–')
 

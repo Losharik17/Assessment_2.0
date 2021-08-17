@@ -259,7 +259,6 @@ def admin_table(project_number, admin_id):
         return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(10)
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
     regions = ['–']
@@ -270,8 +269,7 @@ def admin_table(project_number, admin_id):
             regions.append(user.region)
 
     return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
-                           users=users, ParName=parameters, project_number=project_number,
-                           regions=regions)
+                           ParName=parameters, project_number=project_number, regions=regions)
 
 
 # страница для выдачи ролей

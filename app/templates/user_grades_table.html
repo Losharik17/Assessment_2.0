@@ -18,13 +18,17 @@
                     <td style="text-align: left">ФИО: {{ user.username }}</td>
                 </tr>
                 <tr>
-                    <td style="text-align: left">Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
+                    <td style="text-align: left" id="birthday">Возраст: </td>
                 </tr>
                 <tr>
-                    <td style="text-align: left">Команда: {{ user.team }}</td>
+                    <td style="text-align: left">Команда:
+                        {% if user.team %}{{ user.team }}
+                        {% else %} – {% endif %}</td>
                 </tr>
                 <tr>
-                    <td style="text-align: left">Регион: {{ user.place }}</td>
+                    <td style="text-align: left">Регион:
+                        {% if user.region %}{{ user.region }}
+                        {% else %} – {% endif %}</td>
                 </tr>
             </table>
         </div>
@@ -107,6 +111,8 @@
     </div>
 
     <script>
+        $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
+            / (24 * 3600 * 365.25 * 1000)))
         buttons({{ i.a }})
         delete_buttons({{ user_id }})
     </script>

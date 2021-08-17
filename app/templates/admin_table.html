@@ -13,8 +13,9 @@
                         {{ project_number }})">ID</th>
                 <th id="username" class="sort" data-order="0"
                     onclick="sort(this.id, {{ project_number }})">ФИО</th>
-                <th id="birthday" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Дата рождения</th>
+                <th id="birthday" class="sort dropdown_2" data-order="0"
+                    onclick="sort(this.id, {{ project_number }})">Возраст
+                </th>
                 <th id="team" class="sort dropdown_2" data-order="0">Команда
                     <input type="hidden" name="teams" id="teams" value="Все команды">
                     <ul class="dropdown-menu"
@@ -48,75 +49,7 @@
             </thead>
 
             <tbody id="tbody" class="tbody-table">
-            {% set i.a = 0 %}
-            {% for user in users %}
 
-                <tr id="number_str{{ i.a }}" onclick="location.href='{{ url_for(
-                'main.user_grades_table', project_number=project_number, user_id=user.id) }}'">
-
-                    <td id="id{{ i.a }}">
-                        {% if user.project_id %}
-                            {{ user.project_id }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="username{{ i.a }}">
-                        {% if user.username %}
-                            {{ user.username }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="birthday{{ i.a }}">
-                        {% if user.birthday %}
-                            {{ user.birthday.strftime('%d.%m.%Y') }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="team{{ i.a }}">
-                        {% if user.team %}
-                            {{ user.team }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="place{{ i.a }}">
-                        {% if user.place %}
-                            {{ user.place }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-                    {% for j in range(10) %}
-                        {% if user.__dict__['sum_grade_{}'.format(j)] %}
-                            <td id="sum_grade_{{ j }}{{ i.a }}">
-                                {% if user.__dict__['sum_grade_{}'.format(j)] == 0 %}
-                                    —
-                                {% else %}
-                                    {{ user.__dict__['sum_grade_{}'.format(j)] }}
-                                {% endif %}
-                            </td>
-                        {% endif %}
-                    {% endfor %}
-
-                    <td id="sum_grade_all{{ i.a }}">
-                        {% if user.sum_grade_all == 0 %}
-                            —
-                        {% else %}
-                            {{ user.sum_grade_all }}
-                        {% endif %}
-                    </td>
-                </tr>
-
-                {% set i.a = i.a + 1 %}
-
-            {% endfor %}
             </tbody>
         </table>
 

@@ -22,7 +22,7 @@ def users_in_json(users):
     for user in users:
 
         if user.birthday:
-            birthday = user.birthday.strftime('%d.%m.%Y')
+            birthday = user.birthday
         else:
             birthday = '-'
         string += '{' + '"id":{0},"username":"{1}","birthday":"{2}","team":"{3}",' \
