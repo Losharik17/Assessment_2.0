@@ -184,8 +184,6 @@ def viewer(viewer_id):
     return render_template('viewer_main.html', viever=viewer, projects=projects)
 
 
-
-
 # страница Настройки проектов + доступ к юзерам и экспертам.
 @bp.route('/viewer/settings/<viewer_id>', methods=['GET', 'POST'])
 @login_required
