@@ -6,7 +6,7 @@
 
         <h1 class="title">Создание проекта</h1>
         <br>
-        <form style="position:relative;" action="{{ url_for('main.create_project', viewer_id = viewer.id) }}" method="POST"
+        <form style="position:relative;" action="{{ url_for('main.create_project', viewer_id=viewer.id) }}" method="POST"
               enctype="multipart/form-data">
             <div class="block">
                 <div class="block_1">
@@ -57,20 +57,22 @@
                         </label>
                     </div>
                     <div class="input__wrapper">
-                        <input  type="file" name="users" id="input__file_4" class="input input__file">
+                        <input  type="file" name="users_photo" id="input__file_4" class="input input__file">
                         <label for="input__file" class="input__file-button">
                             <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
                             <span class="input__file-button-text">Загрузить Фото Участников</span>
                         </label>
                     </div>
                     <div class="input__wrapper">
-                        <input  type="file" name="users" id="input__file_5" class="input input__file">
+                        <input  type="file" name="experts_photo" id="input__file_5" class="input input__file">
                         <label for="input__file" class="input__file-button">
                             <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
                             <span class="input__file-button-text">Загрузить Фото Экспертов</span>
                         </label>
                     </div>
                 </div>
+                <input type="number" name="quantity" id="quantity" value="1"
+                style="visibility: hidden" />
                 <div class="container">
                     <input type="submit" value="Создать проект" class="btn btn-5" >
                 </div>

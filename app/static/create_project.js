@@ -33,6 +33,7 @@ function deleteField(number) {
     if (number === 0)
         return alert('Извините. У вас должен быть хотя бы один критерий')
 
+    $('#quantity').val(+$('#quantity').val() - 1)
     $(`#parameter${number}`).remove()
 
     $('#button_delete').unbind()
@@ -49,6 +50,9 @@ function deleteField(number) {
 function addField(number) {
     if (number === 9)
         return alert('Извините. Вы не можете создать более 10 критериев')
+
+
+    $('#quantity').val(+$('#quantity').val() + 1)
     $(`#button_add`).before(`<div id="parameter${number + 1}">
                                  <div class="block_4">
                                      <label for="name${number + 1}"></label>

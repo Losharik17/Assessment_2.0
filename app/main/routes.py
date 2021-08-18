@@ -176,7 +176,7 @@ def expert_grade(project_number, expert_id, user_id):
 @login_required
 def viewer(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-    projects = Project.query.filter_by(viewer_id=viewer_id).all()
+    projects = viewer.projects.all()
     '''users_in_project = []
     experts_in_project = []
     for project in projects:
@@ -206,7 +206,7 @@ def viewer_table(project_number, viewer_id):
         if user.region not in regions and user.region is not None:
             regions.append(user.region)
 
-    return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
+    return render_template('viewer_table.html', title='Table', admin=admin, teams=teams,
                            ParName=parameters, project_number=project_number, regions=regions,
                            project=project)
 
@@ -240,7 +240,8 @@ def create_project(viewer_id):
         excel(experts.filename.rsplit(".", 1)[0])
 
         path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
-        photos = request.files.getlist("photos")
+        users_photo = request.files.getlist("users_photo")
+        expert_phoros = request.files.getlist("experts_photo")
         for photo in photos:
             photo.save(os.path.join(path, photo.filename))  # указать другое название файла
 
