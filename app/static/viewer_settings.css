@@ -17,6 +17,11 @@
     display: inline-block;
     border: 2px solid rgba(0, 64, 144, 0.7);
     border-radius: 10px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    user-select:none;
+    -o-user-select:none;
 
 }
 
@@ -41,3 +46,7 @@
     box-shadow: 0 0 0 0;
     transform: scale(1);
 }
+
+
+
+

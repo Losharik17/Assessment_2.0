@@ -110,7 +110,7 @@ input::-webkit-inner-spin-button {
 
 
 .button {
-    padding:0 5px;
+    padding:0 2px;
     width:max-content;
     background: #0071f0;
     border-width: 0;

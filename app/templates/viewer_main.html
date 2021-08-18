@@ -14,20 +14,22 @@
 
         {% for project in projects %}
             <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
-
                 <div class="block_logo">
                     {% set path = 'images/' + project.number|string + '/logo.webp' %}
                     <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                 </div>
-
-                <div class="data">
-                    <span>
+                <div class="data" align="top">
+                    <h2 >
                         {{ project.name }}
-                    </span>
+                    </h2>
                 </div>
 
+
+
+
+
                 <div class="date">
-                    <span >{{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}</span>
+                    <span>{{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}</span>
                 </div>
 
             </div>
