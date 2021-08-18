@@ -3,7 +3,12 @@
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-    <h1 style="text-align:center">{{ project.name }}<br>Участники</h1>
+    <div class="title">
+        <div class="block">
+            <h1>{{ project.name }}</h1></div>
+        <div class="block">
+            <h1 style="text-align:center">Участники</h1></div>
+    </div>
     <div class="table-wrap">
 
         <table class="table-sort">
@@ -77,8 +82,13 @@
         <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ project_number }})">
             Показать все</a>
     </div>
-
+    <br>
+    <!--
     <div class="buttons">
+        <div class="show_btn" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
+            <span>Настройки</span>
+        </div>
+
         <div class="input__wrapper">
             <input  type="file" name="experts" id="input__file_6" class="input input__file">
             <label for="input__file_6" class="input__file-button">
@@ -94,7 +104,7 @@
             </label>
         </div>
     </div>
-
+-->
     <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
     <script>
         show_more(0, {{ project_number }})

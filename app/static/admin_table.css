@@ -110,7 +110,16 @@ th.sort[data-order="1"]::after {
 
 }
 
+.title {
+    display: flex;
+    justify-content: space-between;
+    width:55%;
+    margin-left: 20px;
+}
 
+.block {
+    display: block;
+}
 
 .choice {
     border: 2px solid rgba(0, 64, 144, 0.7);
@@ -164,6 +173,7 @@ th.sort[data-order="1"]::after {
 .show {
     text-align: center;
     margin: 20px auto;
+
 }
 
 @media(hover: hover) {
