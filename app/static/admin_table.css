@@ -225,7 +225,7 @@ th.sort[data-order="1"]::after {
     width: 100%;
     max-width: 290px;
     height: 60px;
-    background: #0071f0;
+    background-color: #5f8dc4;
     color: #fff;
     font-size: 1.125rem;
     font-weight: 700;
@@ -255,8 +255,8 @@ th.sort[data-order="1"]::after {
 
 @media screen {
     .input__file-button:active {
-        box-shadow: 0 2px 3px #0044ff;
-        background-color: #0044ff;
+        box-shadow: 0 2px 3px #5980b0;
+        bbackground-color: #4c76a9;
     }
 }
 
