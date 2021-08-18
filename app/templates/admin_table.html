@@ -16,20 +16,22 @@
                 <th id="birthday" class="sort dropdown_2" data-order="0">Возраст
                     <input type="hidden" name="birthdays" id="birthdays" value="–">
                     <ul class="dropdown-menu">
-                        <li project_number="{{ project_number }}" id="age_sort" type_sort="age"
+                        <li project_number="{{ project_number }}" id="age_sort" type_sort="birthday"
                             onclick="age_sort({{ project_number }}, 1)">По убыванию</li>
                         <li project_number="{{ project_number }}" id="min_age" type_sort="age">
                             <label for="min_age_value">От&nbsp;&nbsp;</label>
                             <input type="number" id="min_age_value" min="0" max="200"
-                                   step="1" class="age" value="0"></li>
+                                   step="1" class="age"></li>
                         <li project_number="{{ project_number }}" id="max_age" type_sort="age">
                             <label for="max_age_value">До&nbsp;&nbsp;</label>
                             <input type="number" id="max_age_value" min="0" max="200"
-                                   step="1" class="age" value="200"></li>
+                                   step="1" class="age"></li>
                         <li project_number="{{ project_number }}" id="submit_sort_age"
-                            type_sort="age" onclick="age_sort({{ project_number }})">
+                            type_sort="birthday" onclick="age_sort({{ project_number }})">
                             Сортировать</li>
-
+                        <li project_number="{{ project_number }}"
+                            type_sort="birthday" onclick="age_sort_delete({{ project_number }})">
+                            Сбросить сортировку</li>
                     </ul>
                 </th>
                 <th id="team" class="sort dropdown_2" data-order="0">Команда
@@ -82,7 +84,6 @@
     <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
     <script>
         show_more(0, {{ project_number }})
-        $('.dropdown_2 .dropdown-menu').css({'top': $('#team').outerHeight() - 15})
     </script>
 
 {% endblock %}

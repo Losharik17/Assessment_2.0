@@ -16,6 +16,10 @@ from datetime import date
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
+    if current_user.is_authenticated:
+        pass
+        # return redirects()
+
     return render_template('base.html', auth=current_user.is_authenticated)
 
 
@@ -191,16 +195,20 @@ def viewer_table(project_number, viewer_id):
     """if current_user.id <= 11000:
         return redirects()"""
     viewer = Viewer.query.filter_by(id=viewer_id).first()
+    project = Project.query.filter_by(number=project_number).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
+    regions = ['–']
     for user in users_team:
-        if user.team not in teams:
+        if user.team not in teams and user.team is not None:
             teams.append(user.team)
+        if user.region not in regions and user.region is not None:
+            regions.append(user.region)
 
-    return render_template('viewer_table.html', title='Table', viewer=viewer, teams=teams,
-                           users=users, ParName=parameters, project_number=project_number)
+    return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
+                           ParName=parameters, project_number=project_number, regions=regions,
+                           project=project)
 
 
 # страница для создания нового проекта
@@ -285,15 +293,15 @@ def admin_waiting_users(admin_id):
 
 
 # таблица личных оценок участника (для админа)
-@bp.route('/user_grades_table/<project_number>/<user_id>', methods=['GET', 'POST'])
+@bp.route('/user_grades_table_for_admin/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
-def user_grades_table(project_number, user_id):
+def user_grades_table_for_admin(project_number, user_id):
     """if current_user.id <= 11000:
         return redirects()"""
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.all()
-    return render_template('user_grades_table.html', title='Rating', grades=grades, user=user,
+    return render_template('user_grades_table_for_admin.html', title='Rating', grades=grades, user=user,
                            project_number=project_number, ParName=parameters,
                            user_id=user_id)
 
@@ -444,6 +452,7 @@ def give_role():
         db.session.add(expert)
         db.session.delete(waiting_user)
         db.session.commit()
+
         return jsonify({'result': 'success'})
 
     return jsonify({'result': 'User not found'})

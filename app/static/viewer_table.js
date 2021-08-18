@@ -123,7 +123,7 @@ function draw_table(response, project_number) {
     for (let i = 0; i < quantity; i++) {
 
         $("#tbody").append(`<tr id="number_str${i}"` +
-            ` onclick="location.href='/user_grades_table_for_admin/${project_number}/${users[i]['id']}'"></tr>`)
+            ` onclick="location.href='/user_grades_table_for_viewer/${project_number}/${users[i]['id']}'"></tr>`)
 
         if (users[i]['id'] === 'None')
             $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
