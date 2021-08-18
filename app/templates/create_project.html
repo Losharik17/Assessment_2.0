@@ -3,7 +3,6 @@
 {% block app_content %}
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer.css') }}">
     <div class="content">
-
         <h1 class="title">Создание проекта</h1>
         <br>
         <form style="position:relative;" action="{{ url_for('main.create_project', viewer_id = viewer.id) }}" method="POST"
@@ -13,9 +12,9 @@
 
                     <div class="add_new">
                         <div>
-                            <div class="block_4">
+                            <div class="block_4" >
                                 <lable>
-                                    <input id="name" type="text" placeholder="Название проекта" class="input_text_1">
+                                    <input id="name"  type="text" placeholder="Название проекта" class="input_text_1">
                                 </lable>
                             </div>
                             <div id="block_4_1" class="block_4">
