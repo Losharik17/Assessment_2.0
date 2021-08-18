@@ -91,6 +91,10 @@ $('.dropdown-menu li').click(function (event) {
         $('.msg').html(msg + input + '</span>');
 }
 });
+/*Width of Dropdown*/
+$('.dropdown_2 .dropdown-menu').each(function (index, element) {
+    $(element).css({'min-width': $(this).parent().outerWidth()})
+})
 
 
 
