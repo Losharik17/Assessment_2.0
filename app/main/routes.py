@@ -42,6 +42,7 @@ def export_excel(project_number):
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
