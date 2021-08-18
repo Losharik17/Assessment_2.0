@@ -10,6 +10,7 @@ from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
 import pandas as pd
 from werkzeug.utils import secure_filename
 import os
+from datetime import date
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -328,7 +329,18 @@ def users_table():
     else:
         users = users.order_by(User.project_id).limit(limit)
 
-    return jsonify({'users': users_in_json(users)})
+    # сортировка по возрасту
+    t = date.today()
+    new_users = []
+    for user in users:
+        age = t.year - int(user.birthday.strftime('%Y')) - \
+              ((t.month, t.day) <
+               (int(user.birthday.strftime('%m')),
+                int(user.birthday.strftime('%d'))))
+        if int(request.form['min_age']) <= age <= int(request.form['max_age']):
+            new_users.append(user)
+
+    return jsonify({'users': users_in_json(new_users)})
 
 
 # сортировка личных оценок участника

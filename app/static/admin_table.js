@@ -35,27 +35,44 @@ document.addEventListener('click', function (event) {
     if ($('#regions').attr('value') === '–' &&
         event.target.id !== 'region')
         $('#region').attr('data-order', 0)
-
-    let x = event.target.tagName
-    console.log(x)
-    $('.dropdown_2').focusout(function (event) {
-        if (x !== 'TH' && x !== 'INPUT' && x !== 'LABEL' && x !== 'LI') {
-            $(this).removeClass('active');
-            $(this).find('.dropdown-menu').slideUp(300);
-        }
-    });
 })
 
-$('.dropdown_2').click(function (event) {
-    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
-        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
-        console.log(123)
-        $(this).attr('tabindex', 1).focus();
-        $(this).toggleClass('active');
-        $(this).find('.dropdown-menu').slideToggle(300);
+$('html').click(function (event) {
+    // очень хрупкая и тупая конструкция, но она работает
+    if (!$('#birthday').hasClass('active') && event.target.tagName === 'TH' &&
+        event.target.id === 'birthday') {
+        $('#birthday').attr('tabindex', 1).focus();
+        $('#birthday').addClass('active');
+        $('#birthday').find('.dropdown-menu').slideDown(300);
+    }
+    else if (event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
+        || ($('#birthday').hasClass('active') && event.target.tagName === 'TH')) {
+        $('#birthday').removeClass('active');
+        $('#birthday').find('.dropdown-menu').slideUp(300);
     }
 });
 
+$('#team').click(function () {
+    $(this).attr('tabindex', 1).focus();
+    $(this).toggleClass('active');
+    $(this).find('.dropdown-menu').slideToggle(300);
+});
+
+$('#team').focusout(function (event) {
+    $(this).removeClass('active');
+    $(this).find('.dropdown-menu').slideUp(300);
+});
+
+$('#region').click(function () {
+    $(this).attr('tabindex', 1).focus();
+    $(this).toggleClass('active');
+    $(this).find('.dropdown-menu').slideToggle(300);
+});
+
+$('#region').focusout(function () {
+    $(this).removeClass('active');
+    $(this).find('.dropdown-menu').slideUp(300);
+});
 
 $('.dropdown_2 .dropdown-menu li').click(function (event) {
     if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
@@ -152,19 +169,23 @@ function draw_table(response, project_number) {
     }
 }
 
-function age_sort(project_number) {
-    //if (min_age > max_age) {
-    //    let t = min_age
-    //    min_age = max_age
-    //    max_age = t
-    //}
+function age_sort(project_number, type=0) {
+    let min_age = $('#min_age_value').val() || 0,
+        max_age = $('#max_age_value').val() || 200
+    if (+min_age > +max_age) {
+        $('#min_age_value').val(max_age)
+        $('#max_age_value').val(min_age)
+    }
 
     if ($('#age_sort').html() === 'По возрастанию')
         setTimeout( ()=> { $('#age_sort').html('По убыванию') }, 300)
     else
         setTimeout( ()=> { $('#age_sort').html('По возрастанию') }, 300)
 
-    sort('birthday', project_number)
+    if (type)
+        sort('birthday', project_number)
+    else
+        show_more(0, project_number)
 }
 
 function show_more(new_field, project_number) {
@@ -178,8 +199,8 @@ function show_more(new_field, project_number) {
         project_number: project_number,
         team: $('#teams').attr('value'),
         region: $('#regions').attr('value'),
-        min_age: arguments[2] || '',
-        max_age: arguments[3] || ''
+        min_age: $('#min_age_value').val() || 0,
+        max_age: $('#max_age_value').val() || 200
     }).done(function(response) {
 
         draw_table(response, project_number)
@@ -216,6 +237,8 @@ function sort(parameter, project_number) {
         project_number: project_number,
         team: $('#teams').attr('value'),
         region: $('#regions').attr('value'),
+        min_age: $('#min_age_value').val() || 0,
+        max_age: $('#max_age_value').val() || 200
     }).done(
         function (response) {
 
