@@ -1,11 +1,13 @@
 import random
 import string
+
+import alert as alert
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer, Admin
 import pandas as pd
-from flask import redirect, url_for
+from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 
@@ -203,6 +205,19 @@ def delete_timer():
     shed = BackgroundScheduler(daemon=True)
     shed.add_job(delete_function, 'interval', days=1)
     shed.start()
+
+def delete_timer_():
+    shed = BackgroundScheduler(daemon=True)
+    shed.add_job(delete_function, 'interval', minutes=7)
+    shed.start()
+
+
+def delete_function_():
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 seconds'")
+    a = a.fetchall()
+    if a:
+        flash("ITs WORK!")
+        return redirect("base.html")
 
 
 def redirects():
