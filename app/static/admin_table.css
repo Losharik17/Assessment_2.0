@@ -31,7 +31,7 @@ table {
 }
 
 th, td:first-child {
-    background: #AFCDE7;
+    background: #5f8dc4;
     color: white;
     padding: 10px 20px;
     margin: auto;
@@ -47,8 +47,8 @@ th {
 td {
     border-style: solid;
     border-width: 0 1px 1px 0;
-    border-color: white;
-    background: #D8E6F3;
+    border-color: #c4d0fc;
+    background: white;
     margin: auto;
 }
 
@@ -89,7 +89,7 @@ th.sort[data-order="1"]::after {
 
 @media(hover: hover) {
     th.sort:hover {
-        background-color: rgba(175, 205, 231, 0.7);
+        background: #8ca8c9;
     }
 }
 
@@ -440,7 +440,7 @@ th.sort[data-order="1"]::after {
     transition: all .5s ease;
     position: relative;
     font-size: 14px;
-    text-align: left
+    text-align: left;
 }
 .dropdown_2 .select_2 {
     cursor: pointer;
@@ -469,11 +469,11 @@ th.sort[data-order="1"]::after {
 }
 .dropdown_2 .dropdown-menu {
     position: absolute;
-    background-color: rgba(0,0,0,0.7);
+    background-color: #5f8dc4;
     width: max-content;
     left: 0;
     box-shadow: 0 1px 2px rgb(204, 204, 204);
-    border-radius: 0 1px 2px 2px;
+    border-radius: 0 3px 4px 4px;
     overflow: hidden;
     display: none;
     max-height: 200px;
@@ -514,5 +514,9 @@ span.choose {
 }
 
 .age {
-
+    text-align: center;
+    border-radius:5px;
+    background-color: #e8edff;
+    border: 0;
+    width: max-content;
 }
