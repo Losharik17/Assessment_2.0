@@ -1,4 +1,4 @@
-let limit = 5
+let limit = 10
 
 sort.sort_up = false
 sort.current_parameter = 'expert_id'
@@ -6,6 +6,8 @@ sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
 edit_grade.old_value = Array()
+
+
 
 const but = document.querySelectorAll(".btn");
 but.forEach((button) => {

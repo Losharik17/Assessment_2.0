@@ -10,6 +10,7 @@ from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
 import pandas as pd
 from werkzeug.utils import secure_filename
 import os
+from datetime import date
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -40,8 +41,7 @@ def export_excel(project_number):
     for parameter in parameters:
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
-
-    df1 = df1.rename(columns={"place": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+    df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
@@ -270,16 +270,20 @@ def admin_table(project_number, admin_id):
     """if current_user.id <= 11000:
         return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
+    project = Project.query.filter_by(number=project_number).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
+    regions = ['–']
     for user in users_team:
-        if user.team not in teams:
+        if user.team not in teams and user.team is not None:
             teams.append(user.team)
+        if user.region not in regions and user.region is not None:
+            regions.append(user.region)
 
     return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
-                           users=users, ParName=parameters, project_number=project_number)
+                           ParName=parameters, project_number=project_number, regions=regions,
+                           project=project)
 
 
 # страница для выдачи ролей
@@ -305,73 +309,49 @@ def user_grades_table(project_number, user_id):
                            user_id=user_id)
 
 
-# сортировка таблицы участников
+# сортировка таблицы участников или увелечение количества участников в таблице
 @bp.route('/sort_users_table', methods=['POST'])
-@login_required
-def sort_users_table():
-    if request.form['team'] == '' or request.form['team'] == 'Все команды':
-        if request.form['sort_up'] == 'true':
-            users = User.query.filter_by(project_number=request.form['project_number']) \
-                .order_by(User.__dict__[request.form['parameter']].desc()) \
-                .limit(request.form['lim'])
-        else:
-            users = User.query.filter_by(project_number=request.form['project_number']) \
-                .order_by(User.__dict__[request.form['parameter']].asc()) \
-                .limit(request.form['lim'])
-    else:
-        if request.form['sort_up'] == 'true':
-            users = User.query.filter_by(project_number=request.form['project_number'],
-                                         team=request.form['team']) \
-                .order_by(User.__dict__[request.form['parameter']].desc()) \
-                .limit(request.form['lim'])
-        else:
-            users = User.query.filter_by(project_number=request.form['project_number'],
-                                         team=request.form['team']) \
-                .order_by(User.__dict__[request.form['parameter']].asc()) \
-                .limit(request.form['lim'])
-
-    return jsonify({'users': users_in_json(users)})
-
-
-# увелечение количества отображаемых участников в таблице
 @bp.route('/show_more_users', methods=['POST'])
 @login_required
-def show_more_users():
-    if request.form['team'] == '' or request.form['team'] == 'Все команды':
-        if request.form['parameter'] != '':
-            if request.form['sort_up'] == 'true':
-
-                users = User.query.filter_by(project_number=request.form['project_number']) \
-                    .order_by(User.__dict__[request.form['parameter']].desc()) \
-                    .limit(request.form['lim'])
-
-            else:
-                users = User.query.filter_by(project_number=request.form['project_number']) \
-                    .order_by(User.__dict__[request.form['parameter']].asc()) \
-                    .limit(request.form['lim'])
-        else:
-            users = User.query.filter_by(project_number=request.form['project_number']) \
-                .order_by(User.project_id).limit(request.form['lim'])
+def users_table():
+    if int(request.form['lim']) < 10:
+        limit = 10
     else:
-        if request.form['parameter'] != '':
-            if request.form['sort_up'] == 'true':
+        limit = int(request.form['lim'])
 
-                users = User.query.filter_by(project_number=request.form['project_number'],
-                                             team=request.form['team']) \
-                    .order_by(User.__dict__[request.form['parameter']].desc()) \
-                    .limit(request.form['lim'])
+    users = User.query.filter_by(project_number=request.form['project_number'])
+    if request.form['parameter'] != '':
+        if request.form['team'] != '' and request.form['team'] != 'Все команды':
+            users = users.filter_by(team=request.form['team'])
 
+        if request.form['region'] != '' and request.form['region'] != '–':
+            users = users.filter_by(region=request.form['region'])
+
+        if request.form['sort_up'] == 'true':
+            if request.form['parameter'] == 'birthday':
+                users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
             else:
-                users = User.query.filter_by(project_number=request.form['project_number'],
-                                             team=request.form['team']) \
-                    .order_by(User.__dict__[request.form['parameter']].asc()) \
-                    .limit(request.form['lim'])
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
         else:
-            users = User.query.filter_by(project_number=request.form['project_number'],
-                                         team=request.form['team']) \
-                .order_by(User.project_id).limit(request.form['lim'])
+            if request.form['parameter'] == 'birthday':
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
+            else:
+                users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
+    else:
+        users = users.order_by(User.project_id).limit(limit)
 
-    return jsonify({'users': users_in_json(users)})
+    # сортировка по возрасту
+    t = date.today()
+    new_users = []
+    for user in users:
+        age = t.year - int(user.birthday.strftime('%Y')) - \
+              ((t.month, t.day) <
+               (int(user.birthday.strftime('%m')),
+                int(user.birthday.strftime('%d'))))
+        if int(request.form['min_age']) <= age <= int(request.form['max_age']):
+            new_users.append(user)
+
+    return jsonify({'users': users_in_json(new_users)})
 
 
 # сортировка личных оценок участника

@@ -1,31 +1,95 @@
-let limit = 5
+let limit = 10
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
+document.addEventListener('click', function (event) {
+    if (event.target.id === 'team') {
+        if ($('#team').attr('data-order') === '0' ||
+            $('#team').attr('data-order') === '1')
+            $('#team').attr('data-order', -1)
+        else
+            $('#team').attr('data-order', 0)
+    }
 
-$('.dropdown_2').click(function () {
+    if (event.target.id === 'region') {
+        if ($('#region').attr('data-order') === '0' ||
+            $('#region').attr('data-order') === '1')
+            $('#region').attr('data-order', -1)
+        else
+            $('#region').attr('data-order', 0)
+    }
+
+    if (event.target.tagName === 'LI') {
+        if (event.target.getAttribute('type_sort') === 'team')
+            $('#team').attr('data-order', 1)
+        if (event.target.getAttribute('type_sort') === 'region')
+            $('#region').attr('data-order', 1)
+    }
+
+    if ($('#teams').attr('value') === 'Все команды' &&
+        event.target.id !== 'team')
+        $('#team').attr('data-order', 0)
+
+    if ($('#regions').attr('value') === '–' &&
+        event.target.id !== 'region')
+        $('#region').attr('data-order', 0)
+})
+
+$('html').click(function (event) {
+    // очень хрупкая и тупая конструкция, но она работает
+    if (!$('#birthday').hasClass('active') && event.target.tagName === 'TH' &&
+        event.target.id === 'birthday') {
+        $('#birthday').attr('tabindex', 1).focus();
+        $('#birthday').addClass('active');
+        $('#birthday').find('.dropdown-menu').slideDown(300);
+    }
+    else if (event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
+        || ($('#birthday').hasClass('active') && event.target.tagName === 'TH')) {
+        $('#birthday').removeClass('active');
+        $('#birthday').find('.dropdown-menu').slideUp(300);
+    }
+});
+
+$('#team').click(function () {
     $(this).attr('tabindex', 1).focus();
     $(this).toggleClass('active');
     $(this).find('.dropdown-menu').slideToggle(300);
 });
-$('.dropdown_2').focusout(function () {
+
+$('#team').focusout(function (event) {
     $(this).removeClass('active');
     $(this).find('.dropdown-menu').slideUp(300);
 });
 
-$('.dropdown_2 .dropdown-menu li').click(function () {
-    $(this).parents('.dropdown_2').find('span').text($(this).text());
-    $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'));
-    show_more(0, $(this).attr('project_number'))
+$('#region').click(function () {
+    $(this).attr('tabindex', 1).focus();
+    $(this).toggleClass('active');
+    $(this).find('.dropdown-menu').slideToggle(300);
+});
+
+$('#region').focusout(function () {
+    $(this).removeClass('active');
+    $(this).find('.dropdown-menu').slideUp(300);
+});
+
+$('.dropdown_2 .dropdown-menu li').click(function (event) {
+    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
+        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
+        $(this).parents('.dropdown_2').find('span').text($(this).text());
+        $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'))
+    }
 });
 /*End Dropdown Menu*/
 
-$('.dropdown-menu li').click(function () {
-    let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
-        msg = '<span class="msg">Hidden input value: ';
-    $('.msg').html(msg + input + '</span>');
+$('.dropdown-menu li').click(function (event) {
+    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
+        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
+        let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
+            msg = '<span class="msg">Hidden input value: ';
+        $('.msg').html(msg + input + '</span>');
+}
 });
 
 
@@ -37,7 +101,10 @@ function draw_table(response, project_number) {
     let quantity = users.length
 
     if (limit > quantity) {
-        limit = quantity
+        if (quantity < 10)
+            limit = 10
+        else
+            limit = quantity
         $('body').append(
             `<div class="message warning"><h4>
                 В таблице присутствуют все участники</h4></div>`)
@@ -71,17 +138,17 @@ function draw_table(response, project_number) {
         if (users[i]['birthday'] === 'None')
             $(`#number_str${i}`).append(`<td id="birthday${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="birthday${i}">${users[i]['birthday']}</td>`)
-
+            $(`#number_str${i}`).append(`<td id="birthday${i}">${Math.floor((new Date() - new Date(users[i]['birthday']))
+            / (24 * 3600 * 365.25 * 1000))}</td>`)
         if (users[i]['team'] === 'None')
             $(`#number_str${i}`).append(`<td id="team${i}">–</td>`)
         else
             $(`#number_str${i}`).append(`<td id="team${i}">${users[i]['team']}</td>`)
 
-        if (users[i]['place'] === 'None')
-            $(`#number_str${i}`).append(`<td id="place${i}">–</td>`)
+        if (users[i]['region'] === 'None')
+            $(`#number_str${i}`).append(`<td id="region${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="place${i}">${users[i]['place']}</td>`)
+            $(`#number_str${i}`).append(`<td id="region${i}">${users[i]['region']}</td>`)
 
 
         for(let j = 0; j < 10; j++) {
@@ -90,7 +157,7 @@ function draw_table(response, project_number) {
                     users[i][`sum_grade_${j}`] === 'None')
                     $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                 else
-                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.floor(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
+                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.ceil(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
             }
         }
 
@@ -98,21 +165,42 @@ function draw_table(response, project_number) {
             users[i]['sum_grade_all'] === 'None')
             $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.floor(users[i]['sum_grade_all'] * 100) / 100}</td>`)
+            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.ceil(users[i]['sum_grade_all'] * 100) / 100}</td>`)
     }
+}
+
+function age_sort(project_number, type=0) {
+    let min_age = $('#min_age_value').val() || 0,
+        max_age = $('#max_age_value').val() || 200
+    if (+min_age > +max_age) {
+        $('#min_age_value').val(max_age)
+        $('#max_age_value').val(min_age)
+    }
+
+    if ($('#age_sort').html() === 'По возрастанию')
+        setTimeout( ()=> { $('#age_sort').html('По убыванию') }, 300)
+    else
+        setTimeout( ()=> { $('#age_sort').html('По возрастанию') }, 300)
+
+    if (type)
+        sort('birthday', project_number)
+    else
+        show_more(0, project_number)
 }
 
 function show_more(new_field, project_number) {
 
     limit += new_field
 
-
     $.post('/show_more_users', {
         lim: limit,
         parameter: sort.current_parameter,
         sort_up: sort.sort_up,
         project_number: project_number,
-        team: $('#teams').html()
+        team: $('#teams').attr('value'),
+        region: $('#regions').attr('value'),
+        min_age: $('#min_age_value').val() || 0,
+        max_age: $('#max_age_value').val() || 200
     }).done(function(response) {
 
         draw_table(response, project_number)
@@ -141,12 +229,16 @@ function sort(parameter, project_number) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
+
     $.post('/sort_users_table', {
         parameter: parameter,
         sort_up: sort.sort_up,
         lim: limit,
         project_number: project_number,
-        team: $('#teams').val()
+        team: $('#teams').attr('value'),
+        region: $('#regions').attr('value'),
+        min_age: $('#min_age_value').val() || 0,
+        max_age: $('#max_age_value').val() || 200
     }).done(
         function (response) {
 
@@ -160,9 +252,13 @@ function sort(parameter, project_number) {
 
                 $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
-                $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ? users[i]['birthday'] : '–')
+
+                $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ?
+                    Math.floor((new Date() - new Date(users[i]['birthday'])) / (24 * 3600 * 365.25 * 1000)) :
+                    '–')
+
                 $(`#team${i}`).html(users[i]['team'] !== 'None' ? users[i]['team'] : '–')
-                $(`#place${i}`).html(users[i]['place'] !== 'None' ? users[i]['place'] : '–')
+                $(`#region${i}`).html(users[i]['region'] !== 'None' ? users[i]['region'] : '–')
 
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&
@@ -177,6 +273,7 @@ function sort(parameter, project_number) {
                 else
                     $(`#sum_grade_all${i}`).html('–')
             }
+
         }).fail(function () {
         alert("Error AJAX request")
     })
