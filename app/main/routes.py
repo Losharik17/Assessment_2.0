@@ -215,40 +215,50 @@ def viewer_table(project_number, viewer_id):
 @bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def create_project(viewer_id):
-    viewer = Viewer.query.filter_by(id=current_user.id).first()
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
 
     if request.method == 'POST':
-        project = Project(viewer_id=current_user.id)
+        # try:
         result = request.form
 
-        for i in range(result.get('quantity')):
-            Parameter(name=result.get('name{}'.format(i)),
-                      weight=result.get('weight{}'.format(i)),
-                      project_number=project.number)
-            db.session.commit()
+        project = Project(viewer_id=current_user.id, name=result.get('name'))
+        db.session.add(project)
+        project = Project.query.all()[-1]
+
+        for i in range(int(result.get('quantity'))):
+            db.session.add(Parameter(name=result.get('name{}'.format(i)),
+                                     weight=result.get('weight{}'.format(i)),
+                                     project_number=project.number))
+
+        os.chdir("app/static/images")
+        os.mkdir('{}'.format(project.number))
+        os.chdir('{}'.format(project.number))
 
         logo = request.files['logo']
-        path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
-        logo.save(os.path.join(path, '{}.webp'.format(project.number)))
+        logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
-        users = request.files['users']
-        users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
-        excel(users.filename.rsplit(".", 1)[0])
+        # users = request.files['users']
+        # users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
+        # excel(users.filename.rsplit(".", 1)[0])
+        # experts = request.files['experts']
+        # experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
+        # excel(experts.filename.rsplit(".", 1)[0])
 
-        experts = request.files['experts']
-        experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
-        excel(experts.filename.rsplit(".", 1)[0])
-
-        path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
         users_photo = request.files.getlist("users_photo")
-        expert_phoros = request.files.getlist("experts_photo")
-        for photo in photos:
-            photo.save(os.path.join(path, photo.filename))  # указать другое название файла
+        experts_photo = request.files.getlist("experts_photo")
 
-        return redirect(url_for('main.project', project_number=project.number,
-                                viewer_id=current_user.id))
+        for photo in users_photo:
+            photo.save(os.path.join(os.getcwd(), photo.filename))  # указать другое название файла
+        for photo in experts_photo:
+            photo.save(os.path.join(os.getcwd(), photo.filename))
+        db.session.commit()
+        # except:
+        #   flash('Что-то пошло не так', 'danger')
+        #  db.session.rollback()
 
-    return render_template('create_project.html', viewer=viewer)
+        return redirect(url_for('main.viewer', viewer_id=current_user.id))
+
+    return render_template('create_project.html', viewer_id=viewer.id)
 
 
 # главная страница админа
