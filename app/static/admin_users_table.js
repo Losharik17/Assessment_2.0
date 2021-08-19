@@ -129,10 +129,10 @@ function draw_table(response, project_number) {
         $("#tbody").append(`<tr id="number_str${i}"` +
             ` onclick="location.href='/user_grades_table_for_admin/${project_number}/${users[i]['id']}'"></tr>`)
 
-        if (users[i]['id'] === 'None')
-            $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
+        if (users[i]['project_id'] === 'None')
+            $(`#number_str${i}`).append(`<td id="project_id${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="id${i}">${users[i]['project_id']}</td>`)
+            $(`#number_str${i}`).append(`<td id="project_id${i}">${users[i]['project_id']}</td>`)
 
         if (users[i]['username'] === 'None')
             $(`#number_str${i}`).append(`<td id="username${i}">–</td>`)
@@ -263,7 +263,7 @@ function sort(parameter, project_number) {
                 $(`#number_str${i}`).attr('onclick',
                     `location.href='/user_grades_table_for_admin/${project_number}/${users[i]["id"]}'`)
 
-                $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
+                $(`#project_id${i}`).html(users[i]['project_id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
 
                 $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ?

@@ -21,7 +21,6 @@
         justify-content: center;
         vertical-align: center;
         align-items: center;
-        background-color: #e8edff;
     }
 }
 
@@ -30,8 +29,7 @@
     margin: 10px auto;
     justify-content: center;
     vertical-align: center;
-    align-items: center;
-    background-color: #e8edff;
+    align-items: center;;
 }
 
 .buttons {

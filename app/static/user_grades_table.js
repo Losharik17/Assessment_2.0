@@ -64,11 +64,6 @@ function show_more(new_field, user_id) {
                 $(`#number_str${i}`).append(`<td id="comment${i}">–</td>`)
             else
                 $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
-            $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
-                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
     }).fail(function () {
         alert('Error AJAX request')
@@ -92,7 +87,7 @@ function sort(parameter, user_id) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
-    $.post('/sort_grades_table', {
+    $.post('/sort_grades_table_for_user', {
         parameter: parameter,
         sort_up: sort.sort_up,
         lim: limit,
@@ -114,10 +109,6 @@ function sort(parameter, user_id) {
 
                 $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
 
-                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                    `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
-                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
-                    `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
 
         }).fail(function () {

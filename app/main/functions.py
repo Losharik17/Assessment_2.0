@@ -41,14 +41,18 @@ def experts_in_json(experts):
     string = '['
 
     for expert in experts:
-        string += '{' + '"id":{0},"username":"{1}","weight":"{2}","quantity":"{3}},' \
-                        '"project_number":{4}, "project_id":{5},' \
+        string += '{' + '"id":{0},"username":"{1}","weight":"{2}","quantity":"{3}",' \
+                        '"project_number":{4}, "project_id":{5}' \
             .format(str(expert.id),
                     str(expert.username),
                     str(expert.weight),
                     str(expert.quantity),
                     str(expert.project_number),
                     str(expert.project_id)) + '},'
+
+    string = string[:len(string) - 1] + ']'
+
+    return string
 
 
 def grades_in_json(grades):
@@ -69,7 +73,6 @@ def grades_in_json(grades):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
-
     return string
 
 
@@ -123,7 +126,7 @@ def excel(filename):
     df = pd.read_excel(filename)
     df.head
     if filename == 'user':
-        df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'place']
+        df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
         prev_user = User.query.order_by(User.id).first()
         index = df.index
         if prev_user != None:

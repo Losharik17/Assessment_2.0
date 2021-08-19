@@ -5,11 +5,16 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
     <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
-    <script src="{{ url_for('static', filename='user_grades_table_for_admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='user_grades_table.js') }}"></script>
+    <style type="text/css">
+        tr:hover {
+            cursor: default;
+        }
+    </style>
 
     <div class="container">
         <div class="data">
-            {% set path = '/images/' + 'user' + user.id|string + '.webp'%}
+            {% set path = '/images/' + user.project_number|string + '/' + 'user' + user.id|string + '.webp'%}
             <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
             <table style="margin: 10px;">
                 <tr>
@@ -104,9 +109,9 @@
         </table>
 
         <div class="show">
-            <a class="show_btn" href="javascript:show_more(2, {{ user_id }})">
+            <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ user_id }})">
                 Показать больше</a>
-            <a class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
+            <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
                 Показать все</a>
         </div>
     </div>
@@ -114,8 +119,6 @@
     <script>
         $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
-        buttons({{ i.a }})
-        delete_buttons({{ user_id }})
     </script>
 
 {% endblock %}
