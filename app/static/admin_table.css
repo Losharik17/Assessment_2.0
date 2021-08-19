@@ -8,6 +8,7 @@
 .table-wrap {
     overflow-x: auto;
     min-height: 250px;
+    display: block;
 }
 
 .table-sort {
@@ -56,6 +57,7 @@ th:first-child, td:first-child {
 th.sort,
 th.sort {
     position: relative;
+
 }
 
 th.sort[data-order="0"]::after {
@@ -256,7 +258,8 @@ th.sort[data-order="1"]::after {
 }
 
 .input__file-button:hover {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0)
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0);
+    background: rgba(0, 64, 144, 0.7);
 
 }
 
@@ -526,4 +529,9 @@ span.choose {
     background-color: #e8edff;
     border: 0;
     width: max-content;
+}
+
+.age:focus {
+    outline: none;
+
 }

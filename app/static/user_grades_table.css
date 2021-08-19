@@ -5,6 +5,7 @@
         display: block;
         margin:  10px auto;
         justify-content: center;
+        position: fixed;
     }
 }
 
@@ -32,12 +33,62 @@
     align-items: center;;
 }
 
+.th_clean {
+    cursor: default;
+}
+
+.button_re {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: 0 15px;
+    margin: 0 7px;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #fff;
+    background-color: #1a73e8;
+    position: relative;
+    overflow: hidden;
+    vertical-align: top;
+    cursor: pointer;
+    user-select: none;
+    appearance: none;
+    touch-action: manipulation;
+    z-index: 1;
+    width: max-content;
+}
+
+.button_re:hover {
+    background-color: #1c7cfc;
+    box-shadow: gray 1px 2px 2px;
+
+}
+
+
+
 .buttons {
     display: none;
     align-items: center;
     justify-content: space-around;
     height: min-content;
     padding: 0 5px;
+}
+
+.form {
+    border-radius:5px;
+    width: max-content;
+    border:0;
+
+}
+
+.form:focus {
+    outline: 0;
+
 }
 
 .btn {

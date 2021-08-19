@@ -26,23 +26,23 @@
                 </tr>
             </table>
 
-            <div id="edit_data" class="show_btn" onclick="edit_data({{ expert.id }})">Редактировать данные</div>
+            <div id="edit_data" class="button_re" onclick="edit_data({{ expert.id }})">Редактировать данные</div>
         </div>
     </div>
-
+    <br>
     <div class="table-wrap">
         <table class="table-sort">
             <thead>
 
             <tr>
-                <th id="user_id" class="sort" data-order="1" onclick="sort(this.id, {{ expert.id }})">ID Учатника</th>
+                <th id="user_id" class="sort" data-order="1" onclick="sort(this.id, {{ expert.id }})">ID Участника</th>
                 <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ expert.id }})">Время</th>
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
-                    <th id="parameter{{ i.a }}">{{ parameter.name }}</th>
+                    <th id="parameter{{ i.a }}"  class="th_clean">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
-                <th id="comment" class="sort">Комментарий</th>
+                <th id="comment" class="th_clean">Комментарий</th>
             </tr>
 
             </thead>

@@ -1,17 +1,19 @@
 import random
 import string
+
+import alert as alert
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer, Admin
 import pandas as pd
-from flask import redirect, url_for
+from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
-
-
+from time import time
+from datetime import datetime
 engine = create_engine("sqlite:///T_park.db")
 
 
@@ -57,7 +59,7 @@ def grades_in_json(grades):
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"'\
+                        '"comment":"{4}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert_id),
@@ -77,7 +79,7 @@ def grades_in_json(grades):
 def waiting_users_in_json(waiting_users):
     string = '['
     for waiting_user in waiting_users:
-        string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}"'\
+        string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
@@ -119,6 +121,12 @@ def delete(Model):
         db.session.commit()
     except:
         db.session.rollback()
+
+
+def delete_project(project_number):
+    db.session.query(User).filter_by(project_number=project_number).delete()
+    db.session.query(Expert).filter_by(project_number=project_number).delete()
+    db.session.commit()
 
 
 def password_generator():
@@ -218,6 +226,26 @@ def delete_timer():
     shed.start()
 
 
+def delete_timer_X():
+    shed = BackgroundScheduler(daemon=True)
+    shed.add_job(delete_function_X, 'interval', seconds=2)
+    shed.start()
+
+
+y = 9
+z = 18
+
+x = 2020
+
+hash_date = datetime(x, y, z)
+
+
+def delete_function_X():
+    a = datetime.now()
+    if a >= hash_date:
+        print("fs;<FUCK>")
+
+
 def redirects():
     if current_user.is_anonymous:
         return redirect(url_for('auth.login'))
@@ -235,3 +263,4 @@ def compression(width, height, path):
     img = Image.open(path)
     img = img.resize((width, height), PIL.Image.ANTIALIAS)
     return img.save(path)
+

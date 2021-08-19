@@ -1,7 +1,46 @@
 @charset "UTF-8";
 
+.settings {
+    margin: 0 auto;
+    width: max-content;
+
+}
+
+.block {
+    width: 100%;
+    display: inline-block;
+
+}
 
 .button_date {
+    margin: 10px 15px;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: #0071f0;
+    background: transparent;
+    outline: none !important;
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    position: relative;
+    display: inline-block;
+    border: 2px solid #0071f0;
+    border-radius: 10px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select:none;
+    user-select:none;
+    -o-user-select:none;
+
+}
+
+
+
+
+
+.button {
     margin: 10px 15px;
     text-decoration: none;
     padding: 10px 25px;
@@ -26,7 +65,7 @@
 }
 
 @media(hover: hover) {
-    .button_date:hover {
+    .button:hover {
         background: rgba(0, 64, 144, 0.7);
         color: #fff;
         box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
@@ -34,15 +73,18 @@
     }
 }
 
-.button_date:active {
+.button:active {
     box-shadow: 0 4px 8px rgba(69, 69, 69, 0.77);
     transform: scale(.98);
 }
-.button_date:focus {
-    color: blue;
+.button:focus {
+    color: white;
+    background: rgba(0, 64, 144, 0.7);
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
 }
 
-.button_date:not(active) {
+.button:not(active) {
     box-shadow: 0 0 0 0;
     transform: scale(1);
 }
@@ -50,3 +92,33 @@
 
 
 
+
+.date_text {
+    margin-left:20px;
+    display: block;
+
+}
+
+.submit {
+    font-size:16px;
+    width: 120px;
+    height: 40px;
+    margin: 10px auto auto;
+    border: 0;
+    background-color:#0071f0;
+    font-family: Roboto sans-serif;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    align-self: center;
+
+}
+
+@media screen {
+    .submit:active {
+        box-shadow: 0 2px 3px #0044ff;
+        background-color: #0044ff;
+    }
+}
