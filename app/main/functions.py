@@ -215,9 +215,8 @@ def delete_timer_():
 def delete_function_():
     a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 seconds'")
     a = a.fetchall()
-    if a:
-        flash("ITs WORK!")
-        return redirect("base.html")
+
+    return redirect("base.html")
 
 
 def redirects():
