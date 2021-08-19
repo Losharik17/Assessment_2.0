@@ -10,7 +10,6 @@ from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
 import pandas as pd
 from werkzeug.utils import secure_filename
 import os
-from datetime import date
 from datetime import date, datetime
 
 
