@@ -5,10 +5,9 @@ sort.current_parameter = 'expert_id'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
-
 edit_grade.old_value = Array()
 
-th.classList.add("th-grade")
+
 
 const but = document.querySelectorAll(".btn");
 but.forEach((button) => {
@@ -163,7 +162,6 @@ function delete_grade(grade_id, user_id, number_str) {
 }
 
 
-
 function show_more(new_field, user_id) {
 
     limit += new_field
@@ -222,7 +220,14 @@ function show_more(new_field, user_id) {
                 $(`#number_str${i}`).append(`<td id="comment${i}">–</td>`)
             else
                 $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
+            $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
+                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
+                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
+        delete_buttons()
+        buttons(limit)
     }).fail(function () {
         alert('Error AJAX request')
     })
@@ -267,6 +272,10 @@ function sort(parameter, user_id) {
 
                 $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
 
+                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
+                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
 
         }).fail(function () {

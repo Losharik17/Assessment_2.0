@@ -4,29 +4,30 @@ sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
+$('.dropdown_2 .dropdown-menu').css({'top': $('#team').outerHeight() - 15})
+$('.dropdown_2 .dropdown-menu').each(function (index, element) {
+    $(element).css({'min-width': $(this).parent().outerWidth()})
+})
+
+function dataorder(parameter, event) {
+    if (event.target.id === parameter) {
+        if ($(`#${parameter}`).attr('data-order') === '0' ||
+            $(`#${parameter}`).attr('data-order') === '1')
+            $(`#${parameter}`).attr('data-order', -1)
+        else
+            $(`#${parameter}`).attr('data-order', 0)
+    }
+
+    if (event.target.tagName === 'LI')
+        if (event.target.getAttribute('type_sort') === parameter)
+            $(`#${parameter}`).attr('data-order', 1)
+}
+
 document.addEventListener('click', function (event) {
-    if (event.target.id === 'team') {
-        if ($('#team').attr('data-order') === '0' ||
-            $('#team').attr('data-order') === '1')
-            $('#team').attr('data-order', -1)
-        else
-            $('#team').attr('data-order', 0)
-    }
 
-    if (event.target.id === 'region') {
-        if ($('#region').attr('data-order') === '0' ||
-            $('#region').attr('data-order') === '1')
-            $('#region').attr('data-order', -1)
-        else
-            $('#region').attr('data-order', 0)
-    }
-
-    if (event.target.tagName === 'LI') {
-        if (event.target.getAttribute('type_sort') === 'team')
-            $('#team').attr('data-order', 1)
-        if (event.target.getAttribute('type_sort') === 'region')
-            $('#region').attr('data-order', 1)
-    }
+    dataorder('team', event)
+    dataorder('region', event)
+    dataorder('birthday', event)
 
     if ($('#teams').attr('value') === 'Все команды' &&
         event.target.id !== 'team')
@@ -35,6 +36,10 @@ document.addEventListener('click', function (event) {
     if ($('#regions').attr('value') === '–' &&
         event.target.id !== 'region')
         $('#region').attr('data-order', 0)
+
+    if ($('#birthdays').attr('value') === '–' &&
+        event.target.id !== 'birthday')
+        $('#birthday').attr('data-order', 0)
 })
 
 $('html').click(function (event) {
@@ -46,7 +51,8 @@ $('html').click(function (event) {
         $('#birthday').find('.dropdown-menu').slideDown(300);
     }
     else if (event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
-        || ($('#birthday').hasClass('active') && event.target.tagName === 'TH')) {
+        || ($('#birthday').hasClass('active') && (event.target.tagName === 'TH' ||
+            event.target.tagName === 'LI' || event.target.tagName === 'LABEL'))) {
         $('#birthday').removeClass('active');
         $('#birthday').find('.dropdown-menu').slideUp(300);
     }
@@ -75,21 +81,15 @@ $('#region').focusout(function () {
 });
 
 $('.dropdown_2 .dropdown-menu li').click(function (event) {
-    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
-        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
-        $(this).parents('.dropdown_2').find('span').text($(this).text());
-        $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'))
-    }
+    $(this).parents('.dropdown_2').find('span').text($(this).text());
+    $(this).parents('.dropdown_2').find('input').attr('value', $(this).attr('id'))
 });
 /*End Dropdown Menu*/
 
 $('.dropdown-menu li').click(function (event) {
-    if (event.target.id !== 'min_age' && event.target.id !== 'max_age' &&
-        event.target.id !== 'min_age_value' && event.target.id !== 'max_age_value') {
-        let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
-            msg = '<span class="msg">Hidden input value: ';
-        $('.msg').html(msg + input + '</span>');
-}
+    let input = '<strong>' + $(this).parents('.dropdown_2').find('input').val() + '</strong>',
+        msg = '<span class="msg">Hidden input value: ';
+    $('.msg').html(msg + input + '</span>');
 });
 /*Width of Dropdown*/
 $('.dropdown_2 .dropdown-menu').each(function (index, element) {
@@ -127,12 +127,12 @@ function draw_table(response, project_number) {
     for (let i = 0; i < quantity; i++) {
 
         $("#tbody").append(`<tr id="number_str${i}"` +
-            ` onclick="location.href='/user_grades_table/${project_number}/${users[i]['id']}'"></tr>`)
+            ` onclick="location.href='/user_grades_table_for_admin/${project_number}/${users[i]['id']}'"></tr>`)
 
-        if (users[i]['id'] === 'None')
-            $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
+        if (users[i]['project_id'] === 'None')
+            $(`#number_str${i}`).append(`<td id="project_id${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="id${i}">${users[i]['project_id']}</td>`)
+            $(`#number_str${i}`).append(`<td id="project_id${i}">${users[i]['project_id']}</td>`)
 
         if (users[i]['username'] === 'None')
             $(`#number_str${i}`).append(`<td id="username${i}">–</td>`)
@@ -190,6 +190,15 @@ function age_sort(project_number, type=0) {
         sort('birthday', project_number)
     else
         show_more(0, project_number)
+}
+
+function age_sort_delete(project_number) {
+    $('#min_age_value').val(null)
+    $('#max_age_value').val(null)
+    setTimeout( ()=> {$('#birthday').attr('data-order', 0) }, 10)
+
+    sort('project_id', project_number)
+    show_more(0 , project_number)
 }
 
 function show_more(new_field, project_number) {
@@ -252,9 +261,9 @@ function sort(parameter, project_number) {
             for (let i = 0; i < quantity; i++) {
 
                 $(`#number_str${i}`).attr('onclick',
-                    `location.href='/user_grades_table/${project_number}/${users[i]["id"]}'`)
+                    `location.href='/user_grades_table_for_admin/${project_number}/${users[i]["id"]}'`)
 
-                $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
+                $(`#project_id${i}`).html(users[i]['project_id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
 
                 $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ?

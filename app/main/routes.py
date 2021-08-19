@@ -17,6 +17,10 @@ delete_timer_X()
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
+    if current_user.is_authenticated:
+        pass
+        # return redirects()
+
     return render_template('base.html', auth=current_user.is_authenticated)
 
 
@@ -106,7 +110,12 @@ def user(user_id):
     user = User.query.filter_by(id=user_id).first()
     """if current_user.id <= 10000 and current_user.id != user.id:
         return redirects()"""
-    return render_template('user.html', user=user)
+    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
+    user = User.query.filter_by(id=user_id).first()
+    parameters = Parameter.query.filter_by(project_number=user.project_number).all()
+    return render_template('user_grades_table.html', title='Оценки участника',
+                           grades=grades, user=user, project_number=user.project_number,
+                           ParName=parameters, user_id=user_id)
 
 
 # ввод номера участника для перехода к выставлению оценки
@@ -128,6 +137,20 @@ def expert(project_number, expert_id):
         return redirect(url_for('main.expert_grade', project_number=project_number,
                                 expert_id=current_user.id, user_id=user.id))
     return render_template('expert.html', form=form, expert=expert)
+
+
+# таблица личных оценок участника (для админа)
+@bp.route('/expert_table/<project_number>/<expert_id>', methods=['GET', 'POST'])
+@login_required
+def expert_table(project_number, expert_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
+    expert = Expert.query.filter_by(id=expert_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    return render_template('expert_table.html', title='Профиль эксперта',
+                           grades=grades, expert=expert, project_number=project_number,
+                           ParName=parameters)
 
 
 # выставление оценки участнику
@@ -174,13 +197,6 @@ def expert_grade(project_number, expert_id, user_id):
 def viewer(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
     projects = viewer.projects.all()
-    '''users_in_project = []
-    experts_in_project = []
-    for project in projects:
-        users_in_project.append(User.query.filter_by(project_number=project.number)
-                                .all().length())
-        experts_in_project.append(Expert.query.filter_by(project_number=project.number)
-                                  .all().length())'''
 
     return render_template('viewer_main.html', viewer=viewer, projects=projects)
 
@@ -201,55 +217,71 @@ def viewer_table(project_number, viewer_id):
     """if current_user.id <= 11000:
         return redirects()"""
     viewer = Viewer.query.filter_by(id=viewer_id).first()
+    project = Project.query.filter_by(number=project_number).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    users = User.query.filter_by(project_number=project_number).order_by(User.id).limit(5)
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
+    regions = ['–']
     for user in users_team:
-        if user.team not in teams:
+        if user.team not in teams and user.team is not None:
             teams.append(user.team)
+        if user.region not in regions and user.region is not None:
+            regions.append(user.region)
 
-    return render_template('viewer_table.html', title='Table', viewer=viewer, teams=teams,
-                           users=users, ParName=parameters, project_number=project_number)
+    return render_template('viewer_table.html', title='Table', admin=admin, teams=teams,
+                           ParName=parameters, project_number=project_number, regions=regions,
+                           project=project)
 
 
 # страница для создания нового проекта
 @bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
 def create_project(viewer_id):
-    viewer = Viewer.query.filter_by(id=current_user.id).first()
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
 
     if request.method == 'POST':
-        project = Project(viewer_id=current_user.id)
+        # try:
         result = request.form
 
-        for i in range(result.get('quantity')):
-            Parameter(name=result.get('name{}'.format(i)),
-                      weight=result.get('weight{}'.format(i)),
-                      project_number=project.number)
-            db.session.commit()
+        project = Project(viewer_id=current_user.id, name=result.get('name'))
+        db.session.add(project)
+        project = Project.query.all()[-1]
+
+        for i in range(int(result.get('quantity'))):
+            db.session.add(Parameter(name=result.get('name{}'.format(i)),
+                                     weight=result.get('weight{}'.format(i)),
+                                     project_number=project.number))
+
+        os.chdir("app/static/images")
+        os.mkdir('{}'.format(project.number))
+        os.chdir('{}'.format(project.number))
 
         logo = request.files['logo']
-        path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
-        logo.save(os.path.join(path, '{}.webp'.format(project.number)))
+        logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
-        users = request.files['users']
-        users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
-        excel(users.filename.rsplit(".", 1)[0])
+        # users = request.files['users']
+        # users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
+        # excel(users.filename.rsplit(".", 1)[0])
+        # experts = request.files['experts']
+        # experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
+        # excel(experts.filename.rsplit(".", 1)[0])
 
-        experts = request.files['experts']
-        experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
-        excel(experts.filename.rsplit(".", 1)[0])
+        users_photo = request.files.getlist("users_photo")
+        experts_photo = request.files.getlist("experts_photo")
 
-        path = os.path.join('../T-Park/app/static/images/{}'.format(project.number))
-        photos = request.files.getlist("photos")
-        for photo in photos:
-            photo.save(os.path.join(path, photo.filename))  # указать другое название файла
+        for photo in users_photo:
+            photo.save(os.path.join(os.getcwd(), photo.filename))  # указать другое название файла
+        for photo in experts_photo:
+            photo.save(os.path.join(os.getcwd(), photo.filename))
+        db.session.commit()
+        os.chdir('../../../../')
+        # except:
+        #   flash('Что-то пошло не так', 'danger')
+        #  db.session.rollback()
 
-        return redirect(url_for('main.project', project_number=project.number,
-                                viewer_id=current_user.id))
+        return redirect(url_for('main.viewer', viewer_id=current_user.id))
 
-    return render_template('create_project.html', viewer=viewer)
+    return render_template('create_project.html', viewer_id=viewer.id)
 
 
 # главная страница админа
@@ -263,14 +295,14 @@ def admin(admin_id):
 
 
 # таблица всех участников из проекта для админа
-@bp.route('/admin_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
+@bp.route('/admin_users_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
 @login_required
-def admin_table(project_number, admin_id):
+def admin_users_table(project_number, admin_id):
     """if current_user.id <= 11000:
         return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
     project = Project.query.filter_by(number=project_number).first()
-    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    parameters = project.parameters.all()
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
     regions = ['–']
@@ -280,9 +312,23 @@ def admin_table(project_number, admin_id):
         if user.region not in regions and user.region is not None:
             regions.append(user.region)
 
-    return render_template('admin_table.html', title='Table', admin=admin, teams=teams,
+    return render_template('admin_users_table.html', title='Участники', admin=admin, teams=teams,
                            ParName=parameters, project_number=project_number, regions=regions,
                            project=project)
+
+
+# таблица экспертов
+@bp.route('/admin_experts_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
+@login_required
+def admin_experts_table(project_number, admin_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    admin = Admin.query.filter_by(id=admin_id).first()
+    project = Project.query.filter_by(number=project_number).first()
+    parameters = project.parameters.all()
+
+    return render_template('admin_experts_table.html', title='Эксперты', admin=admin,
+                           ParName=parameters, project_number=project_number, project=project)
 
 
 # страница для выдачи ролей
@@ -295,17 +341,17 @@ def admin_waiting_users(admin_id):
 
 
 # таблица личных оценок участника (для админа)
-@bp.route('/user_grades_table/<project_number>/<user_id>', methods=['GET', 'POST'])
+@bp.route('/user_grades_table_for_admin/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
-def user_grades_table(project_number, user_id):
+def user_grades_table_for_admin(project_number, user_id):
     """if current_user.id <= 11000:
         return redirects()"""
-    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(5)
+    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
-    parameters = Parameter.query.all()
-    return render_template('user_grades_table.html', title='Rating', grades=grades, user=user,
-                           project_number=project_number, ParName=parameters,
-                           user_id=user_id)
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    return render_template('user_grades_table_for_admin.html', title='Оценки участника',
+                           grades=grades, user=user, project_number=project_number,
+                           ParName=parameters, user_id=user_id)
 
 
 # сортировка таблицы участников или увелечение количества участников в таблице
@@ -353,33 +399,69 @@ def users_table():
     return jsonify({'users': users_in_json(new_users)})
 
 
-# сортировка личных оценок участника
-@bp.route('/sort_grades_table', methods=['POST'])
+@bp.route('/sort_experts_table', methods=['POST'])
+@bp.route('/show_more_experts', methods=['POST'])
 @login_required
-def sort_grades_table():
-    if request.form['sort_up'] == 'true':
-        grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
-            Grade.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+def experts_table():
+    if int(request.form['lim']) < 10:
+        limit = 10
     else:
-        grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
-            Grade.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+        limit = int(request.form['lim'])
+
+    experts = Expert.query.filter_by(project_number=request.form['project_number'])
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            experts = experts.order_by(Expert.__dict__[request.form['parameter']].desc()).limit(limit)
+        else:
+            experts = experts.order_by(Expert.__dict__[request.form['parameter']].asc()).limit(limit)
+    else:
+        experts = experts.order_by(Expert.project_id).limit(limit)
+
+    return jsonify({'experts': experts_in_json(experts)})
+
+
+# сортировка личных оценок участника или добавление личных оценок участника в таблицу
+@bp.route('/sort_grades_table_for_user', methods=['POST'])
+@bp.route('/show_more_grades_for_user', methods=['POST'])
+@login_required
+def sort_grades_table_for_user():
+    if int(request.form['lim']) < 10:
+        limit = 10
+    else:
+        limit = int(request.form['lim'])
+
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
+                Grade.__dict__[request.form['parameter']].desc()).limit(limit)
+        else:
+            grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
+                Grade.__dict__[request.form['parameter']].asc()).limit(limit)
+    else:
+        grades = Grade.query.order_by(Grade.id).limit(limit)
 
     return jsonify({'grades': grades_in_json(grades)})
 
 
-# добавление личных оценок участника в таблицу
-@bp.route('/show_more_grades', methods=['POST'])
+# добавление оценок эксперта в таблицу или сортировка оценок эксперта
+@bp.route('/show_more_grades_for_expert', methods=['POST'])
+@bp.route('/sort_grades_table_for_expert', methods=['POST'])
 @login_required
-def show_more_grades():
+def show_more_grades_for_expert():
+    if int(request.form['lim']) < 10:
+        limit = 10
+    else:
+        limit = int(request.form['lim'])
+
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
-            grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
-                Grade.__dict__[request.form['parameter']].desc()).limit(request.form['lim'])
+            grades = Grade.query.filter_by(expert_id=request.form['expert_id']).order_by(
+                Grade.__dict__[request.form['parameter']].desc()).limit(limit)
         else:
-            grades = Grade.query.filter_by(user_id=request.form['user_id']).order_by(
-                Grade.__dict__[request.form['parameter']].asc()).limit(request.form['lim'])
+            grades = Grade.query.filter_by(expert_id=request.form['expert_id']).order_by(
+                Grade.__dict__[request.form['parameter']].asc()).limit(limit)
     else:
-        grades = Grade.query.order_by(Grade.id).limit(request.form['lim'])
+        grades = Grade.query.order_by(Grade.id).limit(limit)
 
     return jsonify({'grades': grades_in_json(grades)})
 
@@ -414,7 +496,7 @@ def delete_grade():
     grade = Grade.query.get(request.form['id'])
 
     grade.expert.quantity -= 1
-    user = User.query.get(grade.user.id)
+    user = grade.user
 
     db.session.delete(grade)
     db.session.commit()
@@ -454,6 +536,7 @@ def give_role():
         db.session.add(expert)
         db.session.delete(waiting_user)
         db.session.commit()
+
         return jsonify({'result': 'success'})
 
     return jsonify({'result': 'User not found'})
@@ -522,4 +605,19 @@ def sort_waiting_users():
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
 
 
+@bp.route('/save_expert_data', methods=['POST'])
+@login_required
+def save_expert_data():
+    data = list(json.loads(request.form['data']))
+    expert = Expert.query.filter_by(id=request.form['expert_id']).first()
+
+    if getattr(expert, 'username') != data[0]:
+        setattr(expert, 'username', data[0])
+
+    if getattr(expert, 'weight') != data[1]:
+        setattr(expert, 'weight', data[1])
+
+    db.session.commit()
+
+    return jsonify({'result': 'successfully'})
 

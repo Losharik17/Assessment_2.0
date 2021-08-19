@@ -57,8 +57,8 @@ def register():
                 Expert.query.filter_by(email=form.email.data) is None or \
                 Admin.query.filter_by(email=form.email.data) is None or \
                 Viewer.query.filter_by(email=form.email.data) is None:
-            flash('Данная почта уже используется одним из пользователей<br>'
-                  'Пожалуйста изпользуйте другой email адрес', 'warning')
+            flash('Данная почта уже используется одним из пользователей.\n'
+                  'Пожалуйста изпользуйте другой email адрес.', 'warning')
             return redirect(url_for('auth.register'))
 
         #if user is None or not user.check_phone(form.phone.data):

@@ -3,20 +3,7 @@
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-
-    <div class="dropdown_2">
-        <div class="select_2">
-            <span id="teams">Все команды</span>
-            <i class="fa fa-chevron-left"></i>
-        </div>
-        <input type="hidden" name="teams" id="teams">
-        <ul class="dropdown-menu">
-            {% for team in teams %}
-                <li project_number="{{ project_number }}">{{ team }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-
+    <h1 style="text-align:center">{{ project.name }}<br>Участники</h1>
     <div class="table-wrap">
 
         <table class="table-sort">
@@ -26,14 +13,49 @@
                         {{ project_number }})">ID</th>
                 <th id="username" class="sort" data-order="0"
                     onclick="sort(this.id, {{ project_number }})">ФИО</th>
-                <th id="birthday" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Дата рождения</th>
-                <th id="team" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Команда</th>
-                <th id="place" class="sort" data-order="0"
-                    onclick="sort(this.id, {{ project_number }})">Регион</th>
+                <th id="birthday" class="sort dropdown_2" data-order="0">Возраст
+                    <input type="hidden" name="birthdays" id="birthdays" value="–">
+                    <ul class="dropdown-menu">
+                        <li project_number="{{ project_number }}" id="age_sort" type_sort="birthday"
+                            onclick="age_sort({{ project_number }}, 1)">По убыванию</li>
+                        <li project_number="{{ project_number }}" id="min_age" type_sort="age">
+                            <label for="min_age_value">От&nbsp;&nbsp;</label>
+                            <input type="number" id="min_age_value" min="0" max="200"
+                                   step="1" class="age"></li>
+                        <li project_number="{{ project_number }}" id="max_age" type_sort="age">
+                            <label for="max_age_value">До&nbsp;&nbsp;</label>
+                            <input type="number" id="max_age_value" min="0" max="200"
+                                   step="1" class="age"></li>
+                        <li project_number="{{ project_number }}" id="submit_sort_age"
+                            type_sort="birthday" onclick="age_sort({{ project_number }})">
+                            Сортировать</li>
+                        <li project_number="{{ project_number }}"
+                            type_sort="birthday" onclick="age_sort_delete({{ project_number }})">
+                            Сбросить сортировку</li>
+                    </ul>
+                </th>
+                <th id="team" class="sort dropdown_2" data-order="0">Команда
+                    <input type="hidden" name="teams" id="teams" value="Все команды">
+                    <ul class="dropdown-menu"
+                        onclick="show_more(0, {{ project_number }})">
+                        {% for team in teams %}
+                            <li project_number="{{ project_number }}" type_sort="team"
+                                onclick="$('#teams').attr('value', `{{ team }}`)">{{ team }}</li>
+                        {% endfor %}
+                    </ul>
+                </th>
+                <th id="region" class="sort dropdown_2" data-order="0">Регион
+                    <input type="hidden" name="regions" id="regions" value="–">
+                    <ul class="dropdown-menu"
+                        onclick="show_more(0, {{ project_number }})">
+                        {% for region in regions %}
+                            <li project_number="{{ project_number }}" type_sort="region"
+                                onclick="$('#regions').attr('value', `{{ region }}`)">{{ region }}</li>
+                        {% endfor %}
+                    </ul>
+                </th>
 
-                {% set i = namespace(a=0) %}
+                {% set i=namespace(a=0) %}
                 {% for parameter in ParName %}
                     <th id="sum_grade_{{ i.a }}" class="sort" data-order="0"
                         onclick="sort(this.id, {{ project_number }})">{{ parameter.name }}</th>
@@ -45,78 +67,12 @@
             </thead>
 
             <tbody id="tbody" class="tbody-table">
-            {% set i.a = 0 %}
-            {% for user in users %}
-
-                <tr id="number_str{{ i.a }}" onclick="location.href='{{ url_for(
-                'main.user_grades_table', project_number=project_number, user_id=user.id) }}'">
-
-                    <td id="id{{ i.a }}">
-                        {% if user.project_id %}
-                            {{ user.project_id }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="username{{ i.a }}">
-                        {% if user.username %}
-                            {{ user.username }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="birthday{{ i.a }}">
-                        {% if user.birthday %}
-                            {{ user.birthday.strftime('%d.%m.%Y') }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="team{{ i.a }}">
-                        {% if user.team %}
-                            {{ user.team }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    <td id="place{{ i.a }}">
-                        {% if user.place %}
-                            {{ user.place }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-                    {% for j in range(10) %}
-                        {% if user.__dict__['sum_grade_{}'.format(j)] %}
-                            <td id="sum_grade_{{ j }}{{ i.a }}">
-                                {% if user.__dict__['sum_grade_{}'.format(j)] == 0 %}
-                                    —
-                                {% else %}
-                                    {{ user.__dict__['sum_grade_{}'.format(j)] }}
-                                {% endif %}
-                            </td>
-                        {% endif %}
-                    {% endfor %}
-
-                    <td id="sum_grade_all{{ i.a }}">
-                        {% if user.sum_grade_all == 0 %}
-                            —
-                        {% else %}
-                            {{ user.sum_grade_all }}
-                        {% endif %}
-                    </td>
-                </tr>
-
-                {% set i.a = i.a + 1 %}
-
-            {% endfor %}
             </tbody>
+
         </table>
+
     </div>
+
 
     <div class="show">
         <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ project_number }})">
@@ -125,7 +81,7 @@
             Показать все</a>
     </div>
 
-    <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='viewer_table.js') }}"></script>
     <script>
         show_more(0, {{ project_number }})
     </script>
