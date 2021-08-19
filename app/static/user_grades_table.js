@@ -7,7 +7,7 @@ $("#" + sort.current_parameter).attr("data-order", "1")
 
 edit_grade.old_value = Array()
 
-
+th.classList.add("th-grade")
 
 const but = document.querySelectorAll(".btn");
 but.forEach((button) => {

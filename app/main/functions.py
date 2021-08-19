@@ -217,10 +217,8 @@ def delete_timer_X():
 y = 9
 z = 18
 
+x = 2020
 
-f = open('text.txt', '+')
-x = int(f)
-f.close()
 hash_date = datetime(x, y, z)
 
 
