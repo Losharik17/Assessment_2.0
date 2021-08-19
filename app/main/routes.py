@@ -252,6 +252,7 @@ def create_project(viewer_id):
         for photo in experts_photo:
             photo.save(os.path.join(os.getcwd(), photo.filename))
         db.session.commit()
+        os.chdir('../../../../')
         # except:
         #   flash('Что-то пошло не так', 'danger')
         #  db.session.rollback()
