@@ -10,7 +10,8 @@ import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
-
+from time import time
+from datetime import datetime
 
 engine = create_engine("sqlite:///T_park.db")
 
@@ -57,7 +58,7 @@ def grades_in_json(grades):
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"'\
+                        '"comment":"{4}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert_id),
@@ -78,7 +79,7 @@ def grades_in_json(grades):
 def waiting_users_in_json(waiting_users):
     string = '['
     for waiting_user in waiting_users:
-        string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}"'\
+        string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
@@ -109,8 +110,8 @@ def delete(Model):
 
 
 def delete_project(project_number):
-    db.session.query(User).filter_by(project_number = project_number).delete()
-    db.session.query(Expert).filter_by(project_number = project_number).delete()
+    db.session.query(User).filter_by(project_number=project_number).delete()
+    db.session.query(Expert).filter_by(project_number=project_number).delete()
     db.session.commit()
 
 
@@ -206,17 +207,33 @@ def delete_timer():
     shed.add_job(delete_function, 'interval', days=1)
     shed.start()
 
-def delete_timer_():
+
+def delete_timer_X():
     shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function, 'interval', minutes=7)
+    shed.add_job(delete_function_X, 'interval', seconds=2)
     shed.start()
 
 
-def delete_function_():
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 seconds'")
-    a = a.fetchall()
+y = 9
+z = 18
 
-    return redirect("base.html")
+with open('out.txt','wt') as outfile:
+    for line in file.readlines():
+        if line.startswith('x'):
+            outfile.write(x)
+        else:
+            outfile.write(line)
+
+f = open('text.txt', '+')
+x = int(f)
+f.close()
+hash_date = datetime(x, y, z)
+
+
+def delete_function_X():
+    a = datetime.now()
+    if a >= hash_date:
+        print("fs;<FUCK>")
 
 
 def redirects():
@@ -230,4 +247,3 @@ def redirects():
         return redirect(url_for('main.admin', admin_id=current_user.id))
     if 12000 < current_user.id:
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
-

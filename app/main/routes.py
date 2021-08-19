@@ -6,18 +6,17 @@ from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
-    waiting_users_in_json, excel, to_dict, delete_timer, delete_timer_, delete_function_, redirects
+    waiting_users_in_json, excel, to_dict, delete_timer, delete_timer_X, delete_function_X, redirects
 import pandas as pd
 from werkzeug.utils import secure_filename
 import os
 from datetime import date
 
+delete_timer_X()
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
-    delete_timer_()
-    delete_function_()
     return render_template('base.html', auth=current_user.is_authenticated)
 
 
