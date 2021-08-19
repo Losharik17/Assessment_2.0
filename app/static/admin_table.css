@@ -56,6 +56,7 @@ th:first-child, td:first-child {
 th.sort,
 th.sort {
     position: relative;
+
 }
 
 th.sort[data-order="0"]::after {
