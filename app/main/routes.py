@@ -6,11 +6,11 @@ from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
-    waiting_users_in_json, excel, to_dict, delete_timer, redirects
-import pandas as pd
-from werkzeug.utils import secure_filename
-import os
+    waiting_users_in_json, excel_expert, excel_user, to_dict, delete_timer, redirects, compression
 from datetime import date, datetime
+from werkzeug.utils import secure_filename
+import pandas as pd
+import os
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -88,18 +88,6 @@ def export_excel(project_number):
     worksheet.set_column('I:I', 30, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
-
-
-@bp.route('/uploader', methods=['GET', 'POST'])
-def upload_file():
-    """if current_user.id <= 11000:
-        return redirects()"""
-    if request.method == 'POST':
-        f = request.files['file']
-        f.save(secure_filename(f.filename.rsplit(".", 1)[0]))
-        excel(f.filename.rsplit(".", 1)[0])
-        return redirect(url_for('main.index'))
-    return render_template('upload.html')
 
 
 # профиль пользователя
@@ -251,6 +239,7 @@ def create_project(viewer_id):
                                      weight=result.get('weight{}'.format(i)),
                                      project_number=project.number))
 
+
         os.chdir("app/static/images")
         os.mkdir('{}'.format(project.number))
         os.chdir('{}'.format(project.number))
@@ -258,20 +247,25 @@ def create_project(viewer_id):
         logo = request.files['logo']
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
-        # users = request.files['users']
-        # users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
-        # excel(users.filename.rsplit(".", 1)[0])
-        # experts = request.files['experts']
-        # experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
-        # excel(experts.filename.rsplit(".", 1)[0])
+        users = request.files['users']
+        users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
+        excel_user(users.filename.rsplit(".", 1)[0], project.number)
+
+
+        experts = request.files['experts']
+        experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
+        excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
 
         users_photo = request.files.getlist("users_photo")
         experts_photo = request.files.getlist("experts_photo")
 
         for photo in users_photo:
-            photo.save(os.path.join(os.getcwd(), 'user{}').format(photo.filename))  # указать другое название файла
+            photo.save(os.path.join(os.getcwd(), 'user{}').format(photo.filename))
+            compression(100, 150, os.path.join(os.getcwd(), photo.filename))
         for photo in experts_photo:
             photo.save(os.path.join(os.getcwd(), 'expert{}').format(photo.filename))
+            compression(100, 150, os.path.join(os.getcwd(), photo.filename))
+
         db.session.commit()
         os.chdir('../../../../')
         # except:
@@ -496,6 +490,7 @@ def delete_grade():
 
     grade.expert.quantity -= 1
     user = grade.user
+
 
     db.session.delete(grade)
     db.session.commit()

@@ -7,10 +7,6 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Expert, Admin, Viewer, WaitingUser
 from app.auth.email import send_password_reset_email
-import os
-from werkzeug.utils import secure_filename
-import time
-from flask_bootstrap import Bootstrap
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -59,6 +55,7 @@ def register():
                 Viewer.query.filter_by(email=form.email.data) is None:
             flash('Данная почта уже используется одним из пользователей.\n'
                   'Пожалуйста изпользуйте другой email адрес.', 'warning')
+
             return redirect(url_for('auth.register'))
 
         #if user is None or not user.check_phone(form.phone.data):
@@ -90,6 +87,14 @@ def reset_password_request():
         expert = Expert.query.filter_by(email=form.email.data).first()
         if expert:
             send_password_reset_email(expert)
+        admin = Admin.query.filter_by(email=form.email.data).first()
+        if admin:
+            send_password_reset_email(admin)
+
+        viewer = Viewer.query.filter_by(email=form.email.data).first()
+        if viewer:
+            send_password_reset_email(viewer)
+
         flash('Проверьте вашу почту и следуйте дальнейшим инструкциям', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
@@ -104,8 +109,12 @@ def reset_password(token):
     if not user:
         user = Expert.verify_reset_password_token(token)
         if not user:
-            flash('Мы не нашли пользователя с данной почтой', 'danger')
-            return redirect(url_for('main.index'))
+            user = Admin.verify_reset_password_token(token)
+            if not user:
+                user = Viewer.verify_reset_password_token(token)
+                if not user:
+                    flash('Мы не нашли пользователя с данной почтой', 'danger')
+                    return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
