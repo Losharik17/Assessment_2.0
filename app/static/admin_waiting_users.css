@@ -3,6 +3,7 @@
 
 .table-wrap {
     overflow-x: auto;
+    position: fixed;
 }
 
 .table-sort {

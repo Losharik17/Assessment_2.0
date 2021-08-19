@@ -25,7 +25,7 @@ document.addEventListener('click', function (event) {
 
 function edit_data(expert_id) {
     if ($('#edit_data').html() !== 'Сохранить изменения') {
-        let width = $("#edit_data").width()
+        let width = $("#edit_data").outerWidth()
         $('#edit_data').html('Сохранить изменения').css({width: width})
         edit_data.old_value = Array()
         $('#data_table tr').each(function (index, element) {
@@ -36,11 +36,11 @@ function edit_data(expert_id) {
                 if (index !== 2)
                     td.html(`<input id="d${index}" onchange="
                                         document.getElementById(this.id).setAttribute('value', this.value)" 
-                                        class="input" type="text" value="${value}">`)
+                                        class="form" type="text" value="${value}">`)
                 else
                     td.html(`<input id="d${index}" min="0.1" max="2.0" step="0.1" onchange="
                                         document.getElementById(this.id).setAttribute('value', this.value)" 
-                                        class="input" type="number" value="${value}">`)
+                                        class="form" type="number" value="${value}">`)
             }
         })
     }

@@ -8,6 +8,7 @@
 .table-wrap {
     overflow-x: auto;
     min-height: 250px;
+    display: block;
 }
 
 .table-sort {
