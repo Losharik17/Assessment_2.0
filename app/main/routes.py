@@ -602,3 +602,20 @@ def sort_waiting_users():
             .limit(request.form['lim'])
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
+
+
+@bp.route('/save_expert_data', methods=['POST'])
+@login_required
+def save_expert_data():
+    data = list(json.loads(request.form['data']))
+    expert = Expert.query.filter_by(id=request.form['expert_id']).first()
+
+    if getattr(expert, 'username') != data[0]:
+        setattr(expert, 'username', data[0])
+
+    if getattr(expert, 'weight') != data[1]:
+        setattr(expert, 'weight', data[1])
+
+    db.session.commit()
+
+    return jsonify({'result': 'successfully'})

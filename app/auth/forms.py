@@ -29,6 +29,9 @@ class RegistrationForm(FlaskForm):
 
     def validate_phone_number(self, phone_number):
         user = User.query.filter_by(phone=phone_number.data).first()
+        if user is not None:
+            raise ValidationError('Данный номер уже используется другим пользователем.')
+
         for i in enumerate(phone_number):
             if not i.isdigit():
                 raise ValidationError('Неверно введен телефонный номер')

@@ -9,39 +9,75 @@ edit_grade.old_value = Array()
 edit_data.old_value = Array()
 
 document.addEventListener('click', function (event) {
+    console.log()
     if (event.target.tagName !== 'INPUT' && event.target.id !== 'data_table' &&
-        event.target.id !== 'edit_data') {
+        event.target.id !== 'edit_data' && $('#edit_data').html() === 'Сохранить изменения') {
+
         $('#data_table tr').each(function (index, element) {
-            let td = $(this).children('td').children('span')
-            td.html(`${edit_data.old_value[index]}`)
-            $('#edit_data').html('Редактировать данные')
+            if (index !== 3 && index !== 0) {
+                let td = $(this).children('td').children('span')
+                td.html(`${edit_data.old_value[index - 1]}`)
+                $('#edit_data').html('Редактировать данные')
+            }
         })
     }
 })
 
-function edit_data() {
+function edit_data(expert_id) {
     if ($('#edit_data').html() !== 'Сохранить изменения') {
         let width = $("#edit_data").width()
         $('#edit_data').html('Сохранить изменения').css({width: width})
         edit_data.old_value = Array()
         $('#data_table tr').each(function (index, element) {
-            if (index !== 3) {
+            if (index !== 3 && index !== 0) {
                 let td = $(this).children('td').children('span')
                 let value = td.html()
-                console.log(value)
                 edit_data.old_value.push(value)
-
-                td.html(`<input id="d${index}" onchange="
-                                    document.getElementById(this.id).setAttribute('value', this.value)" 
-                                    class="input" type="text" value="${value}">`)
+                if (index !== 2)
+                    td.html(`<input id="d${index}" onchange="
+                                        document.getElementById(this.id).setAttribute('value', this.value)" 
+                                        class="input" type="text" value="${value}">`)
+                else
+                    td.html(`<input id="d${index}" min="0.1" max="2.0" step="0.1" onchange="
+                                        document.getElementById(this.id).setAttribute('value', this.value)" 
+                                        class="input" type="number" value="${value}">`)
             }
         })
     }
     else {
+        let data = Array()
         $('#edit_data').html('Редактировать данные')
+
+        $('#data_table tr').each(function (index, element) {
+            if (index !== 3 && index !== 0) {
+                let td = $(this).children('td').children('span').children('input').val()
+                data.push(td)
+            }
+        })
+
+        $.post('/save_expert_data', {
+            data: JSON.stringify(data),
+            expert_id: expert_id
+        }).done(function (response) {
+            $('#data_table tr').each(function (index, element) {
+                if (index !== 3 && index !== 0) {
+                    let td = $(this).children('td').children('span')
+                    td.html(`${td.children('input').val()}`)
+                    $('#edit_data').html('Редактировать данные')
+                }
+            })
+        }).fail(function () {
+            alert("Error AJAX request")
+            $('#data_table tr').each(function (index, element) {
+                if (index !== 3 && index !== 0) {
+                    let td = $(this).children('td').children('span')
+                    td.html(`${edit_data.old_value[index - 1]}`)
+                    $('#edit_data').html('Редактировать данные')
+                }
+            })
+        })
+
     }
-
-
 }
 
 function delete_buttons(user_id) {
