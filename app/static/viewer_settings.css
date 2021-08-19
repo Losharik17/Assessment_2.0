@@ -28,11 +28,6 @@
     display: inline-block;
     border: 2px solid #0071f0;
     border-radius: 10px;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select:none;
-    user-select:none;
-    -o-user-select:none;
 
 }
 

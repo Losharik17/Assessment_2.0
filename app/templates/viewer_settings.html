@@ -4,23 +4,28 @@
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_settings.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
     <h1 style="text-align:center">Настройки</h1>
 
 
     <div class="settings">
         <div class="block">
-            <!-- Для них нужно написать routs-->
-            <div class="button" >Пользователи</div><br>
-            <div class="button" >Эксперты</div>
+            <!--пути немного изменятся-->
+            <div class="button" onclick="location.href='{{ url_for('main.viewer_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'">Пользователи</div><br>
+
+            <div class="button" onclick="location.href='{{ url_for('main.viewer_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'" >Эксперты</div>
         </div>
         <div class="date">
             <div>
                 <span class="date_text">Начало Проекта</span>
-                <input type="text"  value="{{ project.start.strftime('%d.%m.%y') }}" id="date_start" class="button_date">
+                <input id="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}"  class="button_date">
             </div>
             <div>
                 <span class="date_text">Конец Проекта</span>
-                <input type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" id="date_end" class="button_date">
+                <input id="end" type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" class="button_date">
 
             </div>
             <input value="Изменить даты" class="submit" >

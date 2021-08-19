@@ -183,7 +183,7 @@ def expert_grade(project_number, expert_id, user_id):
 @login_required
 def viewer(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-    projects = viewer.projects.all()
+    projects = viewer.projects.order_by(Project.start).all()
 
     return render_template('viewer_main.html', viewer=viewer, projects=projects)
 

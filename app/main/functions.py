@@ -1,7 +1,5 @@
 import random
 import string
-
-import alert as alert
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
