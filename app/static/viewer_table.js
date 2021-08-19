@@ -91,10 +91,6 @@ $('.dropdown-menu li').click(function (event) {
         msg = '<span class="msg">Hidden input value: ';
     $('.msg').html(msg + input + '</span>');
 });
-/*Width of Dropdown*/
-$('.dropdown_2 .dropdown-menu').each(function (index, element) {
-    $(element).css({'min-width': $(this).parent().outerWidth()})
-})
 
 
 
@@ -127,7 +123,7 @@ function draw_table(response, project_number) {
     for (let i = 0; i < quantity; i++) {
 
         $("#tbody").append(`<tr id="number_str${i}"` +
-            ` onclick="location.href='/user_grades_table_for_admin/${project_number}/${users[i]['id']}'"></tr>`)
+            ` onclick="location.href='/user_grades_table_for_viewer/${project_number}/${users[i]['id']}'"></tr>`)
 
         if (users[i]['id'] === 'None')
             $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
@@ -143,7 +139,7 @@ function draw_table(response, project_number) {
             $(`#number_str${i}`).append(`<td id="birthday${i}">–</td>`)
         else
             $(`#number_str${i}`).append(`<td id="birthday${i}">${Math.floor((new Date() - new Date(users[i]['birthday']))
-            / (24 * 3600 * 365.25 * 1000))}</td>`)
+                / (24 * 3600 * 365.25 * 1000))}</td>`)
         if (users[i]['team'] === 'None')
             $(`#number_str${i}`).append(`<td id="team${i}">–</td>`)
         else
@@ -242,7 +238,6 @@ function sort(parameter, project_number) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
-
     $.post('/sort_users_table', {
         parameter: parameter,
         sort_up: sort.sort_up,
@@ -261,7 +256,7 @@ function sort(parameter, project_number) {
             for (let i = 0; i < quantity; i++) {
 
                 $(`#number_str${i}`).attr('onclick',
-                    `location.href='/user_grades_table_for_admin/${project_number}/${users[i]["id"]}'`)
+                    `location.href='/user_grades_table_for_viewer/${project_number}/${users[i]["id"]}'`)
 
                 $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
@@ -291,21 +286,3 @@ function sort(parameter, project_number) {
         alert("Error AJAX request")
     })
 }
-
-
-    let inputs = document.querySelectorAll('.input__file');
-    Array.prototype.forEach.call(inputs, function (input) {
-    let label = input.nextElementSibling,
-    labelVal = label.querySelector('.input__file-button-text').innerText;
-
-    input.addEventListener('change', function (e) {
-    let countFiles = '';
-    if (this.files && this.files.length >= 1)
-    countFiles = this.files.length;
-
-    if (countFiles)
-    label.querySelector('.input__file-button-text').innerText = 'Выбрано файлов: ' + countFiles;
-    else
-    label.querySelector('.input__file-button-text').innerText = labelVal;
-});
-});

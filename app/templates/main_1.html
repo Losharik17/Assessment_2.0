@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 
@@ -12,24 +13,35 @@
         <title>T-Park</title>
     {% endif %}
 
-<script>
-    $(window).on('load', function () {
-        $('.preloader').addClass("preloader-remove");
-    });
-</script>
+    <script>
+        $(window).on('load', function () {
+            setTimeout( () => { $('.preloader').addClass("preloader-remove") }, 3000);
+        });
+    </script>
+
+    <style>
+        .preloader-text {
+            position: fixed;
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            top: 20%;
+        }
+    </style>
 
 </head>
 <body id="body">
 
 <div class="preloader">
+    <div class="preloader-text">
+        Команда разработчиков <a href="#">Ссылка на почту</a>
+    </div>
     <div class="preloader-5"></div>
 </div>
 
-
-
 <div class="maket">
     <div class="shapka" >
-        <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="">
+        <img class="logo" src="{{ url_for('static', filename='logo_21.webp') }}" alt="">
         {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
             <div class="exit">
                 <a class="exit_button" href="{{ url_for('auth.logout') }}">
@@ -50,12 +62,13 @@
     <div class="content">
         {% block app_content %}{% endblock %}
     </div>
-    <div class="podval">
-        <img class="img" src="{{ url_for('static',filename='logo_2.webp')}}" width="100px" alt="">
-        <h4 style="margin-left: 15px;"><a href="sergeev@nspt.ru">sergeev@nspt.ru</a></h4><!-- Тут надо поправить чтобы адрес выводился после картинки. От использования таблицы все крашится-->
+    <div class="footer">
+        <p style="margin-left: 10px;">2021  Система оценки Дмитрия Сергеева </p>
+        <p></p>
     </div>
 </div>
 
 </body>
 
 </html>
+

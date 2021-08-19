@@ -1,5 +1,9 @@
 <html lang="ru">
 
+<!--Починить подвал на мобилках(лого). подвал наплывает на кнопки выставления оценок
+ломается -->
+
+
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
@@ -29,7 +33,7 @@
 <div class="maket">
     <div class="shapka" >
         <img class="logo" src="{{ url_for('static', filename='logo_21.webp') }}" alt="" >
-        {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
+        {% if title != 'Авторизация' and title != 'Регистрация' and (auth or auth is not defined) %}
             <div class="exit">
                 <a class="exit_button" href="{{ url_for('auth.logout') }}">
                     Выйти
@@ -49,7 +53,27 @@
 
     {% block app_content %}{% endblock %}
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}"><h4>{{ message }}</h4></div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
+    <div id="notification" class="kdnotification main">
+        <div class="kdnotification-title"></div>
+    </div>
+
 </div>
+
+<script type="text/javascript">
+    setTimeout(() => {
+        $('.message').fadeOut(300)
+    }, 3000)
+
+</script>
 
 </body>
 

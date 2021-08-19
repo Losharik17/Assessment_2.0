@@ -3,12 +3,7 @@
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-    <div class="title">
-        <div class="block">
-            <h1>{{ project.name }}</h1></div>
-        <div class="block">
-            <h1 style="text-align:center">Участники</h1></div>
-    </div>
+    <h1 style="text-align:center">{{ project.name }}<br>Участники</h1>
     <div class="table-wrap">
 
         <table class="table-sort">
@@ -27,7 +22,6 @@
                             <label for="min_age_value">От&nbsp;&nbsp;</label>
                             <input type="number" id="min_age_value" min="0" max="200"
                                    step="1" class="age"></li>
-
                         <li project_number="{{ project_number }}" id="max_age" type_sort="age">
                             <label for="max_age_value">До&nbsp;&nbsp;</label>
                             <input type="number" id="max_age_value" min="0" max="200"
@@ -79,36 +73,15 @@
 
     </div>
 
+
     <div class="show">
         <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ project_number }})">
             Показать больше</a>
         <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ project_number }})">
             Показать все</a>
     </div>
-    <br>
-    <!--
-    <div class="buttons">
-        <div class="show_btn" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
-            <span>Настройки</span>
-        </div>
 
-        <div class="input__wrapper">
-            <input  type="file" name="experts" id="input__file_6" class="input input__file">
-            <label for="input__file_6" class="input__file-button">
-                <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
-                <span class="input__file-button-text">Загрузить Пользователей</span>
-            </label>
-        </div>
-        <div class="input__wrapper">
-            <input  type="file" name="experts" id="input__file_7" class="input input__file">
-            <label for="input__file_7" class="input__file-button">
-                <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
-                <span class="input__file-button-text">Выгрузить Базы данных</span>
-            </label>
-        </div>
-    </div>
--->
-    <script src="{{ url_for('static', filename='admin_table.js') }}"></script>
+    <script src="{{ url_for('static', filename='viewer_table.js') }}"></script>
     <script>
         show_more(0, {{ project_number }})
     </script>

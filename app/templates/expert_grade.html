@@ -1,65 +1,66 @@
 {% extends "main_0.html" %}
 
+
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
 
-    <div class="container">
-        <div class="data">
-            <img style="width: 100px; height: 150px" src="{{ url_for('static', filename='/images/1.webp') }}" alt="">
-            <table style="margin: 10px;">
-                <tr>
-                    <td>ID: {{ user.project_id }}</td>
-                </tr>
-                <tr>
-                    <td>ФИО: {{ user.username }}</td>
-                </tr>
-                <tr>
-                    <td>Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
-                </tr>
-                <tr>
-                    <td>Команда: {{ user.team }}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <br>
-    <div class="assessments">
-
-        <form  action="" method="post" class="form">
-            {{ form.hidden_tag() }}
-            {% set i = namespace(a=0) %}
-            {% for parameter in parameters %}
-                <div class="crit">
-                    <div style="text-align: left; margin-left: 10px;">{{ parameter.name }}</div>
-                    <div style="justify-content: space-evenly; display: flex">
-                        {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
-                            <div class="form_radio_btn">
-                                {{ value }}
-                                {{ value.label }}
-                            </div>
-                            {% for error in form.value %}
-                                <span style="color: red;">{{ error }}</span>
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                </div>
-                {% set i.a = i.a + 1 %}
-            {% endfor %}
-
-            {{ form.comment }}
-
-            <div class="submit">
-                {{ form.submit() }}
-                <a class="form_button_cancel" href="{{ url_for('main.expert',
-                project_number=project_number, expert_id=expert_id) }}">
-                    Отменить
-                </a>
+    <div class="content">
+        <div class="container">
+            <div class="data">
+                {% set path='/images/'+ project_number|string +'/'+ user.project_id|string +'.webp' %}
+                <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+                <table style="margin: 10px;">
+                    <tr>
+                        <td>ID: {{ user.id }}</td>
+                    </tr>
+                    <tr>
+                        <td>ФИО: {{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <td>Дата рождения: {{ user.birthday.strftime('%d.%m.%Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Команда: {{ user.team }}</td>
+                    </tr>
+                </table>
             </div>
-        </form>
+        </div>
+        <div class="assessments">
+
+            <form  action="" method="post" class="form">
+                {{ form.hidden_tag() }}
+                {% set i = namespace(a=0) %}
+                {% for parameter in parameters %}
+                    <div class="crit">
+                        <div style="text-align: left; margin-left: 25px; margin-bottom: 10px">
+                            {{ parameter.name }}</div>
+                        <div style="justify-content: space-evenly; display: flex;">
+                            {% for value in form.__dict__['parameter_{}'.format(i.a)] %}
+                                <div class="form_radio_btn">
+                                    {{ value }}
+                                    {{ value.label }}
+                                </div>
+                                {% for error in form.value %}
+                                    <span style="color: red;">{{ error }}</span>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% set i.a = i.a + 1 %}
+                {% endfor %}
+                {{ form.comment(class="comment") }}
+                <div class="submit">
+                    {{ form.submit() }}
+                    <a class="form_button_cancel" href="{{ url_for('main.expert',
+                           project_number=project_number, expert_id=expert_id) }}">
+                        Отменить
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='expert_grade.js') }}"></script>
-
 
 {% endblock %}

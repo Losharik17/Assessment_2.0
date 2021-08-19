@@ -13,9 +13,6 @@
                     {% for error in form.email.errors %}
                         <span style="color: red;">{{ error }}</span>
                     {% endfor %}
-                    {% if error is not defined %}
-                        {{ error }}
-                    {% endif %}
                 </div>
                 <div class="form_group">
                     {{ form.password.label }}
@@ -37,4 +34,5 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='auth/login.js') }}"></script>
+
 {% endblock %}

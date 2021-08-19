@@ -16,7 +16,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     birthday = db.Column(db.Date)
     team = db.Column(db.String(32))  # команда, класс иди что-то подобное
-    place = db.Column(db.String(64))  # локация, регион или что-то подобное
+    region = db.Column(db.String(64))  # локация, регион или что-то подобное
     project_number = db.Column(db.Integer)  # номер проекта к которму относится
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)  # общий id
     password_hash = db.Column(db.String(128))
@@ -64,7 +64,8 @@ class User(UserMixin, db.Model):
         for i in range(5):  # должно быть кол-во параметров, а не цифра
             setattr(self, 'sum_grade_{}'.format(i),
                     self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
-            self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
+            if len(parameters) > i:  # нужен тест
+                self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
         self.sum_grade_all /= self.sum_weight_parameters(parameters)
         db.session.commit()
 
@@ -195,11 +196,22 @@ class Viewer(UserMixin, db.Model):
             current_app.config['SECRET_KEY'],
             algorithm='HS256').decode('utf-8')
 
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return Viewer.query.get(id)
+
 
 class Project(db.Model):
     number = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
-    end_date = db.Column(db.Date)
+    name = db.Column(db.String(32))
+    start = db.Column(db.Date)
+    end = db.Column(db.Date)
     parameters = db.relationship('Parameter', backref='project', lazy='dynamic')
 
 
@@ -208,6 +220,23 @@ class Parameter(db.Model):
     name = db.Column(db.String(32))
     weight = db.Column(db.Float, default=1.0)
     project_number = db.Column(db.Integer, db.ForeignKey('project.number'))
+
+
+# содержит данные о только что зарегистрированных пользователях
+# после определения роли пользователь удаляется из данной таблицы
+class WaitingUser(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    username = db.Column(db.String(64))
+    email = db.Column(db.String(128), index=True, unique=True)
+    registration_date = db.Column(db.DateTime, default=datetime.now())
+    password_hash = db.Column(db.String(128))
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def __repr__(self):
+        return 'Пользователь {}'.format(self.id)
+
 
 
 class Admin(UserMixin, db.Model):
@@ -228,6 +257,14 @@ class Admin(UserMixin, db.Model):
             current_app.config['SECRET_KEY'],
             algorithm='HS256').decode('utf-8')
 
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return Admin.query.get(id)
 
 event.listen(Expert.__table__, 'after_create',
              DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id

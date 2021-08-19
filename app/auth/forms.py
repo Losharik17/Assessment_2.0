@@ -5,18 +5,18 @@ from app.models import User
 from wtforms.fields.html5 import DateField
 
 
-
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
+    password = PasswordField('Пароль', validators=[DataRequired(message="Неверный пароль")])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
 
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
-    #avatar = FileField('Фото', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    avatar = FileField('Фото')
+    phone = StringField('Номер Телефона')
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
         'Повторите пароль', validators=[DataRequired(), EqualTo('password')])
@@ -27,17 +27,22 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Данная почта уже используется другим пользователем.')
 
+    def validate_phone_number(self, phone_number):
+        user = User.query.filter_by(phone=phone_number.data).first()
+        for i in enumerate(phone_number):
+            if not i.isdigit():
+                raise ValidationError('Неверно введен телефонный номер')
+            elif i[0] > 10:
+                raise ValidationError('Номер телефона слишком длинный')
+
 
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Сбросить пароль?')
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
+    submit = SubmitField('Сбросить пароль')
 
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField('Повторите пароль', validators=[DataRequired(),
                                                               EqualTo('password')])
-    submit = SubmitField('Сбросить пароль')
-
-#     birth_date = DateField('Дата рождения', format='%Y-%m-%d',
-#                            validators=[DataRequired()])
+    submit = SubmitField('Установить пароль')
