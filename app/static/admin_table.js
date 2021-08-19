@@ -91,6 +91,10 @@ $('.dropdown-menu li').click(function (event) {
         msg = '<span class="msg">Hidden input value: ';
     $('.msg').html(msg + input + '</span>');
 });
+/*Width of Dropdown*/
+$('.dropdown_2 .dropdown-menu').each(function (index, element) {
+    $(element).css({'min-width': $(this).parent().outerWidth()})
+})
 
 
 
@@ -287,3 +291,21 @@ function sort(parameter, project_number) {
         alert("Error AJAX request")
     })
 }
+
+
+    let inputs = document.querySelectorAll('.input__file');
+    Array.prototype.forEach.call(inputs, function (input) {
+    let label = input.nextElementSibling,
+    labelVal = label.querySelector('.input__file-button-text').innerText;
+
+    input.addEventListener('change', function (e) {
+    let countFiles = '';
+    if (this.files && this.files.length >= 1)
+    countFiles = this.files.length;
+
+    if (countFiles)
+    label.querySelector('.input__file-button-text').innerText = 'Выбрано файлов: ' + countFiles;
+    else
+    label.querySelector('.input__file-button-text').innerText = labelVal;
+});
+});

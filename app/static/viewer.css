@@ -35,16 +35,23 @@
 
 .block_4 {
     width: max-content;
+    color: #fff;
+    margin: 0 auto;
+    display:flex;
+}
+
+.block_5 {
+    width: 70px;
     background: #0071f0;
-    line-height: 30px;
+    height: 30px;
+    margin-left: 10px;
     border-width: 0;
     border-radius: 20px;
     color: #fff;
-    height: 30px;
-    margin: 15px auto;
+    display: flex;
+    justify-content:center;
+    align-items:center;
 }
-
-
 
 
 /*****************************************************/
@@ -100,29 +107,28 @@ input::-webkit-inner-spin-button {
     justify-content: center;
 }
 
+
+
 .button {
-    padding: 0 3px;
-    margin-left: 10px;
+    padding:0 2px;
+    width:max-content;
     background: #0071f0;
     border-width: 0;
-    border-radius: 7px;
+    border-radius: 10px;
     color: #fff;
     cursor: pointer;
     transform: scale(1.5)
+
 }
-
-
-
-
 /**********************FORM*******************************/
 
 .crit {
     width: 30px;
-    margin: 0 auto;
     background: #0071f0;
     border-width: 0;
+    border-radius: 20px;
     color: #fff;
-    text-align: right;
+    text-align: center;
 }
 
 
@@ -139,9 +145,10 @@ input::-webkit-inner-spin-button {
 }
 
 .input_text_2 {
-    width: 50%;
-    margin-left: 20px;
+    width: 70%;
+    padding: 0 20px;
     background: #0071f0;
+    height: 30px;
     border-width: 0;
     border-radius: 20px;
     color: #fff;
@@ -229,6 +236,10 @@ input::-webkit-inner-spin-button {
     }
 }
 
+.input__file-icon {
+    width: 35px;
+    height: 35px;
+}
 
 /*
 .input__file-button:active {
@@ -248,10 +259,7 @@ input::-webkit-inner-spin-button {
 
 
 
-.input__file-icon {
-    width: 35px;
-    height: 35px;
-}
+
 
 /*****************************************************/
 

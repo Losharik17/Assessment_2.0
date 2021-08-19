@@ -10,7 +10,7 @@
 
 @media screen and (min-width: 768px) {
     .block_new {
-        border: 4px;
+        border: dashed 3px;
         width: 60%;
         height: 30%;
         cursor: pointer;
@@ -19,14 +19,14 @@
         justify-content: center;
         border-radius: 10px;
         margin: 0 auto;
-        background-color: #d4e0ff;
+        background-color: #e8edff;
         transition: all 500ms;
         color: gray;
         box-shadow: 2px 4px 8px 4px #c5c5c5;
     }
 
     .block_new:hover {
-        background-color: #8d9cdb;
+        background-color: #a2a5ad;
         color: white;
 
     }
@@ -64,7 +64,7 @@
     }
 
     .block:hover {
-        background-color: #8d9cdb;
+        background-color: #5f8dc4;
         color: white;
 
     }
@@ -78,14 +78,16 @@
     }
 
     .data {
-
-        margin: 15px auto auto;
-        display: inline-block;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        font-family: Roboto,sans-serif;
     }
 
     .date {
         margin: auto 5px 5px auto;
-        vertical-align: bottom;
+        display:flex;
+        font-size:24px;
     }
 
     .title {

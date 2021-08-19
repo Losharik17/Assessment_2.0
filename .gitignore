@@ -6,6 +6,8 @@
 /__pycache__
 .gradle
 *.flaskenv
+.vagrant/machines/default/virtualbox/private_key
 .vagrant
 !/app/templates/test.html
+
 

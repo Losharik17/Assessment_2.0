@@ -6,10 +6,6 @@ from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer, Admin
 import pandas as pd
 from flask import redirect, url_for
-from sqlalchemy import create_engine
-from app.auth.email import send_password_mail
-import random
-import string
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 
@@ -192,7 +188,7 @@ def excel(filename):
 def delete_function():
     a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 month')")
     a = a.fetchall()
-    if a != []:
+    if a:
         for rows in a:
             b = engine.execute("SELECT id FROM user WHERE project_number = ?", rows[0])
             b = b.fetchall()

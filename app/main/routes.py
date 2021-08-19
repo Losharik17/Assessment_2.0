@@ -45,8 +45,8 @@ def export_excel(project_number):
     for parameter in parameters:
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
-
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
@@ -185,7 +185,16 @@ def viewer(viewer_id):
         experts_in_project.append(Expert.query.filter_by(project_number=project.number)
                                   .all().length())'''
 
-    return render_template('viewer_main.html', viever=viewer, projects=projects)
+    return render_template('viewer_main.html', viewer=viewer, projects=projects)
+
+
+# страница Настройки проектов + доступ к юзерам и экспертам.
+@bp.route('/viewer/settings/<viewer_id>/<project_number>', methods=['GET', 'POST'])
+@login_required
+def viewer_settings(viewer_id, project_number):
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
+    project = viewer.projects.filter_by(number=project_number).first()
+    return render_template('viewer_settings.html', viewer=viewer, project=project)
 
 
 # таблица всех участников из проекта для наблюдателя

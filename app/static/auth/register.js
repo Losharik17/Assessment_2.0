@@ -33,6 +33,14 @@ $('#password2').focus(function () {
     blu(this, $('label[for=password2]'))
 })
 
+
+$('#phone').focus(function () {
+    foc(this, $('label[for=phone]'))
+}).blur(function () {
+    blu(this, $('label[for=phone]'))
+})
+
+
 function foc(el, label) {
     $(el).css({
         'border-bottom': '1px solid #1a73a8'
