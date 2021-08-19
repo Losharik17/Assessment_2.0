@@ -53,6 +53,7 @@ $('html').click(function (event) {
     else if (event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
         || ($('#birthday').hasClass('active') && (event.target.tagName === 'TH' ||
             event.target.tagName === 'LI' || event.target.tagName === 'LABEL'))) {
+        $('#birthday').attr('data-order', 0)
         $('#birthday').removeClass('active');
         $('#birthday').find('.dropdown-menu').slideUp(300);
     }
@@ -193,6 +194,7 @@ function age_sort(project_number, type=0) {
 }
 
 function age_sort_delete(project_number) {
+    $('#age_sort').html('По убыванию')
     $('#min_age_value').val(null)
     $('#max_age_value').val(null)
     setTimeout( ()=> {$('#birthday').attr('data-order', 0) }, 10)
@@ -276,13 +278,13 @@ function sort(parameter, project_number) {
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&
                         users[i][`sum_grade_${j}`] !== 'None')
-                        $(`#sum_grade_${j}${i}`).html(Math.floor(users[i][`sum_grade_${j}`] * 100) / 100)
+                        $(`#sum_grade_${j}${i}`).html(Math.ceil(users[i][`sum_grade_${j}`] * 100) / 100)
                     else
                         $(`#sum_grade_${j}${i}`).html('–')
 
                 if (users[i][`sum_grade_all`] != 0 && !isNaN(users[i][`sum_grade_all`]) &&
                     users[i]['sum_grade_all'] !== 'None')
-                    $(`#sum_grade_all${i}`).html(Math.floor(users[i]['sum_grade_all'] * 100) / 100)
+                    $(`#sum_grade_all${i}`).html(Math.ceil(users[i]['sum_grade_all'] * 100) / 100)
                 else
                     $(`#sum_grade_all${i}`).html('–')
             }

@@ -11,27 +11,29 @@
         <div class="data">
             {% set path = '/images/' + 'user' + user.id|string + '.webp'%}
             <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
-            <table style="margin: 10px;">
+            <table id="data_table" style="margin: 10px;">
                 <tr>
-                    <td style="text-align: left">ID: {{ user.project_id }}</td>
+                    <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
                 </tr>
                 <tr>
-                    <td style="text-align: left">ФИО: {{ user.username }}</td>
+                    <td style="text-align: left">ФИО: <span>{{ user.username }}</span></td>
                 </tr>
                 <tr>
-                    <td style="text-align: left" id="birthday">Возраст: </td>
+                    <td style="text-align: left" id="birthday">Возраст: <span></span></td>
                 </tr>
                 <tr>
                     <td style="text-align: left">Команда:
-                        {% if user.team %}{{ user.team }}
-                        {% else %} – {% endif %}</td>
+                        <span>{% if user.team %}{{ user.team }}{% else %} – {% endif %}</span></td>
                 </tr>
                 <tr>
                     <td style="text-align: left">Регион:
-                        {% if user.region %}{{ user.region }}
-                        {% else %} – {% endif %}</td>
+                        <span>{% if user.region %}{{ user.region }}{% else %} – {% endif %}</span></td>
                 </tr>
             </table>
+
+            <div id="edit_data" class="show_btn" onclick="
+                    edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные</div>
+
         </div>
 
     </div>
@@ -39,7 +41,6 @@
     <div class="table-wrap">
         <table class="table-sort">
             <thead>
-
             <tr>
                 <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
                 <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
@@ -50,7 +51,6 @@
                 {% endfor %}
                 <th id="comment" class="sort">Комментарий</th>
             </tr>
-
             </thead>
 
             <tbody id="tbody">
@@ -112,7 +112,7 @@
     </div>
 
     <script>
-        $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
+        $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
         buttons({{ i.a }})
         delete_buttons({{ user_id }})

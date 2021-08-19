@@ -6,8 +6,78 @@ sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
 edit_grade.old_value = Array()
+edit_data.old_value = Array()
 
 
+function edit_data(user_id, user_birthday) {
+    if ($('#edit_data').html() !== 'Сохранить изменения') {
+        let width = $("#edit_data").width()
+        $('#edit_data').html('Сохранить изменения').css({width: width})
+        edit_data.old_value = Array()
+        $('#data_table tr').each(function (index, element) {
+            let td = $(this).children('td').children('span')
+
+            if (index !== 2 && index !== 0) {
+                let value = td.html()
+                edit_data.old_value.push(value)
+                td.html(`<input id="d${index}" onchange="
+                                    document.getElementById(this.id).setAttribute('value', this.value)" 
+                                    class="input" type="text" value="${value}">`)
+            }
+            else if (index === 2) {
+                edit_data.old_value.push(user_birthday)
+                td.html(`<input id="d${index}" onchange="
+                                    document.getElementById(this.id).setAttribute('value', this.value)" 
+                                    class="input" type="text" value="${user_birthday}">`)
+            }
+        })
+    }
+    else {
+        let data = Array()
+        $('#edit_data').html('Редактировать данные')
+
+        $('#data_table tr').each(function (index, element) {
+            let td = $(this).children('td').children('span').children('input').val()
+            if (index !== 2 && index !== 0) {
+                data.push(td)
+            }
+            else if (index === 2) {
+                console.log(td.replace(/[.]/g,'-').split("-").reverse().join("-"))
+                data.push(td.replace(/[.]/g,'-').split("-").reverse().join("-"))
+            }
+
+        })
+
+        $.post('/save_user_data', {
+            data: JSON.stringify(data),
+            user_id: user_id
+        }).done(function (response) {
+            $('#data_table tr').each(function (index, element) {
+                let td = $(this).children('td').children('span')
+                if (index !== 2 && index !== 0) {
+                    td.html(`${td.children('input').val()}`)
+                }
+                else if (index === 2) {
+                    let date = data[1].split('-')
+                    td.html(Math.floor((new Date() -
+                            new Date(date[0], date[1], date[2]))
+                        / (24 * 3600 * 365.25 * 1000)))
+
+                }
+            })
+        }).fail(function () {
+            alert("Error AJAX request")
+            $('#data_table tr').each(function (index, element) {
+                if (index !== 2 && index !== 0) {
+                    let td = $(this).children('td').children('span')
+                    td.html(`${edit_data.old_value[index - 1]}`)
+                    $('#edit_data').html('Редактировать данные')
+                }
+            })
+        })
+
+    }
+}
 
 const but = document.querySelectorAll(".btn");
 but.forEach((button) => {

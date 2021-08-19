@@ -269,9 +269,9 @@ def create_project(viewer_id):
         experts_photo = request.files.getlist("experts_photo")
 
         for photo in users_photo:
-            photo.save(os.path.join(os.getcwd(), photo.filename))  # указать другое название файла
+            photo.save(os.path.join(os.getcwd(), 'user{}').format(photo.filename))  # указать другое название файла
         for photo in experts_photo:
-            photo.save(os.path.join(os.getcwd(), photo.filename))
+            photo.save(os.path.join(os.getcwd(), 'expert{}').format(photo.filename))
         db.session.commit()
         os.chdir('../../../../')
         # except:
@@ -615,6 +615,30 @@ def save_expert_data():
 
     if getattr(expert, 'weight') != data[1]:
         setattr(expert, 'weight', data[1])
+
+    db.session.commit()
+
+    return jsonify({'result': 'successfully'})
+
+
+@bp.route('/save_user_data', methods=['POST'])
+@login_required
+def save_user_data():
+    data = list(json.loads(request.form['data']))
+    user = User.query.filter_by(id=request.form['user_id']).first()
+
+    if getattr(user, 'username') != data[0]:
+        setattr(user, 'username', data[0])
+
+    if getattr(user, 'team') != data[2].title():
+        setattr(user, 'team', data[2].title())
+
+    if getattr(user, 'region') != data[3]:
+        setattr(user, 'region', data[3])
+
+    x = data[1].split('-')
+    x.reverse()
+    setattr(user, 'birthday', datetime.strptime(''.join(x), '%d%m%Y'))
 
     db.session.commit()
 
