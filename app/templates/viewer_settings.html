@@ -5,18 +5,28 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_settings.css')}}">
     <h1 style="text-align:center">Настройки</h1>
-    <div class="">
-        <a class="button">Пользователи</a>
-        <a class="button">Эксперты</a>
+
+
+    <div class="settings">
+        <div class="date">
+            <div>
+                <span class="date_text">Начало Проекта</span>
+                <input type="text"  value="{{ project.start.strftime('%d.%m.%y') }}" id="date_start" class="button_date">
+            </div>
+            <div>
+                <span class="date_text">Конец Проекта</span>
+                <input type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" id="date_end" class="button_date">
+
+            </div>
+            <input type="submit" value="Изменить даты" class="submit" >
+        </div>
+        <div class="block">
+            <a class="submit">Пользователи</a>
+            <a class="submit">Эксперты</a>
+        </div>
     </div>
-
-    <div class="date">
-        <input type="date" name="calendar" value="{{ project.start.strftime('%d.%m.%y') }}" id="date_start" class="button_date">
-        <input type="date" name="calendar" value="{{ project.end.strftime('%d.%m.%y') }}" id="date_end" class="button_date">
-    </div>
-
-
     <script src="{{ url_for('static', filename='viewer_settings.js') }}"></script>
+
 
 
 {% endblock %}

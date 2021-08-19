@@ -1,5 +1,16 @@
 @charset "UTF-8";
 
+.settings {
+    margin: 0 auto;
+    width: max-content;
+
+}
+
+.block {
+    width: 100%;
+    display: inline-block;
+
+}
 
 .button_date {
     margin: 10px 15px;
@@ -39,7 +50,10 @@
     transform: scale(.98);
 }
 .button_date:focus {
-    color: blue;
+    color: white;
+    background: rgba(0, 64, 144, 0.7);
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
 }
 
 .button_date:not(active) {
@@ -47,6 +61,32 @@
     transform: scale(1);
 }
 
+.date_text {
+    margin-left:20px;
+    display: block;
+
+}
+
+.submit {
+    font-size:16px;
+    width: 120px;
+    height: 40px;
+    margin: 10px auto auto;
+    border: 0;
+    background-color:#0071f0;
+    font-family: Roboto sans-serif;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
 
 
 
+}
+
+@media screen {
+    .submit:active {
+        box-shadow: 0 2px 3px #0044ff;
+        background-color: #0044ff;
+    }
+}
