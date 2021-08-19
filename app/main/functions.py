@@ -217,12 +217,6 @@ def delete_timer_X():
 y = 9
 z = 18
 
-with open('out.txt','wt') as outfile:
-    for line in file.readlines():
-        if line.startswith('x'):
-            outfile.write(x)
-        else:
-            outfile.write(line)
 
 f = open('text.txt', '+')
 x = int(f)
