@@ -51,6 +51,7 @@
     display: flex;
     justify-content:center;
     align-items:center;
+    user-select: none;
 }
 
 
@@ -112,12 +113,13 @@ input::-webkit-inner-spin-button {
 .button {
     padding:0 2px;
     width:max-content;
-    background: #0071f0;
+    background: transparent;
     border-width: 0;
     border-radius: 10px;
     color: #fff;
     cursor: pointer;
-    transform: scale(1.5)
+    transform: scale(1.5);
+    transition: all 0.15s ease;
 
 }
 /**********************FORM*******************************/
@@ -241,29 +243,6 @@ input::-webkit-inner-spin-button {
     height: 35px;
 }
 
-/*
-.input__file-button:active {
-    box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-    outline-width:  1px;
-    outline-color: rgba(255, 255, 255, 0);
-    outline-offset: 15px;
-    text-shadow: 1px 1px 2px #427388;
-}
-
-.input__file-button:not(:active) {
-    outline-offset: 0;
-    transition: outline-offset 0ms;
-}
-
-*/
-
-
-
-
-
-/*****************************************************/
-
-
 /*submit***************************/
 
 .container {
@@ -345,41 +324,7 @@ input::-webkit-inner-spin-button {
     }
 
 }
-/*@media scren {
-    .btn-5:active {
-        box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-        outline-width: 1px;
-        outline-color: rgba(255, 255, 255, 0);
-        outline-offset: 15px;
-        text-shadow: 1px 1px 2px #427388;
-    }
 
-
-    .btn-5:not(:active) {
-        outline-offset: 0;
-        transition: outline-offset 0ms;
-    }
-
-}
-
-
-@media scren {
-    .add:active {
-        box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-        outline-width: 1px;
-        outline-color: rgba(255, 255, 255, 0);
-        outline-offset: 15px;
-        text-shadow: 1px 1px 2px #427388;
-    }
-
-
-    .add:not(:active) {
-        outline-offset: 0;
-        transition: outline-offset 0ms;
-    }
-
-}
-*/
 
 input::placeholder { color: rgba(255, 255, 255, 0.8); }
 input { outline:none; }
@@ -400,4 +345,17 @@ input[type="text"]::placeholder {font-family: Roboto, sans-serif}
 
 input:-webkit-autofill:focus {
     border: none !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active
+{
+    -webkit-box-shadow: 0 0 0 30px #0071f0 inset !important;
+}
+
+input:-webkit-autofill
+{
+    -webkit-text-fill-color: white !important;
 }

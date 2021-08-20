@@ -2,6 +2,8 @@ function activate_buttons(index) {
     // делает кнопки + и - активными
 
     $(`#minus${index}`).click(function () {
+        $(this).css("opacity", "0.5")
+        setTimeout(() => { $(this).css("opacity", "1") }, 125)
         let value = (Math.round(($(`#weight${index}`).attr('value') - 0.1) * 10) / 10)
             .toFixed(1)
 
@@ -10,14 +12,20 @@ function activate_buttons(index) {
     })
 
     $(`#plus${index}`).click(function () {
-
+        $(this).css("opacity", "0.5")
+        setTimeout(() => { $(this).css("opacity", "1") }, 125)
         let value = (Math.round((+$(`#weight${index}`).attr('value') + 0.1) * 10) / 10)
             .toFixed(1)
 
         if (value <= 2)
             $(`#weight${index}`).attr('value', value)
     })
+
+
+    $("[id^='weight']").css({cursor: 'default'})
+
 }
+
 
 activate_buttons(0)
 
@@ -34,7 +42,8 @@ function deleteField(number) {
         return alert('Извините. У вас должен быть хотя бы один критерий')
 
     $('#quantity').val(+$('#quantity').val() - 1)
-    $(`#parameter${number}`).remove()
+    $(`#parameter${number}`).slideUp(250)
+    setTimeout(() => { $(`#parameter${number}`).remove() }, 250)
 
     $('#button_delete').unbind()
     $('#button_delete').click(function () {
@@ -50,7 +59,6 @@ function deleteField(number) {
 function addField(number) {
     if (number === 9)
         return alert('Извините. Вы не можете создать более 10 критериев')
-
 
     $('#quantity').val(+$('#quantity').val() + 1)
     $(`#button_add`).before(`<div id="parameter${number + 1}">
@@ -69,6 +77,8 @@ function addField(number) {
                                      </div>
                                  </div>
                              </div>`)
+    $(`#parameter${number + 1}`).slideUp(0)
+    $(`#parameter${number + 1}`).slideDown(250)
 
     activate_buttons(number + 1)
     $('#button_add').unbind()
@@ -80,15 +90,6 @@ function addField(number) {
         deleteField(number + 1)
     })
 }
-
-$('[id^="name"]').each(function (index, element) {
-
-    $(element).focus(function () {
-
-        $(element).addClass('placeholder_activate')
-
-    })
-})
 
 let inputs = document.querySelectorAll('.input__file');
 Array.prototype.forEach.call(inputs, function (input) {
