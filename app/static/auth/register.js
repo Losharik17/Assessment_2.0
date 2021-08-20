@@ -51,7 +51,6 @@ $('label[for=phone_number]').css({
 $('#phone_number').inputmask("+7 (999) 999-9999",
     {clearMaskOnLostFocus : false});
 
-
 function foc(el, label) {
     $(el).css({
         'border-bottom': '1px solid #1a73a8'

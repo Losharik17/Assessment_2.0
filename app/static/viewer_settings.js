@@ -1,4 +1,5 @@
 $("#start").inputmask({
+    clearMaskOnLostFocus : false,
     mask: "D.M.Y",
     placeholder: "дд.мм.гг",
     definitions: {
@@ -42,6 +43,7 @@ $("#start").inputmask({
 });
 
 $("#end").inputmask({
+    clearMaskOnLostFocus : false,
     mask: "D.M.Y",
     placeholder: "дд.мм.гг",
     definitions: {
