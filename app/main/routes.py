@@ -342,9 +342,10 @@ def user_grades_table_for_admin(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+    print()
     return render_template('user_grades_table_for_admin.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
-                           ParName=parameters, user_id=user_id)
+                           ParName=parameters, user_id=user_id, len=len(parameters))
 
 
 # сортировка таблицы участников или увелечение количества участников в таблице

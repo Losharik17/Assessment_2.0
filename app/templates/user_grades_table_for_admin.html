@@ -44,17 +44,17 @@
             <tr>
                 <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
                 <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
-                {% set i = namespace(a=0) %}
+                {%set k = namespace(a=0) %}
                 {% for parameter in ParName %}
-                    <th id="parameter{{ i.a }}">{{ parameter.name }}</th>
-                    {% set i.a = i.a + 1 %}
+                    <th id="parameter{{ k.a }}">{{ parameter.name }}</th>
+                    {% set k.a = k.a + 1 %}
                 {% endfor %}
                 <th id="comment" class="sort">Комментарий</th>
             </tr>
             </thead>
 
             <tbody id="tbody">
-            {% set i.a = 0 %}
+            {% set i = namespace(a=0) %}
             {% for grade in grades %}
 
                 <tr id="number_str{{ i.a }}">
@@ -74,8 +74,7 @@
                             –
                         {% endif %}
                     </td>
-
-                    {% for j in range(10) %}
+                    {% for j in range(k.a) %}
                         {% if grade.__dict__['parameter_{}'.format(j)] is defined %}
                             <td id="parameter_{{ j }}{{ i.a }}">{% if grade.__dict__['parameter_{}'.format(j)] != 0 %}{{ grade.__dict__['parameter_{}'.format(j)] }}{% else %}–{% endif %}</td>
                         {% endif %}
@@ -85,6 +84,7 @@
                         {% if grade.comment %}
                             {{ grade.comment }}
                         {% else %}
+
                             –
                         {% endif %}
                     </td>

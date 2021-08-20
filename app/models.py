@@ -26,6 +26,11 @@ class User(UserMixin, db.Model):
     sum_grade_2 = db.Column(db.Float, default=0)
     sum_grade_3 = db.Column(db.Float, default=0)
     sum_grade_4 = db.Column(db.Float, default=0)
+    sum_grade_5 = db.Column(db.Float, default=0)
+    sum_grade_6 = db.Column(db.Float, default=0)
+    sum_grade_7 = db.Column(db.Float, default=0)
+    sum_grade_8 = db.Column(db.Float, default=0)
+    sum_grade_9 = db.Column(db.Float, default=0)
     sum_grade_all = db.Column(db.Float, default=0)
 
     def __repr__(self):
@@ -49,19 +54,18 @@ class User(UserMixin, db.Model):
 
         grades = self.grades.all()
         parameters = Parameter.query.filter_by(project_number=self.project_number).all()
-
         setattr(self, 'sum_grade_all', float(0))
-        for i in range(5):
+        for i in range(len(parameters)):
             setattr(self, 'sum_grade_{}'.format(i), 0)
 
         for grade in grades:
-            for i in range(5):  # должно быть кол-во параметров, а не цифра
+            for i in range(len(parameters)):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
                     setattr(self, 'sum_grade_{}'.format(i),
                             (float(self.__dict__['sum_grade_{}'.format(i)]) +
                              grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight))
 
-        for i in range(5):  # должно быть кол-во параметров, а не цифра
+        for i in range(len(parameters)):  # должно быть кол-во параметров, а не цифра
             setattr(self, 'sum_grade_{}'.format(i),
                     self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
             if len(parameters) > i:  # нужен тест
@@ -165,6 +169,11 @@ class Grade(db.Model):
     parameter_2 = db.Column(db.Integer)
     parameter_3 = db.Column(db.Integer)
     parameter_4 = db.Column(db.Integer)
+    parameter_5 = db.Column(db.Integer)
+    parameter_6 = db.Column(db.Integer)
+    parameter_7 = db.Column(db.Integer)
+    parameter_8 = db.Column(db.Integer)
+    parameter_9 = db.Column(db.Integer)
     comment = db.Column(db.Text(200))
 
     def __repr__(self):
