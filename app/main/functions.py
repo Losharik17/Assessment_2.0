@@ -52,6 +52,8 @@ def experts_in_json(experts):
                     str(expert.project_number),
                     str(expert.project_id)) + '},'
 
+    string = string[:len(string) - 1] + ']'
+    return string
 
 def grades_in_json(grades):
     string = '['

@@ -127,15 +127,29 @@ def expert(project_number, expert_id):
 
 
 # таблица личных оценок участника (для админа)
-@bp.route('/expert_table/<project_number>/<expert_id>', methods=['GET', 'POST'])
+@bp.route('/expert_table_for_admin/<project_number>/<expert_id>', methods=['GET', 'POST'])
 @login_required
-def expert_table(project_number, expert_id):
+def expert_table_for_admin(project_number, expert_id):
     """if current_user.id <= 11000:
         return redirects()"""
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    return render_template('expert_table.html', title='Профиль эксперта',
+    return render_template('expert_table_for_admin.html', title='Профиль эксперта',
+                           grades=grades, expert=expert, project_number=project_number,
+                           ParName=parameters)
+
+
+# таблица личных оценок участника (для наблюдателя)
+@bp.route('/expert_table_for_viewer/<project_number>/<expert_id>', methods=['GET', 'POST'])
+@login_required
+def expert_table_for_viewer(project_number, expert_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
+    expert = Expert.query.filter_by(id=expert_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    return render_template('expert_table_for_viewer.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
                            ParName=parameters)
 
@@ -198,14 +212,14 @@ def viewer_settings(viewer_id, project_number):
 
 
 # таблица всех участников из проекта для наблюдателя
-@bp.route('/viewer_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer_users_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
 @login_required
-def viewer_table(project_number, viewer_id):
+def viewer_users_table(project_number, viewer_id):
     """if current_user.id <= 11000:
         return redirects()"""
     viewer = Viewer.query.filter_by(id=viewer_id).first()
     project = Project.query.filter_by(number=project_number).first()
-    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    parameters = project.parameters.all()
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
     regions = ['–']
@@ -215,9 +229,37 @@ def viewer_table(project_number, viewer_id):
         if user.region not in regions and user.region is not None:
             regions.append(user.region)
 
-    return render_template('viewer_table.html', title='Table', admin=admin, teams=teams,
+    return render_template('viewer_users_table.html', title='Участники', viewer=viewer, teams=teams,
                            ParName=parameters, project_number=project_number, regions=regions,
                            project=project)
+
+
+# таблица личных оценок участника (для наблюдателя)
+@bp.route('/user_grades_table_for_viewer/<project_number>/<user_id>', methods=['GET', 'POST'])
+@login_required
+def user_grades_table_for_viewer(project_number, user_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
+    user = User.query.filter_by(id=user_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    return render_template('user_grades_table_for_viewer.html', title='Оценки участника',
+                           grades=grades, user=user, project_number=project_number,
+                           ParName=parameters, user_id=user_id, len=len(parameters))
+
+
+# табллца экспертов для наблюдателя
+@bp.route('/viewer_experts_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@login_required
+def viewer_experts_table(project_number, viewer_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
+    project = Project.query.filter_by(number=project_number).first()
+    parameters = project.parameters.all()
+
+    return render_template('viewer_experts_table.html', title='Эксперты', viewer=viewer,
+                           ParName=parameters, project_number=project_number, project=project)
 
 
 # страница для создания нового проекта
@@ -238,7 +280,6 @@ def create_project(viewer_id):
             db.session.add(Parameter(name=result.get('name{}'.format(i)),
                                      weight=result.get('weight{}'.format(i)),
                                      project_number=project.number))
-
 
         os.chdir("app/static/images")
         os.mkdir('{}'.format(project.number))
@@ -341,7 +382,6 @@ def user_grades_table_for_admin(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    print()
     return render_template('user_grades_table_for_admin.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
                            ParName=parameters, user_id=user_id, len=len(parameters))

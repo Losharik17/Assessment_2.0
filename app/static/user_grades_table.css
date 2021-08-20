@@ -33,10 +33,6 @@
     align-items: center;;
 }
 
-.th_clean {
-    cursor: default;
-}
-
 .button_re {
     display: inline-block;
     box-sizing: border-box;

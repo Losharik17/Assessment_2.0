@@ -53,6 +53,7 @@ $('html').click(function (event) {
     else if (event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
         || ($('#birthday').hasClass('active') && (event.target.tagName === 'TH' ||
             event.target.tagName === 'LI' || event.target.tagName === 'LABEL'))) {
+        $('#birthday').attr('data-order', 0)
         $('#birthday').removeClass('active');
         $('#birthday').find('.dropdown-menu').slideUp(300);
     }
@@ -91,6 +92,10 @@ $('.dropdown-menu li').click(function (event) {
         msg = '<span class="msg">Hidden input value: ';
     $('.msg').html(msg + input + '</span>');
 });
+/*Width of Dropdown*/
+$('.dropdown_2 .dropdown-menu').each(function (index, element) {
+    $(element).css({'min-width': $(this).parent().outerWidth()})
+})
 
 
 
@@ -125,10 +130,10 @@ function draw_table(response, project_number) {
         $("#tbody").append(`<tr id="number_str${i}"` +
             ` onclick="location.href='/user_grades_table_for_viewer/${project_number}/${users[i]['id']}'"></tr>`)
 
-        if (users[i]['id'] === 'None')
-            $(`#number_str${i}`).append(`<td id="id${i}">–</td>`)
+        if (users[i]['project_id'] === 'None')
+            $(`#number_str${i}`).append(`<td id="project_id${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="id${i}">${users[i]['project_id']}</td>`)
+            $(`#number_str${i}`).append(`<td id="project_id${i}">${users[i]['project_id']}</td>`)
 
         if (users[i]['username'] === 'None')
             $(`#number_str${i}`).append(`<td id="username${i}">–</td>`)
@@ -189,6 +194,7 @@ function age_sort(project_number, type=0) {
 }
 
 function age_sort_delete(project_number) {
+    $('#age_sort').html('По убыванию')
     $('#min_age_value').val(null)
     $('#max_age_value').val(null)
     setTimeout( ()=> {$('#birthday').attr('data-order', 0) }, 10)
@@ -238,6 +244,7 @@ function sort(parameter, project_number) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
+
     $.post('/sort_users_table', {
         parameter: parameter,
         sort_up: sort.sort_up,
@@ -256,9 +263,9 @@ function sort(parameter, project_number) {
             for (let i = 0; i < quantity; i++) {
 
                 $(`#number_str${i}`).attr('onclick',
-                    `location.href='/user_grades_table_for_viewer/${project_number}/${users[i]["id"]}'`)
+                    `location.href='/user_grades_table_for_admin/${project_number}/${users[i]["id"]}'`)
 
-                $(`#id${i}`).html(users[i]['id'] ? users[i]['project_id'] : '–');
+                $(`#project_id${i}`).html(users[i]['project_id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
 
                 $(`#birthday${i}`).html(users[i]['birthday'] !== 'None' ?
@@ -271,13 +278,13 @@ function sort(parameter, project_number) {
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&
                         users[i][`sum_grade_${j}`] !== 'None')
-                        $(`#sum_grade_${j}${i}`).html(Math.floor(users[i][`sum_grade_${j}`] * 100) / 100)
+                        $(`#sum_grade_${j}${i}`).html(Math.ceil(users[i][`sum_grade_${j}`] * 100) / 100)
                     else
                         $(`#sum_grade_${j}${i}`).html('–')
 
                 if (users[i][`sum_grade_all`] != 0 && !isNaN(users[i][`sum_grade_all`]) &&
                     users[i]['sum_grade_all'] !== 'None')
-                    $(`#sum_grade_all${i}`).html(Math.floor(users[i]['sum_grade_all'] * 100) / 100)
+                    $(`#sum_grade_all${i}`).html(Math.ceil(users[i]['sum_grade_all'] * 100) / 100)
                 else
                     $(`#sum_grade_all${i}`).html('–')
             }
@@ -286,3 +293,4 @@ function sort(parameter, project_number) {
         alert("Error AJAX request")
     })
 }
+

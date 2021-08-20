@@ -12,10 +12,10 @@
     <div class="settings">
         <div class="block">
             <!--пути немного изменятся-->
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_table',
+            <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
             project_number=project.number, viewer_id=project.viewer_id) }}'">Пользователи</div><br>
 
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_table',
+            <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
             project_number=project.number, viewer_id=project.viewer_id) }}'" >Эксперты</div>
         </div>
         <div class="date">

@@ -5,7 +5,7 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
     <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
-    <script src="{{ url_for('static', filename='user_grades_table_for_admin.js') }}"></script>
+    <script src="{{ url_for('static', filename='user_grades_table_for_viewer.js') }}"></script>
 
     <div class="container">
         <div class="data">
@@ -49,7 +49,7 @@
                     <th id="parameter{{ k.a }}" class="th_clean">{{ parameter.name }}</th>
                     {% set k.a = k.a + 1 %}
                 {% endfor %}
-                <th id="comment" class="sort th_clean">Комментарий</th>
+                <th id="comment" class="sort th_clean" >Комментарий</th>
             </tr>
             </thead>
 
@@ -57,7 +57,7 @@
             {% set i = namespace(a=0) %}
             {% for grade in grades %}
 
-                <tr id="number_str{{ i.a }}">
+                <tr id="number_str{{ i.a }}" class="th_clean">
 
                     <td id="expert_id{{ i.a }}">
                         {% if grade.expert_id %}
@@ -88,15 +88,6 @@
                             –
                         {% endif %}
                     </td>
-
-                    <div id="buttons{{ i.a }}" class="buttons">
-                        <span id="edit{{ i.a }}" onclick="edit_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
-                            <input id="e{{ i.a }}" type="button" value="Редактировать" class="btn">
-                        </span>
-                        <span id="delete{{ i.a }}" onclick="delete_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
-                            <input id="d{{ i.a }}" type="button" value="Удалить" class="btn_delete">
-                        </span>
-                    </div>
                 </tr>
                 {% set i.a = i.a + 1 %}
             {% endfor %}
@@ -114,8 +105,6 @@
     <script>
         $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
-        buttons({{ i.a }})
-        delete_buttons({{ user_id }})
     </script>
 
 {% endblock %}
