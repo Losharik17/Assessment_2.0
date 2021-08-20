@@ -22,6 +22,11 @@
                             {{ project.name }}
                         </h2>
                     </div>
+                    <div class="data">
+                        <h2 >
+                            {{ project.viewer.username }}
+                        </h2>
+                    </div>
 
                     <div class="date">
                         <span>{{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}</span>
@@ -31,6 +36,6 @@
             {% endfor %}
         </div>
     </div>
-    <script src="{{ url_for('static', filename='viewer_main.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin_projects.js') }}"></script>
 
 {% endblock %}

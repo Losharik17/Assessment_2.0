@@ -327,6 +327,16 @@ def admin(admin_id):
     return render_template('admin.html', admin=admin)
 
 
+# страница со всеми проектами
+@bp.route('/admin_projects/<admin_id>', methods=['GET', 'POST'])
+@login_required
+def admin_projects(admin_id):
+    admin = Viewer.query.filter_by(id=admin_id).first()
+    projects = viewer.projects.order_by(Project.start).all()
+
+    return render_template('admin_projects.html', admin=admin, projects=projects)
+
+
 # таблица всех участников из проекта для админа
 @bp.route('/admin_users_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
 @login_required
@@ -680,3 +690,9 @@ def save_user_data():
     db.session.commit()
 
     return jsonify({'result': 'successfully'})
+
+
+@bp.route('/sort_projects', methods=['POST'])
+@login_required
+def sort_projects():
+    pass

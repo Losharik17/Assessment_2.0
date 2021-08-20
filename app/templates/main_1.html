@@ -63,10 +63,16 @@
         {% block app_content %}{% endblock %}
     </div>
     <div class="footer">
-        <p style="margin-left: 10px;">2021  Система оценки Дмитрия Сергеева </p>
+        <p id="footer" style="color: #a8a8a8; margin-left: 10px; font-size: 14px;">Система оценки Дмитрия Сергеева </p>
         <p></p>
     </div>
 </div>
+
+<script>
+    new Date().getFullYear() !== 2021 ?
+        $('#footer').prepend(`&#169; 2021 – ${new Date().getFullYear()} `) :
+        $('#footer').prepend(`&#169; 2021 `)
+</script>
 
 </body>
 
