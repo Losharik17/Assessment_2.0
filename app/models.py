@@ -190,6 +190,7 @@ class Viewer(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
+    phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
     projects = db.relationship('Project', backref='viewer', lazy='dynamic')
 
@@ -237,6 +238,7 @@ class WaitingUser(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
+    phone_number = db.Column(db.String(16))
     registration_date = db.Column(db.DateTime, default=datetime.now())
     password_hash = db.Column(db.String(128))
 
@@ -252,6 +254,7 @@ class Admin(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
+    phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):

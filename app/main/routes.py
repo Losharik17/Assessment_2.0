@@ -248,9 +248,8 @@ def create_project(viewer_id):
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
         users = request.files['users']
-        users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
-        excel_user(users.filename.rsplit(".", 1)[0], project.number)
-
+        users.save(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]))
+        excel_user(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]), project.number)
 
         experts = request.files['experts']
         experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
@@ -513,10 +512,12 @@ def give_role():
 
         if request.form['role'] == 'Администратор':
             user = Admin(username=waiting_user.username, email=waiting_user.email,
-                         password_hash=waiting_user.password_hash)
+                         password_hash=waiting_user.password_hash,
+                         phone_number=waiting_user.phone_number)
         elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
-                          password_hash=waiting_user.password_hash)
+                          password_hash=waiting_user.password_hash,
+                          phone_number=waiting_user.phone_number)
         elif request.form['role'] == 'Удалить':
             db.session.delete(waiting_user)
             db.session.commit()
@@ -569,16 +570,16 @@ def show_more_waiting_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
 
-            waiting_users = WaitingUser.query \
-                .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
+            waiting_users = WaitingUser.query\
+                .order_by(WaitingUser.__dict__[request.form['parameter']].desc())\
                 .limit(request.form['lim'])
 
         else:
-            waiting_users = WaitingUser.query \
-                .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
+            waiting_users = WaitingUser.query\
+                .order_by(WaitingUser.__dict__[request.form['parameter']].asc())\
                 .limit(request.form['lim'])
     else:
-        waiting_users = WaitingUser.query \
+        waiting_users = WaitingUser.query\
             .order_by(WaitingUser.project_id).limit(request.form['lim'])
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})

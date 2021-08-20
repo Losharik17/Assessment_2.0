@@ -43,7 +43,7 @@ h2 {
     width: 300px;
     padding: 32px;
     border-radius: 10px;
-    box-shadow: 0 4px 16px #ccc;
+    box-shadow: 2px 4px 16px #ccc;
     font-family: sans-serif;
     letter-spacing: 1px;
 }
@@ -68,9 +68,10 @@ h2 {
 
 .form_input {
     width: 100%;
-    padding: 0 0 10px 0;
     border: none;
-    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #cccccc;
     background-color: transparent;
     outline: none;
     transition: 0.3s;
@@ -105,23 +106,7 @@ h2 {
     visibility: hidden;
     position: absolute;
 }
-/*
-.input__file-icon-wrapper {
-    height: 60px;
-    width: 60px;
-    margin-right: 15px;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    border-right: 1px solid #fff;
-}
-*/
+
 .input__file-button-text {
     line-height: 1;
     font: 600 16px Roboto;
