@@ -19,25 +19,36 @@
 
     <div class="form">
         <div class="block">
-            <!--пути немного изменятся-->
-            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_users_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'"><span class="input__file-button-text">Пользователи</span></div>
-
-            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_experts_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'" ><span class="input__file-button-text">Эксперты</span></div>
-
-            <div class="input__wrapper">
-                <input  type="file" name="new_users" id="input__file_6" class="input input__file">
-                <label for="input__file_6" class="input__file-button">
-                    <span class="input__file-button-text" onclick="alert(`Не забудьте сохранить изменения`)" >Загрузить Пользователей</span>
+            <div class="input__wrapper_2">
+                <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'">
+                    <span class="input__file_button_text_2">Пользователи</span>
+                </div><br>
+            </div>
+            <div class="input__wrapper_2">
+                <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'">
+                    <span class="input__file_button_text_2">Эксперты</span>
+                </div>
+            </div>
+            <div class="input__wrapper_2">
+                <input  type="file" name="experts" id="input__file_6" class="input input__file">
+                <label for="input__file_6" class="button">
+                    <span class="input__file_button_text_2">Загрузить Пользователей</span>
                 </label>
             </div>
 
-            <div class="input__wrapper">
-                <input  type="file" name="download" id="input__file_7" class="input input__file">
-                <label for="input__file_7" class="input__file-button">
-                    <a class="input__file-button-text"
-                       href="{{ url_for('main.export_excel', project_number=project.number) }}" target="_blank">Скачать отчёт</a>
+            <div class="input__wrapper_2">
+                <input  type="file" name="experts" id="input__file_6" class="input input__file">
+                <label for="input__file_7" class="button">
+                    <span class="input__file_button_text_2">Загрузить Экспертов</span>
+                </label>
+            </div>
+
+            <div class="input__wrapper_2">
+                <input  type="file" name="experts" id="input__file_7" class="input input__file">
+                <label for="input__file_8" class="button">
+                    <span class="input__file_button_text_2">Скачать Отчёт</span>
                 </label>
             </div>
         </div>

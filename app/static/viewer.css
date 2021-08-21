@@ -168,9 +168,9 @@ input::-webkit-inner-spin-button {
 
 
 .input__wrapper {
-    width: 100%;
+    width: 100%; !important;
     position: relative;
-    margin: 15px 0;
+    margin: 15px 0; !important;
 }
 
 .input__file {
@@ -198,7 +198,7 @@ input::-webkit-inner-spin-button {
 .input__file-button-text {
     line-height: 1;
     margin-top: 1px;
-    font-family: Roboto sans-serif;
+    font: 600 16px Roboto;
     font-size: 16px;
 }
 

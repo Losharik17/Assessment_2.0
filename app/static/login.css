@@ -95,10 +95,10 @@ h2 {
 
 
     /*Download avatar*/
-.input__wrapper {
-    width: max-content;
+.input__wrapper_2 {
+    width: 100%;
     position: relative;
-    margin: 0 auto;
+    margin: 0 0 15px;
 }
 
 .input__file {
@@ -107,7 +107,7 @@ h2 {
     position: absolute;
 }
 
-.input__file-button-text {
+.input__file_button_text_2 {
     line-height: 1;
     font: 600 16px Roboto;
     padding: 10px 20px;
@@ -115,7 +115,7 @@ h2 {
     text-decoration: none;
 }
 
-.input__file-button {
+.input__file_button_2 {
     width: 100%;
     max-width: 290px;
     height: 40px;
@@ -142,13 +142,13 @@ h2 {
     transition: all 500ms cubic-bezier(0.19, 1,0.22, 1);
 }
 
-.input__file-button:hover {
+.input__file_button_2:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0)
 
 }
 
 @media screen {
-    .input__file-button:active {
+    .input__file_button_2:active {
         box-shadow: 0 2px 3px #0044ff;
         background-color: #0044ff;
     }

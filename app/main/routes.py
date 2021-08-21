@@ -313,6 +313,7 @@ def create_project():
     if current_user.id <= 110000 or current_user.id > 120000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
+
     if request.method == 'POST':
         # try:
         result = request.form
@@ -364,7 +365,7 @@ def create_project():
 
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
 
-    return render_template('create_project.html', viewer_id=viewer.id, viewer=viewer)
+    return render_template('create_project.html', viewer_id=viewer.id)
 
 
 # главная страница админа
@@ -614,6 +615,7 @@ def delete_grade():
 
     grade.expert.quantity -= 1
     user = grade.user
+
 
     db.session.delete(grade)
     db.session.commit()
