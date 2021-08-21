@@ -7,8 +7,8 @@
 }
 
 .block {
-    width: 100%;
-    display: inline-block;
+    width: max-content;
+    display: block;
 
 }
 
@@ -82,8 +82,8 @@
 
 
 .button {
-    margin: 10px 15px;
     text-decoration: none;
+    margin: 0 auto;
     padding: 10px 25px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
@@ -91,6 +91,7 @@
     outline: none !important;
     cursor: pointer;
     -webkit-transition: all 0.2s ease;
+    width:  260px;
     transition: all 0.2s ease;
     position: relative;
     display: inline-block;
@@ -152,8 +153,15 @@
 }
 
 @media screen {
+    .submit:hover {
+        box-shadow: 0 2px 1px #0044ff;
+        background-color: #0044ff;
+    }
+}
+
+@media handheld {
     .submit:active {
-        box-shadow: 0 2px 3px #0044ff;
+        box-shadow: 0 2px 1px #0044ff;
         background-color: #0044ff;
     }
 }

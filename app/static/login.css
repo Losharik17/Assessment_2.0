@@ -96,9 +96,9 @@ h2 {
 
     /*Download avatar*/
 .input__wrapper_2 {
-    width: max-content;
+    width: 100%;
     position: relative;
-    margin: 0 auto;
+    margin: 0 0 15px;
 }
 
 .input__file {

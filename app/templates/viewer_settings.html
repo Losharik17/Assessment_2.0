@@ -13,28 +13,34 @@
     <div class="form">
         <div class="block">
             <!--пути немного изменятся-->
-
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'">Пользователи</div><br>
-
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'" >Эксперты</div>
-
+            <div class="input__wrapper_2">
+                <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'"><span class="input__file_button_text_2">Пользователи</span></div><br>
+            </div>
+            <div class="input__wrapper_2">
+                <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'"><span class="input__file_button_text_2">Эксперты</span></div>
+            </div>
             <div class="input__wrapper_2">
                 <input  type="file" name="experts" id="input__file_6" class="input input__file">
-                <label for="input__file_6" class="input__file_button_2">
+                <label for="input__file_6" class="button">
                     <span class="input__file_button_text_2">Загрузить Пользователей</span>
                 </label>
             </div>
 
             <div class="input__wrapper_2">
-                <input  type="file" name="experts" id="input__file_7" class="input input__file">
-                <label for="input__file_7" class="input__file_button_2">
-                    <span class="input__file_button_text_2">Выгрузить Базы данных</span>
+                <input  type="file" name="experts" id="input__file_6" class="input input__file">
+                <label for="input__file_7" class="button">
+                    <span class="input__file_button_text_2">Загрузить Экспертов</span>
                 </label>
             </div>
 
-
+            <div class="input__wrapper_2">
+                <input  type="file" name="experts" id="input__file_7" class="input input__file">
+                <label for="input__file_8" class="button">
+                    <span class="input__file_button_text_2">Скачать Отчёт</span>
+                </label>
+            </div>
 
         </div>
         <div  style="margin-top:20px;">
