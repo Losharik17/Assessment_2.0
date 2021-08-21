@@ -203,12 +203,12 @@ def viewer(viewer_id):
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
-@bp.route('/viewer/settings/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer/settings/<viewer_id>/<project_number>', methods=['GET', 'POST'])
 @login_required
-def viewer_settings(viewer_id):
+def viewer_settings(viewer_id, project_number):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-
-    return render_template('viewer_settings.html', viewer=viewer)
+    project = viewer.projects.filter_by(number=project_number).first()
+    return render_template('viewer_settings.html', viewer=viewer, project=project)
 
 
 # таблица всех участников из проекта для наблюдателя
@@ -263,11 +263,11 @@ def viewer_experts_table(project_number, viewer_id):
 
 
 # страница для создания нового проекта
-@bp.route('/viewer/create_project/<viewer_id>/<project_number>', methods=['GET', 'POST'])
+@bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
-def create_project(viewer_id, project_number):
+def create_project(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-    project = viewer.projects.filter_by(number=project_number).first()
+
     if request.method == 'POST':
         # try:
         result = request.form
@@ -289,9 +289,9 @@ def create_project(viewer_id, project_number):
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
         users = request.files['users']
-
         users.save(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]))
         excel_user(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]), project.number)
+
         experts = request.files['experts']
         experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
         excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
@@ -314,7 +314,7 @@ def create_project(viewer_id, project_number):
 
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
 
-    return render_template('create_project.html', viewer_id=viewer.id, viewer=viewer, project=project)
+    return render_template('create_project.html', viewer_id=viewer.id)
 
 
 # главная страница админа
@@ -540,6 +540,7 @@ def delete_grade():
 
     grade.expert.quantity -= 1
     user = grade.user
+
 
     db.session.delete(grade)
     db.session.commit()
