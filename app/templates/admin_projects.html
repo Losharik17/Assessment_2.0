@@ -8,16 +8,16 @@
 
         <div>
             {% for project in projects %}
-                <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
+                <div class="block" onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number) }}'">
                     <div class="block_logo">
                         {% set path = 'images/' + project.number|string + '/' + project.number|string + '.webp' %}
                         <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                     </div>
                     <div date="{{ project.end.strftime('%d.%m.%Y') }}" class="data">
-                        <h2 >
+                        <h2  style="font-weight: normal">
                             {{ project.name }}
                         </h2>
-                        <h3>
+                        <h3 style="font-weight: normal">
                             {{ project.viewer.username }}
                         </h3>
                     </div>
@@ -42,7 +42,7 @@
             if (date.getFullYear() >= +project_date[2] &&
                 date.getMonth() >= +project_date[1] - 1 &&
                 date.getDate() > +project_date[0]) {
-                element.append('<span style="color:crimson">Проект завершён</span>')
+                element.append('<span style="color:crimson">Мероприятие завершено</span>')
                 console.log(123)
             }
         }

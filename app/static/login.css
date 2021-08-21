@@ -111,6 +111,8 @@ h2 {
     line-height: 1;
     font: 600 16px Roboto;
     padding: 10px 20px;
+    color: white;
+    text-decoration: none;
 }
 
 .input__file-button {

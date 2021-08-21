@@ -21,6 +21,16 @@ class GradeForm(FlaskForm):
                              choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     parameter_4 = RadioField('{}'.format(''), default=0,
                              choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
+    parameter_5 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
+    parameter_6 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
+    parameter_7 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
+    parameter_8 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
+    parameter_9 = RadioField('{}'.format(''), default=0,
+                             choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     comment = TextAreaField('Комментарий к оценке', validators=[Length(max=200)])
     submit = SubmitField('Выставить оценки')
 

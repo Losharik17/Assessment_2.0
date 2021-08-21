@@ -20,10 +20,10 @@
     <div class="form">
         <div class="block">
             <!--пути немного изменятся-->
-            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_users_table',
+            <div class="input_button" onclick="location.href='{{ url_for('main.admin_users_table',
             project_number=project.number, viewer_id=project.viewer_id) }}'"><span class="input__file-button-text">Пользователи</span></div>
 
-            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_experts_table',
+            <div class="input_button" onclick="location.href='{{ url_for('main.admin_experts_table',
             project_number=project.number, viewer_id=project.viewer_id) }}'" ><span class="input__file-button-text">Эксперты</span></div>
 
             <div class="input__wrapper">

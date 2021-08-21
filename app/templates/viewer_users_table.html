@@ -81,6 +81,16 @@
             Показать все</a>
     </div>
 
+
+    <div class="buttons">
+        <div class="show_btn" onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number) }}'">
+            <span>Настройки</span>
+        </div>
+
+
+    </div>
+
+
     <script src="{{ url_for('static', filename='viewer_users_table.js') }}"></script>
     <script>
         show_more(0, {{ project_number }})

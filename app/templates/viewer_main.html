@@ -6,27 +6,23 @@
     <div class="content">
         <h1 class="title">Проекты</h1>
 
-        <div class="block_new" onclick="location.href='{{ url_for('main.create_project', viewer_id=viewer.id) }}'">
+        <div class="block_new" onclick="location.href='{{ url_for('main.create_project') }}'">
             <div class="text_new">
                 <span class="text">Создать новый проект</span>
             </div>
         </div>
 
         {% for project in projects %}
-            <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
+            <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number) }}'">
                 <div class="block_logo">
                     {% set path = 'images/' + project.number|string + '/' + project.number|string + '.webp' %}
                     <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                 </div>
-                <div class="data" align="top">
-                    <h2 >
+                <div date="{{ project.end.strftime('%d.%m.%Y') }}" class="data">
+                    <h2 style="font-weight: normal; text-align: center">
                         {{ project.name }}
                     </h2>
                 </div>
-
-
-
-
 
                 <div class="date">
                     <span>{{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}</span>
@@ -37,5 +33,24 @@
     </div>
 
     <script src="{{ url_for('static', filename='viewer_main.js') }}"></script>
+    <script>
+        function end_project (element) {
+
+            let date = new Date()
+            let project_date = element.attr('date').split('.')
+
+            if (date.getFullYear() >= +project_date[2] &&
+                date.getMonth() >= +project_date[1] - 1 &&
+                date.getDate() > +project_date[0]) {
+                element.append('<span style="color:crimson">Мероприятие завершено</span>')
+                console.log(123)
+            }
+        }
+
+        $('.data').each(function (index, element) {
+            end_project($(element))
+        })
+
+    </script>
 
 {% endblock %}

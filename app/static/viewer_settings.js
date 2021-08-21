@@ -85,3 +85,34 @@ $("#end").inputmask({
         },
     }
 });
+
+
+$('label[for=start]').css({
+    top: '-18px',
+    'font-size': '14px',
+})
+
+$('label[for=end]').css({
+    top: '-18px',
+    'font-size': '14px',
+})
+
+$('#start').focus(function () {
+    $(this).css({
+        'border-bottom': '1px solid #1a73a8'
+    })
+}).blur(function () {
+    $(this).css({
+        'border-bottom': '1px solid #cccccc'
+    })
+})
+
+$('#end').focus(function () {
+    $(this).css({
+        'border-bottom': '1px solid #1a73a8'
+    })
+}).blur(function () {
+    $(this).css({
+        'border-bottom': '1px solid #cccccc'
+    })
+})
