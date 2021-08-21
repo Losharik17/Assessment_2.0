@@ -221,11 +221,11 @@ def viewer_table(project_number, viewer_id):
 
 
 # страница для создания нового проекта
-@bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer/create_project/<viewer_id>/<project_number>', methods=['GET', 'POST'])
 @login_required
-def create_project(viewer_id):
+def create_project(viewer_id, project_number):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-
+    project = viewer.projects.filter_by(number=project_number).first()
     if request.method == 'POST':
         # try:
         result = request.form
@@ -239,7 +239,6 @@ def create_project(viewer_id):
                                      weight=result.get('weight{}'.format(i)),
                                      project_number=project.number))
 
-
         os.chdir("app/static/images")
         os.mkdir('{}'.format(project.number))
         os.chdir('{}'.format(project.number))
@@ -250,7 +249,6 @@ def create_project(viewer_id):
         users = request.files['users']
         users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
         excel_user(users.filename.rsplit(".", 1)[0], project.number)
-
 
         experts = request.files['experts']
         experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
@@ -274,7 +272,7 @@ def create_project(viewer_id):
 
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
 
-    return render_template('create_project.html', viewer_id=viewer.id)
+    return render_template('create_project.html', viewer_id=viewer.id, viewer=viewer, project=project)
 
 
 # главная страница админа
@@ -491,7 +489,6 @@ def delete_grade():
 
     grade.expert.quantity -= 1
     user = grade.user
-
 
     db.session.delete(grade)
     db.session.commit()

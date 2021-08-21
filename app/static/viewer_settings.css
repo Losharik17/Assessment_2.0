@@ -40,7 +40,7 @@
 }
 
 .input_button:hover {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0)
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0);
     background-color:rgba(2, 84, 185, 0.7)
 }
 
