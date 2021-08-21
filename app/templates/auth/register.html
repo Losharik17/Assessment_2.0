@@ -3,6 +3,8 @@
 {% block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='login.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
     <div class="content">
 
         <h1>Регистрация</h1>
@@ -15,7 +17,6 @@
                     <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </div>
-
             <div  class="form_group">
                 {{ form.email.label }}
                 {{ form.email(size=32) }}
@@ -24,9 +25,9 @@
                 {% endfor %}
             </div>
             <div  class="form_group">
-                {{ form.phone.label(class_='form_label') }}
-                {{ form.phone(size=16, class_='form_input') }}
-                {% for error in form.phone.errors %}
+                {{ form.phone_number.label(class_='form_label') }}
+                {{ form.phone_number(size=16, class_='form_input') }}
+                {% for error in form.phone_number.errors %}
                     <span style="color: red;">{{ error }}</span>
                 {% endfor %}
             </div>

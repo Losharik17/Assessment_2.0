@@ -15,7 +15,7 @@
         {% for project in projects %}
             <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
                 <div class="block_logo">
-                    {% set path = 'images/' + project.number|string + '/logo.webp' %}
+                    {% set path = 'images/' + project.number|string + '/' + project.number|string + '.webp' %}
                     <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                 </div>
                 <div class="data" align="top">

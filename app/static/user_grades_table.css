@@ -34,10 +34,6 @@
     align-items: center;;
 }
 
-.th_clean {
-    cursor: default;
-}
-
 .button_re {
     display: block;
     box-sizing: border-box;

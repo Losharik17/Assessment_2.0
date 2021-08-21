@@ -33,8 +33,8 @@ function draw_table(response, project_number) {
 
     for (let i = 0; i < quantity; i++) {
 
-        $("#tbody").append(`<tr style="cursor: default;" id="number_str${i}"` +
-            ` onclick="location.href='/expert_table_for_admin/${project_number}/${experts[i]['id']}'"></tr>`)
+        $("#tbody").append(`<tr id="number_str${i}"` +
+            ` onclick="location.href='/expert_table_for_viewer/${project_number}/${experts[i]['id']}'"></tr>`)
 
         if (experts[i]['project_id'] === 'None')
             $(`#number_str${i}`).append(`<td id="project_id${i}">–</td>`)
@@ -110,7 +110,7 @@ function sort(parameter, project_number) {
             for (let i = 0; i < quantity; i++) {
 
                 $(`#number_str${i}`).attr('onclick',
-                    `location.href='/expert_table_for_admin/${project_number}/${experts[i]["id"]}'`)
+                    `location.href='/expert_table_for_viewer/${project_number}/${experts[i]["id"]}'`)
 
                 $(`#project_id${i}`).html(experts[i]['project_id'] ? experts[i]['project_id'] : '–');
                 $(`#username${i}`).html(experts[i]['username'] ? experts[i]['username'] : '–')

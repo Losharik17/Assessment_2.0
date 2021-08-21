@@ -35,7 +35,7 @@
 
 <div class="preloader">
     <div class="preloader-text">
-        Команда разработчиков <a href="#">Ссылка на почту</a>
+        Команда разработчиков&nbsp;<a href="#">Ссылка на почту</a>
     </div>
     <div class="preloader-5"></div>
 </div>
@@ -64,11 +64,17 @@
         {% block app_content %}{% endblock %}
     </div>
     <div class="footer">
-        <p style="margin-left: 10px;">&copy; 2021 Система оценки Дмитрия Сергеева
-             </p>
+
+        <p id="footer" style="color: #a8a8a8; margin-left: 10px; font-size: 14px;">Система оценки Дмитрия Сергеева </p>
         <p></p>
     </div>
 </div>
+
+<script>
+    new Date().getFullYear() !== 2021 ?
+        $('#footer').prepend(`&#169; 2021 – ${new Date().getFullYear()} `) :
+        $('#footer').prepend(`&#169; 2021 `)
+</script>
 
 </body>
 

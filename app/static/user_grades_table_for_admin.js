@@ -42,7 +42,6 @@ function edit_data(user_id, user_birthday) {
                 data.push(td)
             }
             else if (index === 2) {
-                console.log(td.replace(/[.]/g,'-').split("-").reverse().join("-"))
                 data.push(td.replace(/[.]/g,'-').split("-").reverse().join("-"))
             }
 

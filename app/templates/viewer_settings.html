@@ -13,11 +13,12 @@
     <div class="form">
         <div class="block">
             <!--пути немного изменятся-->
-            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'"><span class="input__file-button-text">Пользователи</span></div>
 
-            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'" ><span class="input__file-button-text">Эксперты</span></div>
+            <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'">Пользователи</div><br>
+
+            <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'" >Эксперты</div>
 
             <div class="input__wrapper">
                 <input  type="file" name="experts" id="input__file_6" class="input input__file">
@@ -32,6 +33,9 @@
                     <span class="input__file-button-text">Выгрузить Базы данных</span>
                 </label>
             </div>
+
+
+
         </div>
         <div  style="margin-top:20px;">
 

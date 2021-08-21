@@ -19,6 +19,9 @@
     cursor: pointer;
 }
 
+.th_clean {
+    cursor: default; !important;
+}
 
 table {
     font-family: 'Roboto', sans-serif;

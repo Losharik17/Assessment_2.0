@@ -127,15 +127,29 @@ def expert(project_number, expert_id):
 
 
 # таблица личных оценок участника (для админа)
-@bp.route('/expert_table/<project_number>/<expert_id>', methods=['GET', 'POST'])
+@bp.route('/expert_table_for_admin/<project_number>/<expert_id>', methods=['GET', 'POST'])
 @login_required
-def expert_table(project_number, expert_id):
+def expert_table_for_admin(project_number, expert_id):
     """if current_user.id <= 11000:
         return redirects()"""
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    return render_template('expert_table.html', title='Профиль эксперта',
+    return render_template('expert_table_for_admin.html', title='Профиль эксперта',
+                           grades=grades, expert=expert, project_number=project_number,
+                           ParName=parameters)
+
+
+# таблица личных оценок участника (для наблюдателя)
+@bp.route('/expert_table_for_viewer/<project_number>/<expert_id>', methods=['GET', 'POST'])
+@login_required
+def expert_table_for_viewer(project_number, expert_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
+    expert = Expert.query.filter_by(id=expert_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    return render_template('expert_table_for_viewer.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
                            ParName=parameters)
 
@@ -198,14 +212,14 @@ def viewer_settings(viewer_id, project_number):
 
 
 # таблица всех участников из проекта для наблюдателя
-@bp.route('/viewer_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer_users_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
 @login_required
-def viewer_table(project_number, viewer_id):
+def viewer_users_table(project_number, viewer_id):
     """if current_user.id <= 11000:
         return redirects()"""
     viewer = Viewer.query.filter_by(id=viewer_id).first()
     project = Project.query.filter_by(number=project_number).first()
-    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    parameters = project.parameters.all()
     users_team = User.query.filter_by(project_number=project_number).all()
     teams = ['Все команды']
     regions = ['–']
@@ -215,9 +229,37 @@ def viewer_table(project_number, viewer_id):
         if user.region not in regions and user.region is not None:
             regions.append(user.region)
 
-    return render_template('viewer_table.html', title='Table', admin=admin, teams=teams,
+    return render_template('viewer_users_table.html', title='Участники', viewer=viewer, teams=teams,
                            ParName=parameters, project_number=project_number, regions=regions,
                            project=project)
+
+
+# таблица личных оценок участника (для наблюдателя)
+@bp.route('/user_grades_table_for_viewer/<project_number>/<user_id>', methods=['GET', 'POST'])
+@login_required
+def user_grades_table_for_viewer(project_number, user_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
+    user = User.query.filter_by(id=user_id).first()
+    parameters = Parameter.query.filter_by(project_number=project_number).all()
+    return render_template('user_grades_table_for_viewer.html', title='Оценки участника',
+                           grades=grades, user=user, project_number=project_number,
+                           ParName=parameters, user_id=user_id, len=len(parameters))
+
+
+# табллца экспертов для наблюдателя
+@bp.route('/viewer_experts_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@login_required
+def viewer_experts_table(project_number, viewer_id):
+    """if current_user.id <= 11000:
+        return redirects()"""
+    viewer = Viewer.query.filter_by(id=viewer_id).first()
+    project = Project.query.filter_by(number=project_number).first()
+    parameters = project.parameters.all()
+
+    return render_template('viewer_experts_table.html', title='Эксперты', viewer=viewer,
+                           ParName=parameters, project_number=project_number, project=project)
 
 
 # страница для создания нового проекта
@@ -247,9 +289,9 @@ def create_project(viewer_id, project_number):
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
         users = request.files['users']
-        users.save(secure_filename(users.filename.rsplit(".", 1)[0]))
-        excel_user(users.filename.rsplit(".", 1)[0], project.number)
 
+        users.save(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]))
+        excel_user(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]), project.number)
         experts = request.files['experts']
         experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
         excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
@@ -283,6 +325,16 @@ def admin(admin_id):
         return redirects()"""
     admin = Admin.query.filter_by(id=admin_id).first()
     return render_template('admin.html', admin=admin)
+
+
+# страница со всеми проектами
+@bp.route('/admin_projects/<admin_id>', methods=['GET', 'POST'])
+@login_required
+def admin_projects(admin_id):
+    admin = Viewer.query.filter_by(id=admin_id).first()
+    projects = viewer.projects.order_by(Project.start).all()
+
+    return render_template('admin_projects.html', admin=admin, projects=projects)
 
 
 # таблица всех участников из проекта для админа
@@ -340,7 +392,6 @@ def user_grades_table_for_admin(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
-    print()
     return render_template('user_grades_table_for_admin.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
                            ParName=parameters, user_id=user_id, len=len(parameters))
@@ -510,10 +561,12 @@ def give_role():
 
         if request.form['role'] == 'Администратор':
             user = Admin(username=waiting_user.username, email=waiting_user.email,
-                         password_hash=waiting_user.password_hash)
+                         password_hash=waiting_user.password_hash,
+                         phone_number=waiting_user.phone_number)
         elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
-                          password_hash=waiting_user.password_hash)
+                          password_hash=waiting_user.password_hash,
+                          phone_number=waiting_user.phone_number)
         elif request.form['role'] == 'Удалить':
             db.session.delete(waiting_user)
             db.session.commit()
@@ -566,16 +619,16 @@ def show_more_waiting_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
 
-            waiting_users = WaitingUser.query \
-                .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
+            waiting_users = WaitingUser.query\
+                .order_by(WaitingUser.__dict__[request.form['parameter']].desc())\
                 .limit(request.form['lim'])
 
         else:
-            waiting_users = WaitingUser.query \
-                .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
+            waiting_users = WaitingUser.query\
+                .order_by(WaitingUser.__dict__[request.form['parameter']].asc())\
                 .limit(request.form['lim'])
     else:
-        waiting_users = WaitingUser.query \
+        waiting_users = WaitingUser.query\
             .order_by(WaitingUser.project_id).limit(request.form['lim'])
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
@@ -636,3 +689,9 @@ def save_user_data():
     db.session.commit()
 
     return jsonify({'result': 'successfully'})
+
+
+@bp.route('/sort_projects', methods=['POST'])
+@login_required
+def sort_projects():
+    pass

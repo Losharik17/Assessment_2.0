@@ -26,9 +26,10 @@
     }
 
     .block_new:hover {
+
         background-color: #a2a5ad;
         color: white;
-
+        transform: scale(1.03);
     }
 
     .img_back {
@@ -66,6 +67,7 @@
     .block:hover {
         background-color: #5f8dc4;
         color: white;
+        transform: scale(1.03);
 
     }
 
