@@ -65,7 +65,7 @@ body {
 }
 
 .maket {
-
+    margin: 0 auto;
 }
 
 .shapka {
@@ -77,6 +77,7 @@ body {
     vertical-align: middle;
     align-items: center;
 }
+
 
 .footer {
     max-height: 50px;

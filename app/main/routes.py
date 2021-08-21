@@ -331,8 +331,8 @@ def admin(admin_id):
 @bp.route('/admin_projects/<admin_id>', methods=['GET', 'POST'])
 @login_required
 def admin_projects(admin_id):
-    admin = Viewer.query.filter_by(id=admin_id).first()
-    projects = viewer.projects.order_by(Project.start).all()
+    admin = Admin.query.filter_by(id=admin_id).first()
+    projects = Project.query.order_by(Project.start).all()
 
     return render_template('admin_projects.html', admin=admin, projects=projects)
 
@@ -445,7 +445,7 @@ def users_table():
 @bp.route('/sort_experts_table', methods=['POST'])
 @bp.route('/show_more_experts', methods=['POST'])
 @login_required
-def experts_table():
+def show_more_experts():
     if int(request.form['lim']) < 10:
         limit = 10
     else:
@@ -690,9 +690,3 @@ def save_user_data():
     db.session.commit()
 
     return jsonify({'result': 'successfully'})
-
-
-@bp.route('/sort_projects', methods=['POST'])
-@login_required
-def sort_projects():
-    pass
