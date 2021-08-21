@@ -125,6 +125,17 @@
     transform: scale(1);
 }
 
+.download_button {
+    border-width: 0;
+    color: rgba(0, 64, 144, 0.7);
+    text-decoration: none;
+
+}
+
+.download_button:hover {
+    color: #fff;
+
+}
 
 
 
@@ -136,7 +147,7 @@
 }
 
 .submit {
-    font-size:16px;
+    font:600 16px  Roboto;
     width: 120px;
     height: 40px;
     margin: 10px auto auto;
