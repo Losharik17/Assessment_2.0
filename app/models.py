@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import unique
 from hashlib import md5
 from time import time
-from flask import current_app
+from flask import current_app, request
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -13,7 +13,7 @@ from sqlalchemy import event, DDL
 class User(UserMixin, db.Model):
     project_id = db.Column(db.Integer)  # id в данном проете
     username = db.Column(db.String(64))
-    email = db.Column(db.String(128), index=True, unique=True)
+    email = db.Column(db.String(128), index=True)
     birthday = db.Column(db.Date)
     team = db.Column(db.String(32))  # команда, класс иди что-то подобное
     region = db.Column(db.String(64))  # локация, регион или что-то подобное
@@ -108,18 +108,20 @@ class User(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    if int(id) <= 10000:
+    if int(id) <= 100000:
         return User.query.get(int(id))
-    if 10000 < int(id) <= 11000:
+    if 100000 < int(id) <= 110000:
         return Expert.query.get(int(id))
-    if 11000 < int(id) <= 12000:
-        return Admin.query.get(int(id))
-    if 12000 < int(id):
+    if 110000 < int(id) <= 120000:
         return Viewer.query.get(int(id))
+    if 120000 < int(id):
+        return Admin.query.get(int(id))
+
 
 
 class Expert(UserMixin, db.Model):
     project_id = db.Column(db.Integer, default = 0)
+    photo = db.Column(db.String)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     weight = db.Column(db.Float, default=1.0)
@@ -193,6 +195,7 @@ class Viewer(UserMixin, db.Model):
     phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
     projects = db.relationship('Project', backref='viewer', lazy='dynamic')
+    expert_id = db.Column(db.Integer)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -256,6 +259,7 @@ class Admin(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
+    expert_id = db.Column(db.Integer)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -279,14 +283,13 @@ class Admin(UserMixin, db.Model):
         return Admin.query.get(id)
 
 event.listen(Expert.__table__, 'after_create',
-             DDL("INSERT INTO expert (id) VALUES (10000)")  # аналогично admin_id
-             )
-
-event.listen(Admin.__table__, 'after_create',
-             DDL("INSERT INTO admin (id) VALUES (11000)")
+             DDL("INSERT INTO expert (id) VALUES (100000)")  # аналогично admin_id
              )
 
 event.listen(Viewer.__table__, 'after_create',
-             DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
+             DDL("INSERT INTO viewer (id) VALUES (110000)")  # аналогично admin_id
              )
 
+event.listen(Admin.__table__, 'after_create',
+             DDL("INSERT INTO admin (id) VALUES (120000)")
+             )

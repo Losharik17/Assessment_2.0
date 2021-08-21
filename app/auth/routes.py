@@ -11,7 +11,6 @@ from app.auth.email import send_password_reset_email
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -28,7 +27,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Неверный пароль или email', 'warning')
             return redirect(url_for('auth.login'))
-        print(form.remember_me.data)
+
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -81,17 +80,18 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
-
-        expert = Expert.query.filter_by(email=form.email.data).first()
-        if expert:
-            send_password_reset_email(expert)
-        admin = Admin.query.filter_by(email=form.email.data).first()
-        if admin:
-            send_password_reset_email(admin)
-
-        viewer = Viewer.query.filter_by(email=form.email.data).first()
-        if viewer:
-            send_password_reset_email(viewer)
+        else:
+            viewer = Viewer.query.filter_by(email=form.email.data).first()
+            if viewer:
+                send_password_reset_email(viewer)
+            else:
+                admin = Admin.query.filter_by(email=form.email.data).first()
+                if admin:
+                    send_password_reset_email(admin)
+                else:
+                    expert = Expert.query.filter_by(email=form.email.data).first()
+                    if expert:
+                        send_password_reset_email(expert)
 
         flash('Проверьте вашу почту и следуйте дальнейшим инструкциям', 'success')
         return redirect(url_for('auth.login'))

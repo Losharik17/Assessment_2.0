@@ -7,18 +7,18 @@ from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, W
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, excel_expert, excel_user, to_dict, delete_timer, redirects, compression
-from datetime import date, datetime
-from werkzeug.utils import secure_filename
 import pandas as pd
+from app.main.secure_filename_2 import secure_filename_2
 import os
+from datetime import date
+import datetime
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
     if current_user.is_authenticated:
-        pass
-        # return redirects()
+        return redirects('base')
 
     return render_template('base.html', auth=current_user.is_authenticated)
 
@@ -26,19 +26,24 @@ def index():
 @bp.route('/download')
 @login_required
 def dwn():
-    """if current_user.id <= 11000:
-        return redirects()"""
+    if current_user.id <= 110000:
+        return redirects()
     return render_template('download.html')
 
 
 @bp.route('/excel/<project_number>', methods=['GET', 'POST'])
 @login_required
 def export_excel(project_number):
-    """if current_user.id <= 11000:
-        return redirects()"""
+    if current_user.id <= 110000:
+        return redirects()
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
+
+    df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
+    excel_start_date = datetime.date(1899, 12, 30)
+    df1['birthday'] = df1['birthday'] - excel_start_date
+    df1.birthday = df1.birthday.dt.days
 
     parameters = Project.query.filter_by(number=project_number).first().parameters.all()
     i = 0
@@ -46,19 +51,20 @@ def export_excel(project_number):
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
-
+                              'photo': 'Фотография',
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
     df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
 
+
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
     df2 = df2.loc[df2['project_number'] == int(project_number)]
     df2 = df2.drop(columns=['password_hash', 'id', 'project_number', 'quantity'])
-    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
+    df2.rename(columns={'username': 'ФИО', 'photo':'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -72,46 +78,77 @@ def export_excel(project_number):
 
     filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
 
-    writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
+    writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
     workbook = writer.book
-    new_format = workbook.add_format({'align': 'center'})
+    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter' })
+    date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format' : 'dd/mm/yyyy' })
+    date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format' : 'dd/mm/yyyy hh:mm' })
     worksheet = writer.sheets['Пользователи']
-    worksheet.set_column('A:L', 19, new_format)
+    worksheet.set_default_row(110)
+    worksheet.set_row(0, 15)
+    worksheet.set_column('A:M', 19, new_format)
+    worksheet.set_column('E:E', 19, date_format)
+    worksheet.set_column('B:B', 13, new_format)
+    directory = '../T-Park-Losharik/app/static/images/{}/users/'.format(project_number)
+    files = os.listdir(directory)
+    i = 2
+    for file in files:
+        worksheet.insert_image("B{}".format(i), directory + file)
+        i += 1
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
-    worksheet.set_column('A:F', 19, new_format)
+    worksheet.set_default_row(110)
+    worksheet.set_row(0, 15)
+    worksheet.set_column('A:E', 19, new_format)
+    worksheet.set_column('B:B', 13, new_format)
+    directory = '../T-Park-Losharik/app/static/images/{}/experts/'.format(project_number)
+    files = os.listdir(directory)
+    i = 2
+    for file in files:
+        worksheet.insert_image("B{}".format(i), directory + file)
+        i += 1
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:H', 19, new_format)
-    worksheet.set_column('C:C', 24, new_format)
+    worksheet.set_column('C:C', 24, date2_format)
     worksheet.set_column('I:I', 30, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
 
 # профиль пользователя
-@bp.route('/user/<user_id>')
+@bp.route('/user')
 @login_required
-def user(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    """if current_user.id <= 10000 and current_user.id != user.id:
-        return redirects()"""
-    grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
-    user = User.query.filter_by(id=user_id).first()
+def user():
+    if 100000 < current_user.id:
+        return redirects()
+
+    user = User.query.filter_by(id=current_user.id).first()
+    grades = Grade.query.filter_by(user_id=current_user.id).order_by(Grade.expert_id).limit(20)
     parameters = Parameter.query.filter_by(project_number=user.project_number).all()
-    return render_template('user_grades_table.html', title='Оценки участника',
+    return render_template('user_grades_table.html', title='Мой оценки',
                            grades=grades, user=user, project_number=user.project_number,
-                           ParName=parameters, user_id=user_id)
+                           ParName=parameters, user_id=current_user.id)
 
 
 # ввод номера участника для перехода к выставлению оценки
-@bp.route('/expert/<project_number>/<expert_id>', methods=['GET', 'POST'])
+@bp.route('/expert/<project_number>', methods=['GET', 'POST'])
 @login_required
-def expert(project_number, expert_id):
-    expert = Expert.query.filter_by(id=expert_id).first()
-    """if current_user.id <= 11000 and current_user.id != expert.id:
-        return redirects()"""
+def expert(project_number):
+    if current_user.id <= 100000:
+        return redirects()
+
+    if 120000 < current_user.id < 130000:
+        user = Admin.query.filter_by(id=current_user.id).first()
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+    elif 110000 < current_user.id < 120000:
+        user = Viewer.query.filter_by(id=current_user.id).first()
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+    else:
+        expert = Expert.query.filter_by(id=current_user.id).first()
+
+
     form = UserForm()
     if form.validate_on_submit():
         user = User.query.filter_by(project_number=project_number,
@@ -126,12 +163,12 @@ def expert(project_number, expert_id):
     return render_template('expert.html', form=form, expert=expert)
 
 
-# таблица личных оценок участника (для админа)
+# таблица оценок эксперта (для админа)
 @bp.route('/expert_table_for_admin/<project_number>/<expert_id>', methods=['GET', 'POST'])
 @login_required
 def expert_table_for_admin(project_number, expert_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
+    if current_user.id <= 120000:
+        return redirects()
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
@@ -140,12 +177,12 @@ def expert_table_for_admin(project_number, expert_id):
                            ParName=parameters)
 
 
-# таблица личных оценок участника (для наблюдателя)
+# таблица оценок эксперта (для наблюдателя)
 @bp.route('/expert_table_for_viewer/<project_number>/<expert_id>', methods=['GET', 'POST'])
 @login_required
 def expert_table_for_viewer(project_number, expert_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
+    if current_user.id <= 110000:
+        return redirects()
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
@@ -155,22 +192,27 @@ def expert_table_for_viewer(project_number, expert_id):
 
 
 # выставление оценки участнику
-@bp.route('/expert/<project_number>/<expert_id>/<user_id>', methods=['GET', 'POST'])
+@bp.route('/expert/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
-def expert_grade(project_number, expert_id, user_id):
-    """if current_user.id <= 10000:
-        return redirects()"""
+def expert_grade(project_number, user_id):
+    if current_user.id <= 100000:
+        return redirects()
     form = GradeForm()
     if form.validate_on_submit():
-        if 11000 < current_user.id <= 12000:
-            expert = Admin.query.filter_by(id=current_user.id).first()
-        elif 12000 < current_user.id:
-            expert = Viewer.query.filter_by(id=current_user.id).first()
+        if 120000 < current_user.id < 130000:
+            user = Admin.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
+        elif 110000 < current_user.id < 120000:
+            user = Viewer.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
         else:
             expert = Expert.query.filter_by(id=current_user.id).first()
+
         grade = Grade(user_id=user_id, expert_id=expert.id, comment=form.comment.data)
         grade_parameters = [form.parameter_0.data, form.parameter_1.data, form.parameter_2.data,
-                            form.parameter_3.data, form.parameter_4.data]
+                            form.parameter_3.data, form.parameter_4.data, form.parameter_5.data,
+                            form.parameter_6.data, form.parameter_7.data, form.parameter_8.data,
+                            form.parameter_9.data]
         grade.set_points(grade_parameters)
         db.session.add(grade)
         db.session.commit()
@@ -185,39 +227,40 @@ def expert_grade(project_number, expert_id, user_id):
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
-    if (user.project_number == Expert.query.filter_by(
-            id=current_user.id).first().project_number):
-        pass
     return render_template('expert_grade.html', form=form, expert_id=current_user.id,
                            user=user, parameters=parameters, project_number=project_number)
 
 
 # главня страница наблюдателя
-@bp.route('/viewer/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer', methods=['GET', 'POST'])
 @login_required
-def viewer(viewer_id):
-    viewer = Viewer.query.filter_by(id=viewer_id).first()
+def viewer():
+    if current_user.id <= 110000 or current_user.id > 120000:
+        return redirects()
+    viewer = Viewer.query.filter_by(id=current_user.id).first()
     projects = viewer.projects.order_by(Project.start).all()
 
     return render_template('viewer_main.html', viewer=viewer, projects=projects)
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
-@bp.route('/viewer/settings/<viewer_id>/<project_number>', methods=['GET', 'POST'])
+@bp.route('/viewer/settings/<project_number>', methods=['GET', 'POST'])
 @login_required
-def viewer_settings(viewer_id, project_number):
-    viewer = Viewer.query.filter_by(id=viewer_id).first()
+def viewer_settings(project_number):
+    if current_user.id <= 110000 or current_user.id > 120000:
+        return redirects()
+    viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = viewer.projects.filter_by(number=project_number).first()
     return render_template('viewer_settings.html', viewer=viewer, project=project)
 
 
 # таблица всех участников из проекта для наблюдателя
-@bp.route('/viewer_users_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer_users_table/<project_number>', methods=['GET', 'POST'])
 @login_required
-def viewer_users_table(project_number, viewer_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
-    viewer = Viewer.query.filter_by(id=viewer_id).first()
+def viewer_users_table(project_number):
+    if current_user.id <= 110000 or current_user.id > 120000:
+        return redirects()
+    viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
     parameters = project.parameters.all()
     users_team = User.query.filter_by(project_number=project_number).all()
@@ -238,8 +281,8 @@ def viewer_users_table(project_number, viewer_id):
 @bp.route('/user_grades_table_for_viewer/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
 def user_grades_table_for_viewer(project_number, user_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
+    if current_user.id <= 110000:
+        return redirects()
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
@@ -249,12 +292,12 @@ def user_grades_table_for_viewer(project_number, user_id):
 
 
 # табллца экспертов для наблюдателя
-@bp.route('/viewer_experts_table/<project_number>/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer_experts_table/<project_number>', methods=['GET', 'POST'])
 @login_required
-def viewer_experts_table(project_number, viewer_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
-    viewer = Viewer.query.filter_by(id=viewer_id).first()
+def viewer_experts_table(project_number):
+    if current_user.id <= 110000 or current_user.id > 120000:
+        return redirects()
+    viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
     parameters = project.parameters.all()
 
@@ -263,10 +306,13 @@ def viewer_experts_table(project_number, viewer_id):
 
 
 # страница для создания нового проекта
-@bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
+@bp.route('/viewer/create_project', methods=['GET', 'POST'])
 @login_required
-def create_project(viewer_id):
-    viewer = Viewer.query.filter_by(id=viewer_id).first()
+def create_project():
+    if current_user.id <= 110000 or current_user.id > 120000:
+        return redirects()
+    viewer = Viewer.query.filter_by(id=current_user.id).first()
+
     if request.method == 'POST':
         # try:
         result = request.form
@@ -288,12 +334,17 @@ def create_project(viewer_id):
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
         users = request.files['users']
-        users.save(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]))
-        excel_user(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]), project.number)
+        users.filename = secure_filename_2(users.filename.rsplit(" ",1)[0])
+        users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
+        excel_user(users.filename, project.number)
 
         experts = request.files['experts']
-        experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
+        experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
+        experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
         excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
+
+        os.mkdir('users')
+        os.mkdir('experts')
 
         users_photo = request.files.getlist("users_photo")
         experts_photo = request.files.getlist("experts_photo")
@@ -317,32 +368,46 @@ def create_project(viewer_id):
 
 
 # главная страница админа
-@bp.route('/admin/<admin_id>', methods=['GET', 'POST'])
+@bp.route('/admin', methods=['GET', 'POST'])
 @login_required
-def admin(admin_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
-    admin = Admin.query.filter_by(id=admin_id).first()
-    return render_template('admin.html', admin=admin)
+def admin():
+    if current_user.id <= 120000:
+        return redirects()
+    admin = Admin.query.filter_by(id=current_user.id).first()
+    return redirect(url_for('main.admin_projects'))
+    # return render_template('admin.html', admin=admin)
 
 
 # страница со всеми проектами
-@bp.route('/admin_projects/<admin_id>', methods=['GET', 'POST'])
+@bp.route('/admin_projects', methods=['GET', 'POST'])
 @login_required
-def admin_projects(admin_id):
-    admin = Viewer.query.filter_by(id=admin_id).first()
-    projects = viewer.projects.order_by(Project.start).all()
+def admin_projects():
+    if current_user.id <= 120000:
+        return redirects()
+    admin = Admin.query.filter_by(id=current_user.id).first()
+    projects = Project.query.order_by(Project.start).all()
 
     return render_template('admin_projects.html', admin=admin, projects=projects)
 
 
-# таблица всех участников из проекта для админа
-@bp.route('/admin_users_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
+# страница Настройки проектов + доступ к юзерам и экспертам.
+@bp.route('/admin/settings/<project_number>', methods=['GET', 'POST'])
 @login_required
-def admin_users_table(project_number, admin_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
-    admin = Admin.query.filter_by(id=admin_id).first()
+def admin_settings(project_number):
+    if current_user.id <= 120000:
+        return redirects()
+    admin = Admin.query.filter_by(id=current_user.id).first()
+    project = Project.query.filter_by(number=project_number).first()
+    return render_template('admin_settings.html', admin=admin, project=project)
+
+
+# таблица всех участников из проекта для админа
+@bp.route('/admin_users_table/<project_number>', methods=['GET', 'POST'])
+@login_required
+def admin_users_table(project_number):
+    if current_user.id <= 120000:
+        return redirects()
+    admin = Admin.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
     parameters = project.parameters.all()
     users_team = User.query.filter_by(project_number=project_number).all()
@@ -360,12 +425,12 @@ def admin_users_table(project_number, admin_id):
 
 
 # таблица экспертов
-@bp.route('/admin_experts_table/<project_number>/<admin_id>', methods=['GET', 'POST'])
+@bp.route('/admin_experts_table/<project_number>', methods=['GET', 'POST'])
 @login_required
-def admin_experts_table(project_number, admin_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
-    admin = Admin.query.filter_by(id=admin_id).first()
+def admin_experts_table(project_number):
+    if current_user.id <= 120000:
+        return redirects()
+    admin = Admin.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
     parameters = project.parameters.all()
 
@@ -374,9 +439,12 @@ def admin_experts_table(project_number, admin_id):
 
 
 # страница для выдачи ролей
-@bp.route('/admin_waiting_users/<admin_id>', methods=['GET', 'POST'])
+@bp.route('/admin_waiting_users', methods=['GET', 'POST'])
 @login_required
-def admin_waiting_users(admin_id):
+def admin_waiting_users():
+    if current_user.id <= 120000:
+        return redirects()
+
     waiting_users = WaitingUser.query.limit(15)
 
     return render_template('admin_waiting_users.html', waiting_users=waiting_users)
@@ -386,8 +454,9 @@ def admin_waiting_users(admin_id):
 @bp.route('/user_grades_table_for_admin/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
 def user_grades_table_for_admin(project_number, user_id):
-    """if current_user.id <= 11000:
-        return redirects()"""
+    if current_user.id <= 120000:
+        return redirects()
+
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
@@ -444,7 +513,7 @@ def users_table():
 @bp.route('/sort_experts_table', methods=['POST'])
 @bp.route('/show_more_experts', methods=['POST'])
 @login_required
-def experts_table():
+def show_more_experts():
     if int(request.form['lim']) < 10:
         limit = 10
     else:
@@ -482,7 +551,10 @@ def sort_grades_table_for_user():
     else:
         grades = Grade.query.order_by(Grade.id).limit(limit)
 
-    return jsonify({'grades': grades_in_json(grades)})
+    lenght = len(Project.query.filter_by(number=User.query.filter_by(id=request.form['user_id'])
+                                         .first().project_number).first().parameters.all())
+
+    return jsonify({'grades': grades_in_json(grades, lenght)})
 
 
 # добавление оценок эксперта в таблицу или сортировка оценок эксперта
@@ -505,7 +577,10 @@ def show_more_grades_for_expert():
     else:
         grades = Grade.query.order_by(Grade.id).limit(limit)
 
-    return jsonify({'grades': grades_in_json(grades)})
+    lenght = len(Project.query.filter_by(number=Expert.query.filter_by(id=request.form['expert_id'])
+                                         .first().project_number).first().parameters.all())
+
+    return jsonify({'grades': grades_in_json(grades, lenght)})
 
 
 # сохранение изменений оценки
@@ -558,24 +633,23 @@ def give_role():
     if WaitingUser.query.filter_by(id=request.form['id']).first():
 
         waiting_user = WaitingUser.query.filter_by(id=request.form['id']).first()
+        expert = Expert(username=waiting_user.username, email=waiting_user.email,
+                        password_hash=waiting_user.password_hash)
 
         if request.form['role'] == 'Администратор':
             user = Admin(username=waiting_user.username, email=waiting_user.email,
                          password_hash=waiting_user.password_hash,
-                         phone_number=waiting_user.phone_number)
+                         phone_number=waiting_user.phone_number, expert_id=expert.id)
         elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
                           password_hash=waiting_user.password_hash,
-                          phone_number=waiting_user.phone_number)
+                          phone_number=waiting_user.phone_number, expert_id=expert.id)
         elif request.form['role'] == 'Удалить':
             db.session.delete(waiting_user)
             db.session.commit()
             return jsonify({'result': 'deleted'})
         else:
             return jsonify({'result': 'error'})
-
-        expert = Expert(username=waiting_user.username, email=waiting_user.email,
-                        password_hash=waiting_user.password_hash)
 
         db.session.add(user)
         db.session.add(expert)
@@ -619,16 +693,16 @@ def show_more_waiting_users():
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
 
-            waiting_users = WaitingUser.query\
-                .order_by(WaitingUser.__dict__[request.form['parameter']].desc())\
+            waiting_users = WaitingUser.query \
+                .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
                 .limit(request.form['lim'])
 
         else:
-            waiting_users = WaitingUser.query\
-                .order_by(WaitingUser.__dict__[request.form['parameter']].asc())\
+            waiting_users = WaitingUser.query \
+                .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
                 .limit(request.form['lim'])
     else:
-        waiting_users = WaitingUser.query\
+        waiting_users = WaitingUser.query \
             .order_by(WaitingUser.project_id).limit(request.form['lim'])
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
@@ -689,9 +763,3 @@ def save_user_data():
     db.session.commit()
 
     return jsonify({'result': 'successfully'})
-
-
-@bp.route('/sort_projects', methods=['POST'])
-@login_required
-def sort_projects():
-    pass

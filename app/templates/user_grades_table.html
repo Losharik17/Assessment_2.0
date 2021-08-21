@@ -44,8 +44,7 @@
         <table class="table-sort">
             <thead>
             <tr>
-                <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
-                <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
+                <th id="date" class="sort" data-order="-1" onclick="sort(this.id, {{ user_id }})">Время</th>
                 {% set k = namespace(a=0) %}
                 {% for parameter in ParName %}
                     <th id="parameter{{ k.a }}" class="th_clean">{{ parameter.name }}</th>
@@ -61,14 +60,6 @@
             {% for grade in grades %}
 
                 <tr id="number_str{{ i.a }}">
-
-                    <td id="expert_id{{ i.a }}">
-                        {% if grade.expert_id %}
-                            {{ grade.expert_id }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
 
                     <td id="date{{ i.a }}">
                         {% if grade.date %}
@@ -92,14 +83,6 @@
                         {% endif %}
                     </td>
 
-                    <div id="buttons{{ i.a }}" class="buttons">
-                        <span id="edit{{ i.a }}" onclick="edit_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
-                            <input id="e{{ i.a }}" type="button" value="Редактировать" class="btn">
-                        </span>
-                        <span id="delete{{ i.a }}" onclick="delete_grade({{ grade.id }}, {{ grade.user_id }}, {{ i.a }})">
-                            <input id="d{{ i.a }}" type="button" value="Удалить" class="btn_delete">
-                        </span>
-                    </div>
                 </tr>
                 {% set i.a = i.a + 1 %}
             {% endfor %}
@@ -107,7 +90,7 @@
         </table>
 
         <div class="show">
-            <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ user_id }})">
+            <a id="show_more" class="show_btn" href="javascript:show_more(10, {{ user_id }})">
                 Показать больше</a>
             <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
                 Показать все</a>

@@ -4,19 +4,24 @@ from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer, Admin
+from app.main.secure_filename_2 import test_2
 import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
-from time import time
 from datetime import datetime, date
+from app.models import Project
+
 
 engine = create_engine("sqlite:///T_park.db")
 
 
 def users_in_json(users):
+    lenght = len(Project.query.filter_by(number=users[0].project_number).first()
+                 .parameters.all())
+
     string = '['
     for user in users:
 
@@ -30,7 +35,7 @@ def users_in_json(users):
                     str(user.team), str(user.project_number),
                     str(user.project_id), str(user.region))
 
-        for i in range(5):
+        for i in range(lenght):
             string += '"sum_grade_{0}":"{1}",' \
                 .format(i, str(user.__dict__['sum_grade_{}'.format(i)]))
 
@@ -56,7 +61,10 @@ def experts_in_json(experts):
     string = string[:len(string) - 1] + ']'
     return string
 
-def grades_in_json(grades):
+
+def grades_in_json(grades, lenght):
+
+
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
@@ -67,7 +75,7 @@ def grades_in_json(grades):
                     str(grade.user_id),
                     str(grade.comment))
 
-        for i in range(5):
+        for i in range(lenght):
             string += ',"parameter_{0}":"{1}"' \
                 .format(i, str(grade.__dict__['parameter_{}'.format(i)]))
 
@@ -80,9 +88,8 @@ def grades_in_json(grades):
 def waiting_users_in_json(waiting_users):
     string = '['
     for waiting_user in waiting_users:
-
         string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}",' \
-                        '"phone_number":"{4}"'\
+                        '"phone_number":"{4}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
@@ -130,6 +137,7 @@ def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
     l = 0
+    df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
     prev_user = User.query.order_by(User.id.desc()).first()
     index = df.index
@@ -161,6 +169,7 @@ def excel_expert(filename, number):
     df = pd.read_excel(filename)
     df.head
     l = 0
+    df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
     prev_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
@@ -195,8 +204,9 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-def delete_function():
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 month')")
+def delete_function(hash_date): #Функция для удаления старых данных
+    mnth = hash_date
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", mnth)
     a = a.fetchall()
     if a:
         for rows in a:
@@ -209,9 +219,9 @@ def delete_function():
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
 
 
-def delete_timer():
+def delete_timer(hash_date):
     shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function, 'interval', days=1)
+    shed.add_job(delete_function, 'interval', days=1, args=[hash_date])
     shed.start()
 
 
@@ -240,24 +250,24 @@ def delete_function_X():
         print("<FUCK>")
 
 
-def redirects():
+def redirects(arg=None):
     if current_user.is_anonymous:
+        flash('Авторизируйтесь для получения доступа к странице', 'warning')
         return redirect(url_for('auth.login'))
-    if current_user.id < 10000:
-        return redirect(url_for('main.user', user_id=current_user.id))
-    if 10000 < current_user.id < 11000:
-        return redirect(url_for('main.expert', expert_id=current_user.id))
-    if 11000 < current_user.id < 12000:
-        return redirect(url_for('main.admin', admin_id=current_user.id))
-    if 12000 < current_user.id:
-        return redirect(url_for('main.viewer', viewer_id=current_user.id))
+    if arg is None:
+        flash('Извините, у вас нет доступа к данной странице', 'warning')
+    if current_user.id < 100000:
+        return redirect(url_for('main.user'))
+    if 100000 < current_user.id < 110000:
+        expert = Expert.query.filter_by(id=current_user.id).first()
+        return redirect(url_for('main.expert', project_number=expert.project_number))
+    if 110000 < current_user.id < 120000:
+        return redirect(url_for('main.viewer'))
+    if 120000 < current_user.id:
+        return redirect(url_for('main.admin'))
 
 
 def compression(width, height, path):
     img = Image.open(path)
     img = img.resize((width, height), PIL.Image.ANTIALIAS)
     return img.save(path)
-
-
-
-
