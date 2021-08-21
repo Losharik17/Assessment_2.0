@@ -8,7 +8,9 @@
     <div class="content">
         <h1 class="title">Создание проекта</h1>
 
-        <form style="position:relative;" action="{{ url_for('main.create_project', viewer_id=viewer_id) }}" method="POST"
+        <form style="position:relative; box-shadow: 2px 4px 8px 4px #c5c5c5; padding: 10px;
+              border-radius: 10px; width: fit-content; margin: 0 auto;"
+              action="{{ url_for('main.create_project', viewer_id=viewer_id) }}" method="POST"
               enctype="multipart/form-data">
             <div class="block">
                 <div class="block_1">
@@ -23,7 +25,7 @@
                             </div>
                             <div style="margin-top: 10px;" class="block_4">
 
-                                <div class="form_group">
+                                <div  class="form_group">
                                     <label for="start" class="form_label">Начало Проекта</label>
                                     <input id="start" type="text" class="form_input">
                                 </div>

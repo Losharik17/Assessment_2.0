@@ -19,6 +19,7 @@
     display: inline-block;
     justify-content: center;
     vertical-align: top;
+    margin-right: 40px;
     
 }
 
@@ -26,6 +27,7 @@
     width: 45%;
     display: inline-block;
     justify-content:space-around;
+    margin-left: 40px;
 }
 
 
