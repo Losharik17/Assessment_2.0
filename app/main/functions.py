@@ -11,7 +11,8 @@ from flask_login import current_user
 import PIL
 from PIL import Image
 from time import time
-from datetime import datetime
+from datetime import datetime, date
+
 engine = create_engine("sqlite:///T_park.db")
 
 
@@ -193,7 +194,6 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-
 def delete_function():
     a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 month')")
     a = a.fetchall()
@@ -216,22 +216,27 @@ def delete_timer():
 
 def delete_timer_X():
     shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function_X, 'interval', seconds=2)
+    shed.add_job(delete_function_X, 'interval', days=1)
     shed.start()
 
 
+t = 0
 y = 9
+x = 2021
 z = 18
-
-x = 2020
-
-hash_date = datetime(x, y, z)
+f = open('text.txt', 'w')
+# Алгоритм преобразования сроки в дату
+# x = f
+# if x < t:
+#    f = t
+f.close()
+hash_date = date(x, y, z)
 
 
 def delete_function_X():
-    a = datetime.now()
+    a = date.today()
     if a >= hash_date:
-        print("fs;<FUCK>")
+        print("<FUCK>")
 
 
 def redirects():
@@ -251,4 +256,7 @@ def compression(width, height, path):
     img = Image.open(path)
     img = img.resize((width, height), PIL.Image.ANTIALIAS)
     return img.save(path)
+
+
+
 

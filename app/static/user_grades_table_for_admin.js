@@ -11,7 +11,7 @@ edit_data.old_value = Array()
 
 function edit_data(user_id, user_birthday) {
     if ($('#edit_data').html() !== 'Сохранить изменения') {
-        let width = $("#edit_data").width()
+        let width = $("#edit_data").outerWidth()
         $('#edit_data').html('Сохранить изменения').css({width: width})
         edit_data.old_value = Array()
         $('#data_table tr').each(function (index, element) {
@@ -22,13 +22,13 @@ function edit_data(user_id, user_birthday) {
                 edit_data.old_value.push(value)
                 td.html(`<input id="d${index}" onchange="
                                     document.getElementById(this.id).setAttribute('value', this.value)" 
-                                    class="input" type="text" value="${value}">`)
+                                    class="form" type="text" value="${value}">`)
             }
             else if (index === 2) {
                 edit_data.old_value.push(user_birthday)
                 td.html(`<input id="d${index}" onchange="
                                     document.getElementById(this.id).setAttribute('value', this.value)" 
-                                    class="input" type="text" value="${user_birthday}">`)
+                                    class="form" type="text" value="${user_birthday}">`)
             }
         })
     }

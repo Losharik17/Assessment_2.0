@@ -152,6 +152,8 @@ h2 {
     }
 }
 
+
+
 .input__file-icon {
     width: 35px;
     height: 35px;
@@ -174,6 +176,7 @@ h2 {
     text-align: center;
     margin: 0 auto;
     font: 400 16px Roboto;
+    -webkit-user-select: none;
 }
 
 .custom-checkbox {

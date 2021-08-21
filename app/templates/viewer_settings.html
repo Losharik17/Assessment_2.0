@@ -4,37 +4,52 @@
 {%  block app_content %}
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_settings.css')}}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='login.css')}}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
     <h1 style="text-align:center">Настройки</h1>
 
 
-    <div class="settings">
+    <div class="form">
         <div class="block">
             <!--пути немного изменятся-->
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'">Пользователи</div><br>
+            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'"><span class="input__file-button-text">Пользователи</span></div>
 
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
-            project_number=project.number, viewer_id=project.viewer_id) }}'" >Эксперты</div>
+            <div class="input_button" onclick="location.href='{{ url_for('main.viewer_table',
+            project_number=project.number, viewer_id=project.viewer_id) }}'" ><span class="input__file-button-text">Эксперты</span></div>
+
+            <div class="input__wrapper">
+                <input  type="file" name="experts" id="input__file_6" class="input input__file">
+                <label for="input__file_6" class="input__file-button">
+                    <span class="input__file-button-text">Загрузить Пользователей</span>
+                </label>
+            </div>
+
+            <div class="input__wrapper">
+                <input  type="file" name="experts" id="input__file_7" class="input input__file">
+                <label for="input__file_7" class="input__file-button">
+                    <span class="input__file-button-text">Выгрузить Базы данных</span>
+                </label>
+            </div>
         </div>
-        <div class="date">
-            <div>
-                <span class="date_text">Начало Проекта</span>
-                <input id="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}"  class="button_date">
+        <div  style="margin-top:20px;">
+
+            <div class="form_group">
+                <label class="form_label">Начало Проекта</label>
+                <input id="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}"  class="form_input">
             </div>
-            <div>
-                <span class="date_text">Конец Проекта</span>
-                <input id="end" type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" class="button_date">
+            <div class="form_group">
+                <label class="form_label">Конец Проекта</label>
+                <input id="end" type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" class="form_input">
 
             </div>
-            <input value="Изменить даты" class="submit" >
+            <div  class="submit" >Изменить даты</div>
         </div>
 
     </div>
 
     <script src="{{ url_for('static', filename='viewer_settings.js') }}"></script>
-
 
 
 {% endblock %}
