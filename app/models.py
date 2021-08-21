@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import unique
 from hashlib import md5
 from time import time
-from flask import current_app
+from flask import current_app, request
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -12,6 +12,7 @@ from sqlalchemy import event, DDL
 
 class User(UserMixin, db.Model):
     project_id = db.Column(db.Integer)  # id в данном проете
+    photo = db.Column(db.String)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     birthday = db.Column(db.Date)
@@ -116,6 +117,7 @@ def load_user(id):
 
 class Expert(UserMixin, db.Model):
     project_id = db.Column(db.Integer, default = 0)
+    photo = db.Column(db.String)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     weight = db.Column(db.Float, default=1.0)
@@ -278,3 +280,14 @@ event.listen(Viewer.__table__, 'after_create',
              DDL("INSERT INTO viewer (id) VALUES (12000)")  # аналогично admin_id
              )
 
+def test_1():
+    try:
+        f = open('../T-Park/app/static/test.txt', 'r')
+    except:
+        f = open('../T-Park/app/static/test.txt', 'w+')
+        f.close()
+        f = open('../T-Park/app/static/test.txt', 'r')
+    a = request.args.get('a', f.read())
+    f.close()
+    print(a)
+    return a
