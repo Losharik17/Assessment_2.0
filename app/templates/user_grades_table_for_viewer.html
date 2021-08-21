@@ -31,11 +31,12 @@
                 </tr>
             </table>
 
-            <div id="edit_data" class="show_btn" onclick="
-                    edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные</div>
-
         </div>
 
+    </div>
+
+    <div id="edit_data" class="button_re" onclick="
+            edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
     </div>
 
     <div class="table-wrap">

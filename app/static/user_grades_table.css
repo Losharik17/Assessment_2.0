@@ -209,18 +209,23 @@
 .input {
     text-align:center;
     border: none;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #000000;
     outline: none;
     transition: 0.3s;
 }
 
 input:focus {
+    background-color: #5f8dc4;
     border-bottom: 1px solid #1a73a8;
+    color: white;
+    border-radius:2px;
+
 }
 
 @media(hover: hover) {
     input:hover {
-        background-color: rgb(197, 214, 255);
+
+        border-bottom: 1px solid #1a73a8;
     }
 }
 
