@@ -267,7 +267,6 @@ def viewer_experts_table(project_number, viewer_id):
 @login_required
 def create_project(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-
     if request.method == 'POST':
         # try:
         result = request.form
