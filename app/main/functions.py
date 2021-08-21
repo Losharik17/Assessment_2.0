@@ -3,16 +3,17 @@ import string
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
-from app.models import User, Expert, Viewer, Admin
+from app.models import User, Expert, Viewer, Admin, test_1
+from app.main.secure_filename_2 import test_2
 import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
-from time import time
 from datetime import datetime, date
 from app.models import Project
+
 
 engine = create_engine("sqlite:///T_park.db")
 
@@ -136,6 +137,7 @@ def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
     l = 0
+    df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
     prev_user = User.query.order_by(User.id.desc()).first()
     index = df.index
@@ -167,6 +169,7 @@ def excel_expert(filename, number):
     df = pd.read_excel(filename)
     df.head
     l = 0
+    df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
     prev_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
@@ -201,8 +204,9 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-def delete_function():
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '-1 month')")
+def delete_function(hash_date): #Функция для удаления старых данных
+    mnth = hash_date
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", mnth)
     a = a.fetchall()
     if a:
         for rows in a:
@@ -215,9 +219,9 @@ def delete_function():
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
 
 
-def delete_timer():
+def delete_timer(hash_date):
     shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function, 'interval', days=1)
+    shed.add_job(delete_function, 'interval', days=1, args=[hash_date])
     shed.start()
 
 

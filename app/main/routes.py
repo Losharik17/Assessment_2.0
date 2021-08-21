@@ -6,16 +6,18 @@ from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
-    waiting_users_in_json, excel_expert, excel_user, to_dict, delete_timer, redirects, compression
-from datetime import date, datetime
-from werkzeug.utils import secure_filename
+    waiting_users_in_json, excel_expert, excel_user, to_dict, delete_timer, redirects, compression, test_function
 import pandas as pd
+from app.main.secure_filename_2 import secure_filename_2
 import os
+from datetime import date
+import datetime
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
 def index():
+    test_function()
     if current_user.is_authenticated:
         return redirects('base')
 
@@ -39,25 +41,31 @@ def export_excel(project_number):
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
 
+    df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
+    excel_start_date = datetime.date(1899, 12, 30)
+    df1['birthday'] = df1['birthday'] - excel_start_date
+    df1.birthday = df1.birthday.dt.days
+
     parameters = Project.query.filter_by(number=project_number).first().parameters.all()
     i = 0
     for parameter in parameters:
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
-
+                              'photo': 'Фотография',
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
     df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
 
+
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
     df2 = df2.loc[df2['project_number'] == int(project_number)]
     df2 = df2.drop(columns=['password_hash', 'id', 'project_number', 'quantity'])
-    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
+    df2.rename(columns={'username': 'ФИО', 'photo':'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -71,19 +79,40 @@ def export_excel(project_number):
 
     filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
 
-    writer = pd.ExcelWriter(filename, date_format='dd/mm/yyyy', datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
+    writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
     workbook = writer.book
-    new_format = workbook.add_format({'align': 'center'})
+    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter' })
+    date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format' : 'dd/mm/yyyy' })
+    date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format' : 'dd/mm/yyyy hh:mm' })
     worksheet = writer.sheets['Пользователи']
-    worksheet.set_column('A:L', 19, new_format)
+    worksheet.set_default_row(110)
+    worksheet.set_row(0, 15)
+    worksheet.set_column('A:M', 19, new_format)
+    worksheet.set_column('E:E', 19, date_format)
+    worksheet.set_column('B:B', 13, new_format)
+    directory = '../T-Park-Losharik/app/static/images/{}/users/'.format(project_number)
+    files = os.listdir(directory)
+    i = 2
+    for file in files:
+        worksheet.insert_image("B{}".format(i), directory + file)
+        i += 1
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
-    worksheet.set_column('A:F', 19, new_format)
+    worksheet.set_default_row(110)
+    worksheet.set_row(0, 15)
+    worksheet.set_column('A:E', 19, new_format)
+    worksheet.set_column('B:B', 13, new_format)
+    directory = '../T-Park-Losharik/app/static/images/{}/experts/'.format(project_number)
+    files = os.listdir(directory)
+    i = 2
+    for file in files:
+        worksheet.insert_image("B{}".format(i), directory + file)
+        i += 1
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:H', 19, new_format)
-    worksheet.set_column('C:C', 24, new_format)
+    worksheet.set_column('C:C', 24, date2_format)
     worksheet.set_column('I:I', 30, new_format)
     writer.save()
     return send_file(filename, as_attachment=True, cache_timeout=0)
@@ -305,12 +334,17 @@ def create_project():
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
         users = request.files['users']
-        users.save(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]))
-        excel_user(os.path.join(os.getcwd(), users.filename.rsplit(".", 1)[0]), project.number)
+        users.filename = secure_filename_2(users.filename.rsplit(" ",1)[0])
+        users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
+        excel_user(users.filename, project.number)
 
         experts = request.files['experts']
-        experts.save(secure_filename(experts.filename.rsplit(".", 1)[0]))
+        experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
+        experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
         excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
+
+        os.mkdir('users')
+        os.mkdir('experts')
 
         users_photo = request.files.getlist("users_photo")
         experts_photo = request.files.getlist("experts_photo")

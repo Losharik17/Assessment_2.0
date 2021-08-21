@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import unique
 from hashlib import md5
 from time import time
-from flask import current_app
+from flask import current_app, request
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -12,6 +12,7 @@ from sqlalchemy import event, DDL
 
 class User(UserMixin, db.Model):
     project_id = db.Column(db.Integer)  # id в данном проете
+    photo = db.Column(db.String)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     birthday = db.Column(db.Date)
@@ -121,6 +122,7 @@ def load_user(id):
 
 class Expert(UserMixin, db.Model):
     project_id = db.Column(db.Integer, default = 0)
+    photo = db.Column(db.String)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     weight = db.Column(db.Float, default=1.0)
@@ -292,6 +294,3 @@ event.listen(Viewer.__table__, 'after_create',
 event.listen(Admin.__table__, 'after_create',
              DDL("INSERT INTO admin (id) VALUES (120000)")
              )
-
-
-
