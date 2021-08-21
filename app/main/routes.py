@@ -263,11 +263,10 @@ def viewer_experts_table(project_number, viewer_id):
 
 
 # страница для создания нового проекта
-@bp.route('/viewer/create_project/<viewer_id>/<project_number>', methods=['GET', 'POST'])
+@bp.route('/viewer/create_project/<viewer_id>', methods=['GET', 'POST'])
 @login_required
-def create_project(viewer_id, project_number):
+def create_project(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-    project = viewer.projects.filter_by(number=project_number).first()
     if request.method == 'POST':
         # try:
         result = request.form
@@ -315,7 +314,7 @@ def create_project(viewer_id, project_number):
 
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
 
-    return render_template('create_project.html', viewer_id=viewer.id, viewer=viewer, project=project)
+    return render_template('create_project.html', viewer_id=viewer.id, viewer=viewer)
 
 
 # главная страница админа

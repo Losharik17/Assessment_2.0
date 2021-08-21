@@ -3,6 +3,8 @@
 {% block app_content %}
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer.css') }}">
     <link rel="stylesheet"  href="{{ url_for('static', filename='login.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
     <div class="content">
         <h1 class="title">Создание проекта</h1>
 
@@ -19,22 +21,18 @@
                                     <input name="name" id="name" type="text" placeholder="Название проекта" class="input_text_1">
                                 </lable>
                             </div>
-                            <div class="block_4">
+                            <div style="margin-top: 10px;" class="block_4">
 
                                 <div class="form_group">
-                                    <label class="form_label">Начало Проекта</label>
-                                    <input id="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}"  class="form_input">
+                                    <label for="start" class="form_label">Начало Проекта</label>
+                                    <input id="start" type="text" class="form_input">
                                 </div>
                                 <div class="form_group">
-                                    <label class="form_label">Конец Проекта</label>
-                                    <input id="end" type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" class="form_input">
+                                    <label for="end" class="form_label">Конец Проекта</label>
+                                    <input id="end" type="text" class="form_input">
 
                                 </div>
-                                <div  class="submit" >Изменить даты</div>
-
                             </div>
-
-
                             <div id="block_4_1" class="block_4">
 
                                 <label for="name0"></label>
@@ -99,8 +97,6 @@
                     <input type="submit" value="Создать проект" class="btn btn-5" >
                 </div>
             </div>
-
-
         </form>
 
 
