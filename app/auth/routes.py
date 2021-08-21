@@ -11,7 +11,6 @@ from app.auth.email import send_password_reset_email
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()

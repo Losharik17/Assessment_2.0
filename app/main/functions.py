@@ -3,7 +3,7 @@ import string
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
-from app.models import User, Expert, Viewer, Admin, test_1
+from app.models import User, Expert, Viewer, Admin
 from app.main.secure_filename_2 import test_2
 import pandas as pd
 from flask import redirect, url_for, flash

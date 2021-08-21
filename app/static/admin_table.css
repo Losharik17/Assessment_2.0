@@ -114,9 +114,8 @@ th.sort[data-order="1"]::after {
 
 .title {
     display: flex;
-    justify-content: space-between;
-    width:55%;
-    margin-left: 20px;
+    justify-content: space-evenly;
+    margin: 0 auto;
 }
 
 .block {

@@ -12,9 +12,8 @@ from sqlalchemy import event, DDL
 
 class User(UserMixin, db.Model):
     project_id = db.Column(db.Integer)  # id в данном проете
-    photo = db.Column(db.String)
     username = db.Column(db.String(64))
-    email = db.Column(db.String(128), index=True, unique=True)
+    email = db.Column(db.String(128), index=True)
     birthday = db.Column(db.Date)
     team = db.Column(db.String(32))  # команда, класс иди что-то подобное
     region = db.Column(db.String(64))  # локация, регион или что-то подобное
