@@ -95,7 +95,7 @@ h2 {
 
 
     /*Download avatar*/
-.input__wrapper {
+.input__wrapper_2 {
     width: max-content;
     position: relative;
     margin: 0 auto;
@@ -113,7 +113,7 @@ h2 {
     padding: 10px 20px;
 }
 
-.input__file-button {
+.input__file_button_2 {
     width: 100%;
     max-width: 290px;
     height: 40px;
