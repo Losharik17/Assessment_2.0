@@ -203,12 +203,12 @@ def viewer(viewer_id):
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
-@bp.route('/viewer/settings/<viewer_id>/<project_number>', methods=['GET', 'POST'])
+@bp.route('/viewer/settings/<viewer_id>', methods=['GET', 'POST'])
 @login_required
-def viewer_settings(viewer_id, project_number):
+def viewer_settings(viewer_id):
     viewer = Viewer.query.filter_by(id=viewer_id).first()
-    project = viewer.projects.filter_by(number=project_number).first()
-    return render_template('viewer_settings.html', viewer=viewer, project=project)
+
+    return render_template('viewer_settings.html', viewer=viewer)
 
 
 # таблица всех участников из проекта для наблюдателя
