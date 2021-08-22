@@ -45,6 +45,22 @@ def users_in_json(users):
     return string
 
 
+def viewers_in_json(viewers):
+
+    string = '['
+    for viewer in viewers:
+
+        string += '{' + '"id":{0},"username":"{1}","phone_number":"{2}","expert_id":"{3}",' \
+                        '"email":"{4}"' \
+            .format(str(viewer.id), str(viewer.username), str(viewer.phone_number),
+                    str(viewer.expert_id), str(viewer.email))
+
+        string += '},'
+
+    string = string[:len(string) - 1] + ']'
+    return string
+
+
 def experts_in_json(experts):
     string = '['
 

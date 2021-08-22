@@ -46,15 +46,12 @@
                 </label>
             </div>
             <div class="input__wrapper_2">
-                <div for="input__file_8" class="button">
+                <div class="button">
                     <a href="{{ url_for('main.export_excel', project_number=project.number) }}" target="_blank"
                        class="input__file_button_text_2">Скачать Отчёт</a>
                 </div>
             </div>
-        </div>
-        <div  style="margin-top: 30px;">
-
-            <div class="form_group">
+            <div class="form_group" style="margin-top: 30px;">
                 <label for="start" class="form_label">Начало Проекта</label>
                 <input id="start" name="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}" onchange="warning(1)" class="form_input">
             </div>

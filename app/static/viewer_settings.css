@@ -48,7 +48,7 @@
 
 .input_button:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0);
-    background-color:rgba(2, 84, 185, 0.7)
+    background-color: white;
 }
 
 @media screen {
@@ -75,19 +75,6 @@
     border-radius: 10px;
 }
 
-
-/*
-                                <div class="form_group">
-                                    <label class="form_label">Начало Проекта</label>
-                                    <input id="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}"  class="form_input">
-                                </div>
-                                <div class="form_group">
-                                    <label class="form_label">Конец Проекта</label>
-                                    <input id="end" type="text"  value="{{ project.end.strftime('%d.%m.%y') }}" class="form_input">
-
-                                </div>*/
-
-
 .button {
     text-decoration: none;
     margin: 0 auto;
@@ -97,9 +84,9 @@
     color: rgba(0, 64, 144, 0.7);
     outline: none !important;
     cursor: pointer;
-    -webkit-transition: all 0.2s ease;
+    -webkit-transition: all 0.3s ease;
     width:  260px;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     position: relative;
     display: inline-block;
     border: 2px solid rgba(0, 64, 144, 0.7);
@@ -113,6 +100,11 @@
         color: #fff;
         box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
         transform: scale(1.03)
+    }
+
+    .input__wrapper_2:hover .input__file_button_text_2 {
+        transition: all 0.3s ease;
+        color: white;
     }
 }
 

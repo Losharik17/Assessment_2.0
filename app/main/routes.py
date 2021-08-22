@@ -8,7 +8,8 @@ from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
-    waiting_users_in_json, excel_expert, excel_user, to_dict, delete_timer, redirects, compression
+    waiting_users_in_json, viewers_in_json,\
+    excel_expert, excel_user, to_dict, delete_timer, redirects, compression
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
 import os
@@ -417,7 +418,7 @@ def admin_projects():
     if current_user.id <= 120000:
         return redirects()
     admin = Admin.query.filter_by(id=current_user.id).first()
-    projects = Project.query.order_by(Project.start).all()
+    projects = Project.query.order_by(Project.start.desc()).all()
 
     return render_template('admin_projects.html', admin=admin, projects=projects)
 
@@ -480,6 +481,17 @@ def admin_waiting_users():
     waiting_users = WaitingUser.query.limit(15)
 
     return render_template('admin_waiting_users.html', waiting_users=waiting_users)
+
+
+@bp.route('/admin_viewers', methods=['GET', 'POST'])
+@login_required
+def admin_viewers():
+    if current_user.id <= 120000:
+        return redirects()
+
+    viewers = Viewer.query.limit(10)
+
+    return render_template('admin_viewers.html', viewers=viewers)
 
 
 # таблица личных оценок участника (для админа)
@@ -792,3 +804,27 @@ def save_user_data():
     db.session.commit()
 
     return jsonify({'result': 'successfully'})
+
+
+@bp.route('/show_more_viewers', methods=['POST'])
+@bp.route('/sort_viewers', methods=['POST'])
+@login_required
+def show_more_viewers():
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+
+            viewers = Viewer.query \
+                .order_by(Viewer.__dict__[request.form['parameter']].desc()) \
+                .limit(request.form['lim'])
+
+        else:
+            viewers = Viewer.query \
+                .order_by(Viewer.__dict__[request.form['parameter']].asc()) \
+                .limit(request.form['lim'])
+    else:
+        viewers = Viewer.query \
+            .order_by(Viewer.project_id).limit(request.form['lim'])
+
+    return jsonify({'viewers': viewers_in_json(viewers)})
+
+

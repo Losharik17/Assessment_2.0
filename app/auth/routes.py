@@ -7,6 +7,7 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Expert, Admin, Viewer, WaitingUser
 from app.auth.email import send_password_reset_email
+import os
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -57,8 +58,9 @@ def register():
 
             return redirect(url_for('auth.register'))
 
-        # path = os.path.join('../T-Park/app/static/images')
-        # form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
+        os.chdir("app/static/images/waiting_user")
+        form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
+        os.chdir('../../../../')
         waiting_user = WaitingUser(username=form.username.data, email=form.email.data,
                                    phone_number=form.phone.data)
         waiting_user.set_password(form.password.data)
