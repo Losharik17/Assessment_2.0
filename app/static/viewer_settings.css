@@ -9,6 +9,7 @@
 .block {
     width: max-content;
     display: block;
+    margin-bottom: 10px;
 
 }
 
