@@ -111,7 +111,7 @@ h2 {
     line-height: 1;
     font: 600 16px Roboto;
     padding: 10px 20px;
-    color: white;
+    color: rgba(0, 64, 144, 0.7) ;
     text-decoration: none;
 }
 
