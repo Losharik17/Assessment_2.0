@@ -13,6 +13,12 @@
 
 }
 
+.block_2 {
+    display: block;
+    margin-top: 10px;
+
+}
+
 .input_button {
     width: 90%;
     max-width: 290px;

@@ -5,7 +5,7 @@
         display: block;
         margin:  10px auto auto 0;
         justify-content: center;
-        position: fixed;
+        position: relative;
     }
 }
 
@@ -205,6 +205,12 @@
     opacity: 0.65;
 }
 
+.data_table {
+    height:200px;
+
+
+}
+
 
 .input {
     text-align:center;
@@ -212,6 +218,8 @@
     border-bottom: 1px solid #000000;
     outline: none;
     transition: 0.3s;
+    line-height: 16px;
+    padding:0;
 }
 
 input:focus {
