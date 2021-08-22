@@ -12,7 +12,7 @@ edit_data.old_value = Array()
 function edit_data(user_id, user_birthday) {
     if ($('#edit_data').html() !== 'Сохранить изменения') {
         let width = $("#edit_data").width()
-        $('#edit_data').html('Сохранить изменения').css({width: width})
+        $('#edit_data').html('Сохранить изменения').css({width: width}).css('text-align', 'center')
         edit_data.old_value = Array()
         $('#data_table tr').each(function (index, element) {
             let td = $(this).children('td').children('span')

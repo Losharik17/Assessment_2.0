@@ -1,4 +1,6 @@
 import json
+
+import result as result
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
@@ -11,6 +13,7 @@ import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
 import os
 from datetime import date, datetime
+
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
@@ -39,7 +42,7 @@ def export_excel(project_number):
     df1 = pd.DataFrame(data_list)
 
     df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
-    excel_start_date = datetime.date(1899, 12, 30)
+    excel_start_date = date(1899, 12, 30)
     df1['birthday'] = df1['birthday'] - excel_start_date
     df1.birthday = df1.birthday.dt.days
 
@@ -48,6 +51,10 @@ def export_excel(project_number):
     for parameter in parameters:
         df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
         i += 1
+    while i < 10:
+        df1 = df1.drop(columns={"sum_grade_{}".format(i)})
+        i += 1
+
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
                               'photo': 'Фотография',
                               "sum_grade_all": "Итоговая оценка",
@@ -56,13 +63,12 @@ def export_excel(project_number):
     df1 = df1.loc[df1['project_number'] == int(project_number)]
     df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
 
-
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
     df2 = df2.loc[df2['project_number'] == int(project_number)]
     df2 = df2.drop(columns=['password_hash', 'id', 'project_number', 'quantity'])
-    df2.rename(columns={'username': 'ФИО', 'photo':'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
+    df2.rename(columns={'username': 'ФИО', 'photo': 'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -73,26 +79,30 @@ def export_excel(project_number):
     for parameter in parameters:
         df3 = df3.rename(columns={"parameter_{}".format(i): parameter.name})
         i += 1
+    while i < 10:
+        df3 = df3.drop(columns={"parameter_{}".format(i)})
+        i += 1
 
     filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
 
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
     workbook = writer.book
-    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter' })
-    date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format' : 'dd/mm/yyyy' })
-    date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format' : 'dd/mm/yyyy hh:mm' })
+    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter'})
+    date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
+    date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
     worksheet = writer.sheets['Пользователи']
     worksheet.set_default_row(110)
     worksheet.set_row(0, 15)
     worksheet.set_column('A:M', 19, new_format)
     worksheet.set_column('E:E', 19, date_format)
     worksheet.set_column('B:B', 13, new_format)
-    directory = '../T-Park-Losharik/app/static/images/{}/users/'.format(project_number)
-    files = os.listdir(directory)
+    os.chdir('app/static/images/{}'.format(project_number))
+    files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image("B{}".format(i), directory + file)
+        if file[:4] == 'user':
+            worksheet.insert_image('', os.getcwd() + '/' + file)
         i += 1
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
@@ -100,11 +110,13 @@ def export_excel(project_number):
     worksheet.set_row(0, 15)
     worksheet.set_column('A:E', 19, new_format)
     worksheet.set_column('B:B', 13, new_format)
-    directory = '../T-Park-Losharik/app/static/images/{}/experts/'.format(project_number)
-    files = os.listdir(directory)
+    os.chdir('../../../../')
+    os.chdir('app/static/images/{}'.format(project_number))
+    files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image("B{}".format(i), directory + file)
+        if file[:6] == 'expert':
+            worksheet.insert_image('', os.getcwd() + '/' + file)
         i += 1
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
@@ -112,6 +124,7 @@ def export_excel(project_number):
     worksheet.set_column('C:C', 24, date2_format)
     worksheet.set_column('I:I', 30, new_format)
     writer.save()
+    os.chdir('../../../../')
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
 
@@ -145,7 +158,6 @@ def expert(project_number):
         expert = Expert.query.filter_by(id=user.expert_id).first()
     else:
         expert = Expert.query.filter_by(id=current_user.id).first()
-
 
     form = UserForm()
     if form.validate_on_submit():
@@ -236,7 +248,7 @@ def viewer():
     if current_user.id <= 110000 or current_user.id > 120000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
-    projects = viewer.projects.order_by(Project.start).all()
+    projects = viewer.projects.order_by(Project.start.desc()).all()
 
     return render_template('viewer_main.html', viewer=viewer, projects=projects)
 
@@ -249,6 +261,22 @@ def viewer_settings(project_number):
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = viewer.projects.filter_by(number=project_number).first()
+
+    if request.method == 'POST':
+        # try:
+        result = request.form
+
+        # нужно добавить сохранение добавленных участников и экспертов
+
+        start = result.get('start')
+        setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
+        end = result.get('end')
+        setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+        db.session.commit()
+
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.viewer_settings', project_number=project_number))
+
     return render_template('viewer_settings.html', viewer=viewer, project=project)
 
 
@@ -324,6 +352,12 @@ def create_project():
                                      weight=result.get('weight{}'.format(i)),
                                      project_number=project.number))
 
+        start = result.get('start')
+        setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
+        end = result.get('end')
+        setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+        db.session.commit()
+
         os.chdir("app/static/images")
         os.mkdir('{}'.format(project.number))
         os.chdir('{}'.format(project.number))
@@ -332,7 +366,7 @@ def create_project():
         logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
 
         users = request.files['users']
-        users.filename = secure_filename_2(users.filename.rsplit(" ",1)[0])
+        users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
         users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
         excel_user(users.filename, project.number)
 
@@ -613,7 +647,6 @@ def delete_grade():
     grade.expert.quantity -= 1
     user = grade.user
 
-
     db.session.delete(grade)
     db.session.commit()
 
@@ -754,9 +787,7 @@ def save_user_data():
     if getattr(user, 'region') != data[3]:
         setattr(user, 'region', data[3])
 
-    x = data[1].split('-')
-    x.reverse()
-    setattr(user, 'birthday', datetime.strptime(''.join(x), '%d%m%Y'))
+    setattr(user, 'birthday', datetime.strptime(data[1], '%Y-%m-%d'))
 
     db.session.commit()
 

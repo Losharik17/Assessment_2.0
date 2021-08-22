@@ -137,7 +137,6 @@
 
 .submit {
     font-size:16px;
-    width: 120px;
     height: 40px;
     margin: 10px auto auto;
     border: 0;
@@ -149,13 +148,18 @@
     display: block;
     text-align: center;
     align-self: center;
-
+    outline: none;
 }
 
 @media screen {
     .submit:hover {
         box-shadow: 0 2px 1px #0044ff;
         background-color: #0044ff;
+    }
+
+    .submit:active {
+        box-shadow: 0 2px 1px #002380;
+        background-color: #002380;
     }
 }
 

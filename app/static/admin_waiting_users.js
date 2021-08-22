@@ -134,15 +134,15 @@ function show_more(new_field) {
             else
                 $(`#number_str${i}`).append(`<td id="email${i}">${waiting_users[i]['email']}</td>`)
 
-            if (waiting_users[i]['registration_date'] === 'None')
-                $(`#number_str${i}`).append(`<td id="registration_date${i}">–</td>`)
-            else
-                $(`#number_str${i}`).append(`<td id="registration_date${i}">${waiting_users[i]['registration_date']}</td>`)
-
             if (waiting_users[i]['phone_number'] === 'None')
                 $(`#number_str${i}`).append(`<td id="phone_number${i}">–</td>`)
             else
                 $(`#number_str${i}`).append(`<td id="phone_number${i}">${waiting_users[i]['phone_number']}</td>`)
+
+            if (waiting_users[i]['registration_date'] === 'None')
+                $(`#number_str${i}`).append(`<td id="registration_date${i}">–</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="registration_date${i}">${waiting_users[i]['registration_date']}</td>`)
 
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
                 `<span id="admin${i}" onclick="give_role(${waiting_users[i]['id']}, ${i},  'Администратор')">` +

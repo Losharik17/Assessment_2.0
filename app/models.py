@@ -120,8 +120,7 @@ def load_user(id):
 
 
 class Expert(UserMixin, db.Model):
-    project_id = db.Column(db.Integer, default = 0)
-    photo = db.Column(db.String)
+    project_id = db.Column(db.Integer)
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True, unique=True)
     weight = db.Column(db.Float, default=1.0)
