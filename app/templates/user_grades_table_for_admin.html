@@ -11,7 +11,7 @@
         <div class="data">
             {% set path = '/images/' + user.project_number|string + '/' + 'user' + user.id|string + '.webp'%}
             <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
-            <table id="data_table" style="margin: 10px;">
+            <table id="data_table" style="margin: 10px;" class="data_table">
                 <tr>
                     <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
                 </tr>
@@ -30,7 +30,9 @@
                         <span>{% if user.region %}{{ user.region }}{% else %} – {% endif %}</span></td>
                 </tr>
             </table>
+
         </div>
+
     </div>
 
     <div id="edit_data" class="button_re" onclick="

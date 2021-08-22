@@ -40,12 +40,11 @@
             </div>
 
             <div class="input__wrapper_2">
-                <input  type="file" name="experts" id="input__file_6" class="input input__file">
+                <input  type="file" name="experts" id="input__file_7" class="input input__file">
                 <label for="input__file_7" class="button">
                     <span class="input__file_button_text_2">Загрузить Экспертов</span>
                 </label>
             </div>
-
             <div class="input__wrapper_2">
                 <div for="input__file_8" class="button">
                     <a href="{{ url_for('main.export_excel', project_number=project.number) }}" target="_blank"
@@ -62,11 +61,9 @@
             <div class="form_group">
                 <label for="end" class="form_label">Конец Проекта</label>
                 <input id="end" type="text" name="end"  value="{{ project.end.strftime('%d.%m.%y') }}" onchange="warning(2)" class="form_input">
-
             </div>
             <input type="submit" class="submit" value="Сохранить изменения">
         </div>
-
     </form>
 
     <script src="{{ url_for('static', filename='viewer_settings.js') }}"></script>

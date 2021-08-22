@@ -7,8 +7,13 @@
         <div class="block">
             <h1>{{ project.name }}</h1></div>
         <div class="block">
-            <h1>Участники</h1></div>
-        <div></div>
+            <h1 style="text-align:center">Участники</h1></div>
+        <div class="buttons">
+            <div class="show_btn" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
+                <span>Настройки</span>
+            </div>
+        </div>
+
     </div>
     <div class="table-wrap">
 
@@ -89,15 +94,7 @@
         <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ project_number }})">
             Показать все</a>
     </div>
-    <br>
 
-    <div class="buttons">
-        <div class="show_btn" onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number) }}'">
-            <span>Настройки</span>
-        </div>
-
-
-    </div>
 
     <script src="{{ url_for('static', filename='admin_users_table.js') }}"></script>
     <script>

@@ -9,6 +9,13 @@
 .block {
     width: max-content;
     display: block;
+    margin-bottom: 10px;
+
+}
+
+.block_2 {
+    display: block;
+    margin-top: 10px;
 
 }
 
@@ -125,6 +132,17 @@
     transform: scale(1);
 }
 
+.download_button {
+    border-width: 0;
+    color: rgba(0, 64, 144, 0.7);
+    text-decoration: none;
+
+}
+
+.download_button:hover {
+    color: #fff;
+
+}
 
 
 
@@ -136,7 +154,7 @@
 }
 
 .submit {
-    font-size:16px;
+    font: 600 16px  Roboto;
     height: 40px;
     margin: 10px auto auto;
     border: 0;
