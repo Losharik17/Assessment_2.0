@@ -79,12 +79,13 @@
     border-radius:5px;
     width: 100px;
     border:0;
-
+    background-color: #dcdcdc;
+    transition: all 0.3s ease;
 }
 
 .form:focus {
     outline: 0;
-
+    background-color: white;
 }
 
 .btn {
@@ -222,7 +223,7 @@
     padding:0;
 }
 
-input:focus {
+.input:focus {
     background-color: #5f8dc4;
     border-bottom: 1px solid #1a73a8;
     color: white;
@@ -231,7 +232,7 @@ input:focus {
 }
 
 @media(hover: hover) {
-    input:hover {
+    .input:hover {
 
         border-bottom: 1px solid #1a73a8;
     }

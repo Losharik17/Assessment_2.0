@@ -1,7 +1,7 @@
 let limit = 5
 
 sort.sort_up = false
-sort.current_parameter = 'registration_date'
+sort.current_parameter = 'username'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
@@ -89,19 +89,23 @@ function give_role(id, number_str, role) {
         })
 }
 
+function delete_user(id) {
+    
+}
+
 function show_more(new_field) {
 
     limit += new_field
 
-    $.post('/show_more_waiting_users', {
+    $.post('/show_more_viewers', {
         lim: limit,
         parameter: sort.current_parameter,
         sort_up: sort.sort_up,
     }).done(function (response) {
 
         $("#tbody").html('')
-        let waiting_users = JSON.parse(response['waiting_users'])
-        let quantity = waiting_users.length
+        let viewers = JSON.parse(response['viewers'])
+        let quantity = viewers.length
 
         if (limit > quantity) {
             limit = quantity
@@ -124,33 +128,29 @@ function show_more(new_field) {
 
             $("#tbody").append(`<tr id="number_str${i}"></tr>`)
 
-            if (waiting_users[i]['username'] === 'None')
+            if (viewers[i]['username'] === 'None')
                 $(`#number_str${i}`).append(`<td id="username${i}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="username${i}">${waiting_users[i]['username']}</td>`)
+                $(`#number_str${i}`).append(`<td id="username${i}">${viewers[i]['username']}</td>`)
 
-            if (waiting_users[i]['email'] === 'None')
+            if (viewers[i]['email'] === 'None')
                 $(`#number_str${i}`).append(`<td id="email${i}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="email${i}">${waiting_users[i]['email']}</td>`)
+                $(`#number_str${i}`).append(`<td id="email${i}">${viewers[i]['email']}</td>`)
 
-            if (waiting_users[i]['phone_number'] === 'None')
+            if (viewers[i]['phone_number'] === 'None')
                 $(`#number_str${i}`).append(`<td id="phone_number${i}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="phone_number${i}">${waiting_users[i]['phone_number']}</td>`)
+                $(`#number_str${i}`).append(`<td id="phone_number${i}">${viewers[i]['phone_number']}</td>`)
 
-            if (waiting_users[i]['registration_date'] === 'None')
-                $(`#number_str${i}`).append(`<td id="registration_date${i}">–</td>`)
+            if (viewers[i]['expert_id'] === 'None')
+                $(`#number_str${i}`).append(`<td id="expert_id${i}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="registration_date${i}">${waiting_users[i]['registration_date']}</td>`)
+                $(`#number_str${i}`).append(`<td id="expert_id${i}">${viewers[i]['expert_id']}</td>`)
 
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="admin${i}" onclick="give_role(${waiting_users[i]['id']}, ${i},  'Администратор')">` +
-                `<input id="a${i}" type="button" value="Администратор" class="btn"></span>` +
-                `<span id="viewer${i}" onclick="give_role(${waiting_users[i]['id']}, ${i}, 'Заказчик')">` +
-                `<input id="v${i}" type="button" value="Заказчик"" class="btn"></span>` +
-                `<span id="delete${i}" onclick="give_role(${waiting_users[i]['id']}, ${i},  'Удалить')">` +
-                `<input id="d${i}" type="button" value="Удалить"" class="btn_delete"></span></div>`)
+                `<span id="delete${i}" onclick="delete_user(${viewers[i]['id']})">` +
+                `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
         delete_buttons()
         buttons(limit)
@@ -176,27 +176,23 @@ function sort(parameter) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
-    $.post('/sort_waiting_users', {
+    $.post('/sort_viewers', {
         parameter: parameter,
         sort_up: sort.sort_up,
         lim: limit,
     }).done(
         function (response) {
-            let waiting_users = JSON.parse(response['waiting_users'])
-            let quantity = waiting_users.length
+            let viewers = JSON.parse(response['viewers'])
+            let quantity = viewers.length
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#username${i}`).html(waiting_users[i]['username'] ? waiting_users[i]['username'] : '–');
-                $(`#email${i}`).html(waiting_users[i]['email'] ? waiting_users[i]['email'] : '–')
-                $(`#registration_date${i}`).html(waiting_users[i]['registration_date'] ? waiting_users[i]['registration_date'] : '–')
-                $(`#phone_number${i}`).html(waiting_users[i]['phone_number'] ? waiting_users[i]['phone_number'] : '–')
+                $(`#username${i}`).html(viewers[i]['username'] ? viewers[i]['username'] : '–');
+                $(`#email${i}`).html(viewers[i]['email'] ? viewers[i]['email'] : '–')
+                $(`#expert_id${i}`).html(viewers[i]['expert_id'] ? viewers[i]['expert_id'] : '–')
+                $(`#phone_number${i}`).html(viewers[i]['phone_number'] !== 'None' ? viewers[i]['phone_number'] : '–')
 
-                $(`#buttons${i}`).html(`<span id="admin${i}" onclick="give_role(${waiting_users[i]['id']},  ${i},  'Администратор')">` +
-                    `<input id="a${i}" type="button" value="Администратор" class="btn"></span>` +
-                    `<span id="viewer${i}" onclick="give_role(${waiting_users[i]['id']},  ${i},  'Заказчик')">` +
-                    `<input id="v${i}" type="button" value="Заказчик" class="btn"></span>` +
-                    `<span id="delete${i}" onclick="give_role(${waiting_users[i]['id']}, ${i},  'Удалить')">` +
+                $(`#buttons${i}`).html(`<span id="delete${i}" onclick="delete_user(${viewers[i]['id']})">` +
                     `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
             delete_buttons()
