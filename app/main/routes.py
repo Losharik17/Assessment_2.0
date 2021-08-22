@@ -10,9 +10,7 @@ from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
 import os
-from datetime import date
-import datetime
-
+from datetime import date, datetime
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
