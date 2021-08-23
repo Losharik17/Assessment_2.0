@@ -18,7 +18,7 @@
 
 
     <form action="{{ url_for('main.admin_settings', project_number=project.number)}}"
-          method="post" class="form" enctype="multipart/form-data">
+          method="post" class="form" enctype="multipart/form-data" style="width: 350px;">
         <div class="block">
             <div class="input__wrapper_2">
                 <div class="button" onclick="location.href='{{ url_for('main.admin_users_table',
