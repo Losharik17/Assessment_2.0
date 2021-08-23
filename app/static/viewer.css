@@ -12,6 +12,7 @@
     margin: 0 auto;
     vertical-align: top;
     align-items: center;
+    width: max-content;
 }
 
 .block_1 {

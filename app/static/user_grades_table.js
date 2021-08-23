@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 
 sort.sort_up = false
 sort.current_parameter = 'date'
@@ -24,7 +24,7 @@ function show_more(new_field, user_id) {
         let quantity = grades.length
 
         if (limit > quantity) {
-            limit = quantity
+            quantity < 15 ? limit = 15 : limit = quantity
             $('body').append(
                 `<div class="message warning"><h4>
                 В таблице присутствуют все оценки участника</h4></div>`)

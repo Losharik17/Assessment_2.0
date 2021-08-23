@@ -341,7 +341,7 @@ def create_project():
     viewer = Viewer.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
-        # try:
+
         result = request.form
 
         project = Project(viewer_id=current_user.id, name=result.get('name'))
@@ -391,11 +391,9 @@ def create_project():
 
         db.session.commit()
         os.chdir('../../../../')
-        # except:
-        #   flash('Что-то пошло не так', 'danger')
-        #  db.session.rollback()
-
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
+
+
 
     return render_template('create_project.html', viewer_id=viewer.id)
 
@@ -431,6 +429,22 @@ def admin_settings(project_number):
         return redirects()
     admin = Admin.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
+
+    if request.method == 'POST':
+        # try:
+        result = request.form
+
+        # нужно добавить сохранение добавленных участников и экспертов
+
+        start = result.get('start')
+        setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
+        end = result.get('end')
+        setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+        db.session.commit()
+
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.admin_settings', project_number=project_number))
+
     return render_template('admin_settings.html', admin=admin, project=project)
 
 
@@ -719,6 +733,13 @@ def delete_user():
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':
         user = Viewer.query.filter_by(id=request.form['id']).first()
+        projects = Project.query.filter_by(viewer_id=user.id).all()
+        for project in projects:
+            parameters = project.parameters.all()
+            for parameter in parameters:
+                db.session.delete(parameter)
+            db.session.delete(project)
+
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
     else:
@@ -826,5 +847,3 @@ def show_more_viewers():
             .order_by(Viewer.project_id).limit(request.form['lim'])
 
     return jsonify({'viewers': viewers_in_json(viewers)})
-
-

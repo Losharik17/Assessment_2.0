@@ -87,8 +87,8 @@ def grades_in_json(grades, lenght):
                         '"comment":"{4}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
-                    str(grade.expert_id),
-                    str(grade.user_id),
+                    str(grade.expert.project_id),
+                    str(grade.user.project_id),
                     str(grade.comment))
 
         for i in range(lenght):

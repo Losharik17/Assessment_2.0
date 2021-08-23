@@ -1,4 +1,4 @@
-let limit = 5
+let limit = 15
 
 sort.sort_up = false
 sort.current_parameter = 'username'
@@ -90,7 +90,16 @@ function give_role(id, number_str, role) {
 }
 
 function delete_user(id) {
-    
+    if (confirm(`Ужадить пользователя с ID ${id}?`) && confirm('Будут удалены все проекты связанные' +
+        ' с данным пользователем.\nПродолжить?'))
+        $.post('/delete_user', {
+            role: 'viewer',
+            id: id
+        }).done(function (response) {
+            show_more(0)
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
 }
 
 function show_more(new_field) {

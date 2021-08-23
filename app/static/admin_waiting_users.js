@@ -1,4 +1,4 @@
-let limit = 5
+let limit = 15
 
 sort.sort_up = false
 sort.current_parameter = 'registration_date'
@@ -104,7 +104,7 @@ function show_more(new_field) {
         let quantity = waiting_users.length
 
         if (limit > quantity) {
-            limit = quantity
+            quantity < 15 ? limit = 15 : limit = quantity
             $('body').append(
                 `<div class="message warning"><h4>
                 В таблице присутствуют все пользователи</h4></div>`)

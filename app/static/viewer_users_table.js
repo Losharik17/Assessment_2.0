@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
@@ -106,10 +106,7 @@ function draw_table(response, project_number) {
     let quantity = users.length
 
     if (limit > quantity) {
-        if (quantity < 10)
-            limit = 10
-        else
-            limit = quantity
+        quantity < 15 ? limit = 15 : limit = quantity
         $('body').append(
             `<div class="message warning"><h4>
                 В таблице присутствуют все участники</h4></div>`)

@@ -14,7 +14,7 @@
                         <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                     </div>
                     <div date="{{ project.end.strftime('%d.%m.%Y') }}" class="data">
-                        <h2  style="font-weight: normal">
+                        <h2  style="font-weight: normal; text-align:center">
                             {{ project.name }}
                         </h2>
                         <h3 style="font-weight: normal">
@@ -50,7 +50,7 @@
         $('.data').each(function (index, element) {
             end_project($(element))
         })
-
+        $('.profil_image').css('max-height', $('.profil_image').parent().parent().outerHeight() * 0.9)
     </script>
 
 {% endblock %}

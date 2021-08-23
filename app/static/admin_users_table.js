@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
