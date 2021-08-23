@@ -266,13 +266,45 @@ def viewer_settings(project_number):
         # try:
         result = request.form
 
+        if request.files['users'] and request.files['users_photo']:
+            users = request.files['users']
+            users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
+            users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
+            excel_user(users.filename, project.number)
+            number = User.query.filter_by(project_number=project_number).all()[-1].project_id
+
+            users_photo = request.files.getlist("users_photo")
+            for photo in users_photo:
+                photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
+                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
+                number += 1
+
+        if request.files['experts'] and request.files['experts_photo']:
+            experts = request.files['experts']
+            experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
+            experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
+            excel_user(experts.filename, project.number)
+            number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
+
+            experts_photo = request.files.getlist("experts_photo")
+            for photo in experts_photo:
+                photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
+                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
+                number += 1
+
+        if request.files['logo']:
+            os.chdir('app/static/images/{}'.format(project_number))
+            path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
+            os.remove(path)
+            logo = request.files['logo']
+            logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+            os.chdir('../../../../')
+
+
         # нужно добавить сохранение добавленных участников и экспертов
-        name = result.get('name')
-        setattr(project, 'name', name)
-        start = result.get('start')
-        setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
-        end = result.get('end')
-        setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+        setattr(project, 'name', result.get('name'))
+        setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
+        setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
         db.session.commit()
 
         flash('Изменения сохранены', 'success')
@@ -381,7 +413,9 @@ def create_project():
         users_photo = request.files.getlist("users_photo")
         experts_photo = request.files.getlist("experts_photo")
         os.chdir('users')
+
         # добавить проверку имени фото
+
         for photo in users_photo:
             photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
             compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
@@ -436,6 +470,17 @@ def admin_settings(project_number):
     if request.method == 'POST':
         # try:
         result = request.form
+
+        if request.files['users']:
+            pass
+
+        if request.files['logo']:
+            os.chdir('app/static/images/{}'.format(project_number))
+            path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
+            os.remove(path)
+            logo = request.files['logo']
+            logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+            os.chdir('../../../../')
 
         # нужно добавить сохранение добавленных участников и экспертов
         name = result.get('name')

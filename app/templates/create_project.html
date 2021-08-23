@@ -55,7 +55,7 @@
 
                 <div class="block_2">
                     <div class="input__wrapper">
-                        <input name="logo" type="file" id="input__file" class="input input__file" multiple>
+                        <input name="logo" type="file" id="input__file" class="input input__file">
                         <label for="input__file" class="input__file-button">
                             <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
                             <span class="input__file-button-text">Загрузить Логотип</span>
@@ -100,8 +100,6 @@
                 </div>
             </div>
         </form>
-
-
     </div>
 
     <script src="{{ url_for('static', filename='create_project.js') }}"></script>

@@ -18,12 +18,12 @@
 
 
     <form action="{{ url_for('main.admin_settings', project_number=project.number)}}"
-          method="post" class="form">
+          method="post" class="form" enctype="multipart/form-data" style="width: 350px;">
         <div class="block">
             <div class="input__wrapper_2">
                 <div class="button" onclick="location.href='{{ url_for('main.admin_users_table',
             project_number=project.number) }}'">
-                    <span class="input__file_button_text_2">Пользователи</span>
+                    <span class="input__file_button_text_2">Участники</span>
                 </div><br>
             </div>
             <div class="input__wrapper_2">
@@ -35,14 +35,20 @@
             <div class="input__wrapper_2">
                 <input  type="file" name="experts" id="input__file_6" class="input input__file">
                 <label for="input__file_6" class="button">
-                    <span class="input__file_button_text_2">Загрузить Пользователей</span>
+                    <span class="input__file_button_text_2">Добавить участников</span>
                 </label>
             </div>
 
             <div class="input__wrapper_2">
                 <input  type="file" name="experts" id="input__file_7" class="input input__file">
                 <label for="input__file_7" class="button">
-                    <span class="input__file_button_text_2">Загрузить Экспертов</span>
+                    <span class="input__file_button_text_2">Добавить экспертов</span>
+                </label>
+            </div>
+            <div class="input__wrapper_2">
+                <input  type="file" name="logo" id="logo" class="input input__file">
+                <label for="logo" class="button">
+                    <span class="input__file_button_text_2">Загрузить новый логотип</span>
                 </label>
             </div>
             <div class="input__wrapper_2">
