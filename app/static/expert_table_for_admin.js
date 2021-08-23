@@ -218,8 +218,8 @@ function delete_grade(grade_id, user_id, number_str, expert_id) {
 }
 
 
-function delete_user(id) {
-    if (confirm(`Удадить пользователя с ID ${id}?`))
+function delete_user(id, project_id) {
+    if (confirm(`Удадить пользователя с ID ${project_id}?`))
         $.post('/delete_user', {
             role: 'expert',
             id: id

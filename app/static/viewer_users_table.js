@@ -260,7 +260,7 @@ function sort(parameter, project_number) {
             for (let i = 0; i < quantity; i++) {
 
                 $(`#number_str${i}`).attr('onclick',
-                    `location.href='/user_grades_table_for_admin/${project_number}/${users[i]["id"]}'`)
+                    `location.href='/user_grades_table_for_viewer/${project_number}/${users[i]["id"]}'`)
 
                 $(`#project_id${i}`).html(users[i]['project_id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')

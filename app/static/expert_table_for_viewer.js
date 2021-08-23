@@ -80,8 +80,8 @@ function edit_data(expert_id) {
     }
 }
 
-function delete_user(id) {
-    if (confirm(`Удадить пользователя с ID ${id}?`))
+function delete_user(id, project_id) {
+    if (confirm(`Удадить пользователя с ID ${project_id}?`))
         $.post('/delete_user', {
             role: 'expert',
             id: id

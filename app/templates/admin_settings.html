@@ -52,6 +52,10 @@
                 </div>
             </div>
             <div class="form_group" style="margin-top: 30px;">
+                <label for="name" class="form_label">Название Проекта</label>
+                <input id="name" name="name" type="text" value="{{ project.name }}" onchange="warning(3)" class="form_input">
+            </div>
+            <div class="form_group" style="margin-top: 30px;">
                 <label for="start" class="form_label">Начало Проекта</label>
                 <input id="start" name="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}" onchange="warning(1)" class="form_input">
             </div>

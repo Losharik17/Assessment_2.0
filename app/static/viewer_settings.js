@@ -97,6 +97,12 @@ $('label[for=end]').css({
     'font-size': '14px',
 })
 
+$('label[for=name]').css({
+    top: '-18px',
+    'font-size': '14px',
+})
+
+
 $('#start').focus(function () {
     $(this).css({
         'border-bottom': '1px solid #1a73a8'
@@ -108,6 +114,16 @@ $('#start').focus(function () {
 })
 
 $('#end').focus(function () {
+    $(this).css({
+        'border-bottom': '1px solid #1a73a8'
+    })
+}).blur(function () {
+    $(this).css({
+        'border-bottom': '1px solid #cccccc'
+    })
+})
+
+$('#name').focus(function () {
     $(this).css({
         'border-bottom': '1px solid #1a73a8'
     })

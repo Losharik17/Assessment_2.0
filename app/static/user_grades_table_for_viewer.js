@@ -104,8 +104,8 @@ function edit_data(user_id, user_birthday) {
 
 
 
-function delete_user(id) {
-    if (confirm(`Удадить пользователя с ID ${id}?`))
+function delete_user(id, project_id) {
+    if (confirm(`Удадить пользователя с ID ${project_id}?`))
         $.post('/delete_user', {
             role: 'user',
             id: id
