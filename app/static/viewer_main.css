@@ -75,17 +75,17 @@
 
     .block_logo {
         justify-content: flex-start;
-        width: 40%;
+        width: 28%;
     }
 
     .profil_image {
-        width: 300px;
+        width: 100% ;
         object-fit: contain;
     }
 
     .data {
         display: block;
-        width:30%;
+        width:33%;
         margin: 0 auto;
         text-align: center;
         font-family: Roboto,sans-serif;
@@ -95,7 +95,8 @@
         margin: auto 5px 5px auto;
         display:flex;
         font-size: 20px;
-        width:30%
+        text-align: right;
+        float:right;
     }
 
     .title {

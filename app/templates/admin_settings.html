@@ -18,54 +18,71 @@
 
 
     <form action="{{ url_for('main.admin_settings', project_number=project.number)}}"
-          method="post" class="form" enctype="multipart/form-data" style="width: 350px;">
+          method="post" class="form" enctype="multipart/form-data" style="width: max-content;">
         <div class="block">
-            <div class="input__wrapper_2">
-                <div class="button" onclick="location.href='{{ url_for('main.admin_users_table',
+            <div class="block_1">
+                <div class="input__wrapper_2">
+                    <div class="button" onclick="location.href='{{ url_for('main.admin_users_table',
             project_number=project.number) }}'">
-                    <span class="input__file_button_text_2">Участники</span>
-                </div><br>
+                        <span class="input__file_button_text">Участники</span>
+                    </div><br>
+                </div>
+                <div class="input__wrapper_2">
+                    <div class="button" onclick="location.href='{{ url_for('main.expert', project_number=project.number) }}'">
+                        <span class="input__file_button_text">Выставить оценки</span>
+                    </div>
+                </div>
+                <div class="input__wrapper_2">
+                    <div class="button" onclick="location.href='{{ url_for('main.admin_experts_table',
+            project_number=project.number) }}'">
+                        <span class="input__file_button_text">Эксперты</span>
+                    </div>
+                </div>
+
+                <div class="input__wrapper_2">
+                    <input  type="file" name="logo" id="logo" class="input input__file">
+                    <label for="logo" class="button">
+                        <span class="input__file_button_text">Загрузить новый логотип</span>
+                    </label>
+                </div>
+
+
             </div>
-            <div class="input__wrapper_2">
-                <div class="button" onclick="location.href='{{ url_for('main.admin_experts_table',
-            project_number=project.number) }}'">
-                    <span class="input__file_button_text_2">Эксперты</span>
+                <div class="block_2">
+                    <div class="input__wrapper_2">
+                        <input  type="file" name="users" id="input__file_6" class="input input__file">
+                        <label for="input__file_6" class="button">
+                            <span class="input__file_button_text">Добавить участников</span>
+                        </label>
+                    </div>
+                    <div class="input__wrapper_2">
+                        <input  type="file" name="users_photo" id="users_photo" class="input input__file" multiple>
+                        <label for="users_photo" class="button">
+                            <span class="input__file_button_text">Добавить фото участников</span>
+                        </label>
+                    </div>
+                    <div class="input__wrapper_2">
+                        <input  type="file" name="experts" id="input__file_7" class="input input__file">
+                        <label for="input__file_7" class="button">
+                            <span class="input__file_button_text">Добавить экспертов</span>
+                        </label>
+                    </div>
+                    <div class="input__wrapper_2">
+                        <input  type="file" name="experts_photo" id="experts_photo" class="input input__file" multiple>
+                        <label for="experts_photo" class="button">
+                            <span class="input__file_button_text">Добавить фото экспертов</span>
+                        </label>
+                    </div>
+
+
                 </div>
             </div>
-            <div class="input__wrapper_2">
-                <input  type="file" name="users" id="input__file_6" class="input input__file">
-                <label for="input__file_6" class="button">
-                    <span class="input__file_button_text_2">Добавить участников</span>
-                </label>
-            </div>
-            <div class="input__wrapper_2">
-                <input  type="file" name="users_photo" id="users_photo" class="input input__file" multiple>
-                <label for="users_photo" class="button">
-                    <span class="input__file_button_text_2">Добавить фото участников</span>
-                </label>
-            </div>
-            <div class="input__wrapper_2">
-                <input  type="file" name="experts" id="input__file_7" class="input input__file">
-                <label for="input__file_7" class="button">
-                    <span class="input__file_button_text_2">Добавить экспертов</span>
-                </label>
-            </div>
-            <div class="input__wrapper_2">
-                <input  type="file" name="experts_photo" id="experts_photo" class="input input__file" multiple>
-                <label for="experts_photo" class="button">
-                    <span class="input__file_button_text_2">Добавить фото экспертов</span>
-                </label>
-            </div>
-            <div class="input__wrapper_2">
-                <input  type="file" name="logo" id="logo" class="input input__file">
-                <label for="logo" class="button">
-                    <span class="input__file_button_text_2">Загрузить новый логотип</span>
-                </label>
-            </div>
+        <div class="block_3">
+
             <div class="input__wrapper_2">
                 <div class="button">
                     <a href="{{ url_for('main.export_excel', project_number=project.number) }}" target="_blank"
-                       class="input__file_button_text_2">Скачать Отчёт</a>
+                       class="input__file_button_text">Скачать Отчёт</a>
                 </div>
             </div>
             <div class="form_group" style="margin-top: 30px;">
