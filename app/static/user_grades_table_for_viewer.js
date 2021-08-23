@@ -102,6 +102,21 @@ function edit_data(user_id, user_birthday) {
     }
 }
 
+
+
+function delete_user(id) {
+    if (confirm(`Удадить пользователя с ID ${id}?`))
+        $.post('/delete_user', {
+            role: 'user',
+            id: id
+        }).done(function (response) {
+            alert('Пользователь удалён')
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
+}
+
+
 function show_more(new_field, user_id) {
 
     limit += new_field

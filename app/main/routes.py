@@ -727,8 +727,12 @@ def delete_user():
 
     if role == 'user':
         user = User.query.filter_by(id=request.form['id']).first()
+        for grade in user.grades.all():
+            db.session.delete(grade)
     elif role == 'expert':
         user = Expert.query.filter_by(id=request.form['id']).first()
+        for grade in user.grades.all():
+            db.session.delete(grade)
     elif role == 'waiting_user':
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':

@@ -65,29 +65,6 @@ function buttons(quantity) {
 }
 }
 
-function give_role(id, number_str, role) {
-
-    let x = $(`#username${number_str}`).html()
-
-    if (confirm(`Выдать пользователю ${x} уровень доступа "${role}"?`))
-        $.post('/give_role', {
-            id: id,
-            role: role,
-            lim: limit
-        }).done(function (response) {
-
-            document.getElementById(`buttons${number_str}`).style.transition = '0.3s';
-            document.getElementById(`buttons${number_str}`).style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById(`buttons${number_str}`).style.display = 'none'
-            }, 300)
-
-            show_more(0)
-
-        }).fail(function () {
-            alert("Error AJAX request")
-        })
-}
 
 function delete_user(id) {
     if (confirm(`Ужадить пользователя с ID ${id}?`) && confirm('Будут удалены все проекты связанные' +

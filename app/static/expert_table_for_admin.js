@@ -218,6 +218,20 @@ function delete_grade(grade_id, user_id, number_str, expert_id) {
 }
 
 
+function delete_user(id) {
+    if (confirm(`Удадить пользователя с ID ${id}?`))
+        $.post('/delete_user', {
+            role: 'expert',
+            id: id
+        }).done(function (response) {
+            alert('Пользователь удалён')
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
+}
+
+
+
 function show_more(new_field, expert_id) {
 
     limit += new_field

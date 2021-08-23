@@ -230,6 +230,19 @@ function edit_grade(grade_id, user_id, number_str) {
     }
 }
 
+function delete_user(id) {
+    if (confirm(`Удадить пользователя с ID ${id}?`))
+        $.post('/delete_user', {
+            role: 'user',
+            id: id
+        }).done(function (response) {
+            alert('Пользователь удалён')
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
+}
+
+
 function delete_grade(grade_id, user_id, number_str) {
 
     if (confirm('Удалить оценку?'))

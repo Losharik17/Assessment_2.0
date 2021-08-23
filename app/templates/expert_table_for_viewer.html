@@ -25,11 +25,14 @@
                     <td style="text-align: left">Количество оценок: <span id="grades_number">{{ expert.quantity }}</span></td>
                 </tr>
             </table>
-
-            <div id="edit_data" class="button_re" onclick="edit_data({{ expert.id }})">Редактировать данные</div>
         </div>
     </div>
-    <br>
+    <div id="edit_data" class="button_re" onclick="
+            edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
+    </div>
+    <div id="edit_data" class="button_re" onclick="delete_user({{ expert.id }})">
+        Удалить участника
+    </div>
     <div class="table-wrap">
         <table class="table-sort">
             <thead>
