@@ -8,7 +8,7 @@ from app.main.forms import EmptyForm, GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
-    waiting_users_in_json, viewers_in_json,\
+    waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, delete_timer, redirects, compression
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
@@ -300,7 +300,6 @@ def viewer_settings(project_number):
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
 
-
         # нужно добавить сохранение добавленных участников и экспертов
         setattr(project, 'name', result.get('name'))
         setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
@@ -430,8 +429,6 @@ def create_project():
         flash('Проекет создан', 'success')
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
 
-
-
     return render_template('create_project.html', viewer_id=viewer.id)
 
 
@@ -442,8 +439,7 @@ def admin():
     if current_user.id <= 120000:
         return redirects()
     admin = Admin.query.filter_by(id=current_user.id).first()
-    return redirect(url_for('main.admin_projects'))
-    # return render_template('admin.html', admin=admin)
+    return render_template('admin_main.html', admin=admin)
 
 
 # страница со всеми проектами

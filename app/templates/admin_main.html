@@ -8,11 +8,20 @@
         <h1 class="title">Главная страница</h1>
 
 
-            <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
-            project_number=project.number) }}'">
-                <span class="input__file_button_text_2">Пользователи</span>
-            </div>
+        <div class="button" onclick="location.href='{{ url_for('main.admin_projects') }}'">
+            <span class="input__file_button_text_2">Проекты</span>
+        </div>
 
+        <div class="button" onclick="location.href='{{ url_for('main.admin_viewers') }}'">
+            <span class="input__file_button_text_2">Заказчики</span>
+        </div>
+
+        <div class="button" onclick="location.href='{{ url_for('main.admin_waiting_users') }}'">
+            <span class="input__file_button_text_2">Неавторизованные пользователи</span>
+        </div>
+
+
+    </div>
 
     <script src="{{ url_for('static', filename='admin_main.js') }}"></script>
 
