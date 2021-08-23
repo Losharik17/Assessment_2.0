@@ -8,7 +8,7 @@
     <div class="content">
         <div class="container">
             <div class="data">
-                {% set path='/images/'+ project_number|string +'/'+ user.project_id|string +'.webp' %}
+                {% set path='/images/'+ project_number|string +'/users/'+ user.project_id|string +'.png' %}
                 <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
                 <table style="margin: 10px;">
                     <tr>

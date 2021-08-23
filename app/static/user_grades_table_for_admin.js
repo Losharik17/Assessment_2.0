@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 
 sort.sort_up = false
 sort.current_parameter = 'expert_id'
@@ -7,6 +7,27 @@ $("#" + sort.current_parameter).attr("data-order", "1")
 
 edit_grade.old_value = Array()
 edit_data.old_value = Array()
+
+document.addEventListener('click', function (event) {
+
+    if (event.target.tagName !== 'INPUT' && event.target.id !== 'data_table' &&
+        event.target.id !== 'edit_data' && $('#edit_data').html() === 'Сохранить изменения') {
+
+        $('#data_table tr').each(function (index, element) {
+            let td = $(this).children('td').children('span')
+            if (index !== 2 && index !== 0) {
+
+                td.html(`${edit_data.old_value[index - 1]}`)
+                $('#edit_data').html('Редактировать данные')
+            }
+            else if (index === 2) {
+                let date = edit_data.old_value[index - 1].split('.')
+                td.html(Math.floor((new Date() - new Date(date[2], date[1], date[0]))
+                    / (24 * 3600 * 365.25 * 1000)))
+            }
+        })
+    }
+})
 
 
 function edit_data(user_id, user_birthday) {
@@ -209,6 +230,19 @@ function edit_grade(grade_id, user_id, number_str) {
     }
 }
 
+function delete_user(id, project_id) {
+    if (confirm(`Удадить пользователя с ID ${project_id}?`))
+        $.post('/delete_user', {
+            role: 'user',
+            id: id
+        }).done(function (response) {
+            alert('Пользователь удалён')
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
+}
+
+
 function delete_grade(grade_id, user_id, number_str) {
 
     if (confirm('Удалить оценку?'))
@@ -248,7 +282,7 @@ function show_more(new_field, user_id) {
         let quantity = grades.length
 
         if (limit > quantity) {
-            limit = quantity
+            quantity < 15 ? limit = 15 : limit = quantity
             $('body').append(
                 `<div class="message warning"><h4>
                 В таблице присутствуют все оценки участника</h4></div>`)

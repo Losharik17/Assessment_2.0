@@ -9,7 +9,7 @@
 
     <div class="container">
         <div class="data">
-            {% set path = '/images/' + user.project_number|string + '/' + 'user' + user.id|string + '.webp'%}
+            {% set path = '/images/' + user.project_number|string + '/users/' + user.project_id|string + '.png'%}
             <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
             <table id="data_table" style="margin: 10px;">
                 <tr>
@@ -37,6 +37,9 @@
 
     <div id="edit_data" class="button_re" onclick="
             edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
+    </div>
+    <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
+        Удалить участника
     </div>
 
     <div class="table-wrap">
@@ -96,7 +99,7 @@
         </table>
 
         <div class="show">
-            <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ user_id }})">
+            <a id="show_more" class="show_btn" href="javascript:show_more(10, {{ user_id }})">
                 Показать больше</a>
             <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
                 Показать все</a>

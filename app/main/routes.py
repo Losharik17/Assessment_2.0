@@ -98,12 +98,11 @@ def export_excel(project_number):
     worksheet.set_column('A:M', 19, new_format)
     worksheet.set_column('E:E', 19, date_format)
     worksheet.set_column('B:B', 13, new_format)
-    os.chdir('app/static/images/{}'.format(project_number))
+    os.chdir('app/static/images/{}/users'.format(project_number))
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        if file[:4] == 'user':
-            worksheet.insert_image('', os.getcwd() + '/' + file)
+        worksheet.insert_image('E{}'.format(i), os.getcwd() + '/' + file)
         i += 1
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
@@ -111,21 +110,21 @@ def export_excel(project_number):
     worksheet.set_row(0, 15)
     worksheet.set_column('A:E', 19, new_format)
     worksheet.set_column('B:B', 13, new_format)
-    os.chdir('../../../../')
-    os.chdir('app/static/images/{}'.format(project_number))
+    os.chdir('../../../../../')
+    os.chdir('app/static/images/{}/experts'.format(project_number))
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        if file[:6] == 'expert':
-            worksheet.insert_image('', os.getcwd() + '/' + file)
+        worksheet.insert_image('E{}'.format(i), os.getcwd() + '/' + file)
         i += 1
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:H', 19, new_format)
     worksheet.set_column('C:C', 24, date2_format)
     worksheet.set_column('I:I', 30, new_format)
+    os.chdir('../../../../../')
     writer.save()
-    os.chdir('../../../../')
+
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
 
@@ -268,7 +267,8 @@ def viewer_settings(project_number):
         result = request.form
 
         # нужно добавить сохранение добавленных участников и экспертов
-
+        name = result.get('name')
+        setattr(project, 'name', name)
         start = result.get('start')
         setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
         end = result.get('end')
@@ -341,7 +341,7 @@ def create_project():
     viewer = Viewer.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
-        # try:
+
         result = request.form
 
         project = Project(viewer_id=current_user.id, name=result.get('name'))
@@ -364,7 +364,7 @@ def create_project():
         os.chdir('{}'.format(project.number))
 
         logo = request.files['logo']
-        logo.save(os.path.join(os.getcwd(), '{}.webp'.format(project.number)))
+        logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
 
         users = request.files['users']
         users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
@@ -378,24 +378,25 @@ def create_project():
 
         os.mkdir('users')
         os.mkdir('experts')
-
         users_photo = request.files.getlist("users_photo")
         experts_photo = request.files.getlist("experts_photo")
-
+        os.chdir('users')
+        # добавить проверку имени фото
         for photo in users_photo:
-            photo.save(os.path.join(os.getcwd(), 'user{}').format(photo.filename))
-            compression(100, 150, os.path.join(os.getcwd(), photo.filename))
+            photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
+        os.chdir('../experts')
+
         for photo in experts_photo:
-            photo.save(os.path.join(os.getcwd(), 'expert{}').format(photo.filename))
-            compression(100, 150, os.path.join(os.getcwd(), photo.filename))
+            photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
 
         db.session.commit()
-        os.chdir('../../../../')
-        # except:
-        #   flash('Что-то пошло не так', 'danger')
-        #  db.session.rollback()
-
+        os.chdir('../../../../../')
+        flash('Проекет создан', 'success')
         return redirect(url_for('main.viewer', viewer_id=current_user.id))
+
+
 
     return render_template('create_project.html', viewer_id=viewer.id)
 
@@ -431,6 +432,23 @@ def admin_settings(project_number):
         return redirects()
     admin = Admin.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
+
+    if request.method == 'POST':
+        # try:
+        result = request.form
+
+        # нужно добавить сохранение добавленных участников и экспертов
+        name = result.get('name')
+        setattr(project, 'name', name)
+        start = result.get('start')
+        setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
+        end = result.get('end')
+        setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+        db.session.commit()
+
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.admin_settings', project_number=project_number))
+
     return render_template('admin_settings.html', admin=admin, project=project)
 
 
@@ -713,12 +731,23 @@ def delete_user():
 
     if role == 'user':
         user = User.query.filter_by(id=request.form['id']).first()
+        for grade in user.grades.all():
+            db.session.delete(grade)
     elif role == 'expert':
         user = Expert.query.filter_by(id=request.form['id']).first()
+        for grade in user.grades.all():
+            db.session.delete(grade)
     elif role == 'waiting_user':
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':
         user = Viewer.query.filter_by(id=request.form['id']).first()
+        projects = Project.query.filter_by(viewer_id=user.id).all()
+        for project in projects:
+            parameters = project.parameters.all()
+            for parameter in parameters:
+                db.session.delete(parameter)
+            db.session.delete(project)
+
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
     else:
@@ -826,5 +855,3 @@ def show_more_viewers():
             .order_by(Viewer.project_id).limit(request.form['lim'])
 
     return jsonify({'viewers': viewers_in_json(viewers)})
-
-

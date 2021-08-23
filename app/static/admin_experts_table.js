@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
@@ -33,7 +33,7 @@ function draw_table(response, project_number) {
 
     for (let i = 0; i < quantity; i++) {
 
-        $("#tbody").append(`<tr style="cursor: default;" id="number_str${i}"` +
+        $("#tbody").append(`<tr style="cursor: pointer;" id="number_str${i}"` +
             ` onclick="location.href='/expert_table_for_admin/${project_number}/${experts[i]['id']}'"></tr>`)
 
         if (experts[i]['project_id'] === 'None')

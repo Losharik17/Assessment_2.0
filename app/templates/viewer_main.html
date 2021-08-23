@@ -15,7 +15,7 @@
         {% for project in projects %}
             <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number) }}'">
                 <div class="block_logo">
-                    {% set path = 'images/' + project.number|string + '/' + project.number|string + '.webp' %}
+                    {% set path = 'images/' + project.number|string + '/' + project.number|string + '.png' %}
                     <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                 </div>
                 <div date="{{ project.end.strftime('%d.%m.%Y') }}" class="data">
@@ -43,13 +43,14 @@
                 date.getMonth() >= +project_date[1] - 1 &&
                 date.getDate() > +project_date[0]) {
                 element.append('<span style="color:crimson">Мероприятие завершено</span>')
-                console.log(123)
             }
         }
 
         $('.data').each(function (index, element) {
             end_project($(element))
         })
+
+        $('.profil_image').css('max-height', $('.profil_image').parent().parent().outerHeight() * 0.9)
 
     </script>
 

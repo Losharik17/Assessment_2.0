@@ -9,7 +9,7 @@ edit_grade.old_value = Array()
 edit_data.old_value = Array()
 
 document.addEventListener('click', function (event) {
-    console.log()
+
     if (event.target.tagName !== 'INPUT' && event.target.id !== 'data_table' &&
         event.target.id !== 'edit_data' && $('#edit_data').html() === 'Сохранить изменения') {
 
@@ -26,7 +26,7 @@ document.addEventListener('click', function (event) {
 function edit_data(expert_id) {
     if ($('#edit_data').html() !== 'Сохранить изменения') {
         let width = $("#edit_data").outerWidth()
-        $('#edit_data').html('Сохранить изменения').css({width: width})
+        $('#edit_data').html('Сохранить изменения').css({width: width, 'text-align': 'center'});
         edit_data.old_value = Array()
         $('#data_table tr').each(function (index, element) {
             if (index !== 3 && index !== 0) {
@@ -80,6 +80,19 @@ function edit_data(expert_id) {
     }
 }
 
+function delete_user(id, project_id) {
+    if (confirm(`Удадить пользователя с ID ${project_id}?`))
+        $.post('/delete_user', {
+            role: 'expert',
+            id: id
+        }).done(function (response) {
+            alert('Пользователь удалён')
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
+}
+
+
 function show_more(new_field, expert_id) {
 
     limit += new_field
@@ -96,7 +109,7 @@ function show_more(new_field, expert_id) {
         let quantity = grades.length
 
         if (limit > quantity) {
-            limit = quantity
+            quantity < 15 ? limit = 15 : limit = quantity
             $('body').append(
                 `<div class="message warning"><h4>
                 В таблице присутствуют все оценки эксперта</h4></div>`)

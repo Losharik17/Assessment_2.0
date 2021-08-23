@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
@@ -11,10 +11,7 @@ function draw_table(response, project_number) {
     let quantity = experts.length
 
     if (limit > quantity) {
-        if (quantity < 10)
-            limit = 10
-        else
-            limit = quantity
+        quantity < 15 ? limit = 15 : limit = quantity
         $('body').append(
             `<div class="message warning"><h4>
                 В таблице присутствуют все эксперты</h4></div>`)
@@ -103,7 +100,7 @@ function sort(parameter, project_number) {
         project_number: project_number
     }).done(
         function (response) {
-            console.log(123)
+
             let experts = JSON.parse(response['experts'])
             let quantity = experts.length
 

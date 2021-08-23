@@ -9,7 +9,7 @@
         <div class="block">
             <h1 style="text-align:center">Участники</h1></div>
         <div class="buttons">
-            <div class="show_btn" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
+            <div class="show_btn" onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number, viewer_id=project.viewer_id) }}'">
                 <span>Настройки</span>
             </div>
         </div>
@@ -89,7 +89,7 @@
     </div>
 
     <div class="show">
-        <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ project_number }})">
+        <a id="show_more" class="show_btn" href="javascript:show_more(10, {{ project_number }})">
             Показать больше</a>
         <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ project_number }})">
             Показать все</a>

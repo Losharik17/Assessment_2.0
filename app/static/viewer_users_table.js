@@ -1,4 +1,4 @@
-let limit = 10
+let limit = 15
 sort.sort_up = false
 sort.current_parameter = 'project_id'
 sort.previous_parameter = ''
@@ -106,10 +106,7 @@ function draw_table(response, project_number) {
     let quantity = users.length
 
     if (limit > quantity) {
-        if (quantity < 10)
-            limit = 10
-        else
-            limit = quantity
+        quantity < 15 ? limit = 15 : limit = quantity
         $('body').append(
             `<div class="message warning"><h4>
                 В таблице присутствуют все участники</h4></div>`)
@@ -263,7 +260,7 @@ function sort(parameter, project_number) {
             for (let i = 0; i < quantity; i++) {
 
                 $(`#number_str${i}`).attr('onclick',
-                    `location.href='/user_grades_table_for_admin/${project_number}/${users[i]["id"]}'`)
+                    `location.href='/user_grades_table_for_viewer/${project_number}/${users[i]["id"]}'`)
 
                 $(`#project_id${i}`).html(users[i]['project_id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
