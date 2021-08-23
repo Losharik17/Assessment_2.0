@@ -203,7 +203,7 @@ input::-webkit-inner-spin-button {
 }
 
 .input__file-button {
-    width: 100%;
+    width: max-content;
     max-width: 290px;
     height: 60px;
     background: #0071f0;

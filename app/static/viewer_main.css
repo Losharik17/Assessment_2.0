@@ -75,6 +75,7 @@
 
     .block_logo {
         justify-content: flex-start;
+        width: 40%;
     }
 
     .profil_image {
@@ -84,6 +85,7 @@
 
     .data {
         display: block;
+        width:30%;
         margin: 0 auto;
         text-align: center;
         font-family: Roboto,sans-serif;
@@ -93,6 +95,7 @@
         margin: auto 5px 5px auto;
         display:flex;
         font-size: 20px;
+        width:30%
     }
 
     .title {
