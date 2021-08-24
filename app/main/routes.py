@@ -134,7 +134,7 @@ def export_excel(project_number):
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image('E{}'.format(i), os.getcwd() + '/' + file)
+        worksheet.insert_image('', os.getcwd() + '/' + file)
 
         i += 1
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
@@ -148,7 +148,7 @@ def export_excel(project_number):
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image('E{}'.format(i), os.getcwd() + '/' + file)
+        worksheet.insert_image('', os.getcwd() + '/' + file)
 
         i += 1
     df3.to_excel(writer, sheet_name='Оценки', index=False)
@@ -330,29 +330,33 @@ def viewer_settings(project_number):
 
         if request.files['users'] and request.files['users_photo']:
             users = request.files['users']
+            number = User.query.filter_by(project_number=project_number).all()[-1].project_id
             users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
             users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
             excel_user(users.filename, project.number)
-            number = User.query.filter_by(project_number=project_number).all()[-1].project_id
 
             users_photo = request.files.getlist("users_photo")
+            os.chdir("app/static/images/{}/users".format(project_number))
             for photo in users_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
                 compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
                 number += 1
+            os.chdir('../../../../../')
 
         if request.files['experts'] and request.files['experts_photo']:
             experts = request.files['experts']
+            number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
             experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
             experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
             excel_user(experts.filename, project.number)
-            number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
 
             experts_photo = request.files.getlist("experts_photo")
+            os.chdir("app/static/images/{}/users".format(project_number))
             for photo in experts_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
                 compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
                 number += 1
+            os.chdir('../../../../../')
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))

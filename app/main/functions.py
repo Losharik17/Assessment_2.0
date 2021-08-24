@@ -231,7 +231,7 @@ def excel_expert(filename, number):
             send_password_mail(expert, a)
         except:
             print('error')
-            raise 
+            raise
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)

@@ -11,8 +11,11 @@ edit_data.old_value = Array()
 document.addEventListener('click', function (event) {
 
     if (event.target.tagName !== 'INPUT' && event.target.id !== 'data_table' &&
-        event.target.id !== 'edit_data' && $('#edit_data').html() === 'Сохранить изменения') {
+        event.target.id !== 'edit_data' && $('#edit_data').html() === 'Сохранить изменения' &&
+        event.target.id !== 'photo_btn' && event.target.id !== 'photo_label' &&
+        event.target.id !== 'photo') {
 
+        $('#photo_btn').slideUp(300)
         $('#data_table tr').each(function (index, element) {
             if (index !== 3 && index !== 0) {
                 let td = $(this).children('td').children('span')
@@ -31,7 +34,7 @@ function edit_data(expert_id) {
 
         $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
             '                        <input name="photo" type="file" id="photo" class="input input__file">' +
-            '                        <label for="photo" class="button_re_2">' +
+            '                        <label id="photo_label" for="photo" class="button_re_2">' +
             '                            <span class="input__file-button-text_2">Изменить Фото Профиля</span>' +
             '                        </label>' +
             '                    </div>')
