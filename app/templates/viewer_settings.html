@@ -81,6 +81,7 @@
                 <input id="end" type="text" name="end"  value="{{ project.end.strftime('%d.%m.%y') }}" onchange="warning(2)" class="form_input">
             </div>
             <input type="submit" class="submit" value="Сохранить изменения">
+            <div class="submit" onclick="delete_project({{ project.number }})">Удалить проект</div>
         </div>
     </form>
 

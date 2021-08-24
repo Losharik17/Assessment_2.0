@@ -149,3 +149,23 @@ Array.prototype.forEach.call(inputs, function (input) {
             label.querySelector('.input__file_button_text_2').innerText = labelVal;
     });
 });
+
+
+function delete_project(number) {
+
+    if (confirm('Вы уверены?') && confirm('Все данные о проекте будут удалены.'))
+        $.post('/delete_project', {
+            number: number,
+        }).done(function (response) {
+            ('body').append(
+                `<div class="message success"><h4>Проект удалён</h4></div>`)
+            setTimeout( ()=> {
+                $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+            setTimeout( ()=> {
+                $('.message').css({display: 'none'})}, 2300)
+        }).fail(function () {
+            alert('Error AJAX request')
+        })
+
+
+}
