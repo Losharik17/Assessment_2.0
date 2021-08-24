@@ -174,9 +174,10 @@ def excel_user(filename, number):
         l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        print(df)
+        print(i)
         a = password_generator()
-        user = User.query.filter_by(id=1).first()
+        user = User.query.filter_by(project_number=number, project_id=i + 1).first()
+        print(user.username)
         user.project_number = number
         if user.project_id == None:
             user.project_id = l + 1
@@ -189,6 +190,7 @@ def excel_user(filename, number):
             send_password_mail(user, a)
         except:
             print("error")
+            raise
 
 
 def excel_expert(filename, number):
