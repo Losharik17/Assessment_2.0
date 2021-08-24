@@ -6,18 +6,36 @@
 
 }
 
-.block {
+/*.block {
     width: max-content;
     display: block;
     margin-bottom: 10px;
 
+}*/
+
+.block {
+    margin: 0 auto;
+    vertical-align: top;
+    width: max-content;
+    display:flex;
+}
+
+.block_1 {
+    margin: 0 30px;
 }
 
 .block_2 {
-    display: block;
-    margin-top: 10px;
 
+    margin:0 30px;
 }
+
+.block_3 {
+    width: max-content;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+
 
 .input_button {
     width: 90%;
@@ -78,35 +96,51 @@
 .button {
     text-decoration: none;
     margin: 0 auto;
-    padding: 10px 25px;
+    padding: 5px 15px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     color: rgba(0, 64, 144, 0.7);
     outline: none !important;
     cursor: pointer;
     -webkit-transition: all 0.3s ease;
-    width:  300px;
+    width:  250px;
     transition: all 0.3s ease;
     position: relative;
     display: inline-block;
     border: 2px solid rgba(0, 64, 144, 0.7);
     border-radius: 10px;
 
+
+
 }
 
-@media(hover: hover) {
-    .button:hover {
-        background: rgba(0, 64, 144, 0.7);
-        color: #fff;
-        box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
-        transform: scale(1.03)
-    }
+.button:hover {
+    background: rgba(0, 64, 144, 0.7);
+    color: #fff;
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
+}
 
-    .input__wrapper_2:hover .input__file_button_text_2 {
-        transition: all 0.3s ease;
-        color: white;
-        width: max-content;
-    }
+.input__wrapper_2 {
+
+
+}
+
+
+@media(hover: hover) {
+
+}
+
+.input__file_button_text {
+    width: 100%;
+    font: 600 16px Roboto;
+
+}
+
+
+
+a {
+    text-decoration: none;
 }
 
 .button:active {
@@ -136,7 +170,6 @@
     color: #fff;
 
 }
-
 
 
 
