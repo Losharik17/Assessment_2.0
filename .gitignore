@@ -9,5 +9,5 @@
 .vagrant/machines/default/virtualbox/private_key
 .vagrant
 !/app/templates/test.html
-
-
+*.zip
+/.idea

@@ -118,6 +118,7 @@
     <script>
         $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
+        show_more(0, {{ user_id }})
     </script>
 
 {% endblock %}
