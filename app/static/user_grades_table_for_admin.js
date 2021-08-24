@@ -40,7 +40,7 @@ function edit_data(user_id, user_birthday) {
 
         $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
             '                        <input name="photo" type="file" id="photo" class="input input__file">' +
-            '                        <label for="photo" class="input__file-button_2">' +
+            '                        <label for="photo" class="button_re">' +
             '                            <span class="input__file-button-text_2">Изменить Фото Профиля</span>' +
             '                        </label>' +
             '                    </div>')
