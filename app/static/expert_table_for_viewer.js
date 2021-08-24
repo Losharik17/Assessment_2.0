@@ -29,7 +29,12 @@ function edit_data(expert_id) {
         $('#edit_data').html('Сохранить изменения').css({width: width, 'text-align': 'center'});
         edit_data.old_value = Array()
 
-        $('#edit_data').after('<input type="file" id="photo" name="photo">')
+        $('#edit_data').after('<div class="input__wrapper">\n' +
+            '                        <input name="logo" type="file" id="input__file" class="input input__file">\n' +
+            '                        <label for="input__file" class="input__file-button_2">\n' +
+            '                            <span class="input__file-button-text_2">Изменить Фото Профиля</span>\n' +
+            '                        </label>\n' +
+            '                    </div>')
         $('#photo').slideUp(0).slideDown(300).attr('file', '1')
         $('#photo').on('change', function () {
             $('#photo').attr('file', $('#photo').attr('file') * -1)

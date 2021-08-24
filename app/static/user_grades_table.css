@@ -89,6 +89,12 @@
     background-color: white;
 }
 
+.form-control {
+    display: inline-block;
+
+
+}
+
 .btn {
     display: inline-block;
     box-sizing: border-box;
