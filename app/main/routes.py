@@ -14,6 +14,7 @@ import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
 import os
 from datetime import date, datetime
+from PIL import Image
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -182,9 +183,24 @@ def expert_table_for_admin(project_number, expert_id):
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    if request.method == 'POST':
+        os.chdir('app/static/images/{}/experts'.format(project_number))
+        old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
+        os.remove(old_img)
+        img = request.files['photo']
+        img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+
+        os.chdir('../../../../../')
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.expert_table_for_admin',
+                                project_number=project_number, expert_id=expert_id))
+
+
     return render_template('expert_table_for_admin.html', title='Профиль эксперта',
-                           grades=grades, expert=expert, project_number=project_number,
-                           ParName=parameters)
+                               grades=grades, expert=expert, project_number=project_number,
+                               ParName=parameters)
 
 
 # таблица оценок эксперта (для наблюдателя)
@@ -196,6 +212,20 @@ def expert_table_for_viewer(project_number, expert_id):
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    if request.method == 'POST':
+        os.chdir('app/static/images/{}/experts'.format(project_number))
+        old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
+        os.remove(old_img)
+        img = request.files['photo']
+        img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+
+        os.chdir('../../../../../')
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.expert_table_for_viewer',
+                                project_number=project_number, expert_id=expert_id))
+
     return render_template('expert_table_for_viewer.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
                            ParName=parameters)
@@ -345,6 +375,21 @@ def user_grades_table_for_viewer(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    if request.method == 'POST':
+        os.chdir('app/static/images/{}/users'.format(project_number))
+        old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+        os.remove(old_img)
+        img = request.files['photo']
+        img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+
+        os.chdir('../../../../../')
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.user_grades_table_for_viewer',
+                                project_number=project_number, user_id=user_id))
+
+
     return render_template('user_grades_table_for_viewer.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
                            ParName=parameters, user_id=user_id, len=len(parameters))
@@ -494,7 +539,6 @@ def admin_settings(project_number):
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
                 compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
                 number += 1
-        print(1)
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
             path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
@@ -502,12 +546,12 @@ def admin_settings(project_number):
             logo = request.files['logo']
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
-        print(1)
+
         setattr(project, 'name', result.get('name'))
         setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
         setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
+
         db.session.commit()
-        print(1)
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.admin_settings', project_number=project_number))
 
@@ -584,6 +628,21 @@ def user_grades_table_for_admin(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    if request.method == 'POST':
+        os.chdir('app/static/images/{}/users'.format(project_number))
+        old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+        os.remove(old_img)
+        img = request.files['photo']
+        img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+
+        os.chdir('../../../../../')
+        flash('Изменения сохранены', 'success')
+        return redirect(url_for('main.user_grades_table_for_admin',
+                                project_number=project_number, user_id=user_id))
+
+
     return render_template('user_grades_table_for_admin.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
                            ParName=parameters, user_id=user_id, len=len(parameters))
@@ -794,11 +853,15 @@ def delete_user():
     if role == 'user':
         user = User.query.filter_by(id=request.form['id']).first()
         for grade in user.grades.all():
+            t_expert = grade.expert
             db.session.delete(grade)
+            setattr(t_expert, 'quantity', getattr(t_expert, 'quantity') - 1)
     elif role == 'expert':
         user = Expert.query.filter_by(id=request.form['id']).first()
         for grade in user.grades.all():
+            t_user = grade.user
             db.session.delete(grade)
+            t_user.sum_grades()
     elif role == 'waiting_user':
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':

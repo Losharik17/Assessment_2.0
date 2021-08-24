@@ -14,6 +14,9 @@ document.addEventListener('click', function (event) {
     if (event.target.tagName !== 'INPUT' && event.target.id !== 'data_table' &&
         event.target.id !== 'edit_data' && $('#edit_data').html() === 'Сохранить изменения') {
 
+        $('#photo').slideUp(300)
+        setTimeout( () => { $('#photo').remove() }, 300)
+
         $('#data_table tr').each(function (index, element) {
             let td = $(this).children('td').children('span')
             if (index !== 2 && index !== 0) {
@@ -36,8 +39,14 @@ function edit_data(user_id, user_birthday) {
 
         let width = $("#edit_data").outerWidth()
         $('#edit_data').html('Сохранить изменения').css({width: width}).css('text-align', 'center')
-
         edit_data.old_value = Array()
+
+        $('#edit_data').after('<input type="file" id="photo" name="photo">')
+        $('#photo').slideUp(0).slideDown(300).attr('file', '1')
+        $('#photo').on('change', function () {
+            $('#photo').attr('file', $('#photo').attr('file') * -1)
+        })
+
         $('#data_table tr').each(function (index, element) {
             let td = $(this).children('td').children('span')
 
@@ -46,13 +55,13 @@ function edit_data(user_id, user_birthday) {
                 edit_data.old_value.push(value)
                 td.html(`<input id="d${index}" onchange="
                                     document.getElementById(this.id).setAttribute('value', this.value)" 
-                                    class="input" type="text" value="${value}">`)
+                                    class="form" type="text" value="${value}">`)
             }
             else if (index === 2) {
                 edit_data.old_value.push(user_birthday)
                 td.html(`<input id="d${index}" onchange="
                                     document.getElementById(this.id).setAttribute('value', this.value)" 
-                                    class="input" type="text" value="${user_birthday}">`)
+                                    class="form" type="text" value="${user_birthday}">`)
             }
         })
     }
@@ -97,7 +106,19 @@ function edit_data(user_id, user_birthday) {
                     $('#edit_data').html('Редактировать данные')
                 }
             })
+
+            $('body').append(
+                `<div class="message success"><h4>Изменения сохранены</h4></div>`)
+            setTimeout( ()=> {
+                $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+            setTimeout( ()=> {
+                $('.message').css({display: 'none'})}, 2300)
         })
+        if ($('#photo').attr('file') === '-1')
+            $('#submit').trigger('click')
+
+        $('#photo').slideUp(300)
+        setTimeout( () => { $('#photo').remove() }, 300)
 
     }
 }

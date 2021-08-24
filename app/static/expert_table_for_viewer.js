@@ -28,6 +28,13 @@ function edit_data(expert_id) {
         let width = $("#edit_data").outerWidth()
         $('#edit_data').html('Сохранить изменения').css({width: width, 'text-align': 'center'});
         edit_data.old_value = Array()
+
+        $('#edit_data').after('<input type="file" id="photo" name="photo">')
+        $('#photo').slideUp(0).slideDown(300).attr('file', '1')
+        $('#photo').on('change', function () {
+            $('#photo').attr('file', $('#photo').attr('file') * -1)
+        })
+
         $('#data_table tr').each(function (index, element) {
             if (index !== 3 && index !== 0) {
                 let td = $(this).children('td').children('span')
@@ -66,6 +73,14 @@ function edit_data(expert_id) {
                     $('#edit_data').html('Редактировать данные')
                 }
             })
+
+            $('body').append(
+                `<div class="message success"><h4>Изменения сохранены</h4></div>`)
+            setTimeout( ()=> {
+                $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+            setTimeout( ()=> {
+                $('.message').css({display: 'none'})}, 2300)
+
         }).fail(function () {
             alert("Error AJAX request")
             $('#data_table tr').each(function (index, element) {
@@ -76,6 +91,12 @@ function edit_data(expert_id) {
                 }
             })
         })
+
+        if ($('#photo').attr('file') === '-1')
+            $('#submit').trigger('click')
+
+        $('#photo').slideUp(300)
+        setTimeout( () => { $('#photo').remove() }, 300)
 
     }
 }
