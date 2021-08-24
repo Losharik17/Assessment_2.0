@@ -17,7 +17,7 @@
     <h1 style="text-align:center">Настройки</h1>
 
 
-    <form action="{{ url_for('main.admin_settings', project_number=project.number)}}"
+    <form action="{{ url_for('main.viewer_settings', project_number=project.number)}}"
           method="post" class="form" enctype="multipart/form-data" style="width: max-content;">
         <div class="block">
             <div class="block_1">
@@ -80,9 +80,8 @@
         <div class="block_3">
 
             <div class="input__wrapper_2">
-                <div class="button" onclick="location.href={{ url_for('main.export_excel', project_number=project.number) }} target='_blank'">
-                    <span
-                            class="input__file_button_text">Скачать Отчёт</span>
+                <div class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
+                    <span class="input__file_button_text">Скачать Отчёт</span>
                 </div>
             </div>
             <div class="form_group" style="margin-top: 30px;">

@@ -330,13 +330,17 @@ def viewer_settings(project_number):
             os.chdir('../../../../')
 
         # нужно добавить сохранение добавленных участников и экспертов
-        setattr(project, 'name', result.get('name'))
-        setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
-        setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
-        db.session.commit()
+        if result.get('name') and result.get('start') and result.get('end'):
+            setattr(project, 'name', result.get('name'))
+            setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
+            setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
+            db.session.commit()
+            flash('Изменения сохранены', 'success')
+            return redirect(url_for('main.viewer_settings', project_number=project_number))
+        else:
+            flash('Что-то пошло не так', 'warning')
+            return redirect(url_for('main.viewer_settings', project_number=project_number))
 
-        flash('Изменения сохранены', 'success')
-        return redirect(url_for('main.viewer_settings', project_number=project_number))
 
     return render_template('viewer_settings.html', viewer=viewer, project=project)
 
@@ -433,7 +437,6 @@ def create_project():
 
 
             start = result.get('start')
-            print(start)
             setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
             end = result.get('end')
             setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
@@ -463,7 +466,6 @@ def create_project():
             experts_photo = request.files.getlist("experts_photo")
             os.chdir('users')
 
-            # добавить проверку имени фото
 
             for photo in users_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))

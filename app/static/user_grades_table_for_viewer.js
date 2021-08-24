@@ -114,6 +114,7 @@ function edit_data(user_id, user_birthday) {
             setTimeout( ()=> {
                 $('.message').css({display: 'none'})}, 2300)
         })
+
         if ($('#photo').attr('file') === '-1')
             $('#submit').trigger('click')
 

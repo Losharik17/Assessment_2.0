@@ -8,7 +8,8 @@
     <script src="{{ url_for('static', filename='expert_table_for_admin.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="{{ url_for('main.expert_table_for_admin', project_number=project_number,
+           expert_id=expert.id) }}" method="post" enctype="multipart/form-data">
         <div class="container">
             <div id="data" class="data">
                 {% set path = '/images/' + expert.project_number|string + '/experts/' + expert.project_id|string + '.png'%}
@@ -37,7 +38,7 @@
              onclick="delete_user({{ expert.id }}, {{ expert.project_id }})">
             Удалить участника
         </div>
-
+        <input type="submit" name="submit" id="submit" style="visibility: hidden">
     </form>
     <div class="table-wrap">
         <table class="table-sort">
