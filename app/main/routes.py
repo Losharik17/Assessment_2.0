@@ -60,6 +60,10 @@ def export_excel(project_number):
         df1 = df1.drop(columns={"sum_grade_{}".format(i)})
         i += 1
 
+
+    df1['team'] = df1['team'].str.capitalize()
+    df1['region'] = df1['region'].str.capitalize()
+
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
                               'photo': 'Фотография',
                               "sum_grade_all": "Итоговая оценка",
@@ -67,9 +71,16 @@ def export_excel(project_number):
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
     df1 = df1.drop(columns=['password_hash', 'project_number'])
+    names = df1.columns.values
+    names_length = len(names)
+    new_name = [names[0], names[names_length - 1], names[1], names[3], names[2], names[4], names[5], names[6]]
+    for i in range(7, names_length - 1):
+        new_name.append(names[i])
+    df1 = df1.reindex(columns=new_name)
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
+    df2['photo']=""
     df2 = df2.loc[df2['project_number'] == int(project_number)]
     df2 = df2.drop(columns=['password_hash', 'project_number', 'quantity'])
     df2.rename(columns={'username': 'ФИО', 'photo': 'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
@@ -114,6 +125,10 @@ def export_excel(project_number):
     df3 = df3.drop(columns=['id'])
     df2 = df2.drop(columns=['id'])
     df1 = df1.drop(columns=['id'])
+    df1.columns = [x.capitalize() for x in df1.columns]
+    df1 = df1.rename(columns={'Id':'ID', 'Фио':'ФИО'})
+    names = df2.columns.values
+    df2 = df2.reindex(columns=[names[0], names[4], names[1], names[2], names[3]])
     df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта'}, inplace=True)
 
     filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
@@ -134,9 +149,9 @@ def export_excel(project_number):
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image('', os.getcwd() + '/' + file)
-
+        worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
         i += 1
+
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
     worksheet.set_default_row(110)
@@ -148,14 +163,14 @@ def export_excel(project_number):
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image('', os.getcwd() + '/' + file)
-
+        worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
         i += 1
+
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:M', 19, new_format)
     worksheet.set_column('C:C', 24, date2_format)
-    worksheet.set_column('N:N', 30, new_format)
+    worksheet.set_column('Комментарий', 30, new_format)
     writer.save()
     os.chdir('../../../../../')
 
@@ -1039,8 +1054,8 @@ def save_user_data():
     if getattr(user, 'username') != data[0]:
         setattr(user, 'username', data[0])
 
-    if getattr(user, 'team') != data[2].title():
-        setattr(user, 'team', data[2].title())
+    if getattr(user, 'team') != data[2].capitalize():
+        setattr(user, 'team', data[2].capitalize())
 
     if getattr(user, 'region') != data[3]:
         setattr(user, 'region', data[3])
