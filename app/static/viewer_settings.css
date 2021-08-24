@@ -195,6 +195,34 @@ a {
     outline: none;
 }
 
+.submit_2 {
+    font: 400 16px  Roboto;
+    margin: 10px auto auto;
+    width: max-content;
+    border: 0;
+    padding: 10px 20px;
+    background-color:#0071f0;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    align-self: center;
+    outline: none;
+}
+
+@media screen {
+    .submit_2:hover {
+        box-shadow: 0 2px 1px #0044ff;
+        background-color: #0044ff;
+    }
+
+    .submit_2:active {
+        box-shadow: 0 2px 1px #002380;
+        background-color: #002380;
+    }
+}
+
 @media screen {
     .submit:hover {
         box-shadow: 0 2px 1px #0044ff;
