@@ -64,6 +64,7 @@
     width: 80%;
     max-width: 1600px;
     margin: auto;
+    position: relative;
 }
 
 
@@ -203,7 +204,7 @@ input::-webkit-inner-spin-button {
 }
 
 .input__file-button {
-    width: max-content;
+    width: 290px;
     max-width: 290px;
     height: 60px;
     background: #0071f0;
