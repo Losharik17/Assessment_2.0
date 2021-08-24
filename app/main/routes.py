@@ -79,7 +79,7 @@ def export_excel(project_number):
     df3.rename(columns={'date': 'Дата выставления оценки', 'comment': 'Комментарий'}, inplace=True)
     a = engine.execute("SELECT id FROM user WHERE project_number = ?", project_number)
     a = a.fetchall()
-    f = df3.user_id
+    f = []
 
     for i in range(len(df3.index)):
         c = 0
@@ -90,21 +90,18 @@ def export_excel(project_number):
                df3.user_id[i] = b[0][0]
                c += 1
         if c == 0:
-            f = [i]
+            f.append(int(i))
     a = engine.execute("SELECT id FROM expert WHERE project_number = ?", project_number)
     a = a.fetchall()
 
     for i in range(len(df3.index)):
         c = 0
         for rows in a:
-            b = engine.execute("SELECT project_id FROM user WHERE id = ?", rows[0])
+            b = engine.execute("SELECT project_id FROM expert WHERE id = ?", rows[0])
             b = b.fetchall()
             if df3.expert_id[i] == rows[0] and c == 0:
                df3.expert_id[i] = b[0][0]
                c += 1
-            if c == 0:
-                f = [i]
-
     for row in f:
         df3 = df3.drop([row])
     i = 0

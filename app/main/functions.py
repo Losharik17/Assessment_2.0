@@ -159,12 +159,11 @@ def excel_user(filename, number):
     prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
-    print(prev_user.id)
-    if prev_user != None:
+    if last_user != None:
         c = last_user.id
         i = c
         b = len(index) + c
-        if prev_user.project_number == number:
+        if prev_user != None and prev_user.project_number == number:
             l = prev_user.project_id
         else:
             l = 0
@@ -175,7 +174,6 @@ def excel_user(filename, number):
         l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        print(df)
         a = password_generator()
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
@@ -200,10 +198,10 @@ def excel_expert(filename, number):
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
-    if prev_expert != None:
+    if last_expert != None:
         i = c = last_expert.id
         b = len(index) + c
-        if prev_expert.project_number == number:
+        if prev_expert != None and prev_expert.project_number == number:
             l = prev_expert.project_id
         else:
             l = 0
