@@ -31,7 +31,7 @@ function edit_data(expert_id) {
 
         $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
             '                        <input name="photo" type="file" id="photo" class="input input__file">' +
-            '                        <label for="photo" class="button_re">' +
+            '                        <label for="photo" class="button_re_2">' +
             '                            <span class="input__file-button-text_2">Изменить Фото Профиля</span>' +
             '                        </label>' +
             '                    </div>')
