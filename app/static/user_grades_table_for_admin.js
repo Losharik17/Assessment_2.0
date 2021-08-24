@@ -230,7 +230,6 @@ function edit_grade(grade_id, user_id, number_str) {
                 }
             }
         }
-
         if (save) {
             $('#buttons' + buttons.previous_str).fadeOut(300)
             setTimeout(() => {$('#buttons' + buttons.previous_str).css("display", "none")}, 300)
