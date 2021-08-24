@@ -154,12 +154,11 @@ def excel_user(filename, number):
     df.head
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
-    df['team'] = df['team'].str.capitalize()
-    df['region'] = df['region'].str.capitalize()
-    prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
+    df['team'] = df['team'].str.title()
+    df['region'] = df['region'].str.title()
+    prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
-    print(prev_user.id)
     if prev_user != None:
         c = last_user.id
         i = c
@@ -177,7 +176,7 @@ def excel_user(filename, number):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
         print(df)
         a = password_generator()
-        user = User.query.filter_by(id=i + 1).first()
+        user = User.query.filter_by(id=1).first()
         user.project_number = number
         if user.project_id == None:
             user.project_id = l + 1

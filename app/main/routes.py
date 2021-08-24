@@ -452,7 +452,9 @@ def create_project():
     if current_user.id <= 110000 or current_user.id > 120000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
-
+    lvl = 0
+    delete_project = False
+    # try:
     if request.method == 'POST':
         result = request.form
 
@@ -476,12 +478,16 @@ def create_project():
             setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
             end = result.get('end')
             setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+            db.session.commit()
+            delete_project = True
 
             os.chdir("app/static/images")
+            lvl += 3
             if os.path.exists('{}'.format(project.number)):
                 shutil.rmtree('{}'.format(project.number))
             os.mkdir('{}'.format(project.number))
             os.chdir('{}'.format(project.number))
+            lvl += 1
 
             logo = request.files['logo']
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
@@ -502,7 +508,7 @@ def create_project():
             users_photo = request.files.getlist("users_photo")
             experts_photo = request.files.getlist("experts_photo")
             os.chdir('users')
-
+            lvl += 1
             for photo in users_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
                 compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
@@ -514,6 +520,7 @@ def create_project():
 
             db.session.commit()
             os.chdir('../../../../../')
+            lvl = 0
             flash('Проекет создан', 'success')
             return redirect(url_for('main.viewer', viewer_id=current_user.id))
         else:
@@ -522,6 +529,14 @@ def create_project():
                   'и удалите пустые критерии.', 'danger')
             db.session.rollback()
             return redirect(url_for('main.create_project', viewer_id=current_user.id))
+    '''except:
+        for i in range(lvl):
+            os.chdir('../')
+        flash('Ошибка создания проекта. '
+                 'Пожалуйста проверьте, чтобы все поля были заполнены '
+                 'и удалите пустые критерии.', 'danger')
+        db.session.rollback()
+        return redirect(url_for('main.create_project', viewer_id=current_user.id))'''
 
 
 
