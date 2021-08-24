@@ -41,14 +41,14 @@ function edit_data(user_id, user_birthday) {
         $('#edit_data').html('Сохранить изменения').css({width: width}).css('text-align', 'center')
         edit_data.old_value = Array()
 
-        $('#edit_data').after('<div class="input__wrapper">\n' +
-            '                        <input name="logo" type="file" id="input__file" class="input input__file">\n' +
-            '                        <label for="input__file" class="input__file-button_2">\n' +
-            '                            <span class="input__file-button-text_2">Изменить Фото Профиля</span>\n' +
-            '                        </label>\n' +
+        $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
+            '                        <input name="photo" type="file" id="photo" class="input input__file">' +
+            '                        <label for="photo" class="input__file-button_2">' +
+            '                            <span class="input__file-button-text_2">Изменить Фото Профиля</span>' +
+            '                        </label>' +
             '                    </div>')
-        $('#photo').slideUp(0).slideDown(300).attr('file', '1')
-        $('#photo').on('change', function () {
+        $('#photo_btn').slideUp(0).slideDown(300)
+        $('#photo').attr('file', '1').on('change', function () {
             $('#photo').attr('file', $('#photo').attr('file') * -1)
         })
 
@@ -119,12 +119,12 @@ function edit_data(user_id, user_birthday) {
             setTimeout( ()=> {
                 $('.message').css({display: 'none'})}, 2300)
         })
-
+        console.log($('#photo').attr('file'))
         if ($('#photo').attr('file') === '-1')
             $('#submit').trigger('click')
 
-        $('#photo').slideUp(300)
-        setTimeout( () => { $('#photo').remove() }, 300)
+        $('#photo_btn').slideUp(300)
+        setTimeout( () => { $('#photo_btn').remove() }, 300)
 
     }
 }
