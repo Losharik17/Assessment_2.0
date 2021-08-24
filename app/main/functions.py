@@ -152,49 +152,65 @@ def password_generator():
 def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
-    l = 0
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
-    prev_user = User.query.order_by(User.id.desc()).first()
+    df['team'] = df['team'].str.capitalize()
+    df['region'] = df['region'].str.capitalize()
+    prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
+    last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
+    print(prev_user.id)
     if prev_user != None:
-        c = prev_user.id
+        c = last_user.id
         i = c
         b = len(index) + c
-
+        if prev_user.project_number == number:
+            l = prev_user.project_id
+        else:
+            l = 0
     else:
         c = 0
         i = 0
         b = len(index)
+        l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
+        print(df)
         a = password_generator()
         user = User.query.filter_by(id=i + 1).first()
+        user.project_number = number
         if user.project_id == None:
             user.project_id = l + 1
-        user.project_number = number
         user.set_password(a)
         db.session.add(user)
         db.session.commit()
         print(a)
         l += 1
-        send_password_mail(user, a)
+        try:
+            send_password_mail(user, a)
+        except:
+            print("error")
 
 
 def excel_expert(filename, number):
     df = pd.read_excel(filename)
     df.head
-    l = 0
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
-    prev_expert = Expert.query.order_by(Expert.id.desc()).first()
+    prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
+    last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
     if prev_expert != None:
-        i = c = prev_expert.id
+        i = c = last_expert.id
         b = len(index) + c
+        if prev_expert.project_number == number:
+            l = prev_expert.project_id
+        else:
+            l = 0
     else:
         c = 0
         i = 0
+        l = 0
         b = len(index)
         me = Expert()
         db.session.add(me)
@@ -213,7 +229,10 @@ def excel_expert(filename, number):
         db.session.add(expert)
         db.session.commit()
         l += 1
-        send_password_mail(expert, a)
+        try:
+            send_password_mail(expert, a)
+        except:
+            print('error')
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)

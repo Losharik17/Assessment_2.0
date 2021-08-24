@@ -1,6 +1,5 @@
 import json
 
-import result as result
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
@@ -15,7 +14,9 @@ from app.main.secure_filename_2 import secure_filename_2
 import os
 from datetime import date, datetime
 import shutil
+from sqlalchemy import create_engine
 
+engine = create_engine("sqlite:///T_park.db")
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/T-Park', methods=['GET', 'POST'])
@@ -39,9 +40,11 @@ def dwn():
 def export_excel(project_number):
     if current_user.id <= 110000:
         return redirects()
+
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
+    df1['photo'] = ""
 
     df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
     excel_start_date = date(1899, 12, 30)
@@ -63,20 +66,47 @@ def export_excel(project_number):
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
-    df1 = df1.drop(columns=['password_hash', 'id', 'project_number'])
-
+    df1 = df1.drop(columns=['password_hash', 'project_number'])
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
     df2 = df2.loc[df2['project_number'] == int(project_number)]
-    df2 = df2.drop(columns=['password_hash', 'id', 'project_number', 'quantity'])
+    df2 = df2.drop(columns=['password_hash', 'project_number', 'quantity'])
     df2.rename(columns={'username': 'ФИО', 'photo': 'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
-    df3 = df3.drop(columns=['id'])
-    df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта',
-                        'date': 'Дата выставления оценки', 'comment': 'Комментарий'}, inplace=True)
+    df3.rename(columns={'date': 'Дата выставления оценки', 'comment': 'Комментарий'}, inplace=True)
+    a = engine.execute("SELECT id FROM user WHERE project_number = ?", project_number)
+    a = a.fetchall()
+    f = df3.user_id
+
+    for i in range(len(df3.index)):
+        c = 0
+        for rows in a:
+            b = engine.execute("SELECT project_id FROM user WHERE id = ?", rows[0])
+            b = b.fetchall()
+            if df3.user_id[i] == rows[0] and c == 0:
+               df3.user_id[i] = b[0][0]
+               c += 1
+        if c == 0:
+            f = [i]
+    a = engine.execute("SELECT id FROM expert WHERE project_number = ?", project_number)
+    a = a.fetchall()
+
+    for i in range(len(df3.index)):
+        c = 0
+        for rows in a:
+            b = engine.execute("SELECT project_id FROM user WHERE id = ?", rows[0])
+            b = b.fetchall()
+            if df3.expert_id[i] == rows[0] and c == 0:
+               df3.expert_id[i] = b[0][0]
+               c += 1
+            if c == 0:
+                f = [i]
+
+    for row in f:
+        df3 = df3.drop([row])
     i = 0
     for parameter in parameters:
         df3 = df3.rename(columns={"parameter_{}".format(i): parameter.name})
@@ -84,6 +114,10 @@ def export_excel(project_number):
     while i < 10:
         df3 = df3.drop(columns={"parameter_{}".format(i)})
         i += 1
+    df3 = df3.drop(columns=['id'])
+    df2 = df2.drop(columns=['id'])
+    df1 = df1.drop(columns=['id'])
+    df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта'}, inplace=True)
 
     filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
 
@@ -96,14 +130,15 @@ def export_excel(project_number):
     worksheet = writer.sheets['Пользователи']
     worksheet.set_default_row(110)
     worksheet.set_row(0, 15)
-    worksheet.set_column('A:M', 19, new_format)
-    worksheet.set_column('E:E', 19, date_format)
+    worksheet.set_column('A:Q', 19, new_format)
+    worksheet.set_column('D:D', 19, date_format)
     worksheet.set_column('B:B', 13, new_format)
     os.chdir('app/static/images/{}/users'.format(project_number))
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
         worksheet.insert_image('E{}'.format(i), os.getcwd() + '/' + file)
+
         i += 1
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
@@ -117,14 +152,15 @@ def export_excel(project_number):
     i = 2
     for file in files:
         worksheet.insert_image('E{}'.format(i), os.getcwd() + '/' + file)
+
         i += 1
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
-    worksheet.set_column('A:H', 19, new_format)
+    worksheet.set_column('A:M', 19, new_format)
     worksheet.set_column('C:C', 24, date2_format)
-    worksheet.set_column('I:I', 30, new_format)
-    os.chdir('../../../../../')
+    worksheet.set_column('N:N', 30, new_format)
     writer.save()
+    os.chdir('../../../../../')
 
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
@@ -341,7 +377,6 @@ def viewer_settings(project_number):
             flash('Что-то пошло не так', 'warning')
             return redirect(url_for('main.viewer_settings', project_number=project_number))
 
-
     return render_template('viewer_settings.html', viewer=viewer, project=project)
 
 
@@ -436,6 +471,7 @@ def create_project():
                                          project_number=project.number))
 
 
+
             start = result.get('start')
             setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
             end = result.get('end')
@@ -455,6 +491,7 @@ def create_project():
             users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
             excel_user(users.filename, project.number)
 
+
             experts = request.files['experts']
             experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
             experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
@@ -465,7 +502,6 @@ def create_project():
             users_photo = request.files.getlist("users_photo")
             experts_photo = request.files.getlist("experts_photo")
             os.chdir('users')
-
 
             for photo in users_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
@@ -487,7 +523,10 @@ def create_project():
             db.session.rollback()
             return redirect(url_for('main.create_project', viewer_id=current_user.id))
 
-    return render_template('create_project.html', viewer_id=viewer.id)
+
+
+
+    return render_template('create_project.html', viewer_id=1)
 
 
 # главная страница админа
@@ -497,7 +536,9 @@ def admin():
     if current_user.id <= 120000:
         return redirects()
     admin = Admin.query.filter_by(id=current_user.id).first()
+
     return render_template('admin_main.html', admin=admin)
+
 
 
 # страница со всеми проектами
@@ -524,6 +565,7 @@ def admin_settings(project_number):
     if request.method == 'POST':
         # try:
         result = request.form
+
         if request.files['users'] and request.files['users_photo']:
             users = request.files['users']
             users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
@@ -566,6 +608,7 @@ def admin_settings(project_number):
             return redirect(url_for('main.admin_settings', project_number=project_number))
 
         db.session.commit()
+
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.admin_settings', project_number=project_number))
 
