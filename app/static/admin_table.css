@@ -1,5 +1,38 @@
 @charset "UTF-8";
 
+@media(min-width:768px) {
+
+    .title {
+        display: flex;
+        /*
+            justify-content: space-between;
+            width:100%;
+            margin-left: 20px;
+
+         */
+        justify-content: space-evenly;
+        margin: 0 auto;
+
+    }
+
+}
+
+
+@media(max-width:768px) {
+
+    .title {
+        display: block;
+        justify-content: space-evenly;
+        margin: 0 auto;
+
+    }
+
+
+}
+
+
+
+
 .app_content {
     display: flex;
 
@@ -112,18 +145,7 @@ th.sort[data-order="1"]::after {
 
 }
 
-.title {
-    display: flex;
-/*
-    justify-content: space-between;
-    width:100%;
-    margin-left: 20px;
 
- */
-    justify-content: space-evenly;
-    margin: 0 auto;
-
-}
 
 .block {
     display: block;

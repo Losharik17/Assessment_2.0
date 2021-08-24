@@ -269,7 +269,7 @@ a {
     width: max-content;
     border: 0;
     padding: 10px 20px;
-    background-color:#0071f0;
+    background-color: red;
     border-radius: 5px;
     color: #fff;
     cursor: pointer;
@@ -281,13 +281,13 @@ a {
 
 @media screen {
     .submit_2:hover {
-        box-shadow: 0 2px 1px #0044ff;
-        background-color: #0044ff;
+        box-shadow: 0 2px 1px #c90404;
+        background-color: red;
     }
 
     .submit_2:active {
-        box-shadow: 0 2px 1px #002380;
-        background-color: #002380;
+        box-shadow: 0 2px 1px #c90404;
+        background-color: red;
     }
 }
 
