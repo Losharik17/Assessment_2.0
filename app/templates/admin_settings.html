@@ -80,9 +80,9 @@
         <div class="block_3">
 
             <div class="input__wrapper_2">
-                <div class="button">
-                    <a href="{{ url_for('main.export_excel', project_number=project.number) }}" target="_blank"
-                       class="input__file_button_text">Скачать Отчёт</a>
+                <div class="button" onclick="location.href={{ url_for('main.export_excel', project_number=project.number) }} target='_blank'">
+                    <span
+                       class="input__file_button_text">Скачать Отчёт</span>
                 </div>
             </div>
             <div class="form_group" style="margin-top: 30px;">
