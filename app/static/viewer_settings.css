@@ -114,6 +114,13 @@
 
 }
 
+.button:hover {
+    background: rgba(0, 64, 144, 0.7);
+    color: #fff;
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
+}
+
 .input__wrapper_2 {
 
 
@@ -121,32 +128,16 @@
 
 
 @media(hover: hover) {
-    .button:hover {
-        background: rgba(0, 64, 144, 0.7);
-        color: #fff;
-        box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
-        transform: scale(1.03)
-    }
 
-    .input__wrapper_2:hover  {
-        transition: all 0.3s ease;
-        color: white;
-        width: max-content;
-    }
 }
 
 .input__file_button_text {
     width: 100%;
-    color: rgba(0, 64, 144, 0.7) ;
     font: 600 16px Roboto;
 
 }
 
-.input__file_button_text:hover {
-    color: white;
-    transition: all 0.3s ease;
 
-}
 
 a {
     text-decoration: none;
