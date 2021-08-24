@@ -168,9 +168,8 @@ def export_excel(project_number):
 
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
-    worksheet.set_column('A:M', 19, new_format)
+    worksheet.set_column('A:N', 30, new_format)
     worksheet.set_column('C:C', 24, date2_format)
-    worksheet.set_column('Комментарий', 30, new_format)
     writer.save()
     os.chdir('../../../../../')
 
