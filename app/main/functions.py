@@ -290,14 +290,14 @@ def redirects(arg=None):
         return redirect(url_for('auth.login'))
     if arg is None:
         flash('Извините, у вас нет доступа к данной странице', 'warning')
-    if current_user.id < 100000:
+    if current_user.id < 1000000:
         return redirect(url_for('main.user'))
-    if 100000 < current_user.id < 110000:
+    if 1000000 < current_user.id < 1100000:
         expert = Expert.query.filter_by(id=current_user.id).first()
         return redirect(url_for('main.expert', project_number=expert.project_number))
-    if 110000 < current_user.id < 120000:
+    if 1100000 < current_user.id < 1200000:
         return redirect(url_for('main.viewer'))
-    if 120000 < current_user.id:
+    if 1200000 < current_user.id:
         return redirect(url_for('main.admin'))
 
 

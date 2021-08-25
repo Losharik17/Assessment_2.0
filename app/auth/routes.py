@@ -107,11 +107,11 @@ def reset_password(token):
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        user = Expert.verify_reset_password_token(token)
+        user = Viewer.verify_reset_password_token(token)
         if not user:
             user = Admin.verify_reset_password_token(token)
             if not user:
-                user = Viewer.verify_reset_password_token(token)
+                user = Expert.verify_reset_password_token(token)
                 if not user:
                     flash('Мы не нашли пользователя с данной почтой', 'danger')
                     return redirect(url_for('main.index'))

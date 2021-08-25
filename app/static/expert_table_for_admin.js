@@ -224,12 +224,11 @@ function edit_grade(grade_id, user_id, number_str, expert_id) {
     }
 }
 
-function delete_grade(grade_id, user_id, number_str, expert_id) {
+function delete_grade(grade_id, number_str, expert_id) {
 
     if (confirm('Удалить оценку?'))
         $.post('/delete_grade', {
             id: grade_id,
-            user_id: user_id,
             lim: limit
         }).done(function (response) {
 
@@ -321,9 +320,9 @@ function show_more(new_field, expert_id) {
             else
                 $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i}, ${grades[i].expert_id})">` +
+                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${i}, ${expert_id})">` +
                 `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
-                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i}, ${grades[i].expert_id})">` +
+                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${i}, ${expert_id})">` +
                 `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
         delete_buttons()
@@ -372,9 +371,9 @@ function sort(parameter, expert_id) {
 
                 $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
 
-                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i}, ${grades[i].expert_id})">` +
+                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${i}, ${expert_id})">` +
                     `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
-                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i}, ${grades[i].expert_id})">` +
+                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${i}, ${expert_id})">` +
                     `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
             delete_buttons()

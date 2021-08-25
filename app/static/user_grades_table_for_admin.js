@@ -169,7 +169,7 @@ function buttons(quantity) {
     buttons.previous_str = ''
 
     for (let i = 0; i < quantity; i++) {
-        document.getElementById('number_str' + i).addEventListener('click', function () {
+        document.getElementById(`number_str${i}`).addEventListener('click', function () {
 
             if (buttons.previous_str !== '' && buttons.previous_str != i) {
                 $('#buttons' + buttons.previous_str).fadeTo(300, 0.0)
@@ -200,7 +200,6 @@ function buttons(quantity) {
 }
 
 function edit_grade(grade_id, user_id, number_str) {
-    console.log(grade_id)
     if ($("#edit" + number_str + " :input").attr('value') !== 'Сохранить') {
         let width = $("#edit" + number_str + " :input").innerWidth()
         edit_grade.old_value = Array()
@@ -272,7 +271,6 @@ function delete_grade(grade_id, user_id, number_str) {
     if (confirm('Удалить оценку?'))
         $.post('/delete_grade', {
             id: grade_id,
-            user_id: user_id,
             lim: limit
         }).done(function (response) {
 
@@ -349,9 +347,9 @@ function show_more(new_field, user_id) {
             else
                 $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                `<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${user_id}, ${i})">` +
                 `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
-                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${user_id}, ${i})">` +
                 `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
         delete_buttons()
@@ -400,9 +398,9 @@ function sort(parameter, user_id) {
 
                 $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
 
-                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                $(`#buttons${i}`).html(`<span id="edit${i}" onclick="edit_grade(${grades[i].id}, ${user_id}, ${i})">` +
                     `<input id="e${i}" type="button" value="Редактировать" class="btn"></span>` +
-                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${grades[i].user_id}, ${i})">` +
+                    `<span id="delete${i}" onclick="delete_grade(${grades[i].id}, ${user_id}, ${i})">` +
                     `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
 

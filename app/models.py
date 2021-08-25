@@ -15,8 +15,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True)
     birthday = db.Column(db.Date)
-    team = db.Column(db.String(32))  # команда, класс иди что-то подобное
-    region = db.Column(db.String(64))  # локация, регион или что-то подобное
+    team = db.Column(db.String(32), default='–')  # команда, класс иди что-то подобное
+    region = db.Column(db.String(64), default='–')  # локация, регион или что-то подобное
     project_number = db.Column(db.Integer)  # номер проекта к которму относится
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)  # общий id
     password_hash = db.Column(db.String(128))
@@ -70,7 +70,6 @@ class User(UserMixin, db.Model):
                     self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
             if len(parameters) > i:  # нужен тест
                 self.sum_grade_all += self.__dict__['sum_grade_{}'.format(i)] * parameters[i].weight
-        self.sum_grade_all /= self.sum_weight_parameters(parameters)
         db.session.commit()
 
     def sum_weight_parameters(self, parameters):
@@ -282,13 +281,13 @@ class Admin(UserMixin, db.Model):
         return Admin.query.get(id)
 
 event.listen(Expert.__table__, 'after_create',
-             DDL("INSERT INTO expert (id) VALUES (100000)")  # аналогично admin_id
+             DDL("INSERT INTO expert (id) VALUES (1000000)")
              )
 
 event.listen(Viewer.__table__, 'after_create',
-             DDL("INSERT INTO viewer (id) VALUES (110000)")  # аналогично admin_id
+             DDL("INSERT INTO viewer (id) VALUES (1100000)")
              )
 
 event.listen(Admin.__table__, 'after_create',
-             DDL("INSERT INTO admin (id) VALUES (120000)")
+             DDL("INSERT INTO admin (id) VALUES (1200000)")
              )

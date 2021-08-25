@@ -19,7 +19,13 @@ function show_more(new_field, user_id) {
         user_id: user_id
     }).done(function (response) {
 
-        $("#tbody").html('')
+        //$("#tbody").html('')
+        $('#tbody tr').each(function (index, element) {
+            if (index !== 0) {
+                $(element).remove()
+            }
+        })
+
         let grades = JSON.parse(response['grades'])
         let quantity = grades.length
 
@@ -41,26 +47,28 @@ function show_more(new_field, user_id) {
         }
 
         for (let i = 0; i < quantity; i++) {
-
-            $("#tbody").append(`<tr id="number_str${i}"></tr>`)
+            let k
+            i === 0 ? k = 1 : k = i + 1
+            console.log(k, i)
+            $("#tbody").append(`<tr id="number_str${k}"></tr>`)
 
             if (grades[i]['date'] === 'None')
-                $(`#number_str${i}`).append(`<td id="date${i}">–</td>`)
+                $(`#number_str${k}`).append(`<td id="date${k}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="date${i}">${grades[i]['date']}</td>`)
+                $(`#number_str${k}`).append(`<td id="date${k}">${grades[i]['date']}</td>`)
 
             for (let j = 0; j < 10; j++) {
                 if (grades[i][`parameter_${j}`]) {
                     if (grades[i][`parameter_${j}`] === '0')
-                        $(`#number_str${i}`).append(`<td id="parameter_${j}${i}">–</td>`)
+                        $(`#number_str${k}`).append(`<td id="parameter_${j}${k}">–</td>`)
                     else
-                        $(`#number_str${i}`).append(`<td id="parameter_${j}${i}">${grades[i][`parameter_${j}`]}</td>`)
+                        $(`#number_str${k}`).append(`<td id="parameter_${j}${k}">${grades[i][`parameter_${j}`]}</td>`)
                 }
             }
             if (grades[i]['comment'] === 'None' || grades[i]['comment'] === '')
-                $(`#number_str${i}`).append(`<td id="comment${i}">–</td>`)
+                $(`#number_str${k}`).append(`<td id="comment${k}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="comment${i}">${grades[i]['comment']}</td>`)
+                $(`#number_str${k}`).append(`<td id="comment${k}">${grades[i]['comment']}</td>`)
         }
     }).fail(function () {
         alert('Error AJAX request')
@@ -96,14 +104,15 @@ function sort(parameter, user_id) {
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#date${i}`).html(grades[i]['date'] ? grades[i]['date'] : '–')
+                let k = i + 1
+                $(`#date${k}`).html(grades[i]['date'] ? grades[i]['date'] : '–')
 
                 for (let j = 0; j < 10; j++)
-                    if ($(`#parameter_${j}${i}`))
-                        $(`#parameter_${j}${i}`).html(grades[i][`parameter_${j}`] !== '0' ?
+                    if ($(`#parameter_${j}${k}`))
+                        $(`#parameter_${j}${k}`).html(grades[i][`parameter_${j}`] !== '0' ?
                             grades[i][`parameter_${j}`] : '–')
 
-                $(`#comment${i}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
+                $(`#comment${i++}`).html(grades[i][`comment`] ? grades[i][`comment`] : '–')
 
             }
 
