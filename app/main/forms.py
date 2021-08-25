@@ -32,7 +32,7 @@ class GradeForm(FlaskForm):
     parameter_9 = RadioField('{}'.format(''), default=0,
                              choices=[(-1, '-1'), (1, '1'), (2, '2'), (3, '3'), (0, '')])
     comment = TextAreaField('Комментарий к оценке', validators=[Length(max=200)])
-    submit = SubmitField('Выставить оценки')
+    submit = SubmitField('Сохранить')
 
 
 class UserForm(FlaskForm):

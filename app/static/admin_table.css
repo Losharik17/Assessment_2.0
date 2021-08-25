@@ -3,20 +3,25 @@
 @media(min-width:768px) {
 
     .title {
-        display: flex;
+        display: block;
+
         /*
             justify-content: space-between;
             width:100%;
             margin-left: 20px;
 
          */
-        justify-content: space-evenly;
+
+        justify-content: space-between;
         margin: 0 auto;
 
     }
 
-}
+    .block {
+        display: block;
+    }
 
+}
 
 @media(max-width:768px) {
 
@@ -27,11 +32,16 @@
 
     }
 
-
+    .block {
+        display: block;
+        margin: 0 auto;
+    }
 }
 
+h1 {
+    text-align: center;
 
-
+}
 
 .app_content {
     display: flex;
@@ -146,10 +156,6 @@ th.sort[data-order="1"]::after {
 }
 
 
-
-.block {
-    display: block;
-}
 
 .choice {
     border: 2px solid rgba(0, 64, 144, 0.7);
