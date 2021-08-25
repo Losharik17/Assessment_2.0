@@ -58,11 +58,11 @@ def register():
 
             return redirect(url_for('auth.register'))
 
-        os.chdir("app/static/images/waiting_user")
-        form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
-        os.chdir('../../../../')
+        os.chdir("app/static/images/waiting_users")
+        #form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
+        #os.chdir('../../../../')
         waiting_user = WaitingUser(username=form.username.data, email=form.email.data,
-                                   phone_number=form.phone.data)
+                                   phone_number=form.phone_number.data)
         waiting_user.set_password(form.password.data)
         db.session.add(waiting_user)
         db.session.commit()

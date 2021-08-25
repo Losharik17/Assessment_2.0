@@ -348,8 +348,8 @@ body {
 /* всплывающие уведомления и цвета для разных категорий */
 .message {
     width: max-content;
-    height: 30px;
     padding: 5px;
+    height: 30px;
     display: flex;
     z-index: 100;
     justify-content: center;
