@@ -43,7 +43,26 @@ class RegistrationForm(FlaskForm):
     #            raise ValidationError('Данный номер уже используется другим пользователем.')
 
 
-class SinglRegistrationForm(FlaskForm):
+class UserRegistrationForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    birthday = StringField('Дата Рождения')
+    team = StringField('Команда')
+    region = StringField('Регион')
+    avatar = FileField('Фото')
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
+    submit = SubmitField('Зарегистрироваться')
+
+    def validate_email(self, email):
+        users = []
+        users.append(Admin.query.filter_by(email=email.data).first())
+        users.append(Viewer.query.filter_by(email=email.data).first())
+        users.append(WaitingUser.query.filter_by(email=email.data).first())
+        for user in users:
+            if user is not None:
+                raise ValidationError('Данная почта уже используется другим пользователем.')
+
+
+class ExpertRegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     avatar = FileField('Фото')
     email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
