@@ -325,9 +325,11 @@ def viewer():
     if current_user.id <= 1100000 or current_user.id > 1200000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
-    projects = viewer.projects.order_by(Project.start.desc()).all()
+    proj = []
+    for viewer in Viewer.query.filter_by(organization=viewer.organization).all():
+        proj += viewer.projects.all()
 
-    return render_template('viewer_main.html', viewer=viewer, projects=projects, title='Проекты')
+    return render_template('viewer_main.html', viewer=viewer, projects=proj, title='Проекты')
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
@@ -626,7 +628,6 @@ def add_new_expert(project_number):
 
                 if result.get('weight'):
                     setattr(expert, 'weight', result.get('weight'))
-
 
                 if request.files['photo']:
                     os.chdir("app/static/images/{}/experts".format(project_number))
