@@ -17,8 +17,7 @@
     }
     .button_back {
         position:relative;
-
-
+        margin: 10px auto;
     }
 
 
@@ -55,7 +54,8 @@
 
     .button_back {
         position:sticky;
-
+        margin: 10px;
+        bottom:10px;
 
     }
 
@@ -299,8 +299,6 @@ body {
 
 .button_back {
     text-decoration: none;
-    margin: 10px;
-    bottom: 10px;
     padding: 10px 25px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;

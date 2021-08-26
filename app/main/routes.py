@@ -494,7 +494,6 @@ def create_project():
             setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
             db.session.commit()
             delete_project = True
-            print(os.)
             print(os.getcwd())
             print(os.path)
             os.chdir("app/static/images")
