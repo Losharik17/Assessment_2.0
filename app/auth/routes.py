@@ -58,7 +58,7 @@ def register():
 
             return redirect(url_for('auth.register'))
 
-        os.chdir("app/static/images/waiting_users")
+        #os.chdir("app/static/images/waiting_users")
         #form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
         #os.chdir('../../../../')
         waiting_user = WaitingUser(username=form.username.data, email=form.email.data,
