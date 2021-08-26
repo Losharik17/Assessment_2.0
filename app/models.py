@@ -117,7 +117,6 @@ def load_user(id):
         return Admin.query.get(int(id))
 
 
-
 class Expert(UserMixin, db.Model):
     project_id = db.Column(db.Integer)
     username = db.Column(db.String(64))
@@ -253,7 +252,6 @@ class WaitingUser(db.Model):
         return 'Пользователь {}'.format(self.id)
 
 
-
 class Admin(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
     username = db.Column(db.String(64))
@@ -282,6 +280,7 @@ class Admin(UserMixin, db.Model):
         except:
             return
         return Admin.query.get(id)
+
 
 event.listen(Expert.__table__, 'after_create',
              DDL("INSERT INTO expert (id) VALUES (1000000)")
