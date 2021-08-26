@@ -591,7 +591,7 @@ def add_new_user(project_number):
                     compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_user_id + 1)))
                     os.chdir('../../../../../')
 
-                passsword = password_generator()
+                password = password_generator()
                 user.set_password(password)
                 try:
                     send_password_mail(user, password)
