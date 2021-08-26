@@ -26,6 +26,14 @@ $('#username').focus(function () {
     blu(this, $('label[for=username]'))
 })
 
+$('#organization').addClass('form_input')
+$('#organization').focus(function () {
+    foc(this, $('label[for=organization]'))
+}).blur(function () {
+    blu(this, $('label[for=organization]'))
+})
+
+
 $('#password2').addClass('form_input')
 $('#password2').focus(function () {
     foc(this, $('label[for=password2]'))

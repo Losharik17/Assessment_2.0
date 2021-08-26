@@ -2,7 +2,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
-@media screen and (max-width: 768px) {
+@media screen and  (max-width: 768px) {
     .logo {
         width: 30%;
         height: 20%;
@@ -15,6 +15,12 @@
         margin-top: 10px;
         margin-bottom: 60px;
     }
+    .button_back {
+        position:relative;
+        margin: 10px auto;
+    }
+
+
 
     * {
 
@@ -44,6 +50,13 @@
         border-radius: 2px;
         background-color: rgba(0,0,0,0.5);
         -webkit-box-shadow: 0 0 1px rgba(255,255,255,0.5);
+    }
+
+    .button_back {
+        position:sticky;
+        margin: 10px;
+        bottom:10px;
+
     }
 
     * {
@@ -276,9 +289,16 @@ body {
     transform: scale(1);
 }
 
+@media (min-width: 768px){
+
+
+
+}
+
+
+
 .button_back {
     text-decoration: none;
-    margin-left: 10px;
     padding: 10px 25px;
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
@@ -288,7 +308,6 @@ body {
     -webkit-transition: all 0.3s ease;
     width:  max-content;
     transition: all 0.3s ease;
-    position: relative;
     display: block;
     border: 2px solid rgba(0, 64, 144, 0.7);
     border-radius: 10px;

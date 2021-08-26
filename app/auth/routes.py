@@ -62,7 +62,7 @@ def register():
         #form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
         #os.chdir('../../../../')
         waiting_user = WaitingUser(username=form.username.data, email=form.email.data,
-                                   phone_number=form.phone_number.data)
+                                   phone_number=form.phone_number.data, organization=form.organization.data)
         waiting_user.set_password(form.password.data)
         db.session.add(waiting_user)
         db.session.commit()
