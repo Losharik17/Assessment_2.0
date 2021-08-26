@@ -174,7 +174,7 @@ def excel_user(filename, number):
         l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        a = password_generator()
+
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
         if user.project_id == None:

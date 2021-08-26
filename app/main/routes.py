@@ -1,5 +1,6 @@
 import json
 
+import password as password
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
@@ -8,7 +9,8 @@ from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, W
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
-    excel_expert, excel_user, to_dict, delete_timer, redirects, compression
+    excel_expert, excel_user, to_dict, delete_timer, redirects, compression, password_generator, \
+    send_password_mail
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
 import os
@@ -585,6 +587,15 @@ def add_new_user(project_number):
                     photo.save(os.path.join(os.getcwd(), '{}.png').format(last_user_id + 1))
                     compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_user_id + 1)))
                     os.chdir('../../../../../')
+
+                passsword = password_generator()
+                user.set_password(password)
+                try:
+                    send_password_mail(user, password)
+                except:
+                    print("error")
+                    raise
+
                 db.session.commit()
 
                 flash('Участник добавлен', 'success')
@@ -593,6 +604,53 @@ def add_new_user(project_number):
         flash('Проверьте корректность введённых данных', 'warning')
 
     return render_template('add_new_user.html', title='Добавление участника')
+
+
+# добавление эксперта
+@bp.route('/add_new_expert/<project_number>', methods=['GET', 'POST'])
+@login_required
+def add_new_expert(project_number):
+    if request.method == 'POST':
+        result = request.form
+
+        if result.get('username') and result.get('email'):
+            if Expert.query.filter_by(email=result.get('email')) is None:
+                last_expert_id = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
+                expert = User(project_number=project_number, username=result.get('username'),
+                              email=result.get('email'), project_id=last_expert_id + 1)
+
+                db.session.add(expert)
+                db.session.commit()
+
+                expert = Expert.query.filter_by(project_number=project_number, project_id=last_expert_id + 1).first()
+
+                if result.get('weight'):
+                    setattr(expert, 'weight', result.get('weight'))
+
+
+                if request.files['photo']:
+                    os.chdir("app/static/images/{}/experts".format(project_number))
+                    photo = request.files['photo']
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(last_expert_id + 1))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_expert_id + 1)))
+                    os.chdir('../../../../../')
+
+                password = password_generator()
+                expert.set_password(password)
+                try:
+                    send_password_mail(expert, password)
+                except:
+                    print("error")
+                    raise
+
+                db.session.commit()
+
+                flash('Эксперт добавлен', 'success')
+                return redirect(url_for('main.viewer_settings', project_number=project_number))
+
+        flash('Проверьте корректность введённых данных', 'warning')
+
+    return render_template('add_new_expert.html', title='Добавление участника')
 
 
 # главная страница админа
