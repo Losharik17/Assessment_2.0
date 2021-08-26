@@ -10,12 +10,12 @@
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
-        <title>T-Park</title>
+        <title>Ассессмент 2.0</title>
     {% endif %}
 
     <script>
         $(window).on('load', function () {
-            $('.preloader').addClass("preloader-remove");
+            setTimeout( () => { $('.preloader').addClass("preloader-remove") }, 100);
         });
     </script>
 
@@ -48,9 +48,6 @@
     </div>
 
     {% block app_content %}{% endblock %}
-
-
-
 
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

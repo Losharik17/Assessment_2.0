@@ -166,6 +166,4 @@ function delete_project(number) {
         }).fail(function () {
             alert('Error AJAX request')
         })
-
-
 }

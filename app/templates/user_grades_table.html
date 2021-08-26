@@ -56,36 +56,15 @@
             </thead>
 
             <tbody id="tbody">
-            {% set i = namespace(a=0) %}
-            {% for grade in grades %}
-
-                <tr id="number_str{{ i.a }}">
-
-                    <td id="date{{ i.a }}">
-                        {% if grade.date %}
-                            {{ grade.date.strftime('%H:%M %d.%m.%y') }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                    {% for j in range(k.a) %}
-                        {% if grade.__dict__['parameter_{}'.format(j)] is defined %}
-                            <td id="parameter_{{ j }}{{ i.a }}">{% if grade.__dict__['parameter_{}'.format(j)] != 0 %}{{ grade.__dict__['parameter_{}'.format(j)] }}{% else %}–{% endif %}</td>
-                        {% endif %}
-                    {% endfor %}
-
-                    <td id="comment{{ i.a }}">
-                        {% if grade.comment %}
-                            {{ grade.comment }}
-                        {% else %}
-                            –
-                        {% endif %}
-                    </td>
-
-                </tr>
-                {% set i.a = i.a + 1 %}
-            {% endfor %}
+            <tr id="number_str0">
+                <td id="date0">Среднее значение</td>
+                {% for j in range(k.a) %}
+                    {% if user.__dict__['sum_grade_{}'.format(j)] is defined %}
+                        <td id="parameter_{{ j }}0">{% if user.__dict__['sum_grade_{}'.format(j)] != 0 %}{{ user.__dict__['sum_grade_{}'.format(j)]|round(2) }}{% else %}–{% endif %}</td>
+                    {% endif %}
+                {% endfor %}
+                <td id="comment0">–</td>
+            </tr>
             </tbody>
         </table>
 
@@ -100,6 +79,7 @@
     <script>
         $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
+        show_more(0, {{ user.id }})
     </script>
 
 {% endblock %}

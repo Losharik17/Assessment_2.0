@@ -152,49 +152,63 @@ def password_generator():
 def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
-    l = 0
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
-    prev_user = User.query.order_by(User.id.desc()).first()
+    df['team'] = df['team'].str.capitalize()
+    df['region'] = df['region'].str.capitalize()
+    prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
+    last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
-    if prev_user != None:
-        c = prev_user.id
+    if last_user != None:
+        c = last_user.id
         i = c
         b = len(index) + c
-
+        if prev_user != None and prev_user.project_number == number:
+            l = prev_user.project_id
+        else:
+            l = 0
     else:
         c = 0
         i = 0
         b = len(index)
+        l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        a = password_generator()
+
         user = User.query.filter_by(id=i + 1).first()
+        user.project_number = number
         if user.project_id == None:
             user.project_id = l + 1
-        user.project_number = number
         user.set_password(a)
         db.session.add(user)
         db.session.commit()
-        print(a)
         l += 1
-        send_password_mail(user, a)
+        try:
+            send_password_mail(user, a)
+        except:
+            print("error")
+            raise
 
 
 def excel_expert(filename, number):
     df = pd.read_excel(filename)
     df.head
-    l = 0
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
-    prev_expert = Expert.query.order_by(Expert.id.desc()).first()
+    prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
+    last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
-    if prev_expert != None:
-        i = c = prev_expert.id
+    if last_expert != None:
+        i = c = last_expert.id
         b = len(index) + c
+        if prev_expert != None and prev_expert.project_number == number:
+            l = prev_expert.project_id
+        else:
+            l = 0
     else:
         c = 0
         i = 0
+        l = 0
         b = len(index)
         me = Expert()
         db.session.add(me)
@@ -213,7 +227,11 @@ def excel_expert(filename, number):
         db.session.add(expert)
         db.session.commit()
         l += 1
-        send_password_mail(expert, a)
+        try:
+            send_password_mail(expert, a)
+        except:
+            print('error')
+            raise
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
@@ -272,14 +290,14 @@ def redirects(arg=None):
         return redirect(url_for('auth.login'))
     if arg is None:
         flash('Извините, у вас нет доступа к данной странице', 'warning')
-    if current_user.id < 100000:
+    if current_user.id < 1000000:
         return redirect(url_for('main.user'))
-    if 100000 < current_user.id < 110000:
+    if 1000000 < current_user.id < 1100000:
         expert = Expert.query.filter_by(id=current_user.id).first()
         return redirect(url_for('main.expert', project_number=expert.project_number))
-    if 110000 < current_user.id < 120000:
+    if 1100000 < current_user.id < 1200000:
         return redirect(url_for('main.viewer'))
-    if 120000 < current_user.id:
+    if 1200000 < current_user.id:
         return redirect(url_for('main.admin'))
 
 
