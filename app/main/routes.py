@@ -1045,13 +1045,6 @@ def delete_user():
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':
         user = Viewer.query.filter_by(id=request.form['id']).first()
-        projects = Project.query.filter_by(viewer_id=user.id).all()
-        for project in projects:
-            parameters = project.parameters.all()
-            for parameter in parameters:
-                db.session.delete(parameter)
-            db.session.delete(project)
-
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
     else:
