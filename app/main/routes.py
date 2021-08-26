@@ -494,7 +494,9 @@ def create_project():
             setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
             db.session.commit()
             delete_project = True
-
+            print(os.)
+            print(os.getcwd())
+            print(os.path)
             os.chdir("app/static/images")
             lvl += 3
             if os.path.exists('{}'.format(project.number)):
@@ -1004,7 +1006,8 @@ def give_role():
         elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
                           password_hash=waiting_user.password_hash,
-                          phone_number=waiting_user.phone_number, expert_id=expert.id)
+                          phone_number=waiting_user.phone_number, expert_id=expert.id,
+                          organization=waiting_user.organization)
         elif request.form['role'] == 'Удалить':
             db.session.delete(waiting_user)
             db.session.commit()
