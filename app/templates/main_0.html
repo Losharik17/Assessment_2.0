@@ -49,6 +49,9 @@
 
     {% block app_content %}{% endblock %}
 
+    <div class="button_back" onclick="history.back();"><span>Назад</span></div>
+
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
