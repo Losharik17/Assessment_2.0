@@ -4,7 +4,7 @@ import password as password
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EmptyForm, GradeForm, UserForm
+from app.main.forms import EmptyForm, GradeForm, UserForm, UserRegistrationForm, ExpertRegistrationForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
@@ -578,6 +578,7 @@ def create_project():
 @bp.route('/add_new_user/<project_number>', methods=['GET', 'POST'])
 @login_required
 def add_new_user(project_number):
+    form = UserRegistrationForm()
     if request.method == 'POST':
         result = request.form
 
@@ -623,7 +624,7 @@ def add_new_user(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_user.html', title='Добавление участника',
+    return render_template('add_new_user.html', title='Добавление участника', form=form,
                            back=url_for('main.viewer_settings', project_number=project_number))
 
 
@@ -631,6 +632,7 @@ def add_new_user(project_number):
 @bp.route('/add_new_expert/<project_number>', methods=['GET', 'POST'])
 @login_required
 def add_new_expert(project_number):
+    form = ExpertRegistrationForm()
     if request.method == 'POST':
         result = request.form
 
@@ -670,7 +672,7 @@ def add_new_expert(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_expert.html', title='Добавление участника',
+    return render_template('add_new_expert.html', title='Добавление участника', form=form,
                            back=url_for('main.viewer_settings', project_number=project_number))
 
 

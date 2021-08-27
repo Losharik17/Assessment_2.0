@@ -51,6 +51,12 @@
         margin:0 30px;
     }
 
+    .input__wrapper_2 {
+        display: none;
+
+    }
+
+
 
 }
 
@@ -103,6 +109,12 @@
         margin: 0 auto;
         display: block;
     }
+
+
+    .input__wrapper_1{
+        display:none;
+    }
+
 
 
 }
@@ -189,11 +201,29 @@
     transform: scale(1.03)
 }
 
-.input__wrapper_2 {
-
+.input__file_button_text_2 {
+    line-height: 1;
+    font: 400 16px Roboto;
+    text-decoration: none;
 
 }
 
+
+.input__wrapper {
+margin: 0 0 15px;
+
+}
+
+.input__wrapper_1 {
+    margin: 0 0 15px;
+
+}
+
+
+.input__wrapper_2 {
+    margin: 0 0 15px;
+
+}
 
 @media(hover: hover) {
 
