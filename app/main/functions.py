@@ -19,6 +19,8 @@ engine = create_engine("sqlite:///T_park.db")
 
 
 def users_in_json(users):
+    if not users:
+        return []
     lenght = len(Project.query.filter_by(number=users[0].project_number).first()
                  .parameters.all())
 
@@ -46,7 +48,8 @@ def users_in_json(users):
 
 
 def viewers_in_json(viewers):
-
+    if not viewers:
+        return []
     string = '['
     for viewer in viewers:
 
@@ -62,6 +65,8 @@ def viewers_in_json(viewers):
 
 
 def experts_in_json(experts):
+    if not experts:
+        return []
     string = '['
 
     for expert in experts:
@@ -79,8 +84,8 @@ def experts_in_json(experts):
 
 
 def grades_in_json(grades, lenght):
-
-
+    if not grades:
+        return []
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
