@@ -17,12 +17,12 @@
     <h1 style="text-align:center">Настройки</h1>
 
 
-    <form action="{{ url_for('main.viewer_settings', project_number=project.number)}}"
+    <form action="{{ url_for('main.admin_settings', project_number=project.number)}}"
           method="post" class="form" enctype="multipart/form-data" style="width: max-content;">
         <div class="block">
             <div class="block_1">
-                    <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
                 <div class="input__wrapper">
+                    <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
             project_number=project.number) }}'">
                         <span class="input__file_button_text">Участники</span>
                     </div><br>
@@ -32,8 +32,8 @@
                         <span class="input__file_button_text">Выставить оценки</span>
                     </div>
                 </div>
-                    <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
                 <div class="input__wrapper">
+                    <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
             project_number=project.number) }}'">
                         <span class="input__file_button_text">Эксперты</span>
                     </div>
