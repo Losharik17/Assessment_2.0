@@ -185,10 +185,9 @@ def user():
         return redirects()
 
     user = User.query.filter_by(id=current_user.id).first()
-    grades = Grade.query.filter_by(user_id=current_user.id).order_by(Grade.expert_id).limit(20)
     parameters = Parameter.query.filter_by(project_number=user.project_number).all()
     return render_template('user_grades_table.html', title='Мои оценки',
-                           grades=grades, user=user, project_number=user.project_number,
+                           user=user, project_number=user.project_number,
                            ParName=parameters, user_id=current_user.id, back='')
 
 
@@ -578,12 +577,16 @@ def create_project():
 @bp.route('/add_new_user/<project_number>', methods=['GET', 'POST'])
 @login_required
 def add_new_user(project_number):
+    if current_user.id <= 1100000:
+        return redirects()
+
     form = UserRegistrationForm()
+
     if request.method == 'POST':
         result = request.form
 
         if result.get('username') and result.get('email'):
-            if User.query.filter_by(email=result.get('email')) is None:
+            if User.query.filter_by(email=result.get('email')).first() is None:
                 last_user_id = User.query.filter_by(project_number=project_number).all()[-1].project_id
                 user = User(project_number=project_number, username=result.get('username'),
                             email=result.get('email'), project_id=last_user_id + 1)
@@ -620,11 +623,15 @@ def add_new_user(project_number):
                 db.session.commit()
 
                 flash('Участник добавлен', 'success')
-                return redirect(url_for('main.viewer_settings', project_number=project_number))
+                if (current_user.id <= 1200000):
+                    return redirect(url_for('main.viewer_settings', project_number=project_number))
+                else:
+                    return redirect(url_for('main.admin_settings', project_number=project_number))
 
         flash('Проверьте корректность введённых данных', 'warning')
 
     return render_template('add_new_user.html', title='Добавление участника', form=form,
+                           project_number=project_number,
                            back=url_for('main.viewer_settings', project_number=project_number))
 
 
@@ -632,16 +639,17 @@ def add_new_user(project_number):
 @bp.route('/add_new_expert/<project_number>', methods=['GET', 'POST'])
 @login_required
 def add_new_expert(project_number):
+    if current_user.id <= 1100000:
+        return redirects()
     form = ExpertRegistrationForm()
 
     if request.method == 'POST':
         result = request.form
-
         if result.get('username') and result.get('email'):
-            if Expert.query.filter_by(email=result.get('email')) is None:
+            if Expert.query.filter_by(email=result.get('email')).first() is None:
                 last_expert_id = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
-                expert = User(project_number=project_number, username=result.get('username'),
-                              email=result.get('email'), project_id=last_expert_id + 1)
+                expert = Expert(project_number=project_number, username=result.get('username'),
+                                email=result.get('email'), project_id=last_expert_id + 1)
 
                 db.session.add(expert)
                 db.session.commit()
@@ -669,11 +677,14 @@ def add_new_expert(project_number):
                 db.session.commit()
 
                 flash('Эксперт добавлен', 'success')
-                return redirect(url_for('main.viewer_settings', project_number=project_number))
-
+                if (current_user.id <= 1200000):
+                    return redirect(url_for('main.viewer_settings', project_number=project_number))
+                else:
+                    return redirect(url_for('main.admin_settings', project_number=project_number))
         flash('Проверьте корректность введённых данных', 'warning')
 
     return render_template('add_new_expert.html', title='Добавление участника', form=form,
+                           project_number=project_number,
                            back=url_for('main.viewer_settings', project_number=project_number))
 
 
@@ -861,10 +872,10 @@ def user_grades_table_for_admin(project_number, user_id):
 @bp.route('/show_more_users', methods=['POST'])
 @login_required
 def users_table():
-    if int(request.form['lim']) < 10:
-        limit = 10
+    if int(request.form['lim']) < 15:
+        limit = 15
     else:
-        limit = int(request.form['lim'])
+        limit = int(request.form['lim']) + 1
 
     users = User.query.filter_by(project_number=request.form['project_number'])
     if request.form['parameter'] != '':
@@ -891,11 +902,14 @@ def users_table():
     t = date.today()
     new_users = []
     for user in users:
-        age = t.year - int(user.birthday.strftime('%Y')) - \
-              ((t.month, t.day) <
-               (int(user.birthday.strftime('%m')),
-                int(user.birthday.strftime('%d'))))
-        if int(request.form['min_age']) <= age <= int(request.form['max_age']):
+        if user.birthday is not None:
+            age = t.year - int(user.birthday.strftime('%Y')) - \
+                  ((t.month, t.day) <
+                   (int(user.birthday.strftime('%m')),
+                    int(user.birthday.strftime('%d'))))
+            if int(request.form['min_age']) <= age <= int(request.form['max_age']):
+                new_users.append(user)
+        else:
             new_users.append(user)
 
     return jsonify({'users': users_in_json(new_users)})
@@ -905,10 +919,10 @@ def users_table():
 @bp.route('/show_more_experts', methods=['POST'])
 @login_required
 def show_more_experts():
-    if int(request.form['lim']) < 10:
-        limit = 10
+    if int(request.form['lim']) < 15:
+        limit = 15
     else:
-        limit = int(request.form['lim'])
+        limit = int(request.form['lim']) + 1
 
     experts = Expert.query.filter_by(project_number=request.form['project_number'])
     if request.form['parameter'] != '':
@@ -927,10 +941,10 @@ def show_more_experts():
 @bp.route('/show_more_grades_for_user', methods=['POST'])
 @login_required
 def sort_grades_table_for_user():
-    if int(request.form['lim']) < 10:
-        limit = 10
+    if int(request.form['lim']) < 15:
+        limit = 15
     else:
-        limit = int(request.form['lim'])
+        limit = int(request.form['lim']) + 1
 
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
@@ -953,10 +967,10 @@ def sort_grades_table_for_user():
 @bp.route('/sort_grades_table_for_expert', methods=['POST'])
 @login_required
 def show_more_grades_for_expert():
-    if int(request.form['lim']) < 10:
-        limit = 10
+    if int(request.form['lim']) < 15:
+        limit = 15
     else:
-        limit = int(request.form['lim'])
+        limit = int(request.form['lim']) + 1
 
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
@@ -1114,15 +1128,15 @@ def show_more_waiting_users():
 
             waiting_users = WaitingUser.query \
                 .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
-                .limit(request.form['lim'])
+                .limit(int(request.form['lim']) + 1)
 
         else:
             waiting_users = WaitingUser.query \
                 .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
-                .limit(request.form['lim'])
+                .limit(int(request.form['lim']) + 1)
     else:
         waiting_users = WaitingUser.query \
-            .order_by(WaitingUser.project_id).limit(request.form['lim'])
+            .order_by(WaitingUser.project_id).limit(int(request.form['lim']) + 1)
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
 
@@ -1134,11 +1148,11 @@ def sort_waiting_users():
     if request.form['sort_up'] == 'true':
         waiting_users = WaitingUser.query \
             .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
-            .limit(request.form['lim'])
+            .limit(int(request.form['lim']) + 1)
     else:
         waiting_users = WaitingUser.query \
             .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
-            .limit(request.form['lim'])
+            .limit(int(request.form['lim']) + 1)
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
 
@@ -1191,14 +1205,14 @@ def show_more_viewers():
 
             viewers = Viewer.query \
                 .order_by(Viewer.__dict__[request.form['parameter']].desc()) \
-                .limit(request.form['lim'])
+                .limit(int(request.form['lim']) + 1)
 
         else:
             viewers = Viewer.query \
                 .order_by(Viewer.__dict__[request.form['parameter']].asc()) \
-                .limit(request.form['lim'])
+                .limit(int(request.form['lim']) + 1)
     else:
         viewers = Viewer.query \
-            .order_by(Viewer.project_id).limit(request.form['lim'])
+            .order_by(Viewer.project_id).limit(int(request.form['lim']) + 1)
 
     return jsonify({'viewers': viewers_in_json(viewers)})
