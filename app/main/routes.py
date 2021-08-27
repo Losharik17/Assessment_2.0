@@ -26,7 +26,7 @@ def index():
     if current_user.is_authenticated:
         return redirects('base')
 
-    return render_template('base.html', auth=current_user.is_authenticated)
+    return render_template('base.html', auth=current_user.is_authenticated, back='')
 
 
 @bp.route('/download')
@@ -189,7 +189,7 @@ def user():
     parameters = Parameter.query.filter_by(project_number=user.project_number).all()
     return render_template('user_grades_table.html', title='Мои оценки',
                            grades=grades, user=user, project_number=user.project_number,
-                           ParName=parameters, user_id=current_user.id)
+                           ParName=parameters, user_id=current_user.id, back='')
 
 
 # ввод номера участника для перехода к выставлению оценки
@@ -199,14 +199,18 @@ def expert(project_number):
     if current_user.id <= 1000000:
         return redirects()
 
+
     if 1200000 < current_user.id < 1300000:
         user = Admin.query.filter_by(id=current_user.id).first()
         expert = Expert.query.filter_by(id=user.expert_id).first()
+        back = url_for('main.admin_settings', project_number=project_number)
     elif 1100000 < current_user.id < 1200000:
         user = Viewer.query.filter_by(id=current_user.id).first()
         expert = Expert.query.filter_by(id=user.expert_id).first()
+        back = url_for('main.viewer_settings', project_number=project_number)
     else:
         expert = Expert.query.filter_by(id=current_user.id).first()
+        back = None
 
     form = UserForm()
     if form.validate_on_submit():
@@ -219,7 +223,7 @@ def expert(project_number):
 
         return redirect(url_for('main.expert_grade', project_number=project_number,
                                 expert_id=current_user.id, user_id=user.id))
-    return render_template('expert.html', form=form, expert=expert)
+    return render_template('expert.html', form=form, expert=expert, project_number=project_number, back=back)
 
 
 # таблица оценок эксперта (для админа)
@@ -247,7 +251,8 @@ def expert_table_for_admin(project_number, expert_id):
 
     return render_template('expert_table_for_admin.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
-                           ParName=parameters)
+                           ParName=parameters,
+                           back=url_for('main.admin_experts_table', project_number=project_number))
 
 
 # таблица оценок эксперта (для наблюдателя)
@@ -275,7 +280,8 @@ def expert_table_for_viewer(project_number, expert_id):
 
     return render_template('expert_table_for_viewer.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
-                           ParName=parameters)
+                           ParName=parameters,
+                           back=url_for('main.viewer_experts_table', project_number=project_number))
 
 
 # выставление оценки участнику
@@ -328,6 +334,9 @@ def viewer():
     proj = []
     for viewer in Viewer.query.filter_by(organization=viewer.organization).all():
         proj += viewer.projects.all()
+
+    proj.sort(key=lambda Project: Project.start)
+    proj.reverse()
 
     return render_template('viewer_main.html', viewer=viewer, projects=proj, title='Проекты')
 
@@ -383,7 +392,6 @@ def viewer_settings(project_number):
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
 
-        # нужно добавить сохранение добавленных участников и экспертов
         if result.get('name') and result.get('start') and result.get('end'):
             setattr(project, 'name', result.get('name'))
             setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
@@ -395,7 +403,8 @@ def viewer_settings(project_number):
             flash('Что-то пошло не так', 'warning')
             return redirect(url_for('main.viewer_settings', project_number=project_number))
 
-    return render_template('viewer_settings.html', viewer=viewer, project=project, title='Настройки проекта')
+    return render_template('viewer_settings.html', viewer=viewer, project=project, title='Настройки проекта',
+                           back=url_for('main.viewer'))
 
 
 # таблица всех участников из проекта для наблюдателя
@@ -418,7 +427,7 @@ def viewer_users_table(project_number):
 
     return render_template('viewer_users_table.html', title='Участники', viewer=viewer, teams=teams,
                            ParName=parameters, project_number=project_number, regions=regions,
-                           project=project)
+                           project=project, back=url_for('main.viewer_settings', project_number=project_number))
 
 
 # таблица личных оценок участника (для наблюдателя)
@@ -446,7 +455,8 @@ def user_grades_table_for_viewer(project_number, user_id):
 
     return render_template('user_grades_table_for_viewer.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
-                           ParName=parameters, user_id=user_id, len=len(parameters))
+                           ParName=parameters, user_id=user_id, len=len(parameters),
+                           back=url_for('main.viewer_users_table', project_number=project_number))
 
 
 # табллца экспертов для наблюдателя
@@ -460,7 +470,8 @@ def viewer_experts_table(project_number):
     parameters = project.parameters.all()
 
     return render_template('viewer_experts_table.html', title='Эксперты', viewer=viewer,
-                           ParName=parameters, project_number=project_number, project=project)
+                           ParName=parameters, project_number=project_number, project=project,
+                           back=url_for('main.viewer_settings', project_number=project_number))
 
 
 # страница для создания нового проекта
@@ -560,7 +571,7 @@ def create_project():
             db.session.commit()
         return redirect(url_for('main.create_project'))
 
-    return render_template('create_project.html', title='Создание проекта')
+    return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
 
 
 # добавление участника
@@ -612,7 +623,8 @@ def add_new_user(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_user.html', title='Добавление участника')
+    return render_template('add_new_user.html', title='Добавление участника',
+                           back=url_for('main.viewer_settings', project_number=project_number))
 
 
 # добавление эксперта
@@ -658,7 +670,8 @@ def add_new_expert(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_expert.html', title='Добавление участника')
+    return render_template('add_new_expert.html', title='Добавление участника',
+                           back=url_for('main.viewer_settings', project_number=project_number))
 
 
 # главная страница админа
@@ -673,7 +686,7 @@ def admin():
 
 
 # страница со всеми проектами
-@bp.route('/admin_projects', methods=['GET', 'POST'])
+@bp.route('/admin/projects', methods=['GET', 'POST'])
 @login_required
 def admin_projects():
     if current_user.id <= 1200000:
@@ -681,7 +694,8 @@ def admin_projects():
     admin = Admin.query.filter_by(id=current_user.id).first()
     projects = Project.query.order_by(Project.start.desc()).all()
 
-    return render_template('admin_projects.html', admin=admin, projects=projects, title='Проекты')
+    return render_template('admin_projects.html', admin=admin, projects=projects, title='Проекты',
+                           back=url_for('main.admin'))
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
@@ -743,7 +757,8 @@ def admin_settings(project_number):
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.admin_settings', project_number=project_number))
 
-    return render_template('admin_settings.html', admin=admin, project=project)
+    return render_template('admin_settings.html', admin=admin, project=project,
+                           back=url_for('main.admin_projects'))
 
 
 # таблица всех участников из проекта для админа
@@ -766,7 +781,7 @@ def admin_users_table(project_number):
 
     return render_template('admin_users_table.html', title='Участники', admin=admin, teams=teams,
                            ParName=parameters, project_number=project_number, regions=regions,
-                           project=project)
+                           project=project, back=url_for('main.admin_settings', project_number=project_number))
 
 
 # таблица экспертов
@@ -780,7 +795,8 @@ def admin_experts_table(project_number):
     parameters = project.parameters.all()
 
     return render_template('admin_experts_table.html', title='Эксперты', admin=admin,
-                           ParName=parameters, project_number=project_number, project=project)
+                           ParName=parameters, project_number=project_number, project=project,
+                           back=url_for('main.admin_settings', project_number=project_number))
 
 
 # страница для выдачи ролей
@@ -792,7 +808,8 @@ def admin_waiting_users():
 
     waiting_users = WaitingUser.query.limit(15)
 
-    return render_template('admin_waiting_users.html', waiting_users=waiting_users)
+    return render_template('admin_waiting_users.html', waiting_users=waiting_users,
+                           back=url_for('main.admin'))
 
 
 @bp.route('/admin_viewers', methods=['GET', 'POST'])
@@ -803,7 +820,7 @@ def admin_viewers():
 
     viewers = Viewer.query.limit(10)
 
-    return render_template('admin_viewers.html', viewers=viewers)
+    return render_template('admin_viewers.html', viewers=viewers, back=url_for('main.admin'))
 
 
 # таблица личных оценок участника (для админа)
@@ -832,7 +849,8 @@ def user_grades_table_for_admin(project_number, user_id):
 
     return render_template('user_grades_table_for_admin.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
-                           ParName=parameters, user_id=user_id, len=len(parameters))
+                           ParName=parameters, user_id=user_id, len=len(parameters),
+                           back=url_for('main.admin_users_table', project_number=project_number))
 
 
 # сортировка таблицы участников или увелечение количества участников в таблице
