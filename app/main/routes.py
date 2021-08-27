@@ -472,87 +472,93 @@ def create_project():
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     lvl = 0
     delete_project = False
-    # try:
-    if request.method == 'POST':
-        result = request.form
+    try:
+        if request.method == 'POST':
+            result = request.form
 
-        if request.files['logo'] and request.files['users'] \
-                and request.files['experts'] and request.files.getlist("users_photo") \
-                and request.files.getlist("experts_photo") and result.get('start') \
-                and result.get('end') and result.get('name'):
+            if request.files['logo'] and request.files['users'] \
+                    and request.files['experts'] and request.files.getlist("users_photo") \
+                    and request.files.getlist("experts_photo") and result.get('start') \
+                    and result.get('end') and result.get('name'):
 
-            project = Project(viewer_id=current_user.id, name=result.get('name'))
-            db.session.add(project)
-            project = Project.query.all()[-1]
+                project = Project(viewer_id=current_user.id, name=result.get('name'))
+                db.session.add(project)
+                project = Project.query.all()[-1]
 
-            for i in range(int(result.get('quantity'))):
-                db.session.add(Parameter(name=result.get('name{}'.format(i)),
-                                         weight=result.get('weight{}'.format(i)),
-                                         project_number=project.number))
+                for i in range(int(result.get('quantity'))):
+                    db.session.add(Parameter(name=result.get('name{}'.format(i)),
+                                             weight=result.get('weight{}'.format(i)),
+                                             project_number=project.number))
 
-            start = result.get('start')
-            setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
-            end = result.get('end')
-            setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
-            db.session.commit()
-            delete_project = True
-            print(os.getcwd())
-            print(os.path)
-            os.chdir("app/static/images")
-            lvl += 3
-            if os.path.exists('{}'.format(project.number)):
-                shutil.rmtree('{}'.format(project.number))
-            os.mkdir('{}'.format(project.number))
-            os.chdir('{}'.format(project.number))
-            lvl += 1
+                start = result.get('start')
+                setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
+                end = result.get('end')
+                setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+                db.session.commit()
+                delete_project = True
+                print(os.getcwd())
+                print(os.path)
+                os.chdir("app/static/images")
+                lvl += 3
+                if os.path.exists('{}'.format(project.number)):
+                    shutil.rmtree('{}'.format(project.number))
+                os.mkdir('{}'.format(project.number))
+                os.chdir('{}'.format(project.number))
+                lvl += 1
 
-            logo = request.files['logo']
-            logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+                logo = request.files['logo']
+                logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
 
-            users = request.files['users']
-            users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
-            users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
-            excel_user(users.filename, project.number)
+                users = request.files['users']
+                users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
+                users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
+                excel_user(users.filename, project.number)
 
-            experts = request.files['experts']
-            experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
-            experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
-            excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
+                experts = request.files['experts']
+                experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
+                experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
+                excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
 
-            os.mkdir('users')
-            os.mkdir('experts')
-            users_photo = request.files.getlist("users_photo")
-            experts_photo = request.files.getlist("experts_photo")
-            os.chdir('users')
-            lvl += 1
-            for photo in users_photo:
-                photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
-                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
-            os.chdir('../experts')
+                os.mkdir('users')
+                os.mkdir('experts')
+                users_photo = request.files.getlist("users_photo")
+                experts_photo = request.files.getlist("experts_photo")
+                os.chdir('users')
+                lvl += 1
+                for photo in users_photo:
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
+                os.chdir('../experts')
 
-            for photo in experts_photo:
-                photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
-                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
+                for photo in experts_photo:
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
 
-            db.session.commit()
-            os.chdir('../../../../../')
-            lvl = 0
-            flash('Проекет создан', 'success')
-            return redirect(url_for('main.viewer', viewer_id=current_user.id))
-        else:
-            flash('Ошибка создания проекта. '
-                  'Пожалуйста проверьте, чтобы все поля были заполнены '
-                  'и удалите пустые критерии.', 'danger')
-            db.session.rollback()
-            return redirect(url_for('main.create_project', viewer_id=current_user.id))
-    '''except:
+                db.session.commit()
+                os.chdir('../../../../../')
+                lvl = 0
+                flash('Проекет создан', 'success')
+                return redirect(url_for('main.viewer', viewer_id=current_user.id))
+            else:
+                flash('Ошибка создания проекта. '
+                      'Пожалуйста проверьте, чтобы все поля были заполнены '
+                      'и удалите пустые критерии.', 'danger')
+                db.session.rollback()
+                return redirect(url_for('main.create_project', viewer_id=current_user.id))
+    except:
         for i in range(lvl):
             os.chdir('../')
         flash('Ошибка создания проекта. '
                  'Пожалуйста проверьте, чтобы все поля были заполнены '
                  'и удалите пустые критерии.', 'danger')
         db.session.rollback()
-        return redirect(url_for('main.create_project'))'''
+        if delete_project:
+            project = Project(viewer_id=current_user.id, name=request.form.get('name'))
+            for parameter in project.parameters.all():
+                db.session.delete(parameter)
+            db.session.delete(project)
+            db.session.commit()
+        return redirect(url_for('main.create_project'))
 
     return render_template('create_project.html', title='Создание проекта')
 
@@ -688,7 +694,7 @@ def admin_settings(project_number):
     project = Project.query.filter_by(number=project_number).first()
 
     if request.method == 'POST':
-        # try:
+        #try:
         result = request.form
 
         if request.files['users'] and request.files['users_photo']:
