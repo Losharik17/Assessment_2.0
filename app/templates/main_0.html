@@ -56,15 +56,12 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
-
-    <div id="notification" class="kdnotification main">
-        <div class="kdnotification-title"></div>
-    </div>
-
 </div>
 
-<div class="button_back" onclick="history.back();"><span>Назад</span></div>
+{% if back is defined and back != None %}
+    <div id="button_back" class="button_back" onclick="location.href='{{ back }}'"><span>Назад</span></div>
+{% endif %}
+
 
 <script type="text/javascript">
     setTimeout(() => {

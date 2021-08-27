@@ -22,7 +22,7 @@
         <div class="block">
             <div class="block_1">
                 <div class="input__wrapper">
-                    <div class="button" onclick="location.href='{{ url_for('main.admin_users_table',
+                    <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
             project_number=project.number) }}'">
                         <span class="input__file_button_text">Участники</span>
                     </div><br>
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="input__wrapper">
-                    <div class="button" onclick="location.href='{{ url_for('main.admin_experts_table',
+                    <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
             project_number=project.number) }}'">
                         <span class="input__file_button_text">Эксперты</span>
                     </div>
