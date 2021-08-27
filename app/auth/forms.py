@@ -15,7 +15,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     organization = StringField('Название Организации')
-    #avatar = FileField('Фото')
+    # avatar = FileField('Фото')
     phone_number = StringField('Номер Телефона')
     email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
     password = PasswordField('Пароль', validators=[DataRequired()])
@@ -32,7 +32,7 @@ class RegistrationForm(FlaskForm):
             if user is not None:
                 raise ValidationError('Данная почта уже используется другим пользователем.')
 
-    #def validate_phone_number(self, phone_number):
+    # def validate_phone_number(self, phone_number):
     #    users = []
     #    users.append(Admin.query.filter_by(phone_number=phone_number.data).first())
     #    users.append(Viewer.query.filter_by(phone_number=phone_number.data).first())
@@ -41,6 +41,41 @@ class RegistrationForm(FlaskForm):
     #    for user in users:
     #        if user is not None:
     #            raise ValidationError('Данный номер уже используется другим пользователем.')
+
+
+class UserRegistrationForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    birthday = StringField('Дата Рождения')
+    team = StringField('Команда')
+    region = StringField('Регион')
+    avatar = FileField('Фото')
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
+    submit = SubmitField('Зарегистрироваться')
+
+    def validate_email(self, email):
+        users = []
+        users.append(Admin.query.filter_by(email=email.data).first())
+        users.append(Viewer.query.filter_by(email=email.data).first())
+        users.append(WaitingUser.query.filter_by(email=email.data).first())
+        for user in users:
+            if user is not None:
+                raise ValidationError('Данная почта уже используется другим пользователем.')
+
+
+class ExpertRegistrationForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    avatar = FileField('Фото')
+    email = StringField('Email', validators=[DataRequired(), Email("Некорректный email")])
+    submit = SubmitField('Зарегистрироваться')
+
+    def validate_email(self, email):
+        users = []
+        users.append(Admin.query.filter_by(email=email.data).first())
+        users.append(Viewer.query.filter_by(email=email.data).first())
+        users.append(WaitingUser.query.filter_by(email=email.data).first())
+        for user in users:
+            if user is not None:
+                raise ValidationError('Данная почта уже используется другим пользователем.')
 
 
 class ResetPasswordRequestForm(FlaskForm):
