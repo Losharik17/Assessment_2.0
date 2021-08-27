@@ -630,9 +630,14 @@ def add_new_user(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_user.html', title='Добавление участника', form=form,
-                           project_number=project_number,
-                           back=url_for('main.viewer_settings', project_number=project_number))
+    if (current_user.id <= 1200000):
+        return render_template('add_new_user.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.viewer_settings', project_number=project_number))
+    else:
+        return render_template('add_new_user.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.admin_settings', project_number=project_number))
 
 
 # добавление эксперта
@@ -675,7 +680,6 @@ def add_new_expert(project_number):
                     raise
 
                 db.session.commit()
-
                 flash('Эксперт добавлен', 'success')
                 if (current_user.id <= 1200000):
                     return redirect(url_for('main.viewer_settings', project_number=project_number))
@@ -683,9 +687,14 @@ def add_new_expert(project_number):
                     return redirect(url_for('main.admin_settings', project_number=project_number))
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_expert.html', title='Добавление участника', form=form,
-                           project_number=project_number,
-                           back=url_for('main.viewer_settings', project_number=project_number))
+    if (current_user.id <= 1200000):
+        return render_template('add_new_expert.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.viewer_settings', project_number=project_number))
+    else:
+        return render_template('add_new_expert.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.admin_settings', project_number=project_number))
 
 
 # главная страница админа

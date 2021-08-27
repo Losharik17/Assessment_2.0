@@ -17,7 +17,8 @@
                         <h2  style="font-weight: normal; text-align:center">
                             {{ project.name }}
                         </h2>
-                        <h3 style="font-weight: normal">
+                        <h3 style="font-weight: normal; text-align: center">
+                            {{ project.viewer.organization }}<br>
                             {{ project.viewer.username }}
                         </h3>
                     </div>
@@ -42,15 +43,16 @@
             if (date.getFullYear() >= +project_date[2] &&
                 date.getMonth() >= +project_date[1] - 1 &&
                 date.getDate() > +project_date[0]) {
-                element.append('<span style="color:crimson">Мероприятие завершено</span>')
-                console.log(123)
+                element.append('<div style="text-align: center; color:crimson">Проект завершён</div>')
             }
         }
 
         $('.data').each(function (index, element) {
             end_project($(element))
         })
-        $('.profil_image').css('max-height', $('.profil_image').parent().parent().outerHeight() * 0.9)
+        $('.profil_image').each(function (index, element) {
+            $(element).css('max-height', document.documentElement.clientHeight * 0.2 + 'px')
+        })
     </script>
 
 {% endblock %}
