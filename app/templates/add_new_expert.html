@@ -8,40 +8,29 @@
     <div class="content">
 
         <h1>Добавление пользователя</h1>
-        <form action="" method="post" enctype="multipart/form-data" class="form">
-            {{ form.hidden_tag() }}
+        <form action="{{ url_for('main.add_new_expert', project_number=project_number) }}"
+              method="post" enctype="multipart/form-data" class="form">
             <div class="form_group">
-                {{ form.username.label(class_='form_label') }}
-                {{ form.username(size=32, class_='form_input') }}
-                {% for error in form.username.errors %}
-                    <span style="color: red;">{{ error }}</span>
-                {% endfor %}
+                <label for="username" class="form_label">ФИО</label>
+                <input type="text" name="username" id="username" class="form_input">
             </div>
             <div  class="form_group">
-                {{ form.email.label(class_='form_label') }}
-                {{ form.email(size=32, class_='form_input') }}
-                {% for error in form.email.errors %}
-                    <span style="color: red;">{{ error }}</span>
-                {% endfor %}
+                <label for="email" class="form_label">Email</label>
+                <input type="text" name="email" id="email" class="form_input">
             </div>
             <div  class="form_group">
-                {{ form.weight.label(class_='form_label') }}
-                {{ form.weight(size=32, class_='form_input') }}
-                {% for error in form.weight.errors %}
-                    <span style="color: red;">{{ error }}</span>
-                {% endfor %}
+                <label for="weight" class="form_label">Вес</label>
+                <input value="1.0" step="0.1" max="2.0" min="0.1" type="number" name="weight" id="weight" class="form_input">
             </div>
 
             <div  class="form_group">
-                {{ form.avatar() }}
-                {% for error in form.avatar.errors %}
-                    <span style="color: red;">{{ error }}</span>
-                {% endfor %}
+                <input name="photo" type="file" id="photo">
+
             </div>
 
-            <div class="submit">{{ form.submit() }}</div>
+            <input type="submit" class="submit">
         </form>
     </div>
 
-    <script src="{{ url_for('static', filename='auth/register.js') }}"></script>
+    <script src="{{ url_for('static', filename='auth/add_new.js') }}"></script>
 {% endblock %}

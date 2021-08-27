@@ -45,13 +45,12 @@ class UserRegistrationForm(FlaskForm):
     birthday = StringField('Дата Рождения')
     team = StringField('Команда')
     region = StringField('Регион')
-    avatar = FileField('Фото')
     email = StringField('Email', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
 
 class ExpertRegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
-    avatar = FileField('Фото')
     email = StringField('Email', validators=[DataRequired()])
+    weight = StringField('Вес')
     submit = SubmitField('Зарегистрироваться')
