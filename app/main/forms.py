@@ -53,5 +53,6 @@ class UserRegistrationForm(FlaskForm):
 class ExpertRegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     avatar = FileField('Фото')
+    weight = IntegerField('Вес')
     email = StringField('Email', validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')

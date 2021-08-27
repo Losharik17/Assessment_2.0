@@ -14,7 +14,6 @@ from PIL import Image
 from datetime import datetime, date
 from app.models import Project
 
-
 engine = create_engine("sqlite:///T_park.db")
 
 
@@ -46,10 +45,8 @@ def users_in_json(users):
 
 
 def viewers_in_json(viewers):
-
     string = '['
     for viewer in viewers:
-
         string += '{' + '"id":{0},"username":"{1}","phone_number":"{2}","expert_id":"{3}",' \
                         '"email":"{4}"' \
             .format(str(viewer.id), str(viewer.username), str(viewer.phone_number),
@@ -79,8 +76,6 @@ def experts_in_json(experts):
 
 
 def grades_in_json(grades, lenght):
-
-
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
@@ -156,7 +151,7 @@ def excel_user(filename, number):
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
-    prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
+    prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
     if last_user != None:
@@ -238,7 +233,7 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-def delete_function(hash_date): #Функция для удаления старых данных
+def delete_function(hash_date):  # Функция для удаления старых данных
     mnth = hash_date
     a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", mnth)
     a = a.fetchall()

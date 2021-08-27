@@ -26,6 +26,34 @@ $('#username').focus(function () {
     blu(this, $('label[for=username]'))
 })
 
+$('#birthday').addClass('form_input')
+$('#birthday').focus(function () {
+    foc(this, $('label[for=birthday]'))
+}).blur(function () {
+    blu(this, $('label[for=birthday]'))
+})
+
+$('#team').addClass('form_input')
+$('#team').focus(function () {
+    foc(this, $('label[for=team]'))
+}).blur(function () {
+    blu(this, $('label[for=team]'))
+})
+
+$('#region').addClass('form_input')
+$('#region').focus(function () {
+    foc(this, $('label[for=region]'))
+}).blur(function () {
+    blu(this, $('label[for=region]'))
+})
+
+$('#weight').addClass('form_input')
+$('#weight').focus(function () {
+    foc(this, $('label[for=weight]'))
+}).blur(function () {
+    blu(this, $('label[for=weight]'))
+})
+
 $('#organization').addClass('form_input')
 $('#organization').focus(function () {
     foc(this, $('label[for=organization]'))
