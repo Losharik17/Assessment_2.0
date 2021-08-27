@@ -134,6 +134,12 @@ function show_more(new_field) {
             else
                 $(`#number_str${i}`).append(`<td id="email${i}">${waiting_users[i]['email']}</td>`)
 
+            if (waiting_users[i]['organization'] === 'None')
+                $(`#number_str${i}`).append(`<td id="organization${i}">–</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="organization${i}">${waiting_users[i]['organization']}</td>`)
+
+
             if (waiting_users[i]['phone_number'] === 'None')
                 $(`#number_str${i}`).append(`<td id="phone_number${i}">–</td>`)
             else
@@ -190,6 +196,7 @@ function sort(parameter) {
                 $(`#username${i}`).html(waiting_users[i]['username'] ? waiting_users[i]['username'] : '–');
                 $(`#email${i}`).html(waiting_users[i]['email'] ? waiting_users[i]['email'] : '–')
                 $(`#registration_date${i}`).html(waiting_users[i]['registration_date'] ? waiting_users[i]['registration_date'] : '–')
+                $(`#organization${i}`).html(waiting_users[i]['organization'] ? waiting_users[i]['organization'] : '–')
                 $(`#phone_number${i}`).html(waiting_users[i]['phone_number'] ? waiting_users[i]['phone_number'] : '–')
 
                 $(`#buttons${i}`).html(`<span id="admin${i}" onclick="give_role(${waiting_users[i]['id']},  ${i},  'Администратор')">` +

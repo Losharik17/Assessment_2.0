@@ -102,15 +102,18 @@ def grades_in_json(grades, lenght):
 
 
 def waiting_users_in_json(waiting_users):
+    if not waiting_users:
+        return []
     string = '['
     for waiting_user in waiting_users:
         string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}",' \
-                        '"phone_number":"{4}"' \
+                        '"phone_number":"{4}", "organization":{5}' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
                     str(waiting_user.username),
-                    str(waiting_user.phone_number))
+                    str(waiting_user.phone_number),
+                    str(waiting_user.organization))
         string += '},'
     string = string[:len(string) - 1] + ']'
 
