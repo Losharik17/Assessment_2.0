@@ -633,6 +633,7 @@ def add_new_user(project_number):
 @login_required
 def add_new_expert(project_number):
     form = ExpertRegistrationForm()
+
     if request.method == 'POST':
         result = request.form
 
