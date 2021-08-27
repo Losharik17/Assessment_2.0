@@ -31,12 +31,6 @@ $('#region').focus(function () {
     blu(this, $('label[for=region]'))
 })
 
-$('#weight').focus(function () {
-    foc(this, $('label[for=weight]'))
-}).blur(function () {
-    blu(this, $('label[for=weight]'))
-})
-
 
 
 function foc(el, label) {

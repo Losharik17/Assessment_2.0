@@ -85,6 +85,15 @@ h2 {
     transition: 0.3s;
 }
 
+.form_label_weight {
+    position: absolute;
+    z-index: -1;
+    color: #9e9e9e;
+    transition: 0.3s;
+    top: -18px;
+    font-size: 12px;
+}
+
 @media screen {
     .form_button:active {
         box-shadow: 0 2px 3px #0044ff;
