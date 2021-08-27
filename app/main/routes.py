@@ -4,7 +4,7 @@ import password as password
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EmptyForm, GradeForm, UserForm
+from app.main.forms import EmptyForm, GradeForm, UserForm, UserRegistrationForm, ExpertRegistrationForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
@@ -561,6 +561,15 @@ def create_project():
 @bp.route('/add_new_user/<project_number>', methods=['GET', 'POST'])
 @login_required
 def add_new_user(project_number):
+    form = UserRegistrationForm()
+
+    if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data) is None or \
+                Expert.query.filter_by(email=form.email.data) is None or \
+                Admin.query.filter_by(email=form.email.data) is None or \
+                Viewer.query.filter_by(email=form.email.data) is None:
+            flash('Данная почта уже используется одним из пользователей.\n'
+                  'Пожалуйста изпользуйте другой email адрес.', 'warning')
     if request.method == 'POST':
         result = request.form
 
@@ -606,13 +615,22 @@ def add_new_user(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_user.html', title='Добавление участника')
+    return render_template('add_new_user.html', title='Добавление участника', form=form)
 
 
 # добавление эксперта
 @bp.route('/add_new_expert/<project_number>', methods=['GET', 'POST'])
 @login_required
 def add_new_expert(project_number):
+    form = ExpertRegistrationForm()
+    if form.validate_on_submit():
+        if User.query.filter_by(email=form.email.data) is None or \
+                Expert.query.filter_by(email=form.email.data) is None or \
+                Admin.query.filter_by(email=form.email.data) is None or \
+                Viewer.query.filter_by(email=form.email.data) is None:
+            flash('Данная почта уже используется одним из пользователей.\n'
+                  'Пожалуйста изпользуйте другой email адрес.', 'warning')
+
     if request.method == 'POST':
         result = request.form
 
@@ -652,7 +670,7 @@ def add_new_expert(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_expert.html', title='Добавление участника')
+    return render_template('add_new_expert.html', title='Добавление участника', form=form)
 
 
 # главная страница админа

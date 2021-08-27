@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from sqlalchemy import Integer
-from wtforms import StringField, SubmitField, TextAreaField, IntegerField, RadioField
+from wtforms import StringField, SubmitField, TextAreaField, IntegerField, RadioField, FileField
 from wtforms.validators import ValidationError, DataRequired, Length
 
 from app.models import User
@@ -39,3 +39,19 @@ class UserForm(FlaskForm):
     user_id = IntegerField('Номер участника')
     submit = SubmitField('Продолжить')
 
+
+class UserRegistrationForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    birthday = StringField('Дата Рождения')
+    team = StringField('Команда')
+    region = StringField('Регион')
+    avatar = FileField('Фото')
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Зарегистрироваться')
+
+
+class ExpertRegistrationForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    avatar = FileField('Фото')
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Зарегистрироваться')
