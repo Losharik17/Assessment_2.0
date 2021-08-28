@@ -225,10 +225,6 @@ margin: 0 0 15px;
 
 }
 
-@media(hover: hover) {
-
-}
-
 .input__file_button_text {
     width: 100%;
     font: 600 16px Roboto;

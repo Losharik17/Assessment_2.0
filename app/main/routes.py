@@ -1065,6 +1065,8 @@ def give_role():
         else:
             return jsonify({'result': 'error'})
 
+
+
         db.session.add(user)
         db.session.add(expert)
         db.session.delete(waiting_user)
@@ -1098,8 +1100,12 @@ def delete_user():
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':
         user = Viewer.query.filter_by(id=request.form['id']).first()
+        expert = Expert.query.filter_by(id=user.expert.id).first()
+        db.session.delete(expert)
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
+        expert = Expert.query.filter_by(id=user.expert.id).first()
+        db.session.delete(expert)
     else:
         return jsonify({'result': 'User not found'})
 
@@ -1129,7 +1135,9 @@ def delete_project():
 
 
 # увелечение количества отображаемых пользователей в таблице раздачи ролей
+# сортировка таблицы зарегистрированных пользователей
 @bp.route('/show_more_waiting_users', methods=['POST'])
+@bp.route('/sort_waiting_users', methods=['POST'])
 @login_required
 def show_more_waiting_users():
     if request.form['parameter'] != '':
@@ -1146,22 +1154,6 @@ def show_more_waiting_users():
     else:
         waiting_users = WaitingUser.query \
             .order_by(WaitingUser.project_id).limit(int(request.form['lim']) + 1)
-
-    return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
-
-
-# сортировка таблицы зарегистрированных пользователей
-@bp.route('/sort_waiting_users', methods=['POST'])
-@login_required
-def sort_waiting_users():
-    if request.form['sort_up'] == 'true':
-        waiting_users = WaitingUser.query \
-            .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
-            .limit(int(request.form['lim']) + 1)
-    else:
-        waiting_users = WaitingUser.query \
-            .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
-            .limit(int(request.form['lim']) + 1)
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
 

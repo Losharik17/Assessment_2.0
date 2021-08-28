@@ -19,7 +19,7 @@ engine = create_engine("sqlite:///T_park.db")
 
 def users_in_json(users):
     if not users:
-        return []
+        return '[]'
     lenght = len(Project.query.filter_by(number=users[0].project_number).first()
                  .parameters.all())
 
@@ -48,7 +48,7 @@ def users_in_json(users):
 
 def viewers_in_json(viewers):
     if not viewers:
-        return []
+        return '[]'
 
     string = '['
     for viewer in viewers:
@@ -65,7 +65,7 @@ def viewers_in_json(viewers):
 
 def experts_in_json(experts):
     if not experts:
-        return []
+        return '[]'
     string = '['
 
     for expert in experts:
@@ -84,7 +84,7 @@ def experts_in_json(experts):
 
 def grades_in_json(grades, lenght):
     if not grades:
-        return []
+        return '[]'
 
     string = '['
     for grade in grades:
@@ -108,11 +108,11 @@ def grades_in_json(grades, lenght):
 
 def waiting_users_in_json(waiting_users):
     if not waiting_users:
-        return []
+        return '[]'
     string = '['
     for waiting_user in waiting_users:
         string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}",' \
-                        '"phone_number":"{4}", "organization":{5}' \
+                        '"phone_number":"{4}", "organization":"{5}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),

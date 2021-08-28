@@ -193,11 +193,11 @@ function sort(parameter) {
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#username${i}`).html(waiting_users[i]['username'] ? waiting_users[i]['username'] : '–');
-                $(`#email${i}`).html(waiting_users[i]['email'] ? waiting_users[i]['email'] : '–')
-                $(`#registration_date${i}`).html(waiting_users[i]['registration_date'] ? waiting_users[i]['registration_date'] : '–')
-                $(`#organization${i}`).html(waiting_users[i]['organization'] ? waiting_users[i]['organization'] : '–')
-                $(`#phone_number${i}`).html(waiting_users[i]['phone_number'] ? waiting_users[i]['phone_number'] : '–')
+                $(`#username${i}`).html(waiting_users[i]['username'] !== 'None' ? waiting_users[i]['username'] : '–');
+                $(`#email${i}`).html(waiting_users[i]['email'] !== 'None' ? waiting_users[i]['email'] : '–')
+                $(`#registration_date${i}`).html(waiting_users[i]['registration_date'] !== 'None' ? waiting_users[i]['registration_date'] : '–')
+                $(`#organization${i}`).html(waiting_users[i]['organization'] !== 'None' ? waiting_users[i]['organization'] : '–')
+                $(`#phone_number${i}`).html(waiting_users[i]['phone_number'] !== 'None' ? waiting_users[i]['phone_number'] : '–')
 
                 $(`#buttons${i}`).html(`<span id="admin${i}" onclick="give_role(${waiting_users[i]['id']},  ${i},  'Администратор')">` +
                     `<input id="a${i}" type="button" value="Администратор" class="btn"></span>` +

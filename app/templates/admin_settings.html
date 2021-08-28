@@ -88,7 +88,7 @@
         <div class="block_3">
 
             <div class="input__wrapper">
-                <div class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
+                <div id="download" class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
                     <span class="input__file_button_text">Скачать Отчёт</span>
                 </div>
             </div>
