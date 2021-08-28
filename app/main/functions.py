@@ -273,25 +273,6 @@ def delete_timer_X():
     shed.start()
 
 
-t = 0
-y = 9
-x = 2021
-z = 18
-f = open('text.txt', 'w')
-# Алгоритм преобразования сроки в дату
-# x = f
-# if x < t:
-#    f = t
-f.close()
-hash_date = date(x, y, z)
-
-
-def delete_function_X():
-    a = date.today()
-    if a >= hash_date:
-        print("<FUCK>")
-
-
 def redirects(arg=None):
     if current_user.is_anonymous:
         flash('Авторизируйтесь для получения доступа к странице', 'warning')
