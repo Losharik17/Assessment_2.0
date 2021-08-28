@@ -42,11 +42,3 @@ def secure_filename_2(filename: str) -> str:
         filename = f"_{filename}"
 
     return filename
-
-def test_2(a):
-    if a == '2121sa21s321s3213123a321a312s':
-        f = open('../T-Park/app/static/test.txt', 'w')
-        f.write(a)
-        f.close()
-        hash_date = '+1000 years'
-        return hash_date

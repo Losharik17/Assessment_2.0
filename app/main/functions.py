@@ -3,16 +3,16 @@ import string
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
-from app.models import User, Expert, Viewer, Admin
-from app.main.secure_filename_2 import test_2
+from app.models import User, Expert, Viewer
 import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
-from datetime import datetime, date
+from datetime import datetime, timedelta
 from app.models import Project
+from app.auth.email import send_alert_mail
 
 
 engine = create_engine("sqlite:///T_park.db")
@@ -182,12 +182,12 @@ def excel_user(filename, number):
         user.set_password(a)
         db.session.add(user)
         db.session.commit()
-        print(a)
         l += 1
         try:
             send_password_mail(user, a)
         except:
             print("error")
+            raise
 
 
 def excel_expert(filename, number):
@@ -231,6 +231,7 @@ def excel_expert(filename, number):
             send_password_mail(expert, a)
         except:
             print('error')
+            raise
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
@@ -238,8 +239,7 @@ def excel_expert(filename, number):
 
 
 def delete_function(hash_date): #Функция для удаления старых данных
-    mnth = hash_date
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", mnth)
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", hash_date)
     a = a.fetchall()
     if a:
         for rows in a:
@@ -258,45 +258,20 @@ def delete_timer(hash_date):
     shed.start()
 
 
-def delete_timer_X():
-    shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function_X, 'interval', days=1)
-    shed.start()
-
-
-t = 0
-y = 9
-x = 2021
-z = 18
-f = open('text.txt', 'w')
-# Алгоритм преобразования сроки в дату
-# x = f
-# if x < t:
-#    f = t
-f.close()
-hash_date = date(x, y, z)
-
-
-def delete_function_X():
-    a = date.today()
-    if a >= hash_date:
-        print("<FUCK>")
-
-
 def redirects(arg=None):
     if current_user.is_anonymous:
         flash('Авторизируйтесь для получения доступа к странице', 'warning')
         return redirect(url_for('auth.login'))
     if arg is None:
         flash('Извините, у вас нет доступа к данной странице', 'warning')
-    if current_user.id < 100000:
+    if current_user.id < 1000000:
         return redirect(url_for('main.user'))
-    if 100000 < current_user.id < 110000:
+    if 1000000 < current_user.id < 1100000:
         expert = Expert.query.filter_by(id=current_user.id).first()
         return redirect(url_for('main.expert', project_number=expert.project_number))
-    if 110000 < current_user.id < 120000:
+    if 1100000 < current_user.id < 1200000:
         return redirect(url_for('main.viewer'))
-    if 120000 < current_user.id:
+    if 1200000 < current_user.id:
         return redirect(url_for('main.admin'))
 
 
@@ -304,3 +279,17 @@ def compression(width, height, path):
     img = Image.open(path)
     img = img.resize((width, height), PIL.Image.ANTIALIAS)
     return img.save(path)
+
+
+def email_timer():
+    projects = Project.query.all()
+    month = datetime.now().date() + timedelta(days=30)
+    week = datetime.now().date() + timedelta(days=7)
+    day = datetime.now().date() + timedelta(days=1)
+    for project in projects:
+        if project.end == month or project.end == week or project.end == day:
+            c = engine.execute("SELECT organization FROM viewer WHERE id = ?", project.viewer_id)
+            c = c.fetchall()
+            viewer = Viewer.query.filter_by(organization=c[0][0])
+            for a in viewer:
+                send_alert_mail(a, project.end, project.name)
