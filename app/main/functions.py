@@ -3,16 +3,16 @@ import string
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
-from app.models import User, Expert, Viewer, Admin
-from app.main.secure_filename_2 import test_2
+from app.models import User, Expert, Viewer
 import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
-from datetime import datetime, date
+from datetime import datetime, timedelta
 from app.models import Project
+from app.auth.email import send_alert_mail
 
 engine = create_engine("sqlite:///T_park.db")
 
@@ -246,9 +246,9 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-def delete_function(hash_date):  # Функция для удаления старых данных
-    mnth = hash_date
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", mnth)
+
+def delete_function(hash_date): #Функция для удаления старых данных
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", hash_date)
     a = a.fetchall()
     if a:
         for rows in a:
@@ -264,12 +264,6 @@ def delete_function(hash_date):  # Функция для удаления ста
 def delete_timer(hash_date):
     shed = BackgroundScheduler(daemon=True)
     shed.add_job(delete_function, 'interval', days=1, args=[hash_date])
-    shed.start()
-
-
-def delete_timer_X():
-    shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function_X, 'interval', days=1)
     shed.start()
 
 
@@ -294,3 +288,17 @@ def compression(width, height, path):
     img = Image.open(path)
     img = img.resize((width, height), PIL.Image.ANTIALIAS)
     return img.save(path)
+
+
+def email_timer():
+    projects = Project.query.all()
+    month = datetime.now().date() + timedelta(days=30)
+    week = datetime.now().date() + timedelta(days=7)
+    day = datetime.now().date() + timedelta(days=1)
+    for project in projects:
+        if project.end == month or project.end == week or project.end == day:
+            c = engine.execute("SELECT organization FROM viewer WHERE id = ?", project.viewer_id)
+            c = c.fetchall()
+            viewer = Viewer.query.filter_by(organization=c[0][0])
+            for a in viewer:
+                send_alert_mail(a, project.end, project.name)

@@ -1065,8 +1065,6 @@ def give_role():
         else:
             return jsonify({'result': 'error'})
 
-
-
         db.session.add(user)
         db.session.add(expert)
         db.session.delete(waiting_user)
