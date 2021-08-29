@@ -1048,7 +1048,11 @@ def give_role():
         waiting_user = WaitingUser.query.filter_by(id=request.form['id']).first()
         expert = Expert(username=waiting_user.username, email=waiting_user.email,
                         password_hash=waiting_user.password_hash)
+        db.session.add(expert)
+        db.session.commit()
 
+        expert = Expert.query.filter_by(username=waiting_user.username, email=waiting_user.email).first()
+        setattr(expert, 'project_id', expert.id)
         if request.form['role'] == 'Администратор':
             user = Admin(username=waiting_user.username, email=waiting_user.email,
                          password_hash=waiting_user.password_hash,
@@ -1066,7 +1070,6 @@ def give_role():
             return jsonify({'result': 'error'})
 
         db.session.add(user)
-        db.session.add(expert)
         db.session.delete(waiting_user)
         db.session.commit()
 
@@ -1098,12 +1101,14 @@ def delete_user():
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':
         user = Viewer.query.filter_by(id=request.form['id']).first()
-        expert = Expert.query.filter_by(id=user.expert.id).first()
-        db.session.delete(expert)
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+        if expert:
+            db.session.delete(expert)
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
-        expert = Expert.query.filter_by(id=user.expert.id).first()
-        db.session.delete(expert)
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+        if expert:
+            db.session.delete(expert)
     else:
         return jsonify({'result': 'User not found'})
 
