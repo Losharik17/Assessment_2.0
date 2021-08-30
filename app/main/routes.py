@@ -132,7 +132,7 @@ def export_excel(project_number):
     df2 = df2.reindex(columns=[names[0], names[4], names[1], names[2], names[3]])
     df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта'}, inplace=True)
 
-    filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
+    filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
 
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
@@ -388,7 +388,8 @@ def viewer_settings(project_number):
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
             path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
-            os.remove(path)
+            if path:
+                os.remove(path)
             logo = request.files['logo']
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
@@ -482,10 +483,11 @@ def create_project():
     if current_user.id <= 1100000 or current_user.id > 1200000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
-    lvl = 0
-    delete_project = False
+
     if request.method == 'POST':
         result = request.form
+        lvl = 0
+        delete_project = False
         try:
             if request.files['logo'] and request.files['users'] \
                     and request.files['experts'] and request.files.getlist("users_photo") \
@@ -564,7 +566,7 @@ def create_project():
                   'и удалите пустые критерии.', 'danger')
             db.session.rollback()
             if delete_project:
-                project = Project(viewer_id=current_user.id, name=request.form.get('name'))
+                project = Project.query.all()[-1]
                 for parameter in project.parameters.all():
                     db.session.delete(parameter)
                 db.session.delete(project)
@@ -763,7 +765,8 @@ def admin_settings(project_number):
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
             path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
-            os.remove(path)
+            if path:
+                os.remove(path)
             logo = request.files['logo']
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
