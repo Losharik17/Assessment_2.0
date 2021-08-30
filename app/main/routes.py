@@ -198,7 +198,6 @@ def expert(project_number):
     if current_user.id <= 1000000:
         return redirects()
 
-
     if 1200000 < current_user.id < 1300000:
         user = Admin.query.filter_by(id=current_user.id).first()
         expert = Expert.query.filter_by(id=user.expert_id).first()
@@ -334,8 +333,11 @@ def viewer():
     for viewer in Viewer.query.filter_by(organization=viewer.organization).all():
         proj += viewer.projects.all()
 
-    proj.sort(key=lambda Project: Project.start)
-    proj.reverse()
+    try:
+        proj.sort(key=lambda Project: Project.start)
+        proj.reverse()
+    except:
+        pass
 
     return render_template('viewer_main.html', viewer=viewer, projects=proj, title='Проекты')
 
@@ -482,10 +484,9 @@ def create_project():
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     lvl = 0
     delete_project = False
-    try:
-        if request.method == 'POST':
-            result = request.form
-
+    if request.method == 'POST':
+        result = request.form
+        try:
             if request.files['logo'] and request.files['users'] \
                     and request.files['experts'] and request.files.getlist("users_photo") \
                     and request.files.getlist("experts_photo") and result.get('start') \
@@ -493,6 +494,8 @@ def create_project():
 
                 project = Project(viewer_id=current_user.id, name=result.get('name'))
                 db.session.add(project)
+                db.session.commit()
+                delete_project = True
                 project = Project.query.all()[-1]
 
                 for i in range(int(result.get('quantity'))):
@@ -505,9 +508,7 @@ def create_project():
                 end = result.get('end')
                 setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
                 db.session.commit()
-                delete_project = True
-                print(os.getcwd())
-                print(os.path)
+
                 os.chdir("app/static/images")
                 lvl += 3
                 if os.path.exists('{}'.format(project.number)):
@@ -555,20 +556,21 @@ def create_project():
                       'и удалите пустые критерии.', 'danger')
                 db.session.rollback()
                 return redirect(url_for('main.create_project', viewer_id=current_user.id))
-    except:
-        for i in range(lvl):
-            os.chdir('../')
-        flash('Ошибка создания проекта. '
-                 'Пожалуйста проверьте, чтобы все поля были заполнены '
-                 'и удалите пустые критерии.', 'danger')
-        db.session.rollback()
-        if delete_project:
-            project = Project(viewer_id=current_user.id, name=request.form.get('name'))
-            for parameter in project.parameters.all():
-                db.session.delete(parameter)
-            db.session.delete(project)
-            db.session.commit()
-        return redirect(url_for('main.create_project'))
+        except:
+            for i in range(lvl):
+                os.chdir('../')
+            flash('Ошибка создания проекта. '
+                  'Пожалуйста проверьте, чтобы все поля были заполнены '
+                  'и удалите пустые критерии.', 'danger')
+            db.session.rollback()
+            if delete_project:
+                project = Project(viewer_id=current_user.id, name=request.form.get('name'))
+                for parameter in project.parameters.all():
+                    db.session.delete(parameter)
+                db.session.delete(project)
+                db.session.commit()
+            return redirect(url_for('main.create_project'))
+
 
     return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
 
@@ -731,7 +733,7 @@ def admin_settings(project_number):
     project = Project.query.filter_by(number=project_number).first()
 
     if request.method == 'POST':
-        #try:
+        # try:
         result = request.form
 
         if request.files['users'] and request.files['users_photo']:
