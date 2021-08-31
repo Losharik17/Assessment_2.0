@@ -49,7 +49,7 @@
     display: block;
     transition: 0.5s;
     position: absolute;
-    background: #adadaf;
+    background: #BFE2FF;
     content: attr(data-back);
     transform: translateY(-50%) rotateX(90deg);
 }
@@ -57,13 +57,13 @@
     top: 0;
     left: 0;
     opacity: 1;
-    color: #adadaf;
+    color: #83c0f1;
     display: block;
     padding: 0 30px;
     line-height: 40px;
     transition: 0.5s;
     position: relative;
-    background: #323237;
+    background: #ffffff;
     content: attr(data-front);
     transform: translateY(0) rotateX(0);
 }
