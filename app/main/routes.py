@@ -236,12 +236,15 @@ def expert_table_for_admin(project_number, expert_id):
 
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/experts'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
-        os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+        except:
+            pass
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.expert_table_for_admin',
@@ -265,12 +268,15 @@ def expert_table_for_viewer(project_number, expert_id):
 
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/experts'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
-        os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+        except:
+            pass
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.expert_table_for_viewer',
@@ -387,9 +393,6 @@ def viewer_settings(project_number):
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
-            path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
-            if path:
-                os.remove(path)
             logo = request.files['logo']
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
@@ -445,7 +448,8 @@ def user_grades_table_for_viewer(project_number, user_id):
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/users'.format(project_number))
         old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
-        os.remove(old_img)
+        if os.path.exists(old_img):
+            os.remove(old_img)
         img = request.files['photo']
         img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
         compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
@@ -611,9 +615,12 @@ def add_new_user(project_number):
 
                 if request.files['photo']:
                     os.chdir("app/static/images/{}/users".format(project_number))
-                    photo = request.files['photo']
-                    photo.save(os.path.join(os.getcwd(), '{}.png').format(last_user_id + 1))
-                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_user_id + 1)))
+                    try:
+                        photo = request.files['photo']
+                        photo.save(os.path.join(os.getcwd(), '{}.png').format(last_user_id + 1))
+                        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_user_id + 1)))
+                    except:
+                        pass
                     os.chdir('../../../../../')
 
                 password = password_generator()
@@ -621,7 +628,7 @@ def add_new_user(project_number):
                 try:
                     send_password_mail(user, password)
                 except:
-                    print("error")
+                    db.session.rollback()
                     raise
 
                 db.session.commit()
@@ -670,9 +677,12 @@ def add_new_expert(project_number):
 
                 if request.files['photo']:
                     os.chdir("app/static/images/{}/experts".format(project_number))
-                    photo = request.files['photo']
-                    photo.save(os.path.join(os.getcwd(), '{}.png').format(last_expert_id + 1))
-                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_expert_id + 1)))
+                    try:
+                        photo = request.files['photo']
+                        photo.save(os.path.join(os.getcwd(), '{}.png').format(last_expert_id + 1))
+                        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_expert_id + 1)))
+                    except:
+                        pass
                     os.chdir('../../../../../')
 
                 password = password_generator()
@@ -680,7 +690,7 @@ def add_new_expert(project_number):
                 try:
                     send_password_mail(expert, password)
                 except:
-                    print("error")
+                    db.session.rollback()
                     raise
 
                 db.session.commit()
@@ -764,11 +774,11 @@ def admin_settings(project_number):
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
-            path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
-            if path:
-                os.remove(path)
-            logo = request.files['logo']
-            logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+            try:
+                logo = request.files['logo']
+                logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+            except:
+                pass
             os.chdir('../../../../')
 
         if result.get('start') and result.get('end') and result.get('name'):
@@ -864,12 +874,15 @@ def user_grades_table_for_admin(project_number, user_id):
 
     if request.method == 'POST':
         os.chdir('app/static/images/{}/users'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
-        os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
-
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+        except:
+            pass
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.user_grades_table_for_admin',

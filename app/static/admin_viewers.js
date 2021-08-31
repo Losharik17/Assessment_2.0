@@ -66,9 +66,8 @@ function buttons(quantity) {
 }
 
 
-function delete_user(id) {
-    if (confirm(`Ужадить пользователя с ID ${id}?`) && confirm('Будут удалены все проекты связанные' +
-        ' с данным пользователем.\nПродолжить?'))
+function delete_user(id, username) {
+    if (confirm(`Ужадить пользователя ${username}?`) && confirm('Вы уверены?'))
         $.post('/delete_user', {
             role: 'viewer',
             id: id
@@ -135,7 +134,7 @@ function show_more(new_field) {
                 $(`#number_str${i}`).append(`<td id="expert_id${i}">${viewers[i]['expert_id']}</td>`)
 
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="delete${i}" onclick="delete_user(${viewers[i]['id']})">` +
+                `<span id="delete${i}" onclick="delete_user(${viewers[i]['id']}, '${viewers[i]['username']}')">` +
                 `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
         }
         delete_buttons()
@@ -178,7 +177,7 @@ function sort(parameter) {
                 $(`#expert_id${i}`).html(viewers[i]['expert_id'] ? viewers[i]['expert_id'] : '–')
                 $(`#phone_number${i}`).html(viewers[i]['phone_number'] !== 'None' ? viewers[i]['phone_number'] : '–')
 
-                $(`#buttons${i}`).html(`<span id="delete${i}" onclick="delete_user(${viewers[i]['id']})">` +
+                $(`#buttons${i}`).html(`<span id="delete${i}" onclick="delete_user(${viewers[i]['id']}, '${viewers[i]['username']}')">` +
                     `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
             }
             delete_buttons()
