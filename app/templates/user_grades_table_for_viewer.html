@@ -6,6 +6,8 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
     <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
     <script src="{{ url_for('static', filename='user_grades_table_for_viewer.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
 
     <form action="{{ url_for('main.user_grades_table_for_viewer', project_number=project_number,
             user_id=user_id) }}" method="post" enctype="multipart/form-data">

@@ -244,7 +244,9 @@ def expert_table_for_admin(project_number, expert_id):
             img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
             compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
         except:
-            pass
+            flash('Не удалось сохранить фото', 'warning')
+            return redirect(url_for('main.expert_table_for_admin',
+                                    project_number=project_number, expert_id=expert_id))
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.expert_table_for_admin',
@@ -276,7 +278,9 @@ def expert_table_for_viewer(project_number, expert_id):
             img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
             compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
         except:
-            pass
+            flash('Не удалось сохранить фото', 'warning')
+            return redirect(url_for('main.expert_table_for_viewer',
+                                    project_number=project_number, expert_id=expert_id))
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.expert_table_for_viewer',
@@ -447,12 +451,17 @@ def user_grades_table_for_viewer(project_number, user_id):
 
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/users'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
-        if os.path.exists(old_img):
-            os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+        except:
+            flash('Не удалось сохранить фото', 'warning')
+            return redirect(url_for('main.user_grades_for_viewer',
+                                    project_number=project_number, expert_id=user_id))
 
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
@@ -588,8 +597,6 @@ def add_new_user(project_number):
     if current_user.id <= 1100000:
         return redirects()
 
-    form = UserRegistrationForm()
-
     if request.method == 'POST':
         result = request.form
 
@@ -628,25 +635,32 @@ def add_new_user(project_number):
                 try:
                     send_password_mail(user, password)
                 except:
-                    db.session.rollback()
-                    raise
+                    db.session.delete(user)
+                    db.session.commit()
+                    flash('Возможно пользователь с данной почтой уже зарегистрирован', 'warning')
+                    if (current_user.id <= 1200000):
+                        return redirect(url_for('main.viewer_settings', project_number=project_number))
+                    else:
+                        return redirect(url_for('main.admin_settings', project_number=project_number))
 
                 db.session.commit()
 
-                flash('Участник добавлен', 'success')
+                flash('Участник добавлен{}', 'success')
                 if (current_user.id <= 1200000):
                     return redirect(url_for('main.viewer_settings', project_number=project_number))
                 else:
                     return redirect(url_for('main.admin_settings', project_number=project_number))
-
-        flash('Проверьте корректность введённых данных', 'warning')
+            else:
+                flash('Возможно пользователь с данной почтой уже зарегистрирован', 'warning')
+        else:
+            flash('Проверьте корректность введённых данных', 'warning')
 
     if (current_user.id <= 1200000):
-        return render_template('add_new_user.html', title='Добавление участника', form=form,
+        return render_template('add_new_user.html', title='Добавление участника',
                                project_number=project_number,
                                back=url_for('main.viewer_settings', project_number=project_number))
     else:
-        return render_template('add_new_user.html', title='Добавление участника', form=form,
+        return render_template('add_new_user.html', title='Добавление участника',
                                project_number=project_number,
                                back=url_for('main.admin_settings', project_number=project_number))
 
@@ -657,7 +671,6 @@ def add_new_user(project_number):
 def add_new_expert(project_number):
     if current_user.id <= 1100000:
         return redirects()
-    form = ExpertRegistrationForm()
 
     if request.method == 'POST':
         result = request.form
@@ -690,8 +703,13 @@ def add_new_expert(project_number):
                 try:
                     send_password_mail(expert, password)
                 except:
-                    db.session.rollback()
-                    raise
+                    db.session.delete(expert)
+                    db.session.commit()
+                    flash('Возможно пользователь с данной почтой уже зарегистрирован', 'warning')
+                    if (current_user.id <= 1200000):
+                        return redirect(url_for('main.viewer_settings', project_number=project_number))
+                    else:
+                        return redirect(url_for('main.admin_settings', project_number=project_number))
 
                 db.session.commit()
                 flash('Эксперт добавлен', 'success')
@@ -699,14 +717,17 @@ def add_new_expert(project_number):
                     return redirect(url_for('main.viewer_settings', project_number=project_number))
                 else:
                     return redirect(url_for('main.admin_settings', project_number=project_number))
-        flash('Проверьте корректность введённых данных', 'warning')
+            else:
+                flash('Возможно пользователь с данной почтой уже зарегистрирован', 'warning')
+        else:
+            flash('Проверьте корректность введённых данных', 'warning')
 
     if (current_user.id <= 1200000):
-        return render_template('add_new_expert.html', title='Добавление участника', form=form,
+        return render_template('add_new_expert.html', title='Добавление участника',
                                project_number=project_number,
                                back=url_for('main.viewer_settings', project_number=project_number))
     else:
-        return render_template('add_new_expert.html', title='Добавление участника', form=form,
+        return render_template('add_new_expert.html', title='Добавление участника',
                                project_number=project_number,
                                back=url_for('main.admin_settings', project_number=project_number))
 
@@ -882,7 +903,9 @@ def user_grades_table_for_admin(project_number, user_id):
             img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
             compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
         except:
-            pass
+            flash('Не удалось сохранить фото', 'warning')
+            return redirect(url_for('main.user_grades_for_admin',
+                                    project_number=project_number, expert_id=user_id))
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.user_grades_table_for_admin',
@@ -902,7 +925,7 @@ def users_table():
     if int(request.form['lim']) < 15:
         limit = 15
     else:
-        limit = int(request.form['lim']) + 1
+        limit = int(request.form['lim'])
 
     users = User.query.filter_by(project_number=request.form['project_number'])
     if request.form['parameter'] != '':
@@ -1105,12 +1128,34 @@ def delete_user():
 
     if role == 'user':
         user = User.query.filter_by(id=request.form['id']).first()
+
+        os.chdir('app/static/images/{}/users'.format(user.project_number))
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+        except:
+            pass
+        os.chdir('../../../../../')
+
         for grade in user.grades.all():
             t_expert = grade.expert
+
             db.session.delete(grade)
             setattr(t_expert, 'quantity', getattr(t_expert, 'quantity') - 1)
+
     elif role == 'expert':
         user = Expert.query.filter_by(id=request.form['id']).first()
+
+        os.chdir('app/static/images/{}/experts'.format(user.project_number))
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+        except:
+            pass
+        os.chdir('../../../../../')
+
         for grade in user.grades.all():
             t_user = grade.user
             db.session.delete(grade)
@@ -1151,6 +1196,14 @@ def delete_project():
         db.session.delete(expert)
     db.session.delete(project)
     db.session.commit()
+
+    os.chdir("app/static/images")
+    try:
+        if os.path.exists('{}'.format(project.number)):
+            shutil.rmtree('{}'.format(project.number))
+    except:
+        pass
+    os.chdir('../../../')
 
     return jsonify({'result': 'success'})
 

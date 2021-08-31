@@ -106,8 +106,8 @@ function draw_table(response, project_number) {
     let quantity = users.length
 
     if (limit > quantity) {
-        if (quantity < 10)
-            limit = 10
+        if (quantity < 15)
+            limit = 15
         else
             limit = quantity
         $('body').append(
@@ -259,6 +259,7 @@ function sort(parameter, project_number) {
 
             let users = JSON.parse(response['users'])
             let quantity = users.length
+            console.log(quantity)
 
             for (let i = 0; i < quantity; i++) {
 

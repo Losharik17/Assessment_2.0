@@ -84,7 +84,7 @@ def experts_in_json(experts):
 
 def grades_in_json(grades, lenght):
     if not grades:
-        return '[]'
+        return '[{}]'
 
     string = '['
     for grade in grades:
