@@ -167,12 +167,12 @@
     .block {
         padding: 10px;
         box-sizing: border-box;
-        width: 75%;
+        width: 90%;
         height: min-content;
         cursor: pointer;
         margin: 20px auto;
         background-color: #d4e0ff;
-        transition: all 500ms;
+        transition: all 100ms;
         border: 5px #0044ff;
         color: black;
         align-items: center;
