@@ -132,7 +132,7 @@ def export_excel(project_number):
     df2 = df2.reindex(columns=[names[0], names[4], names[1], names[2], names[3]])
     df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта'}, inplace=True)
 
-    filename = "/{}.xlsx".format(Project.query.filter_by(number=project_number).first().name)
+    filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
 
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
@@ -198,7 +198,6 @@ def expert(project_number):
     if current_user.id <= 1000000:
         return redirects()
 
-
     if 1200000 < current_user.id < 1300000:
         user = Admin.query.filter_by(id=current_user.id).first()
         expert = Expert.query.filter_by(id=user.expert_id).first()
@@ -237,12 +236,15 @@ def expert_table_for_admin(project_number, expert_id):
 
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/experts'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
-        os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+        except:
+            pass
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.expert_table_for_admin',
@@ -266,12 +268,15 @@ def expert_table_for_viewer(project_number, expert_id):
 
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/experts'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
-        os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
-
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(expert.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+        except:
+            pass
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.expert_table_for_viewer',
@@ -334,8 +339,11 @@ def viewer():
     for viewer in Viewer.query.filter_by(organization=viewer.organization).all():
         proj += viewer.projects.all()
 
-    proj.sort(key=lambda Project: Project.start)
-    proj.reverse()
+    try:
+        proj.sort(key=lambda Project: Project.start)
+        proj.reverse()
+    except:
+        pass
 
     return render_template('viewer_main.html', viewer=viewer, projects=proj, title='Проекты')
 
@@ -385,8 +393,6 @@ def viewer_settings(project_number):
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
-            path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
-            os.remove(path)
             logo = request.files['logo']
             logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
             os.chdir('../../../../')
@@ -442,7 +448,8 @@ def user_grades_table_for_viewer(project_number, user_id):
     if request.method == 'POST' and request.files['photo']:
         os.chdir('app/static/images/{}/users'.format(project_number))
         old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
-        os.remove(old_img)
+        if os.path.exists(old_img):
+            os.remove(old_img)
         img = request.files['photo']
         img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
         compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
@@ -480,12 +487,12 @@ def create_project():
     if current_user.id <= 1100000 or current_user.id > 1200000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
-    lvl = 0
-    delete_project = False
-    try:
-        if request.method == 'POST':
-            result = request.form
 
+    if request.method == 'POST':
+        result = request.form
+        lvl = 0
+        delete_project = False
+        try:
             if request.files['logo'] and request.files['users'] \
                     and request.files['experts'] and request.files.getlist("users_photo") \
                     and request.files.getlist("experts_photo") and result.get('start') \
@@ -493,6 +500,8 @@ def create_project():
 
                 project = Project(viewer_id=current_user.id, name=result.get('name'))
                 db.session.add(project)
+                db.session.commit()
+                delete_project = True
                 project = Project.query.all()[-1]
 
                 for i in range(int(result.get('quantity'))):
@@ -505,9 +514,7 @@ def create_project():
                 end = result.get('end')
                 setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
                 db.session.commit()
-                delete_project = True
-                print(os.getcwd())
-                print(os.path)
+
                 os.chdir("app/static/images")
                 lvl += 3
                 if os.path.exists('{}'.format(project.number)):
@@ -555,20 +562,21 @@ def create_project():
                       'и удалите пустые критерии.', 'danger')
                 db.session.rollback()
                 return redirect(url_for('main.create_project', viewer_id=current_user.id))
-    except:
-        for i in range(lvl):
-            os.chdir('../')
-        flash('Ошибка создания проекта. '
-                 'Пожалуйста проверьте, чтобы все поля были заполнены '
-                 'и удалите пустые критерии.', 'danger')
-        db.session.rollback()
-        if delete_project:
-            project = Project(viewer_id=current_user.id, name=request.form.get('name'))
-            for parameter in project.parameters.all():
-                db.session.delete(parameter)
-            db.session.delete(project)
-            db.session.commit()
-        return redirect(url_for('main.create_project'))
+        except:
+            for i in range(lvl):
+                os.chdir('../')
+            flash('Ошибка создания проекта. '
+                  'Пожалуйста проверьте, чтобы все поля были заполнены '
+                  'и удалите пустые критерии.', 'danger')
+            db.session.rollback()
+            if delete_project:
+                project = Project.query.all()[-1]
+                for parameter in project.parameters.all():
+                    db.session.delete(parameter)
+                db.session.delete(project)
+                db.session.commit()
+            return redirect(url_for('main.create_project'))
+
 
     return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
 
@@ -607,9 +615,12 @@ def add_new_user(project_number):
 
                 if request.files['photo']:
                     os.chdir("app/static/images/{}/users".format(project_number))
-                    photo = request.files['photo']
-                    photo.save(os.path.join(os.getcwd(), '{}.png').format(last_user_id + 1))
-                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_user_id + 1)))
+                    try:
+                        photo = request.files['photo']
+                        photo.save(os.path.join(os.getcwd(), '{}.png').format(last_user_id + 1))
+                        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_user_id + 1)))
+                    except:
+                        pass
                     os.chdir('../../../../../')
 
                 password = password_generator()
@@ -617,7 +628,7 @@ def add_new_user(project_number):
                 try:
                     send_password_mail(user, password)
                 except:
-                    print("error")
+                    db.session.rollback()
                     raise
 
                 db.session.commit()
@@ -630,9 +641,14 @@ def add_new_user(project_number):
 
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_user.html', title='Добавление участника', form=form,
-                           project_number=project_number,
-                           back=url_for('main.viewer_settings', project_number=project_number))
+    if (current_user.id <= 1200000):
+        return render_template('add_new_user.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.viewer_settings', project_number=project_number))
+    else:
+        return render_template('add_new_user.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.admin_settings', project_number=project_number))
 
 
 # добавление эксперта
@@ -661,9 +677,12 @@ def add_new_expert(project_number):
 
                 if request.files['photo']:
                     os.chdir("app/static/images/{}/experts".format(project_number))
-                    photo = request.files['photo']
-                    photo.save(os.path.join(os.getcwd(), '{}.png').format(last_expert_id + 1))
-                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_expert_id + 1)))
+                    try:
+                        photo = request.files['photo']
+                        photo.save(os.path.join(os.getcwd(), '{}.png').format(last_expert_id + 1))
+                        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(last_expert_id + 1)))
+                    except:
+                        pass
                     os.chdir('../../../../../')
 
                 password = password_generator()
@@ -671,11 +690,10 @@ def add_new_expert(project_number):
                 try:
                     send_password_mail(expert, password)
                 except:
-                    print("error")
+                    db.session.rollback()
                     raise
 
                 db.session.commit()
-
                 flash('Эксперт добавлен', 'success')
                 if (current_user.id <= 1200000):
                     return redirect(url_for('main.viewer_settings', project_number=project_number))
@@ -683,9 +701,14 @@ def add_new_expert(project_number):
                     return redirect(url_for('main.admin_settings', project_number=project_number))
         flash('Проверьте корректность введённых данных', 'warning')
 
-    return render_template('add_new_expert.html', title='Добавление участника', form=form,
-                           project_number=project_number,
-                           back=url_for('main.viewer_settings', project_number=project_number))
+    if (current_user.id <= 1200000):
+        return render_template('add_new_expert.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.viewer_settings', project_number=project_number))
+    else:
+        return render_template('add_new_expert.html', title='Добавление участника', form=form,
+                               project_number=project_number,
+                               back=url_for('main.admin_settings', project_number=project_number))
 
 
 # главная страница админа
@@ -722,7 +745,7 @@ def admin_settings(project_number):
     project = Project.query.filter_by(number=project_number).first()
 
     if request.method == 'POST':
-        #try:
+        # try:
         result = request.form
 
         if request.files['users'] and request.files['users_photo']:
@@ -751,10 +774,11 @@ def admin_settings(project_number):
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
-            path = os.path.join(os.getcwd(), '{}.png'.format(project_number))
-            os.remove(path)
-            logo = request.files['logo']
-            logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+            try:
+                logo = request.files['logo']
+                logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+            except:
+                pass
             os.chdir('../../../../')
 
         if result.get('start') and result.get('end') and result.get('name'):
@@ -850,12 +874,15 @@ def user_grades_table_for_admin(project_number, user_id):
 
     if request.method == 'POST':
         os.chdir('app/static/images/{}/users'.format(project_number))
-        old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
-        os.remove(old_img)
-        img = request.files['photo']
-        img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
-        compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
-
+        try:
+            old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+            if os.path.exists(old_img):
+                os.remove(old_img)
+            img = request.files['photo']
+            img.save(os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+        except:
+            pass
         os.chdir('../../../../../')
         flash('Изменения сохранены', 'success')
         return redirect(url_for('main.user_grades_table_for_admin',
@@ -1039,7 +1066,11 @@ def give_role():
         waiting_user = WaitingUser.query.filter_by(id=request.form['id']).first()
         expert = Expert(username=waiting_user.username, email=waiting_user.email,
                         password_hash=waiting_user.password_hash)
+        db.session.add(expert)
+        db.session.commit()
 
+        expert = Expert.query.filter_by(username=waiting_user.username, email=waiting_user.email).first()
+        setattr(expert, 'project_id', expert.id)
         if request.form['role'] == 'Администратор':
             user = Admin(username=waiting_user.username, email=waiting_user.email,
                          password_hash=waiting_user.password_hash,
@@ -1057,7 +1088,6 @@ def give_role():
             return jsonify({'result': 'error'})
 
         db.session.add(user)
-        db.session.add(expert)
         db.session.delete(waiting_user)
         db.session.commit()
 
@@ -1089,8 +1119,14 @@ def delete_user():
         user = WaitingUser.query.filter_by(id=request.form['id']).first()
     elif role == 'viewer':
         user = Viewer.query.filter_by(id=request.form['id']).first()
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+        if expert:
+            db.session.delete(expert)
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+        if expert:
+            db.session.delete(expert)
     else:
         return jsonify({'result': 'User not found'})
 
@@ -1120,7 +1156,9 @@ def delete_project():
 
 
 # увелечение количества отображаемых пользователей в таблице раздачи ролей
+# сортировка таблицы зарегистрированных пользователей
 @bp.route('/show_more_waiting_users', methods=['POST'])
+@bp.route('/sort_waiting_users', methods=['POST'])
 @login_required
 def show_more_waiting_users():
     if request.form['parameter'] != '':
@@ -1137,22 +1175,6 @@ def show_more_waiting_users():
     else:
         waiting_users = WaitingUser.query \
             .order_by(WaitingUser.project_id).limit(int(request.form['lim']) + 1)
-
-    return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
-
-
-# сортировка таблицы зарегистрированных пользователей
-@bp.route('/sort_waiting_users', methods=['POST'])
-@login_required
-def sort_waiting_users():
-    if request.form['sort_up'] == 'true':
-        waiting_users = WaitingUser.query \
-            .order_by(WaitingUser.__dict__[request.form['parameter']].desc()) \
-            .limit(int(request.form['lim']) + 1)
-    else:
-        waiting_users = WaitingUser.query \
-            .order_by(WaitingUser.__dict__[request.form['parameter']].asc()) \
-            .limit(int(request.form['lim']) + 1)
 
     return jsonify({'waiting_users': waiting_users_in_json(waiting_users)})
 

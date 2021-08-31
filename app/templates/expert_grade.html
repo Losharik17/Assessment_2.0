@@ -6,19 +6,19 @@
     <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
 
     <div class="content">
-        <div class="container">
+        <div class="container" style="width: 100%;">
             <div class="data">
                 {% set path='/images/'+ project_number|string +'/users/'+ user.project_id|string +'.png' %}
                 <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
                 <table style="margin: 10px;">
                     <tr>
-                        <td>ID: {{ user.id }}</td>
+                        <td>ID: {{ user.project_id }}</td>
                     </tr>
                     <tr>
                         <td>ФИО: {{ user.username }}</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left" id="birthday">Возраст: </td>
+                        <td style="text-align: left" >Возраст: <span id="birthday"></span></td>
                     </tr>
                     <tr>
                         <td>Команда: {{ user.team }}</td>
@@ -62,5 +62,9 @@
     </div>
 
     <script src="{{ url_for('static', filename='expert_grade.js') }}"></script>
+    <script>
+        $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
+            / (24 * 3600 * 365.25 * 1000)))
+    </script>
 
 {% endblock %}

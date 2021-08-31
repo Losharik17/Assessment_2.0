@@ -17,6 +17,8 @@
                         onclick="sort(this.id)">ФИО</th>
                     <th id="email" class="sort" data-order="0"
                         onclick="sort(this.id)">Email</th>
+                    <th id="organization" class="sort" data-order="0"
+                        onclick="sort(this.id)">Организация</th>
                     <th id="phone_number" class="sort" data-order="0"
                         onclick="sort(this.id)">Номер телефона</th>
                     <th id="registration_date" class="sort" data-order="1"
@@ -35,6 +37,13 @@
                         <td id="email{{ i.a }}">
                             {% if waiting_user.email %}
                                 {{ waiting_user.email }}
+                            {% else %}
+                                –
+                            {% endif %}
+                        </td>
+                        <td id="organization{{ i.a }}">
+                            {% if waiting_user.organization %}
+                                {{ waiting_user.organization }}
                             {% else %}
                                 –
                             {% endif %}

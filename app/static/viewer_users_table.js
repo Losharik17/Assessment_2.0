@@ -136,7 +136,7 @@ function draw_table(response, project_number) {
             $(`#number_str${i}`).append(`<td id="username${i}">–</td>`)
         else
             $(`#number_str${i}`).append(`<td id="username${i}">${users[i]['username']}</td>`)
-        console.log(users[i]['birthday'])
+
         if (users[i]['birthday'] === 'None' || users[i]['birthday'] === '-')
             $(`#number_str${i}`).append(`<td id="birthday${i}">–</td>`)
         else

@@ -25,38 +25,7 @@
                 </thead>
 
                 <tbody id="tbody" class="tbody-table">
-                {% set i = namespace(a=0) %}
-                {% for viewer in viewers %}
 
-                    <tr id="number_str{{ i.a }}">
-
-                        <td id="username{{ i.a }}">{% if viewer.username %}{{ viewer.username }}{% else %}–{% endif %}</td>
-                        <td id="email{{ i.a }}">
-                            {% if viewer.email %}
-                                {{ viewer.email }}
-                            {% else %}
-                                –
-                            {% endif %}
-                        </td>
-                        <td id="phone_number{{ i.a }}">
-                            {% if viewer.phone_number %}
-                                {{ viewer.phone_number }}
-                            {% else %}
-                                –
-                            {% endif %}
-                        </td>
-                        <td id="expert_id{{ i.a }}">
-                            {% if viewer.expert_id %}
-                                {{ viewer.expert_id }}
-                            {% else %}
-                                –
-                            {% endif %}
-                        </td>
-                    </tr>
-
-                    {% set i.a = i.a + 1 %}
-
-                {% endfor %}
                 </tbody>
             </table>
         </div>

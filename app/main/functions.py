@@ -3,21 +3,23 @@ import string
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
-from app.models import User, Expert, Viewer, Admin
-from app.main.secure_filename_2 import test_2
+from app.models import User, Expert, Viewer
 import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
-from datetime import datetime, date
+from datetime import datetime, timedelta
 from app.models import Project
+from app.auth.email import send_alert_mail
 
 engine = create_engine("sqlite:///T_park.db")
 
 
 def users_in_json(users):
+    if not users:
+        return '[]'
     lenght = len(Project.query.filter_by(number=users[0].project_number).first()
                  .parameters.all())
 
@@ -45,6 +47,9 @@ def users_in_json(users):
 
 
 def viewers_in_json(viewers):
+    if not viewers:
+        return '[]'
+
     string = '['
     for viewer in viewers:
         string += '{' + '"id":{0},"username":"{1}","phone_number":"{2}","expert_id":"{3}",' \
@@ -59,6 +64,8 @@ def viewers_in_json(viewers):
 
 
 def experts_in_json(experts):
+    if not experts:
+        return '[]'
     string = '['
 
     for expert in experts:
@@ -76,6 +83,9 @@ def experts_in_json(experts):
 
 
 def grades_in_json(grades, lenght):
+    if not grades:
+        return '[]'
+
     string = '['
     for grade in grades:
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
@@ -97,15 +107,18 @@ def grades_in_json(grades, lenght):
 
 
 def waiting_users_in_json(waiting_users):
+    if not waiting_users:
+        return '[]'
     string = '['
     for waiting_user in waiting_users:
         string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}",' \
-                        '"phone_number":"{4}"' \
+                        '"phone_number":"{4}", "organization":"{5}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
                     str(waiting_user.username),
-                    str(waiting_user.phone_number))
+                    str(waiting_user.phone_number),
+                    str(waiting_user.organization))
         string += '},'
     string = string[:len(string) - 1] + ']'
 
@@ -233,9 +246,9 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-def delete_function(hash_date):  # Функция для удаления старых данных
-    mnth = hash_date
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", mnth)
+
+def delete_function(hash_date): #Функция для удаления старых данных
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", hash_date)
     a = a.fetchall()
     if a:
         for rows in a:
@@ -252,31 +265,6 @@ def delete_timer(hash_date):
     shed = BackgroundScheduler(daemon=True)
     shed.add_job(delete_function, 'interval', days=1, args=[hash_date])
     shed.start()
-
-
-def delete_timer_X():
-    shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function_X, 'interval', days=1)
-    shed.start()
-
-
-t = 0
-y = 9
-x = 2021
-z = 18
-f = open('text.txt', 'w')
-# Алгоритм преобразования сроки в дату
-# x = f
-# if x < t:
-#    f = t
-f.close()
-hash_date = date(x, y, z)
-
-
-def delete_function_X():
-    a = date.today()
-    if a >= hash_date:
-        print("<FUCK>")
 
 
 def redirects(arg=None):
@@ -300,3 +288,17 @@ def compression(width, height, path):
     img = Image.open(path)
     img = img.resize((width, height), PIL.Image.ANTIALIAS)
     return img.save(path)
+
+
+def email_timer():
+    projects = Project.query.all()
+    month = datetime.now().date() + timedelta(days=30)
+    week = datetime.now().date() + timedelta(days=7)
+    day = datetime.now().date() + timedelta(days=1)
+    for project in projects:
+        if project.end == month or project.end == week or project.end == day:
+            c = engine.execute("SELECT organization FROM viewer WHERE id = ?", project.viewer_id)
+            c = c.fetchall()
+            viewer = Viewer.query.filter_by(organization=c[0][0])
+            for a in viewer:
+                send_alert_mail(a, project.end, project.name)

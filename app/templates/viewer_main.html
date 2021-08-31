@@ -21,7 +21,6 @@
                 <div date="{{ project.end.strftime('%d.%m.%Y') }}" class="data">
                     <h2 style="font-weight: normal; text-align: center">
                         {{ project.name }}
-                        {{ project.viewer.organization }}
                     </h2>
                 </div>
 
@@ -43,7 +42,7 @@
             if (date.getFullYear() >= +project_date[2] &&
                 date.getMonth() >= +project_date[1] - 1 &&
                 date.getDate() > +project_date[0]) {
-                element.append('<span style="color:crimson">Мероприятие завершено</span>')
+                element.append('<div style="text-align: center; color:crimson">Проект завершён</div>')
             }
         }
 
@@ -51,8 +50,8 @@
             end_project($(element))
         })
 
-        $('.profil_image').css({'max-height': $('.profil_image').parent().parent().outerHeight() * 0.9})
+        $('.profil_image').each(function (index, element) {
+            $(element).css('max-height', document.documentElement.clientHeight * 0.2 + 'px')
+        })
     </script>
-    <script>$(window).on('load', function () {$('#button_back').css('display', 'none') })</script>
-
 {% endblock %}
