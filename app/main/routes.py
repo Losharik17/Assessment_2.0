@@ -939,7 +939,7 @@ def users_table():
             if request.form['parameter'] == 'birthday':
                 users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
             else:
-                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit + 1)
         else:
             if request.form['parameter'] == 'birthday':
                 users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
@@ -972,7 +972,7 @@ def show_more_experts():
     if int(request.form['lim']) < 15:
         limit = 15
     else:
-        limit = int(request.form['lim']) + 1
+        limit = int(request.form['lim'])
 
     experts = Expert.query.filter_by(project_number=request.form['project_number'])
     if request.form['parameter'] != '':
@@ -994,7 +994,7 @@ def sort_grades_table_for_user():
     if int(request.form['lim']) < 15:
         limit = 15
     else:
-        limit = int(request.form['lim']) + 1
+        limit = int(request.form['lim'])
 
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':
@@ -1020,7 +1020,7 @@ def show_more_grades_for_expert():
     if int(request.form['lim']) < 15:
         limit = 15
     else:
-        limit = int(request.form['lim']) + 1
+        limit = int(request.form['lim'])
 
     if request.form['parameter'] != '':
         if request.form['sort_up'] == 'true':

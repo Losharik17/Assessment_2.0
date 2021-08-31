@@ -43,6 +43,7 @@ def users_in_json(users):
         string += '"sum_grade_all":"{0}"'.format(str(user.sum_grade_all)) + '},'
 
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
@@ -84,7 +85,7 @@ def experts_in_json(experts):
 
 def grades_in_json(grades, lenght):
     if not grades:
-        return '[{}]'
+        return '[]'
 
     string = '['
     for grade in grades:

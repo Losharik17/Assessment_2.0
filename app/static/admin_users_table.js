@@ -37,7 +37,8 @@ document.addEventListener('click', function (event) {
         event.target.id !== 'region')
         $('#region').attr('data-order', 0)
 
-    if ($('#birthdays').attr('value') === '–' &&
+    if ($('#min_age_value').attr('value') === '' &&
+        $('#max_age_value').attr('value') === '' &&
         event.target.id !== 'birthday')
         $('#birthday').attr('data-order', 0)
 })
@@ -54,6 +55,7 @@ $('html').click(function (event) {
         || ($('#birthday').hasClass('active') && (event.target.tagName === 'TH' ||
             event.target.tagName === 'LI' || event.target.tagName === 'LABEL'))) {
         $('#birthday').attr('data-order', 0)
+        $('#birthday').removeClass('active');
         $('#birthday').removeClass('active');
         $('#birthday').find('.dropdown-menu').slideUp(300);
     }
@@ -259,7 +261,6 @@ function sort(parameter, project_number) {
 
             let users = JSON.parse(response['users'])
             let quantity = users.length
-            console.log(quantity)
 
             for (let i = 0; i < quantity; i++) {
 
