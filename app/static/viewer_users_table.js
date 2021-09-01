@@ -50,8 +50,8 @@ $('html').click(function (event) {
         $('#birthday').addClass('active');
         $('#birthday').find('.dropdown-menu').slideDown(300);
     }
-    else if (event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
-        || ($('#birthday').hasClass('active') && (event.target.tagName === 'TH' ||
+    else if ((event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
+        || ($('#birthday').hasClass('active')) && (event.target.tagName === 'TH' ||
             event.target.tagName === 'LI' || event.target.tagName === 'LABEL'))) {
         $('#birthday').attr('data-order', 0)
         $('#birthday').removeClass('active');

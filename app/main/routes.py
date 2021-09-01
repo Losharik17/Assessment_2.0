@@ -645,7 +645,7 @@ def add_new_user(project_number):
 
                 db.session.commit()
 
-                flash('Участник добавлен{}', 'success')
+                flash('Участник добавлен', 'success')
                 if (current_user.id <= 1200000):
                     return redirect(url_for('main.viewer_settings', project_number=project_number))
                 else:
