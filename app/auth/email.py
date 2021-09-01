@@ -35,7 +35,7 @@ def send_alert_mail(viewer, date, names):
 
 
 def send_role_update(user, role):
-    send_email('[TPark] Изменение вашего статуса',
+    send_email('NSPT Изменение вашего статуса',
                sender=current_app.config['ADMINS'][0],
                recipients=[user.email],
                text_body=render_template('email/send_role_update.txt',
@@ -45,7 +45,7 @@ def send_role_update(user, role):
 
 
 def send_role_refuse(user):
-    send_email('[TPark] Изменение вашего статуса',
+    send_email('NSPT Изменение вашего статуса',
                sender=current_app.config['ADMINS'][0],
                recipients=[user.email],
                text_body=render_template('email/send_role_refuse.txt',
