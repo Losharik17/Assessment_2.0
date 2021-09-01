@@ -10,7 +10,8 @@ from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, delete_timer, redirects, compression, password_generator, \
-    send_password_mail
+    send_password_mail, email_timer
+from app.auth.email import send_role_update, send_role_refuse
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
 import os
@@ -25,8 +26,7 @@ engine = create_engine("sqlite:///T_Park.db")
 def index():
     if current_user.is_authenticated:
         return redirects('base')
-
-    return render_template('base.html', auth=current_user.is_authenticated, back='')
+    return render_template('base.html', auth=current_user.is_authenticated)
 
 
 @bp.route('/download')
@@ -189,6 +189,7 @@ def user():
     return render_template('user_grades_table.html', title='Мои оценки',
                            user=user, project_number=user.project_number,
                            ParName=parameters, user_id=current_user.id, back='')
+
 
 
 # ввод номера участника для перехода к выставлению оценки
@@ -496,7 +497,8 @@ def create_project():
     if current_user.id <= 1100000 or current_user.id > 1200000:
         return redirects()
     viewer = Viewer.query.filter_by(id=current_user.id).first()
-
+    lvl = 0
+    delete_project = False
     if request.method == 'POST':
         result = request.form
         lvl = 0
@@ -754,6 +756,7 @@ def admin_projects():
 
     return render_template('admin_projects.html', admin=admin, projects=projects, title='Проекты',
                            back=url_for('main.admin'))
+
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
@@ -1098,14 +1101,19 @@ def give_role():
             user = Admin(username=waiting_user.username, email=waiting_user.email,
                          password_hash=waiting_user.password_hash,
                          phone_number=waiting_user.phone_number, expert_id=expert.id)
+            send_role_update(user, 'Администратор')
+
         elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
                           password_hash=waiting_user.password_hash,
                           phone_number=waiting_user.phone_number, expert_id=expert.id,
                           organization=waiting_user.organization)
+            send_role_update(user, 'Заказчик')
+
         elif request.form['role'] == 'Удалить':
             db.session.delete(waiting_user)
             db.session.commit()
+            send_role_refuse(waiting_user)
             return jsonify({'result': 'deleted'})
         else:
             return jsonify({'result': 'error'})
@@ -1128,7 +1136,6 @@ def delete_user():
 
     if role == 'user':
         user = User.query.filter_by(id=request.form['id']).first()
-
         os.chdir('app/static/images/{}/users'.format(user.project_number))
         try:
             old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
@@ -1155,7 +1162,6 @@ def delete_user():
         except:
             pass
         os.chdir('../../../../../')
-
         for grade in user.grades.all():
             t_user = grade.user
             db.session.delete(grade)
@@ -1196,7 +1202,6 @@ def delete_project():
         db.session.delete(expert)
     db.session.delete(project)
     db.session.commit()
-
     os.chdir("app/static/images")
     try:
         if os.path.exists('{}'.format(project.number)):
