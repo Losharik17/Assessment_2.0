@@ -602,7 +602,8 @@ def add_new_user(project_number):
     if request.method == 'POST':
         result = request.form
 
-        if result.get('username') and result.get('email'):
+        if result.get('username') and result.get('email') and\
+                result.get('birthday') != 'дд.мм.гггг':
             if User.query.filter_by(email=result.get('email')).first() is None:
                 last_user_id = User.query.filter_by(project_number=project_number).all()[-1].project_id
                 user = User(project_number=project_number, username=result.get('username'),

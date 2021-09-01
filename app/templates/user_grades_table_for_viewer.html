@@ -2,82 +2,85 @@
 
 
 {%  block app_content %}
+    {% if user is defined %}
+        <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
+        <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
+        <script src="{{ url_for('static', filename='user_grades_table_for_viewer.js') }}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
-    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-    <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
-    <script src="{{ url_for('static', filename='user_grades_table_for_viewer.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
+        <form action="{{ url_for('main.user_grades_table_for_viewer', project_number=project_number,
+                user_id=user_id) }}" method="post" enctype="multipart/form-data">
+            <div class="container">
+                <div class="data">
+                    {% set path = '/images/' + user.project_number|string + '/users/' + user.project_id|string + '.png'%}
+                    <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+                    <table id="data_table" style="margin: 10px;" class="data_table">
+                        <tr>
+                            <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">ФИО: <span>{{ user.username }}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left" id="birthday">Возраст: <span></span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">Команда:
+                                <span>{% if user.team %}{{ user.team }}{% else %} – {% endif %}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">Регион:
+                                <span>{% if user.region %}{{ user.region }}{% else %} – {% endif %}</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
-    <form action="{{ url_for('main.user_grades_table_for_viewer', project_number=project_number,
-            user_id=user_id) }}" method="post" enctype="multipart/form-data">
-        <div class="container">
-            <div class="data">
-                {% set path = '/images/' + user.project_number|string + '/users/' + user.project_id|string + '.png'%}
-                <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
-                <table id="data_table" style="margin: 10px;" class="data_table">
-                    <tr>
-                        <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">ФИО: <span>{{ user.username }}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left" id="birthday">Возраст: <span></span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">Команда:
-                            <span>{% if user.team %}{{ user.team }}{% else %} – {% endif %}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">Регион:
-                            <span>{% if user.region %}{{ user.region }}{% else %} – {% endif %}</span></td>
-                    </tr>
-                </table>
+            <div id="edit_data" class="button_re" onclick="
+                    edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
+            </div>
+            <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
+                Удалить участника
+            </div>
+            <input type="submit" name="submit" id="submit" style="visibility: hidden">
+        </form>
+
+        <div class="table-wrap">
+            <table class="table-sort">
+                <thead>
+                <tr>
+                    <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
+                    <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
+                    {%set k = namespace(a=0) %}
+                    {% for parameter in ParName %}
+                        <th id="parameter{{ k.a }}" class="th_clean">{{ parameter.name }}</th>
+                        {% set k.a = k.a + 1 %}
+                    {% endfor %}
+                    <th id="comment" class=" th_clean">Комментарий</th>
+                </tr>
+                </thead>
+
+                <tbody id="tbody">
+
+                </tbody>
+            </table>
+
+            <div class="show">
+                <a id="show_more" class="show_btn" href="javascript:show_more(10, {{ user_id }})">
+                    Показать больше</a>
+                <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
+                    Показать все</a>
             </div>
         </div>
 
-        <div id="edit_data" class="button_re" onclick="
-                edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
-        </div>
-        <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
-            Удалить участника
-        </div>
-        <input type="submit" name="submit" id="submit" style="visibility: hidden">
-    </form>
-
-    <div class="table-wrap">
-        <table class="table-sort">
-            <thead>
-            <tr>
-                <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
-                <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
-                {%set k = namespace(a=0) %}
-                {% for parameter in ParName %}
-                    <th id="parameter{{ k.a }}" class="th_clean">{{ parameter.name }}</th>
-                    {% set k.a = k.a + 1 %}
-                {% endfor %}
-                <th id="comment" class=" th_clean">Комментарий</th>
-            </tr>
-            </thead>
-
-            <tbody id="tbody">
-
-            </tbody>
-        </table>
-
-        <div class="show">
-            <a id="show_more" class="show_btn" href="javascript:show_more(10, {{ user_id }})">
-                Показать больше</a>
-            <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ user_id }})">
-                Показать все</a>
-        </div>
-    </div>
-
-    <script>
-        $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
-            / (24 * 3600 * 365.25 * 1000)))
-        show_more(0, {{ user_id }})
-    </script>
+        <script>
+            $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
+                / (24 * 3600 * 365.25 * 1000)))
+            show_more(0, {{ user_id }})
+        </script>
+    {% else %}
+        <h3>Пользователя не существует или мы не смогли его найти</h3>
+    {% endif %}
 
 {% endblock %}
