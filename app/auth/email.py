@@ -32,3 +32,23 @@ def send_alert_mail(viewer, date, names):
                                          viewer=viewer, date=date, names= names),
                html_body=render_template('email/send_alert.html',
                                          viewer=viewer, date=date, names = names))
+
+
+def send_role_update(user, role):
+    send_email('[TPark] Изменение вашего статуса',
+               sender=current_app.config['ADMINS'][0],
+               recipients=[user.email],
+               text_body=render_template('email/send_role_update.txt',
+                                         user=user, role=role),
+               html_body=render_template('email/send_role_update.html',
+                                         user=user, role=role))
+
+
+def send_role_refuse(user):
+    send_email('[TPark] Изменение вашего статуса',
+               sender=current_app.config['ADMINS'][0],
+               recipients=[user.email],
+               text_body=render_template('email/send_role_refuse.txt',
+                                         user=user),
+               html_body=render_template('email/send_role_refuse.html',
+                                         user=user))
