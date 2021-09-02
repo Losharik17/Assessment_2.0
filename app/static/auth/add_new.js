@@ -63,7 +63,6 @@ function blu(el, label) {
         })
 }
 
-
 $("#birthday").inputmask({
     clearMaskOnLostFocus : false,
     mask: "D.M.Y",
@@ -71,15 +70,15 @@ $("#birthday").inputmask({
     definitions: {
         "Y": {
             validator: function (chrs, buffer, pos, strict, opts) {
-                let valExp = new RegExp("[0-9][0-9][0-9][0-9]");
+                let valExp = new RegExp("1[9][0-9][0-9]|2[0][0-9][0-9]");
                 return valExp.test(chrs);
             },
             cardinality: 4,
             prevalidator: [
-                { validator: "[0-9]", cardinality: 1 },
-                { validator: "[0-9][0-9]", cardinality: 2 },
-                { validator: "[0-9][0-9][0-9]", cardinality: 3 },
-                { validator: "[0-9][0-9][0-9][0-9]", cardinality: 4 },
+                { validator: "[12]", cardinality: 1 },
+                { validator: "(1|2)[09]", cardinality: 2 },
+                { validator: "(1|2)(0|9)[0-9]", cardinality: 3 },
+                { validator: "(1|2)(0|9)[0-9][0-9]", cardinality: 4 },
             ]
         },
         "M": {
@@ -109,3 +108,21 @@ $("#birthday").inputmask({
         },
     }
 });
+
+let inputs = document.querySelectorAll('.input__file');
+Array.prototype.forEach.call(inputs, function (input) {
+    let label = input.nextElementSibling,
+        labelVal = label.querySelector('.input__file_button_text_2').innerText;
+
+    input.addEventListener('change', function (e) {
+        let countFiles = '';
+        if (this.files && this.files.length >= 1)
+            countFiles = this.files.length;
+
+        if (countFiles)
+            label.querySelector('.input__file_button_text_2').innerText = 'Выбрано файлов: ' + countFiles;
+        else
+            label.querySelector('.input__file_button_text_2').innerText = labelVal;
+    });
+});
+
