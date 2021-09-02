@@ -5,7 +5,7 @@ from app import db
 from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer
 import pandas as pd
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, current_app
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
@@ -13,8 +13,9 @@ from PIL import Image
 from datetime import datetime, timedelta
 from app.models import Project
 from app.auth.email import send_alert_mail
+from app import create_app
 
-
+app = create_app()
 engine = create_engine("sqlite:///T_park.db")
 
 
@@ -238,8 +239,8 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-def delete_function(hash_date): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', ?)", hash_date)
+def delete_function(): #Функция для удаления старых данных
+    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:
@@ -252,10 +253,16 @@ def delete_function(hash_date): #Функция для удаления стар
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
 
 
-def delete_timer(hash_date):
+def delete_timer():
     shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function, 'interval', days=1, args=[hash_date])
+    shed.add_job(delete_function, 'interval', days=7)
+    sched = BackgroundScheduler(daemon=True)
+    sched.add_job(email_timer, 'interval', days=1)
+    email = BackgroundScheduler(daemon=True)
+    email.add_job(email_saver, 'interval', days=1)
     shed.start()
+    sched.start()
+    email.start()
 
 
 def redirects(arg=None):
@@ -282,14 +289,36 @@ def compression(width, height, path):
 
 
 def email_timer():
-    projects = Project.query.all()
-    month = datetime.now().date() + timedelta(days=30)
-    week = datetime.now().date() + timedelta(days=7)
-    day = datetime.now().date() + timedelta(days=1)
-    for project in projects:
-        if project.end == month or project.end == week or project.end == day:
-            c = engine.execute("SELECT organization FROM viewer WHERE id = ?", project.viewer_id)
+    with app.app_context():
+        projects = Project.query.all()
+        month = datetime.now().date() + timedelta(days=30)
+        week = datetime.now().date() + timedelta(days=7)
+        day = datetime.now().date() + timedelta(days=1)
+        for project in projects:
+            if project.end == month or project.end == week or project.end == day:
+                c = engine.execute("SELECT organization FROM viewer WHERE id = ?", project.viewer_id)
+                c = c.fetchall()
+                viewer = Viewer.query.filter_by(organization=c[0][0])
+                for a in viewer:
+                    send_alert_mail(a, project.end, project.name)
+
+
+def email_saver():
+    with app.app_context():
+        a = engine.execute("SELECT number FROM project WHERE end == DATE('now', '-1 day')")
+        a = a.fetchall()
+        for rows in a:
+            b = engine.execute("SELECT id FROM user WHERE project_number = ?", rows[0])
+            b = b.fetchall()
+            for row in b:
+                user = User.query.filter_by(id=row[0]).first()
+                user.email = user.email + 'λ'
+                db.session.add(user)
+                db.session.commit()
+            c = engine.execute("SELECT id FROM expert WHERE project_number = ?", rows[0])
             c = c.fetchall()
-            viewer = Viewer.query.filter_by(organization=c[0][0])
-            for a in viewer:
-                send_alert_mail(a, project.end, project.name)
+            for row in c:
+                expert = Expert.query.filter_by(id=row[0]).first()
+                expert.email = expert.email + 'λ'
+                db.session.add(expert)
+                db.session.commit()

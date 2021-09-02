@@ -10,7 +10,7 @@ from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, delete_timer, redirects, compression, password_generator, \
-    send_password_mail, email_timer
+    send_password_mail, email_timer, email_saver
 from app.auth.email import send_role_update, send_role_refuse
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
@@ -26,7 +26,6 @@ engine = create_engine("sqlite:///T_Park.db")
 def index():
     if current_user.is_authenticated:
         return redirects('base')
-    email_timer()
     return render_template('base.html', auth=current_user.is_authenticated)
 
 
@@ -65,6 +64,11 @@ def export_excel(project_number):
 
     df1['team'] = df1['team'].str.capitalize()
     df1['region'] = df1['region'].str.capitalize()
+
+    for i in range (0, len(df1.index)):
+        if 'λ' in df1.email[i]:
+            a = len(df1.email[i]) - 1
+            df1.email[i] = df1.email[i][:a]
 
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
                               'photo': 'Фотография',
