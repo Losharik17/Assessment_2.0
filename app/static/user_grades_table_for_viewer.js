@@ -76,15 +76,15 @@ function edit_data(user_id, user_birthday) {
                     definitions: {
                         "Y": {
                             validator: function (chrs, buffer, pos, strict, opts) {
-                                let valExp = new RegExp("[0-9][0-9][0-9][0-9]");
+                                let valExp = new RegExp("1[9][0-9][0-9]|2[0][0-9][0-9]");
                                 return valExp.test(chrs);
                             },
                             cardinality: 4,
                             prevalidator: [
-                                { validator: "[0-9]", cardinality: 1 },
-                                { validator: "[0-9][0-9]", cardinality: 2 },
-                                { validator: "[0-9][0-9][0-9]", cardinality: 3 },
-                                { validator: "[0-9][0-9][0-9][0-9]", cardinality: 4 },
+                                { validator: "[12]", cardinality: 1 },
+                                { validator: "(1|2)[09]", cardinality: 2 },
+                                { validator: "(1|2)(0|9)[0-9]", cardinality: 3 },
+                                { validator: "(1|2)(0|9)[0-9][0-9]", cardinality: 4 },
                             ]
                         },
                         "M": {
