@@ -35,22 +35,14 @@
 <div class="maket">
     <div class="shapka" >
         <img class="logo" src="{{ url_for('static', filename='logo_21.png') }}" alt="">
-        {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
-            <div class="exit">
-                <a class="exit_button" href="{{ url_for('auth.logout') }}">
-                    Выйти
-                </a>
-            </div>
-        {% else %}
-            <div class="buttons">
-                <a class="button" href="{{ url_for('auth.login') }}">
-                    Вход
-                </a>
-                <a class="button" href="{{ url_for('auth.register') }}">
-                    Регистрация
-                </a>
-            </div>
-        {% endif %}
+        <div class="buttons">
+            <a class="button" href="{{ url_for('auth.login') }}">
+                Вход
+            </a>
+            <a class="button" href="{{ url_for('auth.register') }}">
+                Регистрация
+            </a>
+        </div>
     </div>
     <div class="content">
         {% block app_content %}{% endblock %}
