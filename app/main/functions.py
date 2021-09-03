@@ -249,7 +249,7 @@ def excel_expert(filename, number):
 
 
 def delete_function(): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '12 month')")
+    a = engine.execute("SELECT number FROM project WHERE end <= DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:
