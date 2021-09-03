@@ -139,7 +139,7 @@
     .logo {
         width: max-content;
         height: max-content;
-        max-width: 300px;
+        max-width: 310px;
 
     }
 
@@ -193,6 +193,7 @@ body {
 .shapka {
     background-color: rgb(255, 255, 255);
     width: 100%;
+    max-height: 100px;
     position: sticky;
     display: flex;
     justify-content: space-between;
