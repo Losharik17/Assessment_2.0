@@ -36,12 +36,11 @@
     <script>
         function end_project (element) {
 
-            let date = new Date()
+            let date = new Date(), pr_date
             let project_date = element.attr('date').split('.')
 
-            if (date.getFullYear() >= +project_date[2] &&
-                date.getMonth() >= +project_date[1] - 1 &&
-                date.getDate() > +project_date[0]) {
+            pr_date = new Date(project_date[2], project_date[1] - 1, project_date[0])
+            if (pr_date < date) {
                 element.append('<div style="text-align: center; color:crimson">Проект завершён</div>')
             }
         }

@@ -11,7 +11,6 @@ from flask_moment import Moment
 from config import Config
 from flask_bootstrap import Bootstrap
 
-
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()

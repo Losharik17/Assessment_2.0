@@ -4,7 +4,8 @@ from flask_mail import Message
 from app import mail
 
 
-def send_async_email(app, msg):
+def send_async_email(msg):
+    from main import app
     with app.app_context():
         mail.send(msg)
 

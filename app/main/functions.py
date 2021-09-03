@@ -13,7 +13,6 @@ from PIL import Image
 from datetime import datetime, timedelta
 from app.models import Project
 from app.auth.email import send_alert_mail
-from app import create_app
 
 engine = create_engine("sqlite:///T_park.db")
 
@@ -267,9 +266,9 @@ def delete_timer():
     shed = BackgroundScheduler(daemon=True)
     shed.add_job(delete_function, 'interval', days=7)
     sched = BackgroundScheduler(daemon=True)
-    sched.add_job(email_timer, 'interval', days=1)
+    sched.add_job(email_timer, 'interval', seconds=1)
     email = BackgroundScheduler(daemon=True)
-    email.add_job(email_saver, 'interval', days=1)
+    email.add_job(email_saver, 'interval', seconds=1)
     shed.start()
     sched.start()
     email.start()
@@ -299,7 +298,8 @@ def compression(width, height, path):
 
 
 def email_timer():
-    with current_app._get_current_object().app_context():
+    from main import app
+    with app.app_context():
         projects = Project.query.all()
         month = datetime.now().date() + timedelta(days=30)
         week = datetime.now().date() + timedelta(days=7)
@@ -314,7 +314,8 @@ def email_timer():
 
 
 def email_saver():
-    with current_app._get_current_object().app_context():
+    from main import app
+    with app.app_context():
         a = engine.execute("SELECT number FROM project WHERE end == DATE('now', '-1 day')")
         a = a.fetchall()
         for rows in a:

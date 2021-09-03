@@ -10,7 +10,7 @@ from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, delete_timer, redirects, compression, password_generator, \
-    send_password_mail, email_timer, email_saver
+    send_password_mail
 from app.auth.email import send_role_update, send_role_refuse
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
@@ -65,7 +65,7 @@ def export_excel(project_number):
     df1['team'] = df1['team'].str.capitalize()
     df1['region'] = df1['region'].str.capitalize()
 
-    for i in range (0, len(df1.index)):
+    for i in range(0, len(df1.index)):
         if 'λ' in df1.email[i]:
             a = len(df1.email[i]) - 1
             df1.email[i] = df1.email[i][:a]
@@ -194,7 +194,6 @@ def user():
     return render_template('user_grades_table.html', title='Мои оценки',
                            user=user, project_number=user.project_number,
                            ParName=parameters, user_id=current_user.id, back='')
-
 
 
 # ввод номера участника для перехода к выставлению оценки
@@ -593,7 +592,6 @@ def create_project():
                 db.session.commit()
             return redirect(url_for('main.create_project'))
 
-
     return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
 
 
@@ -607,7 +605,7 @@ def add_new_user(project_number):
     if request.method == 'POST':
         result = request.form
 
-        if result.get('username') and result.get('email') and\
+        if result.get('username') and result.get('email') and \
                 result.get('birthday') != 'дд.мм.гггг':
             if User.query.filter_by(email=result.get('email')).first() is None:
                 last_user_id = User.query.filter_by(project_number=project_number).all()[-1].project_id
@@ -762,7 +760,6 @@ def admin_projects():
 
     return render_template('admin_projects.html', admin=admin, projects=projects, title='Проекты',
                            back=url_for('main.admin'))
-
 
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
