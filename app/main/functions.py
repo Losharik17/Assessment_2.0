@@ -13,9 +13,10 @@ from PIL import Image
 from datetime import datetime, timedelta
 from app.models import Project
 from app.auth.email import send_alert_mail
-from app import create_app
+import os
+import shutil
 
-app = create_app()
+
 engine = create_engine("sqlite:///T_park.db")
 
 
@@ -251,6 +252,13 @@ def delete_function(): #Функция для удаления старых да
             engine.execute("DELETE FROM user WHERE project_number = ?", rows[0])
             engine.execute("DELETE FROM expert WHERE project_number = ?", rows[0])
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
+            os.chdir("app/static/images")
+            try:
+                if os.path.exists('{}'.format(a)):
+                    shutil.rmtree('{}'.format(a))
+            except:
+                pass
+            os.chdir('../../../')
 
 
 def delete_timer():
@@ -289,6 +297,7 @@ def compression(width, height, path):
 
 
 def email_timer():
+    from main import app
     with app.app_context():
         projects = Project.query.all()
         month = datetime.now().date() + timedelta(days=30)
@@ -304,6 +313,7 @@ def email_timer():
 
 
 def email_saver():
+    from main import app
     with app.app_context():
         a = engine.execute("SELECT number FROM project WHERE end == DATE('now', '-1 day')")
         a = a.fetchall()
