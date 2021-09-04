@@ -13,13 +13,15 @@ from PIL import Image
 from datetime import datetime, timedelta
 from app.models import Project
 from app.auth.email import send_alert_mail
-from app import create_app
+import os
+import shutil
 
-app = create_app()
 engine = create_engine("sqlite:///T_park.db")
 
 
 def users_in_json(users):
+    if not users:
+        return '[]'
     lenght = len(Project.query.filter_by(number=users[0].project_number).first()
                  .parameters.all())
 
@@ -43,14 +45,16 @@ def users_in_json(users):
         string += '"sum_grade_all":"{0}"'.format(str(user.sum_grade_all)) + '},'
 
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
 def viewers_in_json(viewers):
+    if not viewers:
+        return '[]'
 
     string = '['
     for viewer in viewers:
-
         string += '{' + '"id":{0},"username":"{1}","phone_number":"{2}","expert_id":"{3}",' \
                         '"email":"{4}"' \
             .format(str(viewer.id), str(viewer.username), str(viewer.phone_number),
@@ -63,6 +67,8 @@ def viewers_in_json(viewers):
 
 
 def experts_in_json(experts):
+    if not experts:
+        return '[]'
     string = '['
 
     for expert in experts:
@@ -80,7 +86,8 @@ def experts_in_json(experts):
 
 
 def grades_in_json(grades, lenght):
-
+    if not grades:
+        return '[]'
 
     string = '['
     for grade in grades:
@@ -103,15 +110,18 @@ def grades_in_json(grades, lenght):
 
 
 def waiting_users_in_json(waiting_users):
+    if not waiting_users:
+        return '[]'
     string = '['
     for waiting_user in waiting_users:
         string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}",' \
-                        '"phone_number":"{4}"' \
+                        '"phone_number":"{4}", "organization":"{5}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
                     str(waiting_user.username),
-                    str(waiting_user.phone_number))
+                    str(waiting_user.phone_number),
+                    str(waiting_user.organization))
         string += '},'
     string = string[:len(string) - 1] + ']'
 
@@ -157,7 +167,7 @@ def excel_user(filename, number):
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
-    prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
+    prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
     if last_user != None:
@@ -184,11 +194,7 @@ def excel_user(filename, number):
         db.session.add(user)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(user, a)
-        except:
-            print("error")
-            raise
+
 
 
 def excel_expert(filename, number):
@@ -228,19 +234,16 @@ def excel_expert(filename, number):
         db.session.add(expert)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(expert, a)
-        except:
-            print('error')
-            raise
+
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
         db.session.commit()
 
 
+
 def delete_function(): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '12 month')")
+    a = engine.execute("SELECT number FROM project WHERE end != DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:
@@ -251,6 +254,13 @@ def delete_function(): #Функция для удаления старых да
             engine.execute("DELETE FROM user WHERE project_number = ?", rows[0])
             engine.execute("DELETE FROM expert WHERE project_number = ?", rows[0])
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
+            os.chdir("app/static/images")
+            try:
+                if os.path.exists('{}'.format(rows[0])):
+                    shutil.rmtree('{}'.format(rows[0]))
+            except:
+                pass
+            os.chdir('../../../')
 
 
 def delete_timer():
@@ -289,6 +299,7 @@ def compression(width, height, path):
 
 
 def email_timer():
+    from main import app
     with app.app_context():
         projects = Project.query.all()
         month = datetime.now().date() + timedelta(days=30)
@@ -304,6 +315,7 @@ def email_timer():
 
 
 def email_saver():
+    from main import app
     with app.app_context():
         a = engine.execute("SELECT number FROM project WHERE end == DATE('now', '-1 day')")
         a = a.fetchall()
