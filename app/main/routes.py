@@ -1,5 +1,4 @@
 import json
-
 import password as password
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
@@ -580,9 +579,7 @@ def create_project():
         except:
             for i in range(lvl):
                 os.chdir('../')
-            flash('Ошибка создания проекта. '
-                  'Пожалуйста проверьте, чтобы все поля были заполнены '
-                  'и удалите пустые критерии.', 'danger')
+            flash('Что-то пошло не так. Попробуйте снова.', 'danger')
             db.session.rollback()
             if delete_project:
                 project = Project.query.all()[-1]
@@ -943,16 +940,16 @@ def users_table():
 
         if request.form['sort_up'] == 'true':
             if request.form['parameter'] == 'birthday':
-                users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
+                users = users.order_by(User.__dict__[request.form['parameter']].asc()).all()
             else:
-                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit + 1)
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).all()
         else:
             if request.form['parameter'] == 'birthday':
-                users = users.order_by(User.__dict__[request.form['parameter']].desc()).limit(limit)
+                users = users.order_by(User.__dict__[request.form['parameter']].desc()).all()
             else:
-                users = users.order_by(User.__dict__[request.form['parameter']].asc()).limit(limit)
+                users = users.order_by(User.__dict__[request.form['parameter']].asc()).all()
     else:
-        users = users.order_by(User.project_id).limit(limit)
+        users = users.order_by(User.project_id).all()
 
     # сортировка по возрасту
     t = date.today()
@@ -968,7 +965,7 @@ def users_table():
         else:
             new_users.append(user)
 
-    return jsonify({'users': users_in_json(new_users)})
+    return jsonify({'users': users_in_json(new_users[:limit])})
 
 
 @bp.route('/sort_experts_table', methods=['POST'])

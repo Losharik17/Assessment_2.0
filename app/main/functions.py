@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 from app.models import Project
 from app.auth.email import send_alert_mail
 
-engine = create_engine("sqlite:///T_park.db")
+engine = create_engine("sqlite:///T_Park.db")
 
 
 def users_in_json(users):

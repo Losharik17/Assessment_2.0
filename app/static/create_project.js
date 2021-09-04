@@ -226,3 +226,7 @@ $('#end').focus(function () {
         'border-bottom': '1px solid #cccccc'
     })
 })
+
+function waiting() {
+
+}

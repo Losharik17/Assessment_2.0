@@ -23,11 +23,27 @@ function dataorder(parameter, event) {
             $(`#${parameter}`).attr('data-order', 1)
 }
 
+function dataorder_birthday(event) {
+    if (event.target.id === 'birthday') {
+        if ($(`#birthday`).attr('data-order') === '0' ||
+            $(`#birthday`).attr('data-order') === '1')
+            $(`#birthday`).attr('data-order', -1)
+        else if ($('#min_age_value').val() === 0 && $('#max_age_value').val() === 0) {
+            $(`#birthday`).attr('data-order', 0)
+            console.log(1)
+        }
+    }
+
+    if (event.target.tagName === 'LI')
+        if (event.target.getAttribute('type_sort') === 'birthday')
+            $(`#birthday`).attr('data-order', 1)
+}
+
 document.addEventListener('click', function (event) {
 
     dataorder('team', event)
     dataorder('region', event)
-    dataorder('birthday', event)
+    dataorder_birthday(event)
 
     if ($('#teams').attr('value') === 'Все команды' &&
         event.target.id !== 'team')
@@ -37,9 +53,7 @@ document.addEventListener('click', function (event) {
         event.target.id !== 'region')
         $('#region').attr('data-order', 0)
 
-    if ($('#birthdays').attr('value') === '–' &&
-        event.target.id !== 'birthday')
-        $('#birthday').attr('data-order', 0)
+
 })
 
 $('html').click(function (event) {
@@ -50,12 +64,16 @@ $('html').click(function (event) {
         $('#birthday').addClass('active');
         $('#birthday').find('.dropdown-menu').slideDown(300);
     }
-    else if ((event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
-        || ($('#birthday').hasClass('active')) && (event.target.tagName === 'TH' ||
-            event.target.tagName === 'LI' || event.target.tagName === 'LABEL'))) {
-        $('#birthday').attr('data-order', 0)
+    else if ((event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age') &&
+        (event.target.tagName === 'TH' ||
+            event.target.tagName === 'LI' || event.target.tagName === 'LABEL')) {
         $('#birthday').removeClass('active');
-        $('#birthday').find('.dropdown-menu').slideUp(300);
+        $('#birthday').find('.dropdown-menu').slideUp(300)
+        if ($('#min_age_value').val() === 0 && $('#max_age_value').val() === 0) {
+            $('#birthday').attr('data-order', 0)
+        }
+        if ($('#min_age_value').val() !== 0 || $('#max_age_value').val() !== 0)
+            $(`#birthday`).attr('data-order', 1)
     }
 });
 
@@ -175,17 +193,23 @@ function age_sort(project_number, type=0) {
     let min_age = $('#min_age_value').val() || 0,
         max_age = $('#max_age_value').val() || 200
     if (+min_age > +max_age) {
+        let t = $('#min_age_value').val()
         $('#min_age_value').val(max_age)
-        $('#max_age_value').val(min_age)
+        $('#max_age_value').val(t)
     }
 
-    if ($('#age_sort').html() === 'По возрастанию')
-        setTimeout( ()=> { $('#age_sort').html('По убыванию') }, 300)
-    else
-        setTimeout( ()=> { $('#age_sort').html('По возрастанию') }, 300)
-
-    if (type)
+    if (type) {
         sort('birthday', project_number)
+        if ($('#birthday').attr('data-order') !== 1) {
+            setTimeout(() => {
+                $('#age_sort').html('По убыванию')
+            }, 300)
+        } else {
+            setTimeout(() => {
+                $('#age_sort').html('По возрастанию')
+            }, 300)
+        }
+    }
     else
         show_more(0, project_number)
 }
@@ -196,7 +220,6 @@ function age_sort_delete(project_number) {
     $('#max_age_value').val(null)
     setTimeout( ()=> {$('#birthday').attr('data-order', 0) }, 10)
 
-    sort('project_id', project_number)
     show_more(0 , project_number)
 }
 
