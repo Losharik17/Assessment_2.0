@@ -82,6 +82,21 @@
     margin: 0 0 0 20px;
 }
 
+
+.btn_error {
+    color: #1a73e8;
+    cursor: pointer;
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 35px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    width: max-content;
+    margin: 0 0 0 20px;
+}
+
 .btn-5 {
     border: 0 solid;
     box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
