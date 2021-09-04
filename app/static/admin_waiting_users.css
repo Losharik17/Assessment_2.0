@@ -17,6 +17,7 @@
     border: none;
     border-radius: 4px;
     height: 36px;
+    width:min-content;
     line-height: 36px;
     font-size: 14px;
     font-weight: 500;
