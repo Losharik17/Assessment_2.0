@@ -585,8 +585,17 @@ def create_project():
                 project = Project.query.all()[-1]
                 for parameter in project.parameters.all():
                     db.session.delete(parameter)
+
+                os.chdir("app/static/images")
+                try:
+                    if os.path.exists('{}'.format(project.number)):
+                        shutil.rmtree('{}'.format(project.number))
+                except:
+                    pass
+                os.chdir('../../../')
                 db.session.delete(project)
                 db.session.commit()
+
             return redirect(url_for('main.create_project'))
 
     return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
