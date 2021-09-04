@@ -26,11 +26,11 @@
                             onclick="age_sort({{ project_number }}, 1)">По убыванию</li>
                         <li project_number="{{ project_number }}" id="min_age" type_sort="age">
                             <label for="min_age_value">От&nbsp;&nbsp;</label>
-                            <input type="number" id="min_age_value" min="0" max="200"
+                            <input type="number" id="min_age_value" min="0" max="100"
                                    step="1" class="age"></li>
                         <li project_number="{{ project_number }}" id="max_age" type_sort="age">
                             <label for="max_age_value">До&nbsp;&nbsp;</label>
-                            <input type="number" id="max_age_value" min="0" max="200"
+                            <input type="number" id="max_age_value" min="0" max="100"
                                    step="1" class="age"></li>
                         <li project_number="{{ project_number }}" id="submit_sort_age"
                             type_sort="birthday" onclick="age_sort({{ project_number }})">
