@@ -65,7 +65,7 @@ def export_excel(project_number):
     df1['region'] = df1['region'].str.capitalize()
 
     for i in range(0, len(df1.index)):
-        if 'λ' in df1.email[i]:
+        if 'λ' in str(df1.email[i]):
             a = len(df1.email[i]) - 1
             df1.email[i] = df1.email[i][:a]
 
