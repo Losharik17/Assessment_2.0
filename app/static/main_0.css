@@ -85,6 +85,8 @@
 
 .btn_error {
     color: #1a73e8;
+    padding-left: 7px;
+    padding-right: 7px;
     cursor: pointer;
     display: block;
     font-size: 12px;
