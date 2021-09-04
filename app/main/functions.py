@@ -265,8 +265,8 @@ def delete_function(): #Функция для удаления старых да
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
             os.chdir("app/static/images")
             try:
-                if os.path.exists('{}'.format(rows[0])):
-                    shutil.rmtree('{}'.format(rows[0]))
+                if os.path.exists('{}'.format(a)):
+                    shutil.rmtree('{}'.format(a))
             except:
                 pass
             os.chdir('../../../')
