@@ -28,7 +28,8 @@ function dataorder_birthday(event) {
         if ($(`#birthday`).attr('data-order') === '0' ||
             $(`#birthday`).attr('data-order') === '1')
             $(`#birthday`).attr('data-order', -1)
-        else if ($('#min_age_value').val() === 0 && $('#max_age_value').val() === 0)
+        else if (!$('#min_age_value').val() && !$('#max_age_value').val() &&
+            sort.current_parameter !== 'birthday')
             $(`#birthday`).attr('data-order', 0)
     }
 
@@ -60,17 +61,23 @@ $('html').click(function (event) {
         $('#birthday').attr('tabindex', 1).focus();
         $('#birthday').addClass('active');
         $('#birthday').find('.dropdown-menu').slideDown(300);
+
+        if (sort.sort_up && sort.current_parameter === 'birthday')
+            $('#age_sort').html('По возрастанию')
+        else
+            $('#age_sort').html('По убыванию')
     }
-    else if ((event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age') &&
-        (event.target.tagName === 'TH' ||
-            event.target.tagName === 'LI' || event.target.tagName === 'LABEL')) {
+    else if ((event.target.tagName !== 'INPUT' || event.target.id === 'submit_sort_age'
+        || ($('#birthday').hasClass('active')) ) && event.target.tagName !== 'INPUT') {
+
         $('#birthday').removeClass('active');
         $('#birthday').find('.dropdown-menu').slideUp(300)
-        if ($('#min_age_value').val() === 0 && $('#max_age_value').val() === 0) {
+
+        if ($('#min_age_value').val() || $('#max_age_value').val())
+            $(`#birthday`).attr('data-order', 1)
+        else if (sort.current_parameter !== 'birthday'){
             $('#birthday').attr('data-order', 0)
         }
-        if ($('#min_age_value').val() !== 0 || $('#max_age_value').val() !== 0)
-            $(`#birthday`).attr('data-order', 1)
     }
 });
 
@@ -200,7 +207,8 @@ function age_sort(project_number, type=0) {
 
     if (type) {
         sort('birthday', project_number)
-        if ($('#birthday').attr('data-order') !== 1) {
+        console.log(sort.sort_up)
+        if (!sort.sort_up && sort.current_parameter === 'birthday') {
             setTimeout(() => {
                 $('#age_sort').html('По убыванию')
             }, 300)
