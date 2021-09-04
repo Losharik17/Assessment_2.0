@@ -227,7 +227,7 @@ function show_more(new_field, user_id) {
 
             $("#tbody").append(`<tr class="th_clean" id="number_str${i}"></tr>`)
 
-            if (grades[i]['expert_id'] === 'None')
+            if (grades[i]['expert_id'] === 'None' || grades[i]['expert_id'] > 1000000)
                 $(`#number_str${i}`).append(`<td id="expert_id${i}">–</td>`)
             else
                 $(`#number_str${i}`).append(`<td id="expert_id${i}">${grades[i]['expert_id']}</td>`)
@@ -286,7 +286,8 @@ function sort(parameter, user_id) {
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#expert_id${i}`).html(grades[i]['expert_id'] ? grades[i]['expert_id'] : '–');
+                $(`#expert_id${i}`).html((grades[i]['expert_id'] &&
+                    grades[i]['expert_id'] < 1000000) ? grades[i]['expert_id'] : '–');
                 $(`#date${i}`).html(grades[i]['date'] ? grades[i]['date'] : '–')
 
                 for (let j = 0; j < 15; j++)

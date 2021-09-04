@@ -228,5 +228,10 @@ $('#end').focus(function () {
 })
 
 function waiting() {
-
+    $('body').append('<div class="preloader">' +
+        '<div class="preloader-text">' +
+        '<h4>Создание проекта может занять несколько минут</h4>' +
+        '</div>' +
+        '<div class="preloader-5"></div>' +
+        '</div>')
 }
