@@ -70,7 +70,7 @@ function addField(number) {
                                      <div class="block_5">
                                      <input type="button" id="minus${number + 1}" 
                                      class="button" value="-">
-                                     <input type="number" id="weight${number + 1}" 
+                                     <input type="number" name="weight${number + 1}" id="weight${number + 1}" 
                                      value="1.0" step="0.1" max="2.0" min="0.1" class="crit"/>
                                      <input type="button"  id="plus${number + 1}" class="button" 
                                      value="+">
