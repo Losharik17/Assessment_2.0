@@ -65,9 +65,12 @@ def export_excel(project_number):
     df1['region'] = df1['region'].str.capitalize()
 
     for i in range(0, len(df1.index)):
-        if 'λ' in str(df1.email[i]):
-            a = len(df1.email[i]) - 1
-            df1.email[i] = df1.email[i][:a]
+        try:
+            if 'λ' in str(df1.email[i]):
+                a = len(df1.email[i]) - 1
+                df1.email[i] = df1.email[i][:a]
+        except:
+            pass
 
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
                               'photo': 'Фотография',
@@ -153,9 +156,17 @@ def export_excel(project_number):
     os.chdir('app/static/images/{}/users'.format(project_number))
     files = os.listdir(os.getcwd())
     i = 2
+
     for file in files:
-        worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
-        i += 1
+        for j in df1.index:
+            try:
+                if str(df1.ID[j]) == file.rsplit(".", 1)[0]:
+                    worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
+            except:
+                pass
+            i += 1
+        i = 2
+
 
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
@@ -168,8 +179,14 @@ def export_excel(project_number):
     files = os.listdir(os.getcwd())
     i = 2
     for file in files:
-        worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
-        i += 1
+        for j in df2.index:
+            try:
+                if str(df2.ID[j]) == file.rsplit(".", 1)[0]:
+                    worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
+            except:
+                pass
+            i += 1
+        i = 2
 
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
@@ -585,7 +602,6 @@ def create_project():
                 project = Project.query.all()[-1]
                 for parameter in project.parameters.all():
                     db.session.delete(parameter)
-
                 os.chdir("app/static/images")
                 try:
                     if os.path.exists('{}'.format(project.number)):

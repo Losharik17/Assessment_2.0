@@ -13,6 +13,8 @@ from PIL import Image
 from datetime import datetime, timedelta
 from app.models import Project
 from app.auth.email import send_alert_mail
+import os
+import shutil
 
 engine = create_engine("sqlite:///T_Park.db")
 
@@ -241,6 +243,7 @@ def excel_expert(filename, number):
         except:
             print('error')
             raise
+
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
@@ -260,6 +263,13 @@ def delete_function(): #Функция для удаления старых да
             engine.execute("DELETE FROM user WHERE project_number = ?", rows[0])
             engine.execute("DELETE FROM expert WHERE project_number = ?", rows[0])
             engine.execute("DELETE FROM project WHERE number = ?", rows[0])
+            os.chdir("app/static/images")
+            try:
+                if os.path.exists('{}'.format(rows[0])):
+                    shutil.rmtree('{}'.format(rows[0]))
+            except:
+                pass
+            os.chdir('../../../')
 
 
 def delete_timer():
