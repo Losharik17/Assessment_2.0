@@ -145,15 +145,15 @@ def export_excel(project_number):
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
     workbook = writer.book
-    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter'})
+    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
     date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
     date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
     worksheet = writer.sheets['Пользователи']
-    worksheet.set_default_row(110)
+    worksheet.set_default_row(113.2)
     worksheet.set_row(0, 15)
     worksheet.set_column('A:Q', 19, new_format)
     worksheet.set_column('D:D', 19, date_format)
-    worksheet.set_column('B:B', 13, new_format)
+    worksheet.set_column('B:B', 13.6, new_format)
     os.chdir('app/static/images/{}/users'.format(project_number))
     files = os.listdir(os.getcwd())
     i = 2
@@ -169,10 +169,10 @@ def export_excel(project_number):
 
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
-    worksheet.set_default_row(110)
+    worksheet.set_default_row(113.2)
     worksheet.set_row(0, 15)
     worksheet.set_column('A:E', 19, new_format)
-    worksheet.set_column('B:B', 13, new_format)
+    worksheet.set_column('B:B', 13.6, new_format)
     os.chdir('../../../../../')
     os.chdir('app/static/images/{}/experts'.format(project_number))
     files = os.listdir(os.getcwd())
