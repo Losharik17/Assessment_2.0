@@ -8,14 +8,10 @@ from app.auth.forms import LoginForm, RegistrationForm, \
 from app.models import User, Expert, Admin, Viewer, WaitingUser
 from app.auth.email import send_password_reset_email
 import os
-from werkzeug.utils import secure_filename
-import time
-from flask_bootstrap import Bootstrap
 
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # при вводе несущкствующего email ничего не происходит, не высвечиваются ошибки
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -32,7 +28,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Неверный пароль или email', 'warning')
             return redirect(url_for('auth.login'))
-        print(form.remember_me.data)
+
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -57,22 +53,24 @@ def register():
                 Expert.query.filter_by(email=form.email.data) is None or \
                 Admin.query.filter_by(email=form.email.data) is None or \
                 Viewer.query.filter_by(email=form.email.data) is None:
-            flash('Данная почта уже используется одним из пользователей<br>'
-                  'Пожалуйста изпользуйте другой email адрес', 'warning')
+            flash('Данная почта уже используется одним из пользователей.\n'
+                  'Пожалуйста изпользуйте другой email адрес.', 'warning')
+
             return redirect(url_for('auth.register'))
 
-        # path = os.path.join('../T-Park/app/static/images')
-        # form.avatar.data.save(os.path.join(path, '{}.webp'.format(form.email.data)))
-        waiting_user = WaitingUser(username=form.username.data, email=form.email.data)
+        #os.chdir("app/static/images/waiting_users")
+        #form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
+        #os.chdir('../../../../')
+        waiting_user = WaitingUser(username=form.username.data, email=form.email.data,
+                                   phone_number=form.phone_number.data, organization=form.organization.data)
         waiting_user.set_password(form.password.data)
         db.session.add(waiting_user)
         db.session.commit()
-        flash('Регистрация прошла успешно.'
-              'Когда администратор проверит вашу заявку,'
+        flash('Регистрация прошла успешно.\n'
+              'Когда администратор проверит вашу заявку,\n'
               'вам придет уведомление на почту.', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Регистрация', form=form)
-
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
@@ -83,10 +81,19 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_password_reset_email(user)
+        else:
+            viewer = Viewer.query.filter_by(email=form.email.data).first()
+            if viewer:
+                send_password_reset_email(viewer)
+            else:
+                admin = Admin.query.filter_by(email=form.email.data).first()
+                if admin:
+                    send_password_reset_email(admin)
+                else:
+                    expert = Expert.query.filter_by(email=form.email.data).first()
+                    if expert:
+                        send_password_reset_email(expert)
 
-        expert = Expert.query.filter_by(email=form.email.data).first()
-        if expert:
-            send_password_reset_email(expert)
         flash('Проверьте вашу почту и следуйте дальнейшим инструкциям', 'success')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password_request.html',
@@ -99,9 +106,14 @@ def reset_password(token):
         return redirect(url_for('main.index'))
     user = User.verify_reset_password_token(token)
     if not user:
-        user = Expert.verify_reset_password_token(token)
+        user = Viewer.verify_reset_password_token(token)
         if not user:
-            return redirect(url_for('main.index'))
+            user = Admin.verify_reset_password_token(token)
+            if not user:
+                user = Expert.verify_reset_password_token(token)
+                if not user:
+                    flash('Мы не нашли пользователя с данной почтой', 'danger')
+                    return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)

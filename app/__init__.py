@@ -11,7 +11,6 @@ from flask_moment import Moment
 from config import Config
 from flask_bootstrap import Bootstrap
 
-
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
@@ -25,8 +24,9 @@ json = FlaskJSON()
 
 
 def create_app(config_class=Config):
-    app = Flask(__name__, template_folder='templates',
-                static_folder='static',)
+    app = Flask(__name__, static_url_path='/app/static',
+                template_folder='templates',
+                static_folder='static')
     app.config.from_object(config_class)
 
     db.init_app(app)
@@ -58,7 +58,7 @@ def create_app(config_class=Config):
             mail_handler = SMTPHandler(
                 mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
                 fromaddr='no-reply@' + app.config['MAIL_SERVER'],
-                toaddrs=app.config['ADMINS'], subject='Microblog Failure',
+                toaddrs=app.config['ADMINS'], subject='NSPT Rating Failure',
                 credentials=auth, secure=secure)
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
@@ -68,13 +68,13 @@ def create_app(config_class=Config):
         file_handler = RotatingFileHandler('logs/main.log',
                                            maxBytes=10240, backupCount=10)
         file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
+            '\n%(asctime)s %(levelname)s: %(message)s '
             '[in %(pathname)s:%(lineno)d]'))
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info('T-Park started')
+        app.logger.info('NSPT started')
 
     return app
 

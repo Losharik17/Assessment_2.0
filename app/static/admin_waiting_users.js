@@ -1,4 +1,4 @@
-let limit = 5
+let limit = 15
 
 sort.sort_up = false
 sort.current_parameter = 'registration_date'
@@ -104,7 +104,7 @@ function show_more(new_field) {
         let quantity = waiting_users.length
 
         if (limit > quantity) {
-            limit = quantity
+            quantity < 15 ? limit = 15 : limit = quantity
             $('body').append(
                 `<div class="message warning"><h4>
                 В таблице присутствуют все пользователи</h4></div>`)
@@ -133,6 +133,17 @@ function show_more(new_field) {
                 $(`#number_str${i}`).append(`<td id="email${i}">–</td>`)
             else
                 $(`#number_str${i}`).append(`<td id="email${i}">${waiting_users[i]['email']}</td>`)
+
+            if (waiting_users[i]['organization'] === 'None')
+                $(`#number_str${i}`).append(`<td id="organization${i}">–</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="organization${i}">${waiting_users[i]['organization']}</td>`)
+
+
+            if (waiting_users[i]['phone_number'] === 'None')
+                $(`#number_str${i}`).append(`<td id="phone_number${i}">–</td>`)
+            else
+                $(`#number_str${i}`).append(`<td id="phone_number${i}">${waiting_users[i]['phone_number']}</td>`)
 
             if (waiting_users[i]['registration_date'] === 'None')
                 $(`#number_str${i}`).append(`<td id="registration_date${i}">–</td>`)
@@ -182,9 +193,11 @@ function sort(parameter) {
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#username${i}`).html(waiting_users[i]['username'] ? waiting_users[i]['username'] : '–');
-                $(`#email${i}`).html(waiting_users[i]['email'] ? waiting_users[i]['email'] : '–')
-                $(`#registration_date${i}`).html(waiting_users[i]['registration_date'] ? waiting_users[i]['registration_date'] : '–')
+                $(`#username${i}`).html(waiting_users[i]['username'] !== 'None' ? waiting_users[i]['username'] : '–');
+                $(`#email${i}`).html(waiting_users[i]['email'] !== 'None' ? waiting_users[i]['email'] : '–')
+                $(`#registration_date${i}`).html(waiting_users[i]['registration_date'] !== 'None' ? waiting_users[i]['registration_date'] : '–')
+                $(`#organization${i}`).html(waiting_users[i]['organization'] !== 'None' ? waiting_users[i]['organization'] : '–')
+                $(`#phone_number${i}`).html(waiting_users[i]['phone_number'] !== 'None' ? waiting_users[i]['phone_number'] : '–')
 
                 $(`#buttons${i}`).html(`<span id="admin${i}" onclick="give_role(${waiting_users[i]['id']},  ${i},  'Администратор')">` +
                     `<input id="a${i}" type="button" value="Администратор" class="btn"></span>` +

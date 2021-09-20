@@ -1,25 +1,21 @@
 <html lang="ru">
-
-<!--Починить подвал на мобилках(лого). подвал наплывает на кнопки выставления оценок
-ломается -->
-
-
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="{{ url_for('static', filename='main_0.css') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename="favicon.ico") }}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
-        <title>T-Park</title>
+        <title>Ассессмент 2.0</title>
     {% endif %}
 
     <script>
         $(window).on('load', function () {
-            $('.preloader').addClass("preloader-remove");
+            setTimeout( () => { $('.preloader').addClass("preloader-remove") }, 100);
         });
     </script>
 
@@ -32,7 +28,7 @@
 
 <div class="maket">
     <div class="shapka" >
-        <img class="logo" src="{{ url_for('static', filename='logo_21.webp') }}" alt="" >
+        <img class="logo" src="{{ url_for('static', filename='logo_21.png') }}" alt="" >
         {% if title != 'Авторизация' and title != 'Регистрация' and (auth or auth is not defined) %}
             <div class="exit">
                 <a class="exit_button" href="{{ url_for('auth.logout') }}">
@@ -60,13 +56,12 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
-
-    <div id="notification" class="kdnotification main">
-        <div class="kdnotification-title"></div>
-    </div>
-
 </div>
+
+{% if back is defined and back != None %}
+    <div id="button_back" class="button_back" onclick="location.href='{{ back }}'"><span>Назад</span></div>
+{% endif %}
+
 
 <script type="text/javascript">
     setTimeout(() => {

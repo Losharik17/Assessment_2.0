@@ -2,23 +2,33 @@
 
 .title {
     text-align: center;
-    margin:auto;
+    margin:auto auto 10px auto;
 
 
+}
+
+.block {
+    justify-content: space-between;
+    margin: 0 auto;
+    vertical-align: top;
+    align-items: center;
+    width: max-content;
 }
 
 .block_1 {
-    float:left;
-    display: inline;
     width: 45%;
-    justify-content:space-around;
+    display: inline-block;
+    justify-content: center;
+    vertical-align: top;
+    margin-right: 40px;
+    
 }
 
 .block_2 {
-    float:right;
-    display: inline;
     width: 45%;
+    display: inline-block;
     justify-content:space-around;
+    margin-left: 40px;
 }
 
 
@@ -28,24 +38,33 @@
 }
 
 .block_4 {
-    width: 60%;
-    background: #0071f0;
-    line-height: 30px;
-    border-width: 0;
-    border-radius: 20px;
-    margin-bottom:20px;
+    width: max-content;
     color: #fff;
-    display:inline-block;
-    height: 30px;
+    margin: 0 auto;
+    display:flex;
 }
 
-
+.block_5 {
+    width: 70px;
+    background: #0071f0;
+    height: 30px;
+    margin-left: 10px;
+    border-width: 0;
+    border-radius: 20px;
+    color: #fff;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    user-select: none;
+}
 
 
 /*****************************************************/
 .content {
     width: 80%;
+    max-width: 1600px;
     margin: auto;
+    position: relative;
 }
 
 
@@ -90,28 +109,31 @@ input::-webkit-inner-spin-button {
 .add_new {
     width: 100%;
     margin: 0 auto;
+    display: block;
+    justify-content: center;
 }
+
+
 
 .button {
-    padding: 0 3px;
-    margin-left: 10px;
-    background: #0071f0;
+    padding:0 2px;
+    width:max-content;
+    background: transparent;
     border-width: 0;
-    border-radius: 7px;
+    border-radius: 10px;
     color: #fff;
     cursor: pointer;
-    transform: scale(1.5)
+    transform: scale(1.5);
+    transition: all 0.15s ease;
+
 }
-
-
-
-
 /**********************FORM*******************************/
 
 .crit {
     width: 30px;
     background: #0071f0;
     border-width: 0;
+    border-radius: 20px;
     color: #fff;
     text-align: center;
 }
@@ -119,20 +141,21 @@ input::-webkit-inner-spin-button {
 
 
 .input_text_1 {
-    width: 60%;
+    width: max-content;
     padding: 0 20px;
     background: #0071f0;
     height: 30px;
     border-width: 0;
     border-radius: 20px;
     color: #fff;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .input_text_2 {
-    width: 50%;
-    margin-left: 20px;
+    width: 70%;
+    padding: 0 20px;
     background: #0071f0;
+    height: 30px;
     border-width: 0;
     border-radius: 20px;
     color: #fff;
@@ -145,11 +168,10 @@ input::-webkit-inner-spin-button {
     margin-bottom:5px;
 }
 
-
 .input__wrapper {
-    width: 100%;
+    width: 320px; !important;
     position: relative;
-    margin: 15px 0;
+    margin: 15px auto; !important;
 }
 
 .input__file {
@@ -161,7 +183,6 @@ input::-webkit-inner-spin-button {
 .input__file-icon-wrapper {
     height: 60px;
     width: 60px;
-    margin-right: 15px;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -176,13 +197,14 @@ input::-webkit-inner-spin-button {
 
 .input__file-button-text {
     line-height: 1;
+    margin-left: 10px;
     margin-top: 1px;
-    font-family: Roboto sans-serif;
+    font: 600 16px Roboto;
     font-size: 16px;
 }
 
 .input__file-button {
-    width: 100%;
+    width: 290px;
     max-width: 290px;
     height: 60px;
     background: #0071f0;
@@ -201,6 +223,7 @@ input::-webkit-inner-spin-button {
     border-radius: 3px;
     cursor: pointer;
     margin: 0 auto;
+    text-align: center;
     border: 0 solid;
     box-shadow: inset 0 0 20px rgba(255, 255, 255, 0);
     outline: #0071f0 solid 0;
@@ -220,46 +243,23 @@ input::-webkit-inner-spin-button {
     }
 }
 
-
-/*
-.input__file-button:active {
-    box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-    outline-width:  1px;
-    outline-color: rgba(255, 255, 255, 0);
-    outline-offset: 15px;
-    text-shadow: 1px 1px 2px #427388;
-}
-
-.input__file-button:not(:active) {
-    outline-offset: 0;
-    transition: outline-offset 0ms;
-}
-
-*/
-
-
-
 .input__file-icon {
     width: 35px;
     height: 35px;
 }
 
-.input__file-icon:hover {
-    border: 1px solid;
-    box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-    outline-color: rgba(255, 255, 255, 0);
-    outline-offset: 15px;
-    text-shadow: 1px 1px 2px #427388;
-}
-/*****************************************************/
-
-
 /*submit***************************/
 
 .container {
+    vertical-align:bottom;
     justify-content: center;
+    text-align: center;
+    margin: 0 auto;
     display: block;
 }
+
+
+
 
 .btn {
     display:block;
@@ -329,41 +329,7 @@ input::-webkit-inner-spin-button {
     }
 
 }
-/*@media scren {
-    .btn-5:active {
-        box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-        outline-width: 1px;
-        outline-color: rgba(255, 255, 255, 0);
-        outline-offset: 15px;
-        text-shadow: 1px 1px 2px #427388;
-    }
 
-
-    .btn-5:not(:active) {
-        outline-offset: 0;
-        transition: outline-offset 0ms;
-    }
-
-}
-
-
-@media scren {
-    .add:active {
-        box-shadow: inset 0 0 20px #0071f0, 0 0 20px rgba(255, 255, 255, .2);
-        outline-width: 1px;
-        outline-color: rgba(255, 255, 255, 0);
-        outline-offset: 15px;
-        text-shadow: 1px 1px 2px #427388;
-    }
-
-
-    .add:not(:active) {
-        outline-offset: 0;
-        transition: outline-offset 0ms;
-    }
-
-}
-*/
 
 input::placeholder { color: rgba(255, 255, 255, 0.8); }
 input { outline:none; }
@@ -384,4 +350,17 @@ input[type="text"]::placeholder {font-family: Roboto, sans-serif}
 
 input:-webkit-autofill:focus {
     border: none !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active
+{
+    -webkit-box-shadow: 0 0 0 30px #0071f0 inset !important;
+}
+
+input:-webkit-autofill
+{
+    -webkit-text-fill-color: white !important;
 }

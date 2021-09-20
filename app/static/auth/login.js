@@ -3,7 +3,6 @@ $('#remember_me').addClass('custom-checkbox')
 $('label[for=email]').addClass('form_label')
 $('label[for=password]').addClass('form_label')
 $('#email').addClass('form_input')
-
 $('#email').focus(function () {
     foc(this, $('label[for=email]'))
 }).blur(function () {
@@ -16,6 +15,9 @@ $('#password').focus(function () {
 }).blur(function () {
     blu(this, $('label[for=password]'))
 })
+
+
+
 
 function foc(el, label) {
     $(el).css({
@@ -30,7 +32,7 @@ function foc(el, label) {
 
 function blu(el, label) {
     $(el).css({
-        'border-bottom': '1px solid #e0e0e0'
+        'border-bottom': '1px solid #cccccc'
     })
     if ($(el).val() === '')
         label.css({

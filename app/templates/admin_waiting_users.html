@@ -2,6 +2,7 @@
 
 {%  block app_content %}
 
+    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_waiting_users.css')}}">
     <script src="{{ url_for('static', filename='admin_waiting_users.js') }}"></script>
 
@@ -16,8 +17,13 @@
                         onclick="sort(this.id)">ФИО</th>
                     <th id="email" class="sort" data-order="0"
                         onclick="sort(this.id)">Email</th>
+                    <th id="organization" class="sort" data-order="0"
+                        onclick="sort(this.id)">Организация</th>
+                    <th id="phone_number" class="sort" data-order="0"
+                        onclick="sort(this.id)">Номер телефона</th>
                     <th id="registration_date" class="sort" data-order="1"
                         onclick="sort(this.id)">Дата регистрации</th>
+
                 </tr>
                 </thead>
 
@@ -31,6 +37,20 @@
                         <td id="email{{ i.a }}">
                             {% if waiting_user.email %}
                                 {{ waiting_user.email }}
+                            {% else %}
+                                –
+                            {% endif %}
+                        </td>
+                        <td id="organization{{ i.a }}">
+                            {% if waiting_user.organization %}
+                                {{ waiting_user.organization }}
+                            {% else %}
+                                –
+                            {% endif %}
+                        </td>
+                        <td id="phone_number{{ i.a }}">
+                            {% if waiting_user.phone_number %}
+                                {{ waiting_user.phone_number }}
                             {% else %}
                                 –
                             {% endif %}
@@ -52,7 +72,7 @@
         </div>
 
         <div class="show">
-            <a id="show_more" class="show_btn" href="javascript:show_more(2)">
+            <a id="show_more" class="show_btn" href="javascript:show_more(10)">
                 Показать больше</a>
             <a id="show_all" class="show_btn" href="javascript:show_more(10000)">
                 Показать все</a>

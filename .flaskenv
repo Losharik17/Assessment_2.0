@@ -1,7 +1,10 @@
 FLASK_APP=main.py
-MAIL_SERVER=smtp.googlemail.com #smtp.yandex.ru
-MAIL_PORT=587 # 465 для яндекса
-MAIL_USE_TLS=1 # 0 для яндекса
-MAIL_USE_SSL=0 # 1 для яндекса
-MAIL_USERNAME=
-MAIL_PASSWORD=
+MAIL_SERVER=smtp.googlemail.com
+MAIL_PORT=587
+MAIL_USE_TLS=1
+MAIL_USE_SSL=0
+MAIL_USERNAME=test27112002@gmail.com
+MAIL_PASSWORD=9610050908
+MAIL_SUPPRESS_SEND = False
+MAIL_DEBUG = True
+TESTING = False
