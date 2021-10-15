@@ -60,13 +60,13 @@ class User(UserMixin, db.Model):
             setattr(self, 'sum_grade_{}'.format(i), 0)
 
         for grade in grades:
-            for i in range(len(parameters)):
+            for i in range(len(parameters)):  # должно быть кол-во параметров, а не цифра
                 if grade.__dict__['parameter_{}'.format(i)]:
                     setattr(self, 'sum_grade_{}'.format(i),
                             (float(self.__dict__['sum_grade_{}'.format(i)]) +
                              grade.__dict__['parameter_{}'.format(i)] * grade.expert.weight))
 
-        for i in range(len(parameters)):
+        for i in range(len(parameters)):  # должно быть кол-во параметров, а не цифра
             setattr(self, 'sum_grade_{}'.format(i),
                     self.__dict__['sum_grade_{}'.format(i)] / self.sum_weight_experts(i))
             if len(parameters) > i:  # нужен тест
