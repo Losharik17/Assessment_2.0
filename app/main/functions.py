@@ -184,21 +184,13 @@ def excel_user(filename, number):
         l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        a = password_generator()
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
         if user.project_id == None:
             user.project_id = l + 1
-        user.set_password(a)
         db.session.add(user)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(user, a)
-        except:
-            print("error")
-            raise
-
 
 def excel_expert(filename, number):
     df = pd.read_excel(filename)
@@ -225,7 +217,6 @@ def excel_expert(filename, number):
         db.session.commit()
     for i in range(i, b):
         df.loc[[i - c]].to_sql('expert', con=engine, if_exists='append', index=False)
-        a = password_generator()
         expert = Expert.query.filter_by(id=i + 1).first()
         if expert.project_id == None:
             expert.project_id = l + 1
@@ -233,16 +224,11 @@ def excel_expert(filename, number):
             expert.weight = 1
         expert.quantity = 0
         expert.project_number = number
-        expert.set_password(a)
+
         db.session.add(expert)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(expert, a)
-        except:
-            print('error')
-            raise
-
+        
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
@@ -269,7 +255,6 @@ def delete_function(): #Функция для удаления старых да
             except:
                 pass
             os.chdir('../../../')
-
 
 def delete_timer():
     shed = BackgroundScheduler(daemon=True)

@@ -22,6 +22,7 @@ from werkzeug.security import generate_password_hash
 from threading import Thread
 from flask_mail import Message
 from app import mail
+import math
 
 
 engine = create_engine("sqlite:///T_Park.db")
@@ -51,7 +52,7 @@ def export_excel(project_number):
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
-    df1['photo'] = ""
+    df1['photos'] = ""
 
     df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
     excel_start_date = date(1899, 12, 30)
@@ -79,12 +80,12 @@ def export_excel(project_number):
             pass
 
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
-                              'photo': 'Фотография',
+                              'photos': 'Фотография',
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
-    df1 = df1.drop(columns=['password_hash', 'project_number'])
+    df1 = df1.drop(columns=['password_hash', 'project_number', 'photo'])
     names = df1.columns.values
     names_length = len(names)
     new_name = [names[0], names[names_length - 1], names[1], names[3], names[2], names[4], names[5], names[6]]
@@ -94,10 +95,10 @@ def export_excel(project_number):
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2['photo'] = ""
+    df2['photos'] = ""
     df2 = df2.loc[df2['project_number'] == int(project_number)]
     df2 = df2.drop(columns=['password_hash', 'project_number', 'quantity'])
-    df2.rename(columns={'username': 'ФИО', 'photo': 'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
+    df2.rename(columns={'username': 'ФИО', 'photos': 'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -134,7 +135,7 @@ def export_excel(project_number):
         df3 = df3.rename(columns={"parameter_{}".format(i): parameter.name})
         i += 1
     while i < 10:
-        df3 = df3.drop(columns={"parameter_{}".format(i)})
+        df3 = df3.drop(columns=["parameter_{}".format(i)])
         i += 1
     df3 = df3.drop(columns=['id'])
     df2 = df2.drop(columns=['id'])
@@ -143,17 +144,17 @@ def export_excel(project_number):
     df1 = df1.rename(columns={'Id': 'ID', 'Фио': 'ФИО'})
     names = df2.columns.values
     df2 = df2.reindex(columns=[names[0], names[4], names[1], names[2], names[3]])
-    df3.rename(columns={'user_id': 'ID пользователя', 'expert_id': 'ID эксперта'}, inplace=True)
+    df3.rename(columns={'user_id': 'ID участника', 'expert_id': 'ID эксперта'}, inplace=True)
 
     filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
 
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
-    df1.to_excel(writer, sheet_name='Пользователи', index=False, float_format="%.1f")
+    df1.to_excel(writer, sheet_name='Участники', index=False, float_format="%.1f")
     workbook = writer.book
     new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
     date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
     date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
-    worksheet = writer.sheets['Пользователи']
+    worksheet = writer.sheets['Участники']
     worksheet.set_default_row(113.2)
     worksheet.set_row(0, 15)
     worksheet.set_column('A:Q', 19, new_format)
@@ -182,8 +183,8 @@ def export_excel(project_number):
     os.chdir('../../../../../')
     os.chdir('app/static/images/{}/experts'.format(project_number))
     files = os.listdir(os.getcwd())
-    i = 2
 
+    i = 2
     for file in files:
         for j in df2.index:
             try:
@@ -210,12 +211,16 @@ def export_excel(project_number):
 def user():
     if 1000000 < current_user.id:
         return redirects()
-    import math
+
     user = User.query.filter_by(id=current_user.id).first()
     parameters = Parameter.query.filter_by(project_number=user.project_number).all()
     sum = []
     for i in range(10):
-        sum.append(round(getattr(user, 'sum_grade_{}'.format(i)), 2))
+        x = getattr(user, 'sum_grade_{}'.format(i))
+        if x:
+            sum.append(round(x, 2))
+        else:
+            sum.append(0)
     return render_template('user_grades_table.html', title='Мои оценки',
                            user=user, project_number=user.project_number,
                            ParName=parameters, user_id=current_user.id, sum=sum, back='')
@@ -372,6 +377,7 @@ def viewer():
     proj = []
     for viewer in Viewer.query.filter_by(organization=viewer.organization).all():
         proj += viewer.projects.all()
+
     try:
         proj.sort(key=lambda Project: Project.start)
         proj.reverse()
@@ -401,11 +407,14 @@ def viewer_settings(project_number):
             users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
             excel_user(users.filename, project.number)
 
+            users_photo = request.files.getlist("users_photo")
+
             def async_mail_ex(ap, project_number, number):
-                engine = create_engine(ap.config['SQLALCHEMY_DATABASE_URI'])
+                engine = create_engine("sqlite:////var/www/fastuser/data/www/rating.nspt.ru/T_Park.db")
                 with ap.app_context():
-                    users = User.query.filter_by(project_number=project_number).\
-                        filter(User.project_id > number).all()
+                    users = User.query.filter_by(project_number=project_number).all()
+                    for i in range(number):
+                        users.pop(0)
 
                     for user in users:
                         passw = password_generator()
@@ -427,7 +436,6 @@ def viewer_settings(project_number):
 
             ex_mail(project.number, number)
 
-            users_photo = request.files.getlist("users_photo")
             os.chdir("app/static/images/{}/users".format(project_number))
             for photo in users_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
@@ -435,26 +443,22 @@ def viewer_settings(project_number):
                 number += 1
             os.chdir('../../../../../')
 
+
         if request.files['experts'] and request.files['experts_photo']:
             experts = request.files['experts']
             number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
             experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
             experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
-            excel_user(experts.filename, project.number)
+            excel_expert(experts.filename, project.number)
 
             experts_photo = request.files.getlist("experts_photo")
-            os.chdir("app/static/images/{}/experts".format(project_number))
-            for photo in experts_photo:
-                photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
-                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
-                number += 1
-            os.chdir('../../../../../')
-
+            
             def async_mail_ex_2(ap, project_number, number):
-                engine = create_engine(ap.config['SQLALCHEMY_DATABASE_URI'])
+                engine = create_engine("sqlite:////var/www/fastuser/data/www/rating.nspt.ru/T_Park.db")
                 with ap.app_context():
-                    users = Expert.query.filter_by(project_number=project_number). \
-                        filter(Expert.project_id > number).all()
+                    users = Expert.query.filter_by(project_number=project_number).all()
+                    for i in range(number):
+                        users.pop(0)
 
                     for user in users:
                         passw = password_generator()
@@ -475,6 +479,14 @@ def viewer_settings(project_number):
                        args=(ap, project_number, number)).start()
 
             ex_mail_2(project.number, number)
+
+            os.chdir("app/static/images/{}/users".format(project_number))
+            for photo in experts_photo:
+                photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
+                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
+                number += 1
+            os.chdir('../../../../../')
+
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
@@ -583,112 +595,133 @@ def create_project():
         result = request.form
         lvl = 0
         delete_project = False
-        if request.files['logo'] and request.files['users'] \
-                and request.files['experts'] and request.files.getlist("users_photo") \
-                and request.files.getlist("experts_photo") and result.get('start') \
-                and result.get('end') and result.get('name'):
+        try:
+            if request.files['logo'] and request.files['users'] \
+                    and request.files['experts'] and request.files.getlist("users_photo") \
+                    and request.files.getlist("experts_photo") and result.get('start') \
+                    and result.get('end') and result.get('name'):
 
-            project = Project(viewer_id=current_user.id, name=result.get('name'))
-            db.session.add(project)
-            db.session.commit()
-            delete_project = True
-            project = Project.query.all()[-1]
+                project = Project(viewer_id=current_user.id, name=result.get('name'))
+                db.session.add(project)
+                db.session.commit()
+                delete_project = True
+                project = Project.query.all()[-1]
 
-            for i in range(int(result.get('quantity'))):
-                db.session.add(Parameter(name=result.get('name{}'.format(i)),
-                                         weight=result.get('weight{}'.format(i)),
-                                         project_number=project.number))
+                for i in range(int(result.get('quantity'))):
+                    db.session.add(Parameter(name=result.get('name{}'.format(i)),
+                                             weight=result.get('weight{}'.format(i)),
+                                             project_number=project.number))
 
-            start = result.get('start')
-            setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
-            end = result.get('end')
-            setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
-            db.session.commit()
+                start = result.get('start')
+                setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
+                end = result.get('end')
+                setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
+                db.session.commit()
 
-            os.chdir("app/static/images")
-            lvl += 3
-            if os.path.exists('{}'.format(project.number)):
-                shutil.rmtree('{}'.format(project.number))
-            os.mkdir('{}'.format(project.number))
-            os.chdir('{}'.format(project.number))
-            lvl += 1
+                os.chdir("app/static/images")
+                lvl += 3
+                if os.path.exists('{}'.format(project.number)):
+                    shutil.rmtree('{}'.format(project.number))
+                os.mkdir('{}'.format(project.number))
+                os.chdir('{}'.format(project.number))
+                lvl += 1
 
-            logo = request.files['logo']
-            logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+                logo = request.files['logo']
+                logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
 
-            users = request.files['users']
-            users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
-            users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
-            excel_user(users.filename, project.number)
+                users = request.files['users']
+                users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
+                users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
+                excel_user(users.filename, project.number)
 
-            experts = request.files['experts']
-            experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
-            experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
-            excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
-            def async_mail_expert(ap, project_number):
-                engine = create_engine("sqlite:////var/www/fastuser/data/www/rating.nspt.ru/T_Park.db")
-                with ap.app_context():
-                    experts = Expert.query.filter_by(project_number=project_number).all()
-                    for expert in experts:
-                        passw = password_generator()
-                        engine.execute("UPDATE expert SET password_hash = ? WHERE email = ?",
-                                       generate_password_hash(passw), expert.email)
-                        msg = Message('NSPT Ваш пароль', sender=current_app.config['MAIL_USERNAME'],
-                                      recipients=[expert.email])
-                        msg.body = render_template('email/send_password.txt',
-                                                   user=expert, password=passw)
-                        msg.html = render_template('email/send_password.html',
-                                                   user=expert, password=passw)
-                        mail.send(msg)
+                experts = request.files['experts']
+                experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
+                experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
+                excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
 
-                    users = User.query.filter_by(project_number=project_number).all()
-                    for user in users:
-                        passw = password_generator()
-                        engine.execute("UPDATE user SET password_hash = ? WHERE email = ?",
-                                       generate_password_hash(passw), user.email)
-                        msg = Message('NSPT Ваш пароль', sender=current_app.config['MAIL_USERNAME'],
-                                      recipients=[user.email])
-                        msg.body = render_template('email/send_password.txt',
-                                                   user=user, password=passw)
-                        msg.html = render_template('email/send_password.html',
-                                                   user=user, password=passw)
-                        mail.send(msg)
+                def async_mail_expert(ap, project_number):
+                    engine = create_engine("sqlite:////var/www/fastuser/data/www/rating.nspt.ru/T_Park.db")
+                    with ap.app_context():
+                        experts = Expert.query.filter_by(project_number=project_number).all()
+                        for expert in experts:
+                            passw = password_generator()
+                            engine.execute("UPDATE expert SET password_hash = ? WHERE email = ?",
+                                           generate_password_hash(passw), expert.email)
+                            msg = Message('NSPT Ваш пароль', sender=current_app.config['MAIL_USERNAME'],
+                                          recipients=[expert.email])
+                            msg.body = render_template('email/send_password.txt',
+                                                       user=expert, password=passw)
+                            msg.html = render_template('email/send_password.html',
+                                                       user=expert, password=passw)
+                            mail.send(msg)
+
+                        users = User.query.filter_by(project_number=project_number).all()
+                        for user in users:
+                            passw = password_generator()
+                            engine.execute("UPDATE user SET password_hash = ? WHERE email = ?",
+                                           generate_password_hash(passw), user.email)
+                            msg = Message('NSPT Ваш пароль', sender=current_app.config['MAIL_USERNAME'],
+                                          recipients=[user.email])
+                            msg.body = render_template('email/send_password.txt',
+                                                       user=user, password=passw)
+                            msg.html = render_template('email/send_password.html',
+                                                       user=user, password=passw)
+                            mail.send(msg)
 
 
-            def experts_mail(project_number):
-                from main import app as ap
-                Thread(target=async_mail_expert,
-                       args=(ap, project_number)).start()
+                def experts_mail(project_number):
+                    from main import app as ap
+                    Thread(target=async_mail_expert,
+                           args=(ap, project_number)).start()
 
-            #experts_mail(project.number)
+                experts_mail(project.number)
+                os.mkdir('users')
+                os.mkdir('experts')
+                users_photo = request.files.getlist("users_photo")
+                experts_photo = request.files.getlist("experts_photo")
+                os.chdir('users')
+                lvl += 1
+                for photo in users_photo:
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
+                os.chdir('../experts')
 
-            os.mkdir('users')
-            os.mkdir('experts')
-            users_photo = request.files.getlist("users_photo")
-            experts_photo = request.files.getlist("experts_photo")
-            os.chdir('users')
-            lvl += 1
-            for photo in users_photo:
-                photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
-                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
-            os.chdir('../experts')
+                for photo in experts_photo:
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
 
-            for photo in experts_photo:
-                photo.save(os.path.join(os.getcwd(), '{}.png').format(photo.filename.rsplit(".", 1)[0]))
-                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(photo.filename.rsplit(".", 1)[0])))
-
-            db.session.commit()
-            os.chdir('../../../../../')
-            lvl = 0
-            flash('Проекет создан', 'success')
-            return redirect(url_for('main.viewer', viewer_id=current_user.id))
-        else:
-            flash('Ошибка создания проекта. '
-                  'Пожалуйста проверьте, чтобы все поля были заполнены '
-                  'и удалите пустые критерии.', 'danger')
+                db.session.commit()
+                os.chdir('../../../../../')
+                lvl = 0
+                flash('Проект создан', 'success')
+                return redirect(url_for('main.viewer', viewer_id=current_user.id))
+            else:
+                flash('Ошибка создания проекта. '
+                      'Пожалуйста проверьте, чтобы все поля были заполнены '
+                      'и удалите пустые критерии.', 'danger')
+                db.session.rollback()
+                return redirect(url_for('main.create_project', viewer_id=current_user.id))
+        except:
+            for i in range(lvl):
+                os.chdir('../')
+            flash('Что-то пошло не так. Попробуйте снова.', 'danger')
             db.session.rollback()
-            return redirect(url_for('main.create_project', viewer_id=current_user.id))
+            if delete_project:
+                project = Project.query.all()[-1]
+                for parameter in project.parameters.all():
+                    db.session.delete(parameter)
 
+                os.chdir("app/static/images")
+                try:
+                    if os.path.exists('{}'.format(project.number)):
+                        shutil.rmtree('{}'.format(project.number))
+                except:
+                    pass
+                os.chdir('../../../')
+
+                db.session.delete(project)
+                db.session.commit()
+            return redirect(url_for('main.create_project'))
 
     return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
 
@@ -874,28 +907,86 @@ def admin_settings(project_number):
         result = request.form
 
         if request.files['users'] and request.files['users_photo']:
+            number = User.query.filter_by(project_number=project_number).all()[-1].project_id
             users = request.files['users']
             users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
             users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
             excel_user(users.filename, project.number)
-            number = User.query.filter_by(project_number=project_number).all()[-1].project_id
+            def async_mail_ex(ap, project_number, number):
+                engine = create_engine("sqlite:////var/www/fastuser/data/www/rating.nspt.ru/T_Park.db")
+                with ap.app_context():
+                    users = User.query.filter_by(project_number=project_number).all()
+                    for i in range(number):
+                        users.pop(0)
+                    for user in users:
+                        passw = password_generator()
+                        engine.execute("UPDATE user SET password_hash = ? WHERE email = ?",
+                                       generate_password_hash(passw), user.email)
+                        msg = Message('NSPT Ваш пароль', sender=current_app.config['MAIL_USERNAME'],
+                                      recipients=[user.email])
+                        msg.body = render_template('email/send_password.txt',
+                                                   user=user, password=passw)
+                        msg.html = render_template('email/send_password.html',
+                                                   user=user, password=passw)
+                        mail.send(msg)
+
+
+            def ex_mail(project_number, number):
+                from main import app as ap
+                Thread(target=async_mail_ex,
+                       args=(ap, project_number, number)).start()
+            ex_mail(project.number, number)
             users_photo = request.files.getlist("users_photo")
+            os.chdir("app/static/images/{}/users".format(project_number))
             for photo in users_photo:
-                photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
-                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
+                photo.save(os.path.join(os.getcwd(), '{}.png').format(number + int(photo.filename.rsplit(".", 1)[0])))
+                compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + int(photo.filename.rsplit(".", 1)[0]))))
                 number += 1
+            os.chdir('../../../../../')
+
 
         if request.files['experts'] and request.files['experts_photo']:
+            number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
             experts = request.files['experts']
             experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
             experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
-            excel_user(experts.filename, project.number)
-            number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
+            excel_expert(experts.filename, project.number)
             experts_photo = request.files.getlist("experts_photo")
+
+            def async_mail_ex_2(ap, project_number, number):
+                engine = create_engine("sqlite:////var/www/fastuser/data/www/rating.nspt.ru/T_Park.db")
+                with ap.app_context():
+                    users = Expert.query.filter_by(project_number=project_number).all()
+                    for i in range(number):
+                        users.pop(0)
+
+                    for user in users:
+                        passw = password_generator()
+                        engine.execute("UPDATE expert SET password_hash = ? WHERE email = ?",
+                                       generate_password_hash(passw), user.email)
+                        msg = Message('NSPT Ваш пароль', sender=current_app.config['MAIL_USERNAME'],
+                                      recipients=[user.email])
+                        msg.body = render_template('email/send_password.txt',
+                                                   user=user, password=passw)
+                        msg.html = render_template('email/send_password.html',
+                                                   user=user, password=passw)
+                        mail.send(msg)
+
+
+            def ex_mail_2(project_number, number):
+                from main import app as ap
+                Thread(target=async_mail_ex_2,
+                       args=(ap, project_number, number)).start()
+
+            ex_mail_2(project.number, number)
+
+            os.chdir("app/static/images/{}/experts".format(project_number))
             for photo in experts_photo:
                 photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
                 compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
                 number += 1
+            os.chdir('../../../../../')
+
 
         if request.files['logo']:
             os.chdir('app/static/images/{}'.format(project_number))
