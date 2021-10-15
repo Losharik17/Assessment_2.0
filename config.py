@@ -10,11 +10,11 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     LOG_TO_STDOUT = os.environ.get('LOG_TO_STDOUT')
     MAIL_SERVER = 'smtp.googlemail.com'
-    MAIL_PORT = 587
+    MAIL_PORT = 87
     MAIL_USE_TLS = 1
     MAIL_USE_SSL = 0
-    MAIL_USERNAME = 'test27112002@gmail.com'
-    MAIL_PASSWORD = '9610050908'
+    MAIL_USERNAME = 'test2gmail.meee'
+    MAIL_PASSWORD = '961908'
     ADMINS = ['eternal-programmers@yandex.ru']
     USER_PER_PAGE = 15
     UPLOAD_FOLDER = '/app/static/images'

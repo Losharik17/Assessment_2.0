@@ -15,8 +15,9 @@ def send_password_reset_email(user):
 
 
 def send_password_mail(user, password):
+
     send_email('NSPT Ваш пароль',
-               sender=current_app.config['ADMINS'][0],
+               sender=current_app.config['MAIL_USERNAME'],
                recipients=[user.email],
                text_body=render_template('email/send_password.txt',
                                          user=user, password=password),

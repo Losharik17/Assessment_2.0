@@ -20,6 +20,7 @@ class User(UserMixin, db.Model):
     project_number = db.Column(db.Integer)  # номер проекта к которму относится
     id = db.Column(db.Integer, unique=True, primary_key=True, autoincrement=True)  # общий id
     password_hash = db.Column(db.String(128))
+    photo = db.Column(db.String(1024))
     grades = db.relationship('Grade', backref='user', lazy='dynamic')
     sum_grade_0 = db.Column(db.Float, default=0)
     sum_grade_1 = db.Column(db.Float, default=0)
