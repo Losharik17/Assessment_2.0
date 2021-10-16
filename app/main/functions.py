@@ -16,11 +16,12 @@ from app.auth.email import send_alert_mail
 import os
 import shutil
 
-
-engine = create_engine("sqlite:///T_park.db")
+engine = create_engine("sqlite:///T_Park.db")
 
 
 def users_in_json(users):
+    if not users:
+        return '[]'
     lenght = len(Project.query.filter_by(number=users[0].project_number).first()
                  .parameters.all())
 
@@ -44,14 +45,16 @@ def users_in_json(users):
         string += '"sum_grade_all":"{0}"'.format(str(user.sum_grade_all)) + '},'
 
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
 def viewers_in_json(viewers):
+    if not viewers:
+        return '[]'
 
     string = '['
     for viewer in viewers:
-
         string += '{' + '"id":{0},"username":"{1}","phone_number":"{2}","expert_id":"{3}",' \
                         '"email":"{4}"' \
             .format(str(viewer.id), str(viewer.username), str(viewer.phone_number),
@@ -64,6 +67,8 @@ def viewers_in_json(viewers):
 
 
 def experts_in_json(experts):
+    if not experts:
+        return '[]'
     string = '['
 
     for expert in experts:
@@ -81,7 +86,8 @@ def experts_in_json(experts):
 
 
 def grades_in_json(grades, lenght):
-
+    if not grades:
+        return '[]'
 
     string = '['
     for grade in grades:
@@ -104,15 +110,18 @@ def grades_in_json(grades, lenght):
 
 
 def waiting_users_in_json(waiting_users):
+    if not waiting_users:
+        return '[]'
     string = '['
     for waiting_user in waiting_users:
         string += '{' + '"id":{0},"registration_date":"{1}","email":"{2}","username":"{3}",' \
-                        '"phone_number":"{4}"' \
+                        '"phone_number":"{4}", "organization":"{5}"' \
             .format(str(waiting_user.id),
                     str(waiting_user.registration_date.strftime('%H:%M %d.%m.%y')),
                     str(waiting_user.email),
                     str(waiting_user.username),
-                    str(waiting_user.phone_number))
+                    str(waiting_user.phone_number),
+                    str(waiting_user.organization))
         string += '},'
     string = string[:len(string) - 1] + ']'
 
@@ -154,11 +163,10 @@ def password_generator():
 def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
-    df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
-    prev_user = User.query.filter_by(project_number = number).order_by(User.id.desc()).first()
+    prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
     if last_user != None:
@@ -176,21 +184,13 @@ def excel_user(filename, number):
         l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        a = password_generator()
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
         if user.project_id == None:
             user.project_id = l + 1
-        user.set_password(a)
         db.session.add(user)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(user, a)
-        except:
-            print("error")
-            raise
-
 
 def excel_expert(filename, number):
     df = pd.read_excel(filename)
@@ -217,7 +217,6 @@ def excel_expert(filename, number):
         db.session.commit()
     for i in range(i, b):
         df.loc[[i - c]].to_sql('expert', con=engine, if_exists='append', index=False)
-        a = password_generator()
         expert = Expert.query.filter_by(id=i + 1).first()
         if expert.project_id == None:
             expert.project_id = l + 1
@@ -225,23 +224,20 @@ def excel_expert(filename, number):
             expert.weight = 1
         expert.quantity = 0
         expert.project_number = number
-        expert.set_password(a)
+
         db.session.add(expert)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(expert, a)
-        except:
-            print('error')
-            raise
+        
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
         db.session.commit()
 
 
+
 def delete_function(): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end_date <= DATE('now', '12 month')")
+    a = engine.execute("SELECT number FROM project WHERE end <= DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:
@@ -259,7 +255,6 @@ def delete_function(): #Функция для удаления старых да
             except:
                 pass
             os.chdir('../../../')
-
 
 def delete_timer():
     shed = BackgroundScheduler(daemon=True)

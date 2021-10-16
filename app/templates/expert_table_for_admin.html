@@ -1,0 +1,77 @@
+{% extends "main_0.html" %}
+
+
+{%  block app_content %}
+
+    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
+    <script src="{{ url_for('static', filename='expert_table_for_admin.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
+    <form action="{{ url_for('main.expert_table_for_admin', project_number=project_number,
+           expert_id=expert.id) }}" method="post" enctype="multipart/form-data">
+        <div class="container">
+            <div id="data" class="data">
+                {% set path = '/images/' + expert.project_number|string + '/experts/' + expert.project_id|string + '.png'%}
+                <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+                <table id="data_table" style="margin: 10px;">
+                    <tr>
+                        <td style="text-align: left">ID: <span>{{ expert.project_id }}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left">ФИО: <span>{{ expert.username }}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left">Вес: <span>{{ expert.weight }}</span></td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left">Количество оценок: <span id="grades_number">{{ expert.quantity }}</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="edit_data" class="button_re" onclick="
+                edit_data({{ expert.id }})">Редактировать данные
+        </div>
+        <div id="edit_data" class="button_re"
+             onclick="delete_user({{ expert.id }}, {{ expert.project_id }})">
+            Удалить эксперта
+        </div>
+        <input type="submit" name="submit" id="submit" style="visibility: hidden">
+    </form>
+    <div class="table-wrap">
+        <table class="table-sort">
+            <thead>
+
+            <tr>
+                <th id="user_id" class="sort" data-order="1" onclick="sort(this.id, {{ expert.id }})">ID Участника</th>
+                <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ expert.id }})">Время</th>
+                {% set i = namespace(a=0) %}
+                {% for parameter in ParName %}
+                    <th id="parameter{{ i.a }}"  class="th_clean">{{ parameter.name }}</th>
+                    {% set i.a = i.a + 1 %}
+                {% endfor %}
+                <th id="comment" class="th_clean">Комментарий</th>
+            </tr>
+
+            </thead>
+
+            <tbody id="tbody">
+
+            </tbody>
+        </table>
+
+        <div class="show">
+            <a id="show_more" class="show_btn" href="javascript:show_more(2, {{ expert.id }})">
+                Показать больше</a>
+            <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ expert.id }})">
+                Показать все</a>
+        </div>
+    </div>
+
+    <script>
+        show_more(0, {{ expert.id }})
+    </script>
+
+{% endblock %}

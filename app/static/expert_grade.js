@@ -15,3 +15,7 @@ $(":input[id^='parameter']").on("click", function (e) {
 $(`[value='0']`).each(function (index, element) {
     $(element).parent().css({display: 'none'});
 })
+
+
+$('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
+    / (24 * 3600 * 365.25 * 1000)))

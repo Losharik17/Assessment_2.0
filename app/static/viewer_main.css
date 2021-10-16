@@ -3,9 +3,6 @@
 .content {
     max-width: 1600px;
     margin: auto;
-    height:100%;
-    border-radius:20px;
-
 }
 
 @media screen and (min-width: 768px) {
@@ -26,9 +23,10 @@
     }
 
     .block_new:hover {
-        background-color: #a2a5ad;
-        color: white;
 
+        background-color: #82a7d3;
+        color: white;
+        transform: scale(1.03);
     }
 
     .img_back {
@@ -47,10 +45,12 @@
     }
 
     .block {
+        position: relative;
         padding: 10px;
         box-sizing: border-box;
         width: 60%;
         height: 30%;
+        min-height: 150px;
         cursor: pointer;
         margin: 20px auto;
         background-color: #d4e0ff;
@@ -66,19 +66,33 @@
     .block:hover {
         background-color: #5f8dc4;
         color: white;
+        transform: scale(1.03);
 
     }
 
     .block_logo {
         justify-content: flex-start;
+        width: 28%;
+    }
+
+    .block_buttons {
+        margin: 0 auto;
+        width: 300px;
+        display:block;
+        align-items: center;
+        border-radius:20px;
+        box-shadow: 2px 4px 16px #ccc;
+        padding: 32px
     }
 
     .profil_image {
-        max-width: 300px;
+        width: 100% ;
+        object-fit: contain;
     }
 
     .data {
         display: block;
+        width:33%;
         margin: 0 auto;
         text-align: center;
         font-family: Roboto,sans-serif;
@@ -87,7 +101,9 @@
     .date {
         margin: auto 5px 5px auto;
         display:flex;
-        font-size:24px;
+        font-size: 20px;
+        text-align: right;
+        float:right;
     }
 
     .title {
@@ -101,6 +117,35 @@
     }
 
 }
+
+.button_2 {
+    text-decoration: none;
+    margin: 0 auto 20px auto;
+    padding: 10px 25px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: rgba(0, 64, 144, 0.7);
+    outline: none !important;
+    cursor: pointer;
+    -webkit-transition: all 0.3s ease;
+    width:  max-content;
+    transition: all 0.3s ease;
+    position: relative;
+    display: block;
+    border: 2px solid rgba(0, 64, 144, 0.7);
+    border-radius: 10px;
+    min-width: 140px;
+    text-align:center;
+
+}
+
+.button_2:hover {
+    background: rgba(0, 64, 144, 0.7);
+    color: #fff;
+    box-shadow: 0 10px 15px -5px rgba(71, 71, 71, 0.75);
+    transform: scale(1.03)
+}
+
 
 @media screen and (max-width: 768px) {
 
@@ -122,12 +167,12 @@
     .block {
         padding: 10px;
         box-sizing: border-box;
-        width: 75%;
-        height: 25%;
+        width: 90%;
+        height: min-content;
         cursor: pointer;
         margin: 20px auto;
         background-color: #d4e0ff;
-        transition: all 500ms;
+        transition: all 100ms;
         border: 5px #0044ff;
         color: black;
         align-items: center;
@@ -167,6 +212,6 @@
         margin-left: auto;
         margin-right: auto;
         max-width: 70%;
-        max-height: 95%;
+        max-height: 30%;
     }
 }

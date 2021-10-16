@@ -41,7 +41,5 @@ pandas==1.3.1
 gunicorn==20.1.0
 psycopg2==2.9.1
 openpyxl==3.0.7
-
-# requirements for Heroku
-#
-#
+APScheduler=3.7.0
+Pillow=8.3.1

@@ -1,5 +1,48 @@
 @charset "UTF-8";
 
+@media(min-width:768px) {
+
+    .title {
+        display: block;
+
+        /*
+            justify-content: space-between;
+            width:100%;
+            margin-left: 20px;
+
+         */
+
+        justify-content: space-between;
+        margin: 0 auto;
+
+    }
+
+    .block {
+        display: block;
+    }
+
+}
+
+@media(max-width:768px) {
+
+    .title {
+        display: block;
+        justify-content: space-evenly;
+        margin: 0 auto;
+
+    }
+
+    .block {
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+h1 {
+    text-align: center;
+
+}
+
 .app_content {
     display: flex;
 
@@ -8,6 +51,7 @@
 .table-wrap {
     overflow-x: auto;
     min-height: 250px;
+    display: block;
 }
 
 .table-sort {
@@ -18,8 +62,8 @@
     cursor: pointer;
 }
 
-.tbody-table {
-    height: 300px;
+.th_clean {
+    cursor: default; !important;
 }
 
 table {
@@ -59,6 +103,7 @@ th:first-child, td:first-child {
 th.sort,
 th.sort {
     position: relative;
+
 }
 
 th.sort[data-order="0"]::after {
@@ -110,16 +155,7 @@ th.sort[data-order="1"]::after {
 
 }
 
-.title {
-    display: flex;
-    justify-content: space-between;
-    width:55%;
-    margin-left: 20px;
-}
 
-.block {
-    display: block;
-}
 
 .choice {
     border: 2px solid rgba(0, 64, 144, 0.7);
@@ -231,6 +267,15 @@ th.sort[data-order="1"]::after {
     font-size: 16px;
 }
 
+
+
+.input__file-button-text_2 {
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+    margin: 0 auto;
+
+}
+
 .input__file-button {
     width: 100%;
     max-width: 290px;
@@ -259,7 +304,8 @@ th.sort[data-order="1"]::after {
 }
 
 .input__file-button:hover {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0)
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0);
+    background: rgba(0, 64, 144, 0.7);
 
 }
 
@@ -529,4 +575,9 @@ span.choose {
     background-color: #e8edff;
     border: 0;
     width: max-content;
+}
+
+.age:focus {
+    outline: none;
+
 }

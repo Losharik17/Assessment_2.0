@@ -40,6 +40,7 @@ class UserModelCase(unittest.TestCase):
 
 
         e1 = Expert(username='dima')
+        e2 = Expert(username='dima_2')
         db.session.add(e1)
         db.session.commit()
         g1 = Grade(user_id=u2.id, expert_id=e1.id)
@@ -52,7 +53,7 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
         u2.sum_grades()
         db.session.commit()
-        print(u2.sum_grade_all)
+        print(e1.id)
         self.assertTrue(True)
 
 

@@ -18,7 +18,7 @@
 
 }
 
-.block_1 {
+.block_4 {
     margin-top: 10px;
     margin-left: auto;
 }
@@ -40,10 +40,10 @@ h2 {
 
 .form {
     margin: auto;
-    width: 300px;
+    width: 280px;
     padding: 32px;
     border-radius: 10px;
-    box-shadow: 0 4px 16px #ccc;
+    box-shadow: 2px 4px 16px #ccc;
     font-family: sans-serif;
     letter-spacing: 1px;
 }
@@ -68,9 +68,10 @@ h2 {
 
 .form_input {
     width: 100%;
-    padding: 0 0 10px 0;
     border: none;
-    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #cccccc;
     background-color: transparent;
     outline: none;
     transition: 0.3s;
@@ -84,6 +85,21 @@ h2 {
     transition: 0.3s;
 }
 
+.form_label_weight {
+    position: absolute;
+    z-index: -1;
+    color: #9e9e9e;
+    transition: 0.3s;
+    top: -18px;
+    font-size: 14px;
+
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
 @media screen {
     .form_button:active {
         box-shadow: 0 2px 3px #0044ff;
@@ -94,10 +110,11 @@ h2 {
 
 
     /*Download avatar*/
-.input__wrapper {
-    width: max-content;
+.input__wrapper_2 {
+    width: 100%;
     position: relative;
-    margin: 0 auto;
+    margin: 0 0 15px;
+    transition: all 0.3s ease;
 }
 
 .input__file {
@@ -105,30 +122,17 @@ h2 {
     visibility: hidden;
     position: absolute;
 }
-/*
-.input__file-icon-wrapper {
-    height: 60px;
-    width: 60px;
-    margin-right: 15px;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    border-right: 1px solid #fff;
-}
-*/
-.input__file-button-text {
+
+.input__file_button_text_2 {
     line-height: 1;
     font: 600 16px Roboto;
     padding: 10px 20px;
+    color: #ffffff ;
+    margin: 0 auto;
+    text-decoration: none;
 }
 
-.input__file-button {
+.input__file_button_2 {
     width: 100%;
     max-width: 290px;
     height: 40px;
@@ -155,22 +159,26 @@ h2 {
     transition: all 500ms cubic-bezier(0.19, 1,0.22, 1);
 }
 
-.input__file-button:hover {
+.input__file_button_2:hover {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0)
 
 }
 
 @media screen {
-    .input__file-button:active {
+    .input__file_button_2:active {
         box-shadow: 0 2px 3px #0044ff;
         background-color: #0044ff;
     }
 }
 
+
+
 .input__file-icon {
     width: 35px;
     height: 35px;
 }
+
+
 
 
 .down_block {
@@ -189,6 +197,7 @@ h2 {
     text-align: center;
     margin: 0 auto;
     font: 400 16px Roboto;
+    -webkit-user-select: none;
 }
 
 .custom-checkbox {

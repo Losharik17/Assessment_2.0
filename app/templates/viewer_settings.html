@@ -3,18 +3,113 @@
 
 {%  block app_content %}
 
+    <script type="text/javascript">
+        function warning(arg) {
+            $('body').append(`<div id="${arg}" class="message warning"><h4>Не забудьте сохранить изменения</h4></div>`)
+            setTimeout(() => {$(`#${arg}`).fadeOut(300)}, 2000)
+        }
+    </script>
+
     <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_settings.css')}}">
+    <link rel="stylesheet"  href="{{ url_for('static', filename='login.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
+
     <h1 style="text-align:center">Настройки</h1>
-    <div class="">
-        <a class="button">Пользователи</a>
-        <a class="button">Эксперты</a>
-    </div>
 
-    <div class="date">
-        <input type="date" name="calendar" value="{{ project.start.strftime('%d.%m.%y') }}" id="date_start" class="button_date">
-        <input type="date" name="calendar" value="{{ project.end.strftime('%d.%m.%y') }}" id="date_end" class="button_date">
-    </div>
 
+    <form action="{{ url_for('main.viewer_settings', project_number=project.number)}}"
+          method="post" class="form" enctype="multipart/form-data" style="width: max-content;">
+        <div class="block">
+            <div class="block_1">
+                <div class="input__wrapper">
+                    <div class="button" onclick="location.href='{{ url_for('main.viewer_users_table',
+            project_number=project.number) }}'">
+                        <span class="input__file_button_text">Участники</span>
+                    </div><br>
+                </div>
+                <div class="input__wrapper">
+                    <div class="button" onclick="location.href='{{ url_for('main.expert', project_number=project.number) }}'">
+                        <span class="input__file_button_text">Выставить оценки</span>
+                    </div>
+                </div>
+                <div class="input__wrapper">
+                    <div class="button" onclick="location.href='{{ url_for('main.viewer_experts_table',
+            project_number=project.number) }}'">
+                        <span class="input__file_button_text">Эксперты</span>
+                    </div>
+                </div>
+
+                <div class="input__wrapper_1">
+                    <input  type="file" name="logo" id="logo" class="input input__file">
+                    <label for="logo" class="button">
+                        <span class="input__file_button_text">Загрузить новый логотип</span>
+                    </label>
+                </div>
+
+
+            </div>
+            <div class="block_2">
+                <div class="input__wrapper_1">
+                    <input  type="file" name="users" id="input__file_6" class="input input__file">
+                    <label for="input__file_6" class="button">
+                        <span class="input__file_button_text">Добавить участников</span>
+                    </label>
+                </div>
+                <div class="input__wrapper_1">
+                    <input  type="file" name="users_photo" id="users_photo" class="input input__file" multiple>
+                    <label for="users_photo" class="button">
+                        <span class="input__file_button_text">Добавить фото участников</span>
+                    </label>
+                </div>
+                <div class="input__wrapper_1">
+                    <input  type="file" name="experts" id="input__file_7" class="input input__file">
+                    <label for="input__file_7" class="button">
+                        <span class="input__file_button_text">Добавить экспертов</span>
+                    </label>
+                </div>
+                <div class="input__wrapper_1">
+                    <input  type="file" name="experts_photo" id="experts_photo" class="input input__file" multiple>
+                    <label for="experts_photo" class="button">
+                        <span class="input__file_button_text">Добавить фото экспертов</span>
+                    </label>
+                </div>
+                <div class="input__wrapper_2" onclick="location.href='{{ url_for('main.add_new_user', project_number=project.number) }}'">
+                    <label for="input__file_8" class="button">
+                        <span class="input__file_button_text">Добавить Участника</span>
+                    </label>
+                </div>
+                <div class="input__wrapper_2" onclick="location.href='{{ url_for('main.add_new_expert', project_number=project.number) }}'">
+                    <label for="input__file_9" class="button">
+                        <span class="input__file_button_text">Добавить Эксперта</span>
+                    </label>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="block_3">
+
+            <div class="input__wrapper">
+                <div class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
+                    <span class="input__file_button_text">Скачать Отчёт</span>
+                </div>
+            </div>
+            <div class="form_group" style="margin-top: 30px;">
+                <label for="name" class="form_label">Название Проекта</label>
+                <input id="name" name="name" type="text" value="{{ project.name }}" onchange="warning(3)" class="form_input">
+            </div>
+            <div class="form_group" style="margin-top: 30px;">
+                <label for="start" class="form_label">Начало Проекта</label>
+                <input id="start" name="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}" onchange="warning(1)" class="form_input">
+            </div>
+            <div class="form_group">
+                <label for="end" class="form_label">Конец Проекта</label>
+                <input id="end" type="text" name="end"  value="{{ project.end.strftime('%d.%m.%y') }}" onchange="warning(2)" class="form_input">
+            </div>
+            <input type="submit" class="submit" value="Сохранить изменения">
+            <div class="submit_2" onclick="delete_project({{ project.number }})">Удалить проект</div>
+        </div>
+    </form>
 
     <script src="{{ url_for('static', filename='viewer_settings.js') }}"></script>
 

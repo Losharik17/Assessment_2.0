@@ -32,7 +32,7 @@ function foc(el, label) {
 
 function blu(el, label) {
     $(el).css({
-        'border-bottom': '1px solid #e0e0e0'
+        'border-bottom': '1px solid #cccccc'
     })
     if ($(el).val() === '')
         label.css({

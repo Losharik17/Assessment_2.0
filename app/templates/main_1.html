@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="{{ url_for('static', filename='main_0.css') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename="favicon.ico") }}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     {% if title %}
         <title>{{ title }}</title>
     {% else %}
-        <title>T-Park</title>
+        <title>Ассессмент 2.0</title>
     {% endif %}
 
     <script>
@@ -19,51 +20,35 @@
         });
     </script>
 
-    <style>
-        .preloader-text {
-            position: fixed;
-            display: flex;
-            text-align: center;
-            justify-content: center;
-            top: 20%;
-        }
-    </style>
-
 </head>
 <body id="body">
 
 <div class="preloader">
     <div class="preloader-text">
-        Команда разработчиков <a href="#">Ссылка на почту</a>
+        Команда разработчиков&nbsp;<a href="mailto:eternal_programmers@yandex.ru"
+                                      class="text_advertising" data-back="Нажмите" data-front="Ссылка на почту"></a>
+
     </div>
     <div class="preloader-5"></div>
 </div>
 
 <div class="maket">
     <div class="shapka" >
-        <img class="logo" src="{{ url_for('static', filename='logo_21.webp') }}" alt="">
-        {% if title != 'Sign In' and title != 'Register' and (auth or auth is not defined) %}
-            <div class="exit">
-                <a class="exit_button" href="{{ url_for('auth.logout') }}">
-                    Выйти
-                </a>
-            </div>
-        {% else %}
-            <div class="buttons">
-                <a class="button" href="{{ url_for('auth.login') }}">
-                    Вход
-                </a>
-                <a class="button" href="{{ url_for('auth.register') }}">
-                    Регистрация
-                </a>
-            </div>
-        {% endif %}
+        <img class="logo" src="{{ url_for('static', filename='logo_21.png') }}" alt="">
+        <div class="buttons">
+            <a class="button" href="{{ url_for('auth.login') }}">
+                Вход
+            </a>
+            <a class="button" href="{{ url_for('auth.register') }}">
+                Регистрация
+            </a>
+        </div>
     </div>
     <div class="content">
         {% block app_content %}{% endblock %}
     </div>
     <div class="footer">
-        <p style="margin-left: 10px;">2021  Система оценки Дмитрия Сергеева </p>
+        <p id="footer" style="color: #a8a8a8; margin-left: 10px; font-size: 14px;">&#169; 2021 Система оценки Дмитрия Сергеева </p>
         <p></p>
     </div>
 </div>
