@@ -161,19 +161,7 @@ def export_excel(project_number):
     worksheet.set_column('A:Q', 19, new_format)
     worksheet.set_column('D:D', 19, date_format)
     worksheet.set_column('B:B', 13.6, new_format)
-    os.chdir('app/static/images/{}/users'.format(project_number))
-    files = os.listdir(os.getcwd())
 
-    i = 2
-    for file in files:
-        for j in df1.index:
-            try:
-                if str(df1.ID[j]) == file.rsplit(".", 1)[0]:
-                    worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
-            except:
-                pass
-            i += 1
-        i = 2
 
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
@@ -181,27 +169,13 @@ def export_excel(project_number):
     worksheet.set_row(0, 15)
     worksheet.set_column('A:E', 19, new_format)
     worksheet.set_column('B:B', 13.6, new_format)
-    os.chdir('../../../../../')
-    os.chdir('app/static/images/{}/experts'.format(project_number))
-    files = os.listdir(os.getcwd())
 
-    i = 2
-    for file in files:
-        for j in df2.index:
-            try:
-                if str(df2.ID[j]) == file.rsplit(".", 1)[0]:
-                    worksheet.insert_image('B{}'.format(i), os.getcwd() + '/' + file)
-            except:
-                pass
-            i += 1
-        i = 2
 
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
     worksheet.set_column('A:N', 30, new_format)
     worksheet.set_column('C:C', 24, date2_format)
     writer.save()
-    os.chdir('../../../../../')
 
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
