@@ -85,7 +85,7 @@ def export_excel(project_number):
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
     df1 = df1.loc[df1['project_number'] == int(project_number)]
-    df1 = df1.drop(columns=['password_hash', 'project_number', 'photo'])
+    df1 = df1.drop(columns=['password_hash', 'project_number'])
     names = df1.columns.values
     names_length = len(names)
     new_name = [names[0], names[1], names[3], names[2], names[4], names[5], names[6]]
@@ -98,8 +98,9 @@ def export_excel(project_number):
     df2 = pd.DataFrame(data_list)
 
     df2 = df2.loc[df2['project_number'] == int(project_number)]
-    df2 = df2.drop(columns=['password_hash', 'project_number', 'quantity'])
-    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
+    df2 = df2.drop(columns=['password_hash', 'project_number'])
+    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID',
+                        'quantity': 'Количество выставленных оценок'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -165,7 +166,7 @@ def export_excel(project_number):
 
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
-    worksheet.set_column('A:D', 21, base_format)
+    worksheet.set_column('A:E', 21, base_format)
     worksheet.set_column('B:B', 35, base_format)
 
     df3.to_excel(writer, sheet_name='Оценки', index=False)
