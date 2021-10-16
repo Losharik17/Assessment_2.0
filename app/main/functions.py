@@ -169,7 +169,7 @@ def password_generator():
 def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
-    df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region', 'photo']
+    df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()

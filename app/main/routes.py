@@ -53,7 +53,6 @@ def export_excel(project_number):
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
-    df1['photos'] = ""
 
     df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
     excel_start_date = date(1899, 12, 30)
@@ -81,7 +80,7 @@ def export_excel(project_number):
             pass
 
     df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
-                              'photos': 'Фотография',
+                              'photo': 'Ссылка на фотографию',
                               "sum_grade_all": "Итоговая оценка",
                               'project_id': 'ID'})  # надо будет добавить изменение имен через формы
     df1 = df1.fillna('-')
@@ -89,17 +88,18 @@ def export_excel(project_number):
     df1 = df1.drop(columns=['password_hash', 'project_number', 'photo'])
     names = df1.columns.values
     names_length = len(names)
-    new_name = [names[0], names[names_length - 1], names[1], names[3], names[2], names[4], names[5], names[6]]
-    for i in range(7, names_length - 1):
+    new_name = [names[0], names[1], names[3], names[2], names[4], names[5], names[6]]
+    for i in range(8, names_length):
         new_name.append(names[i])
+    new_name.append(names[7])
     df1 = df1.reindex(columns=new_name)
     data = Expert.query.all()
     data_list = [to_dict(item) for item in data]
     df2 = pd.DataFrame(data_list)
-    df2['photos'] = ""
+
     df2 = df2.loc[df2['project_number'] == int(project_number)]
     df2 = df2.drop(columns=['password_hash', 'project_number', 'quantity'])
-    df2.rename(columns={'username': 'ФИО', 'photos': 'Фотография', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
+    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID'}, inplace=True)
     data = Grade.query.all()
     data_list = [to_dict(item) for item in data]
     df3 = pd.DataFrame(data_list)
@@ -123,12 +123,13 @@ def export_excel(project_number):
 
     for i in range(len(df3.index)):
         c = 0
-        for rows in a:
-            b = engine.execute("SELECT project_id FROM expert WHERE id = ?", rows[0])
+        for row in a:
+            b = engine.execute("SELECT project_id FROM expert WHERE id = ?", row[0])
             b = b.fetchall()
-            if df3.expert_id[i] == rows[0] and c == 0:
+            if int(df3.expert_id[i]) == row[0] and c == 0:
                 df3.expert_id[i] = b[0][0]
                 c += 1
+
     for row in f:
         df3 = df3.drop([row])
     i = 0
@@ -143,8 +144,6 @@ def export_excel(project_number):
     df1 = df1.drop(columns=['id'])
     df1.columns = [x.capitalize() for x in df1.columns]
     df1 = df1.rename(columns={'Id': 'ID', 'Фио': 'ФИО'})
-    names = df2.columns.values
-    df2 = df2.reindex(columns=[names[0], names[4], names[1], names[2], names[3]])
     df3.rename(columns={'user_id': 'ID участника', 'expert_id': 'ID эксперта'}, inplace=True)
 
     filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
@@ -152,24 +151,22 @@ def export_excel(project_number):
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
     df1.to_excel(writer, sheet_name='Участники', index=False, float_format="%.1f")
     workbook = writer.book
+    base_format = workbook.add_format({'align': 'center'})
     new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
     date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
     date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
     worksheet = writer.sheets['Участники']
-    worksheet.set_default_row(113.2)
-    worksheet.set_row(0, 15)
-    worksheet.set_column('A:Q', 19, new_format)
-    worksheet.set_column('D:D', 19, date_format)
-    worksheet.set_column('B:B', 13.6, new_format)
 
+    worksheet.set_column('A:Q', 21, base_format)
+    worksheet.set_column('B:B', 35, base_format)
+    worksheet.set_column('D:D', 24, base_format)
+    worksheet.set_column('F:F', 26, base_format)
+    worksheet.set_column('C:C', 14, date_format)
 
     df2.to_excel(writer, sheet_name='Эксперты', index=False)
     worksheet = writer.sheets['Эксперты']
-    worksheet.set_default_row(113.2)
-    worksheet.set_row(0, 15)
-    worksheet.set_column('A:E', 19, new_format)
-    worksheet.set_column('B:B', 13.6, new_format)
-
+    worksheet.set_column('A:D', 21, base_format)
+    worksheet.set_column('B:B', 35, base_format)
 
     df3.to_excel(writer, sheet_name='Оценки', index=False)
     worksheet = writer.sheets['Оценки']
