@@ -1,3 +1,4 @@
+import datetime
 import json
 import password as password
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
@@ -350,6 +351,7 @@ def expert_grade(project_number, user_id):
                             form.parameter_6.data, form.parameter_7.data, form.parameter_8.data,
                             form.parameter_9.data]
         grade.set_points(grade_parameters)
+        grade.date = datetime.now()
         db.session.add(grade)
         db.session.commit()
         grade.user.sum_grades()
