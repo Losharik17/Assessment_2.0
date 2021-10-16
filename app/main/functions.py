@@ -1,5 +1,7 @@
 import random
 import string
+import time
+
 from sqlalchemy import create_engine
 from app import db
 from app.auth.email import send_password_mail
@@ -63,6 +65,7 @@ def viewers_in_json(viewers):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
@@ -91,6 +94,7 @@ def grades_in_json(grades, lenght):
 
     string = '['
     for grade in grades:
+
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
                         '"comment":"{4}"' \
             .format(str(grade.id),
@@ -106,6 +110,8 @@ def grades_in_json(grades, lenght):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
+    string = string.replace("\r", "").replace("\n", "")
+
     return string
 
 
