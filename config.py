@@ -12,9 +12,9 @@ class Config(object):
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
-    MAIL_USE_SSL = 0
-    MAIL_USERNAME = 'test27112002@gmail.com'
-    MAIL_PASSWORD = '9610050908'
+    MAIL_USE_SSL= 0
+    MAIL_USERNAME = 'rating.nspt@gmail.com'
+    MAIL_PASSWORD = '9610050908Dima'
     ADMINS = ['eternal-programmers@yandex.ru']
     USER_PER_PAGE = 15
     UPLOAD_FOLDER = '/app/static/images'

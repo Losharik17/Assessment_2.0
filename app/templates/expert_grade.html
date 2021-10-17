@@ -9,7 +9,7 @@
         <div class="container" style="width: 100%;">
             <div class="data">
                 {% set path='/images/'+ project_number|string +'/users/'+ user.project_id|string +'.png' %}
-                <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+                <img id="img" style="width: 100px; height: 150px" src="{{ user.photo }}" alt="">
                 <table style="margin: 10px;">
                     <tr>
                         <td>ID: {{ user.project_id }}</td>
@@ -65,6 +65,9 @@
     <script>
         $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
+        let src = $('#img').attr('src')
+        src = src.substr(0, 25) + 'uc' + src.substr(29)
+        $('#img').attr('src', src)
     </script>
 
 {% endblock %}
