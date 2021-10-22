@@ -50,7 +50,7 @@
             <table class="table-sort">
                 <thead>
                 <tr>
-                    <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
+                    <th id="expertname" class="th_clean">Эксперт</th>
                     <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
                     {%set k = namespace(a=0) %}
                     {% for parameter in ParName %}

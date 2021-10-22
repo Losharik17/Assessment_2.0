@@ -96,12 +96,13 @@ def grades_in_json(grades, lenght):
     for grade in grades:
 
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"' \
+                        '"comment":"{4}", "username":"{5}", "expertname":"{6}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert.project_id),
                     str(grade.user.project_id),
-                    str(grade.comment))
+                    str(grade.comment), str(grade.user.username),
+                    str(grade.expert.username))
 
         for i in range(lenght):
             string += ',"parameter_{0}":"{1}"' \

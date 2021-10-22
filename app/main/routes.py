@@ -150,7 +150,7 @@ def export_excel(project_number):
     filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
 
     writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
-    df1.to_excel(writer, sheet_name='Участники', index=False, float_format="%.1f")
+    df1.to_excel(writer, sheet_name='Участники', index=False, float_format="%.2f")
     workbook = writer.book
     base_format = workbook.add_format({'align': 'center'})
     new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
