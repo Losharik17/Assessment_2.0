@@ -1,16 +1,15 @@
 import datetime
 import json
-import password as password
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EmptyForm, GradeForm, UserForm, UserRegistrationForm, ExpertRegistrationForm
+from app.main.forms import GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser
 from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, delete_timer, redirects, compression, password_generator, \
-    send_password_mail, password_generator
+    send_password_mail
 from app.auth.email import send_role_update, send_role_refuse
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
@@ -23,7 +22,6 @@ from werkzeug.security import generate_password_hash
 from threading import Thread
 from flask_mail import Message
 from app import mail
-import math
 
 
 engine = create_engine("sqlite:///T_Park.db")
@@ -33,7 +31,11 @@ engine = create_engine("sqlite:///T_Park.db")
 def index():
     if current_user.is_authenticated:
         return redirects('base')
-    return render_template('base.html', auth=current_user.is_authenticated)
+
+    mail = request.args.get('mail')
+
+    return render_template('base.html', auth=current_user.is_authenticated,
+                           mail=mail)
 
 
 @bp.route('/download')
@@ -713,7 +715,12 @@ def add_new_user(project_number):
         if result.get('username') and result.get('email') and \
                 result.get('birthday') != 'дд.мм.гггг':
             if User.query.filter_by(email=result.get('email')).first() is None:
-                last_user_id = User.query.filter_by(project_number=project_number).all()[-1].project_id
+                users = User.query.filter_by(project_number=project_number).all()
+                if users:
+                    last_user_id = users[-1].project_id
+                else:
+                    last_user_id = 0
+
                 user = User(project_number=project_number, username=result.get('username'),
                             email=result.get('email'), project_id=last_user_id + 1)
 
@@ -787,7 +794,12 @@ def add_new_expert(project_number):
         result = request.form
         if result.get('username') and result.get('email'):
             if Expert.query.filter_by(email=result.get('email')).first() is None:
-                last_expert_id = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
+                experts = Expert.query.filter_by(project_number=project_number).all()
+                if experts:
+                    last_expert_id = experts[-1].project_id
+                else:
+                    last_expert_id = 0
+
                 expert = Expert(project_number=project_number, username=result.get('username'),
                                 email=result.get('email'), project_id=last_expert_id + 1)
 
@@ -1462,3 +1474,10 @@ def show_more_viewers():
             .order_by(Viewer.project_id).limit(int(request.form['lim']) + 1)
 
     return jsonify({'viewers': viewers_in_json(viewers)})
+
+
+# прикрепляет заказчика к проекту
+def append_viewer():
+
+
+    return jsonify({'result': 'success'})

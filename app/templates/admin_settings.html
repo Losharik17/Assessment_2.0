@@ -98,11 +98,13 @@
             </div>
             <div class="form_group" style="margin-top: 30px;">
                 <label for="start" class="form_label">Начало Проекта</label>
-                <input id="start" name="start" type="text" value="{{ project.start.strftime('%d.%m.%y') }}" onchange="warning(1)" class="form_input">
+                <input id="start" name="start" type="text" value="{% if project.start is not none %}{{ project.start.strftime('%d.%m.%y') }}{% endif %}"
+                       onchange="warning(1)" class="form_input">
             </div>
             <div class="form_group">
                 <label for="end" class="form_label">Конец Проекта</label>
-                <input id="end" type="text" name="end"  value="{{ project.end.strftime('%d.%m.%y') }}" onchange="warning(2)" class="form_input">
+                <input id="end" type="text" name="end"  value="{% if project.end is not none %}{{ project.end.strftime('%d.%m.%y') }}{% endif %}"
+                       onchange="warning(2)" class="form_input">
             </div>
             <input type="submit" class="submit" value="Сохранить изменения">
             <div class="submit_2" onclick="delete_project({{ project.number }})">Удалить проект</div>

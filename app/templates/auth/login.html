@@ -37,4 +37,9 @@
         </div>
     </div>
     <script src="{{ url_for('static', filename='auth/login.js') }}"></script>
+    {% if mail is defined %}
+        <script>
+            $('label[for=email]').html('{{ mail }}')
+        </script>
+    {% endif %}
 {% endblock %}

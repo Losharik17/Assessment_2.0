@@ -38,10 +38,10 @@ class User(UserMixin, db.Model):
         return '<Пользователь {}>'.format(self.username)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
@@ -130,10 +130,10 @@ class Expert(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
@@ -193,15 +193,14 @@ class Viewer(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
-    projects = db.relationship('Project', backref='viewer', lazy='dynamic')
-
+    projects = db.relationship('ViewerProjects', backref='viewer', lazy='dynamic')
     expert_id = db.Column(db.Integer)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
@@ -219,13 +218,19 @@ class Viewer(UserMixin, db.Model):
         return Viewer.query.get(id)
 
 
+class ViewerProjects(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
+    project_number = db.Column(db.Integer, db.ForeignKey('project.number'))
+
+
 class Project(db.Model):
     number = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
     name = db.Column(db.String(32))
     start = db.Column(db.Date)
     end = db.Column(db.Date)
     parameters = db.relationship('Parameter', backref='project', lazy='dynamic')
+    viewers = db.relationship('ViewerProjects', backref='project', lazy='dynamic')
 
 
 class Parameter(db.Model):
@@ -247,7 +252,7 @@ class WaitingUser(db.Model):
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def __repr__(self):
         return 'Пользователь {}'.format(self.id)
@@ -260,12 +265,13 @@ class Admin(UserMixin, db.Model):
     phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
     expert_id = db.Column(db.Integer)
+    viewer_id = db.Column(db.Integer)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
