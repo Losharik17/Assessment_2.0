@@ -94,7 +94,8 @@
             </div>
             <div class="form_group" style="margin-top: 30px;">
                 <label for="name" class="form_label">Название Проекта</label>
-                <input id="name" name="name" type="text" value="{{ project.name }}" onchange="warning(3)" class="form_input">
+                <input id="name" name="name" type="text" value="{% if project.name is not none %}{{ project.name }}{% endif %}"
+                       onchange="warning(3)" class="form_input">
             </div>
             <div class="form_group" style="margin-top: 30px;">
                 <label for="start" class="form_label">Начало Проекта</label>

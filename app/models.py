@@ -123,6 +123,7 @@ class Expert(UserMixin, db.Model):
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True)
     weight = db.Column(db.Float, default=1.0)
+    photo = db.Column(db.String(1024))
     project_number = db.Column(db.Integer)
     id = db.Column(db.Integer, unique=True, primary_key=True)
     grades = db.relationship('Grade', backref='expert', lazy='dynamic')

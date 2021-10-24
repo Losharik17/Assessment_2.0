@@ -149,6 +149,17 @@ function edit_data(user_id, user_birthday) {
 
                 }
             })
+
+            if (response['result'] !== 'successfully')
+                alert('Не удалось изменить дату рождения.\nПожалуйста, проверьте корректность введённой даты.')
+            else {
+                $('body').append(
+                    `<div class="message success"><h4>Изменения сохранены</h4></div>`)
+                setTimeout( ()=> {
+                    $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+                setTimeout( ()=> {
+                    $('.message').css({display: 'none'})}, 2300)
+            }
         }).fail(function () {
             alert("Error AJAX request")
             $('#data_table tr').each(function (index, element) {
