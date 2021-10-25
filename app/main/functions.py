@@ -139,7 +139,7 @@ def project_settings(request, project, project_number):
     if request.files['logo']:
         os.chdir('app/static/images/{}'.format(project_number))
         logo = request.files['logo']
-        logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+        logo.save(os.path.join(os.getcwd(), 'logo.png'))
         os.chdir('../../../../')
         changes = True
 
