@@ -147,13 +147,16 @@ function edit_data(user_id, user_birthday) {
                 }
             })
 
-            $('body').append(
-                `<div class="message success"><h4>Изменения сохранены</h4></div>`)
-            setTimeout( ()=> {
-                $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
-            setTimeout( ()=> {
-                $('.message').css({display: 'none'})}, 2300)
-
+            if (response['result'] !== 'successfully')
+                alert('Не удалось изменить дату рождения.\nПожалуйста, проверьте корректность введённой даты.')
+            else {
+                $('body').append(
+                    `<div class="message success"><h4>Изменения сохранены</h4></div>`)
+                setTimeout( ()=> {
+                    $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+                setTimeout( ()=> {
+                    $('.message').css({display: 'none'})}, 2300)
+            }
         }).fail(function () {
             alert("Error AJAX request")
             $('#data_table tr').each(function (index, element) {
@@ -371,10 +374,10 @@ function show_more(new_field, user_id) {
 
             $("#tbody").append(`<tr id="number_str${i}"></tr>`)
 
-            if (grades[i]['expert_id'] === 'None')
-                $(`#number_str${i}`).append(`<td id="expert_id${i}">–</td>`)
+            if (grades[i]['expertname'] === 'None')
+                $(`#number_str${i}`).append(`<td id="expertname${i}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="expert_id${i}">${grades[i]['expert_id']}</td>`)
+                $(`#number_str${i}`).append(`<td id="expertname${i}">${grades[i]['expertname']}</td>`)
 
             if (grades[i]['date'] === 'None')
                 $(`#number_str${i}`).append(`<td id="date${i}">–</td>`)
@@ -435,7 +438,7 @@ function sort(parameter, user_id) {
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#expert_id${i}`).html(grades[i]['expert_id'] ? grades[i]['expert_id'] : '–');
+                $(`#expertname${i}`).html(grades[i]['expertname'] ? grades[i]['expertname'] : '–');
                 $(`#date${i}`).html(grades[i]['date'] ? grades[i]['date'] : '–')
 
                 for (let j = 0; j < 15; j++)

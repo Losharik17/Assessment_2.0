@@ -1,13 +1,11 @@
 import random
 import string
-import time
 
 from sqlalchemy import create_engine
 from app import db
-from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer
 import pandas as pd
-from flask import redirect, url_for, flash, current_app
+from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
@@ -24,8 +22,7 @@ engine = create_engine("sqlite:///T_Park.db")
 def users_in_json(users):
     if not users:
         return '[]'
-    lenght = len(Project.query.filter_by(number=users[0].project_number).first()
-                 .parameters.all())
+    lenght = len(Project.query.filter_by(number=users[0].project_number).first().parameters.all())
 
     string = '['
     for user in users:
@@ -96,12 +93,13 @@ def grades_in_json(grades, lenght):
     for grade in grades:
 
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"' \
+                        '"comment":"{4}", "username":"{5}", "expertname":"{6}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert.project_id),
                     str(grade.user.project_id),
-                    str(grade.comment))
+                    str(grade.comment), str(grade.user.username),
+                    str(grade.expert.username))
 
         for i in range(lenght):
             string += ',"parameter_{0}":"{1}"' \
@@ -132,6 +130,33 @@ def waiting_users_in_json(waiting_users):
     string = string[:len(string) - 1] + ']'
 
     return string
+
+
+def project_settings(request, project, project_number):
+    changes = False
+    result = request.form
+
+    if request.files['logo']:
+        os.chdir('app/static/images/{}'.format(project_number))
+        logo = request.files['logo']
+        logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+        os.chdir('../../../../')
+        changes = True
+
+    if result.get('name') != '':
+        setattr(project, 'name', result.get('name'))
+        changes = True
+
+    if result.get('start') != 'дд.мм.гг':
+        setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
+        changes = True
+    if result.get('end') != 'дд.мм.гг':
+        setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
+        changes = True
+
+    db.session.commit()
+    if changes:
+        flash('Изменения сохранены', 'success')
 
 
 def to_dict(row):
@@ -261,6 +286,7 @@ def delete_function(): #Функция для удаления старых да
             except:
                 pass
             os.chdir('../../../')
+
 
 def delete_timer():
     shed = BackgroundScheduler(daemon=True)
