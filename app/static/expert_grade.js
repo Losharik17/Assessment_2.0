@@ -16,11 +16,7 @@ $(`[value='0']`).each(function (index, element) {
     $(element).parent().css({display: 'none'});
 })
 
-$('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
-    / (24 * 3600 * 365.25 * 1000)))
-
-
 document.getElementById('submit').addEventListener("click", function (event) {
-    $('#submit').attr('disabled','disabled')
-    setTimeout(()=> {    $('#submit').attr('disabled','enabled')}, 5000)
+    setTimeout(()=> { $('#submit').attr('disabled','disabled')}, 1)
+    setTimeout(()=> { $('#submit').removeAttr('disabled')}, 1000)
 })

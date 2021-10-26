@@ -184,7 +184,7 @@ function draw_table(response, project_number) {
                     users[i][`sum_grade_${j}`] === 'None')
                     $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                 else
-                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.ceil(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
+                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.round(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
             }
         }
 
@@ -192,7 +192,7 @@ function draw_table(response, project_number) {
             users[i]['sum_grade_all'] === 'None')
             $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.ceil(users[i]['sum_grade_all'] * 100) / 100}</td>`)
+            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.round(users[i]['sum_grade_all'] * 100) / 100}</td>`)
     }
 }
 
@@ -306,13 +306,13 @@ function sort(parameter, project_number) {
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&
                         users[i][`sum_grade_${j}`] !== 'None')
-                        $(`#sum_grade_${j}${i}`).html(Math.ceil(users[i][`sum_grade_${j}`] * 100) / 100)
+                        $(`#sum_grade_${j}${i}`).html(Math.round(users[i][`sum_grade_${j}`] * 100) / 100)
                     else
                         $(`#sum_grade_${j}${i}`).html('–')
 
                 if (users[i][`sum_grade_all`] != 0 && !isNaN(users[i][`sum_grade_all`]) &&
                     users[i]['sum_grade_all'] !== 'None')
-                    $(`#sum_grade_all${i}`).html(Math.ceil(users[i]['sum_grade_all'] * 100) / 100)
+                    $(`#sum_grade_all${i}`).html(Math.round(users[i]['sum_grade_all'] * 100) / 100)
                 else
                     $(`#sum_grade_all${i}`).html('–')
             }
