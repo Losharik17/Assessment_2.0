@@ -1308,6 +1308,10 @@ def show_more_viewers():
 
     return jsonify({'viewers': viewers_in_json(viewers)})
 
+def unappended_viewers():
+    return render_template("unappended_viewers.html", project_number=request.form['project_number'],
+                           viewer_id=request.form['viewer_id'])
+
 
 # прикрепляет заказчика к проекту
 def append_viewer():
@@ -1316,5 +1320,5 @@ def append_viewer():
 
     db.session.add(new_viewer)
     db.session.commit()
-
-    return jsonify({'result': 'success'})
+    jsonify({'result': 'success'})
+    return redirect('main.viewer_settings')
