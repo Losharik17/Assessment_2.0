@@ -1307,10 +1307,12 @@ def show_more_viewers():
             .order_by(Viewer.id).limit(int(request.form['lim']) + 1)
 
     return jsonify({'viewers': viewers_in_json(viewers)})
-
+#функция не рабочая,
 def unappended_viewers():
-    return render_template("unappended_viewers.html", project_number=request.form['project_number'],
-                           viewer_id=request.form['viewer_id'])
+    viewers = Viewer.query.limit(10)
+
+    return render_template('unappended_viewers.html', viewers=viewers, back=url_for('main.admin'))
+
 
 
 # прикрепляет заказчика к проекту
