@@ -2,9 +2,8 @@ from datetime import datetime
 from enum import unique
 from hashlib import md5
 from time import time
-from flask import current_app, request
+from flask import current_app
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
 from sqlalchemy import event, DDL
@@ -180,7 +179,7 @@ class Grade(db.Model):
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
 
-    def set_points(self, grades):  # сломается если grades > чем кол-во параметров
+    def set_points(self, grades):
         """ устанавливает баллы для критериев """
         for i in range(len(grades)):
             if grades[i] is not None:

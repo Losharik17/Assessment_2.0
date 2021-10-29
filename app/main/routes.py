@@ -508,10 +508,10 @@ def create_project():
                                                  weight=result.get('weight{}'.format(i)),
                                                  project_number=project.number))
 
-                if result.get('start'):
+                if result.get('start') and result.get('start') != 'дд.мм.гггг':
                     start = result.get('start')
                     setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
-                if result.get('end'):
+                if result.get('end') and result.get('end') != 'дд.мм.гггг':
                     end = result.get('end')
                     setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
                 db.session.commit()
@@ -526,7 +526,7 @@ def create_project():
 
                 if request.files['logo']:
                     logo = request.files['logo']
-                    logo.save(os.path.join(os.getcwd(), '{}.png'.format(project.number)))
+                    logo.save(os.path.join(os.getcwd(), 'logo.png'.format(project.number)))
 
                 os.chdir('../../../../')
                 lvl = 0
@@ -590,8 +590,7 @@ def create_project():
             return render_template('create_project.html', title='Создание проекта',
                                    form=request.form, back=url_for('main.viewer'))
 
-    return render_template('create_project.html', title='Создание проекта',
-                           form=request.form, back=url_for('main.viewer'))
+    return render_template('create_project.html', title='Создание проекта', back=url_for('main.viewer'))
 
 
 # добавление участника
@@ -1074,7 +1073,11 @@ def give_role():
             user = Admin(username=waiting_user.username, email=waiting_user.email,
                          password_hash=waiting_user.password_hash,
                          phone_number=waiting_user.phone_number, expert_id=expert.id)
+            viewer = Viewer(username=waiting_user.username, email=waiting_user.email,
+                            password_hash=waiting_user.password_hash, organization=waiting_user.organization,
+                            phone_number=waiting_user.phone_number, expert_id=expert.id)
             send_role_update(user, 'Администратор')
+            db.session.add(viewer)
 
         elif request.form['role'] == 'Заказчик':
             user = Viewer(username=waiting_user.username, email=waiting_user.email,
@@ -1149,8 +1152,11 @@ def delete_user():
     elif role == 'admin':
         user = Admin.query.filter_by(id=request.form['id']).first()
         expert = Expert.query.filter_by(id=user.expert_id).first()
+        viewer = Viewer.query.filter_by(id=user.viewer_id).first()
         if expert:
             db.session.delete(expert)
+        if viewer:
+            db.session.delete(viewer)
     else:
         return jsonify({'result': 'User not found'})
 
