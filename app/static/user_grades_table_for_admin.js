@@ -303,13 +303,14 @@ function edit_grade(grade_id, user_id, number_str) {
     }
 }
 
-function delete_user(id, project_id) {
+function delete_user(id, project_id, project_number) {
     if (confirm(`Удадить пользователя с ID ${project_id}?`))
         $.post('/delete_user', {
             role: 'user',
             id: id
         }).done(function (response) {
             alert('Пользователь удалён')
+            location.href = `/admin_users_table/${project_number}`
         }).fail(function () {
             alert('Error AJAX request')
         })
@@ -458,4 +459,3 @@ function sort(parameter, user_id) {
         alert("Error AJAX request")
     })
 }
-
