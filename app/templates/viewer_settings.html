@@ -88,12 +88,12 @@
             </div>
         </div>
         <div class="block_3">
-        <!-- После исправления функции вытащить из бездны
+
             <div class="input__wrapper">
-                <div class="button" onclick="location.href='{ url_for('main.unappended_viewers', project_number=project.number) }}'">
+                <div class="button" onclick="location.href='{{ url_for('main.unappended_viewers') }}'">
                     <span class="input__file_button_text">Добавить Заказчика</span>
                 </div>
-            -->
+
             <div class="input__wrapper">
                 <div class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
                     <span class="input__file_button_text">Скачать Отчёт</span>
@@ -116,6 +116,7 @@
             </div>
             <input type="submit" class="submit" value="Сохранить изменения">
             <div class="submit_2" onclick="delete_project({{ project.number }})">Удалить проект</div>
+        </div>
         </div>
     </form>
 

@@ -1307,12 +1307,18 @@ def show_more_viewers():
             .order_by(Viewer.id).limit(int(request.form['lim']) + 1)
 
     return jsonify({'viewers': viewers_in_json(viewers)})
-#функция не рабочая,
+
+
+# функция не рабочая,
+@bp.route('/unappended_viewers', methods=['GET', 'POST'])
+@login_required
 def unappended_viewers():
+    if current_user.id <= 1200000:
+        return redirects()
+
     viewers = Viewer.query.limit(10)
 
     return render_template('unappended_viewers.html', viewers=viewers, back=url_for('main.admin'))
-
 
 
 # прикрепляет заказчика к проекту
