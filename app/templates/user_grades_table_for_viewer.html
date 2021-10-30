@@ -40,7 +40,7 @@
             <div id="edit_data" class="button_re" onclick="
                     edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
             </div>
-            <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
+            <div id="edit_data" class="button_delete" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
                 Удалить участника
             </div>
             <input type="submit" name="submit" id="submit" style="visibility: hidden">
