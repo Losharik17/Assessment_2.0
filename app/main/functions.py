@@ -195,6 +195,7 @@ def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region', 'photo']
+    df['email'] = df['email'].str.lower()
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
@@ -228,6 +229,7 @@ def excel_expert(filename, number):
     df.head
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
+    df['email'] = df['email'].str.lower()
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
