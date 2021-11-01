@@ -1251,7 +1251,21 @@ def show_more_viewers():
     return jsonify({'viewers': viewers_in_json(viewers)})
 
 
+# открепляет заказчика от проекта
+@bp.route('/unappended_viewer', methods=['GET', 'POST'])
+def unappended_viewers():
+
+    viewer = ViewerProjects.query.filter_by(project_number=request.form['project_number'],
+                                            viewer_id=request.form['viewer_id']).first()
+
+    db.session.delete(viewer)
+    db.session.commit()
+
+    return jsonify({'result': 'success'})
+
+
 # прикрепляет заказчика к проекту
+@bp.route('/appended_viewer', methods=['GET', 'POST'])
 def append_viewer():
     new_viewer = ViewerProjects(project_number=request.form['project_number'],
                                 viewer_id=request.form['viewer_id'])
