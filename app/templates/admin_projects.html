@@ -18,7 +18,7 @@
                             {{ project.name }}
                         </h2>
                         <h3 style="font-weight: normal; text-align: center">
-                            {% if project.viewers.all()[0].organization is not none%}
+                            {% if project.viewers.all()[0].organization is not none %}
                                 {{ project.viewers.all()[0].organization }}
                             {% endif %}<br>
                             {% if project.viewers.all()[0].username is not none%}

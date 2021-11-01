@@ -437,22 +437,24 @@ def create_project():
         delete_project = False
         try:
             if result.get('name'):
-
-                project = Project(viewer_id=viewer.id, name=result.get('name'))
+                print(1)
+                project = Project(name=result.get('name'))
                 db.session.add(project)
                 db.session.commit()
-                proj = ViewerProjects(viewer_id=viewer.id)
+                print(1)
+                proj = ViewerProjects(viewer_id=viewer.id, project_number=project.number)
                 db.session.add(proj)
                 db.session.commit()
+                print(1)
                 delete_project = True
                 project = Project.query.all()[-1]
-
+                print(1)
                 for i in range(int(result.get('quantity'))):
                     if result.get('name{}'.format(i)).strip() != '':
                         db.session.add(Parameter(name=result.get('name{}'.format(i)).strip(),
                                                  weight=result.get('weight{}'.format(i)),
                                                  project_number=project.number))
-
+                print(1)
                 if result.get('start') and result.get('start') != 'дд.мм.гггг':
                     start = result.get('start')
                     setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
@@ -460,7 +462,7 @@ def create_project():
                     end = result.get('end')
                     setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
                 db.session.commit()
-
+                print(1)
                 os.chdir("app/static/images")
                 lvl += 3
                 if os.path.exists('{}'.format(project.number)):
@@ -468,11 +470,11 @@ def create_project():
                 os.mkdir('{}'.format(project.number))
                 os.chdir('{}'.format(project.number))
                 lvl += 1
-
+                print(1)
                 if request.files['logo']:
                     logo = request.files['logo']
                     logo.save(os.path.join(os.getcwd(), 'logo.png'.format(project.number)))
-
+                print(1)
                 os.chdir('../../../../')
                 lvl = 0
 
@@ -519,8 +521,9 @@ def create_project():
             if delete_project:
 
                 project = Project.query.all()[-1]
-                proj = ViewerProjects(project_number=project.number)
-                db.session.delete(proj)
+                proj = ViewerProjects.query.filter_by(project_number=project.number).first()
+                if proj:
+                    db.session.delete(proj)
                 for parameter in project.parameters.all():
                     db.session.delete(parameter)
 

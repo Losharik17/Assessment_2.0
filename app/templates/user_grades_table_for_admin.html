@@ -33,9 +33,15 @@
                 </table>
             </div>
         </div>
-        <div id="edit_data" class="button_re" onclick="
-                edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
-        </div>
+        {% if user.birthday is not none %}
+            <div id="edit_data" class="button_re" onclick="
+                    edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
+            </div>
+        {% else %}
+            <div id="edit_data" class="button_re" onclick="
+                    edit_data({{ user.id }}, `99.99.99`)">Редактировать данные
+            </div>
+        {% endif %}
         <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }}, {{ user.project_number }})">
             Удалить участника
         </div>
