@@ -23,7 +23,6 @@ def login():
                 user = Viewer.query.filter_by(email=form.email.data.lower()).first()
                 if not user:
                     user = Expert.query.filter_by(email=form.email.data.lower()).first()
-        print(form.password.data, form.email.data, user.password_hash)
         if user is None or not user.check_password(form.password.data):
             flash('Неверный пароль или email', 'warning')
             return redirect(url_for('auth.login'))
