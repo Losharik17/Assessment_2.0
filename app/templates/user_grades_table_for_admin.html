@@ -22,7 +22,7 @@
                             <td style="text-align: left">ФИО: <span>{{ user.username }}</span></td>
                         </tr>
                         <tr>
-                            <td style="text-align: left">Почта: <span>{{ user.email }}</span></td>
+                            <td style="text-align: left">Почта: <span>{{ user.email }}</span></td><!--Отображается как дата-->
                         </tr>
                         <tr>
                             <td style="text-align: left">Пароль: <span>{{ user.password }}</span></td>
@@ -41,6 +41,7 @@
                     </table>
                 </div>
             </div>
+        <!--Почему тут просто id а не project_id?-->
             <div id="edit_data" class="button_re" onclick="
                     edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
             </div>
