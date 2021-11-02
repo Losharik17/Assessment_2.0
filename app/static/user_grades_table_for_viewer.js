@@ -43,17 +43,6 @@ function edit_data(user_id, user_birthday) {
         $('#edit_data').html('Сохранить изменения').css({width: width}).css('text-align', 'center')
         edit_data.old_value = Array()
 
-        $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
-            '                        <input name="photo" type="file" id="photo" class="input input__file">' +
-            '                        <label id="photo_label" for="photo" class="button_re_2">' +
-            '                            <span id="photo_span" class="input__file-button-text_2">Изменить Фото Профиля</span>' +
-            '                        </label>' +
-            '                    </div>')
-        $('#photo_btn').slideUp(0).slideDown(300)
-        $('#photo').attr('file', '1').on('change', function () {
-            $('#photo').attr('file', $('#photo').attr('file') * -1)
-        })
-
         $('#data_table tr').each(function (index, element) {
             let td = $(this).children('td').children('span')
 

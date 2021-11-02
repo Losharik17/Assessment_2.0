@@ -321,7 +321,6 @@ def viewer():
     except:
         # proj не отсортировался
         pass
-
     return render_template('viewer_main.html', viewer=viewer, projects=proj, title='Проекты')
 
 
@@ -1104,6 +1103,9 @@ def delete_project():
 
     for parameter in project.parameters.all():
         db.session.delete(parameter)
+
+    for viewer in project.viewers.all():
+        db.session.delete(viewer)
 
     for user in User.query.filter_by(project_number=project.number).all():
         for grade in user.grades.all():

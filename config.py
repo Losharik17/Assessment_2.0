@@ -20,4 +20,4 @@ class Config(object):
     UPLOAD_FOLDER = '/app/static/images'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-
+'''1m|MWoY?@S$kiEfO'''
