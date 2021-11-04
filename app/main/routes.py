@@ -1265,6 +1265,7 @@ def show_more_viewers():
     return jsonify({'viewers': viewers_in_json(viewers)})
 
 
+<<<<<<< HEAD
 # открепляет заказчика от проекта
 @bp.route('/unappend_viewer', methods=['GET', 'POST'])
 def unappend_viewer():
@@ -1275,6 +1276,15 @@ def unappend_viewer():
         db.session.commit()
     else:
         return jsonify({'result': 'not_found_error'})
+=======
+@bp.route('/unappended_viewers', methods=['GET', 'POST'])
+@login_required
+def unappended_viewers():
+    if current_user.id <= 1200000:
+        return redirects()
+
+    viewers = Viewer.query.limit(10)
+>>>>>>> origin/Egor
 
     return jsonify({'result': 'success'})
 
