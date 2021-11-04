@@ -67,7 +67,7 @@ function buttons(quantity) {
 
 
 function delete_user(id, username) {
-    if (confirm(`Ужадить пользователя ${username}?`) && confirm('Вы уверены?'))
+    if (confirm(`Удалить пользователя ${username}?`) && confirm('Вы уверены?'))
         $.post('/delete_user', {
             role: 'viewer',
             id: id
@@ -177,8 +177,12 @@ function sort(parameter) {
                 $(`#expert_id${i}`).html(viewers[i]['expert_id'] ? viewers[i]['expert_id'] : '–')
                 $(`#phone_number${i}`).html(viewers[i]['phone_number'] !== 'None' ? viewers[i]['phone_number'] : '–')
 
+                /*<input id="d${i}" type="button" value="Добавить к проекту" class="btn_add"></span>*/
+
                 $(`#buttons${i}`).html(`<span id="delete${i}" onclick="delete_user(${viewers[i]['id']}, '${viewers[i]['username']}')">` +
                     `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
+
+
             }
             delete_buttons()
             buttons(limit)
