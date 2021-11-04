@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 * {
-    -webkit-appearance: none; !important;
+    -webkit-appearance: none;
 }
 
 .preloader-text {

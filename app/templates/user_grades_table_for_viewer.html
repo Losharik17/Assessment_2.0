@@ -9,8 +9,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
 
-        <form action="{{ url_for('main.user_grades_table_for_viewer', project_number=project_number,
-                user_id=user_id) }}" method="post" enctype="multipart/form-data">
+        <form>
             <div class="container">
                 <div class="data">
                     {% set path = '/images/' + user.project_number|string + '/users/' + user.project_id|string + '.png'%}

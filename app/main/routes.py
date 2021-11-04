@@ -806,6 +806,17 @@ def admin_viewers():
     return render_template('admin_viewers.html', viewers=viewers, back=url_for('main.admin'))
 
 
+@bp.route('/unappended_viewers/<project_number>', methods=['GET', 'POST'])
+@login_required
+def unappended_viewers(project_number):
+    if current_user.id <= 1200000:
+        return redirects()
+
+
+    return render_template("unappended_viewers.html", project_number=project_number,
+                           back=url_for('main.admin_settings', project_number=project_number))
+
+
 # таблица личных оценок участника (для админа)
 @bp.route('/user_grades_table_for_admin/<project_number>/<user_id>', methods=['GET', 'POST'])
 @login_required
@@ -1204,21 +1215,22 @@ def save_user_data():
         d3 = data[3].strip().capitalize()
         if d3 != '':
             setattr(user, 'region', d3)
-    '''
-    if getattr(user, 'email') != data[4]:
-        d4 = data[4].strip().lower()
-        if d4 != '':
-            setattr(user, 'email', d4)
 
-    if getattr(user, 'password_hash', ) != data[5]:
-        d5 = data[5].strip()
-        if d5 != '':
-            setattr(user, 'password_hash', d5)
+    if len(data) >= 5:
+        if getattr(user, 'email') != data[4]:
+            d4 = data[4].strip().lower()
+            if d4 != '':
+                setattr(user, 'email', d4)
 
-    if getattr(user, 'photo') != data[6]:
-        d6 = data[6].strip()
-        if d6 != '':
-            setattr(user, 'photo', d6)'''
+        if getattr(user, 'password_hash', ) != data[5]:
+            d5 = data[5].strip()
+            if d5 != '':
+                setattr(user, 'password_hash', d5)
+        '''
+        if getattr(user, 'photo') != data[6]:
+            d6 = data[6].strip()
+            if d6 != '':
+                setattr(user, 'photo', d6)'''
 
     db.session.commit()
 
@@ -1254,24 +1266,21 @@ def show_more_viewers():
 
 
 # открепляет заказчика от проекта
-@bp.route('/unappended_viewer', methods=['GET', 'POST'])
-def unappended_viewers():
-    try:
-        viewer = ViewerProjects.query.filter_by(project_number=request.form['project_number'],
-                                                viewer_id=request.form['viewer_id']).first()
-        if viewer:
-            db.session.delete(viewer)
-            db.session.commit()
-        else:
-            return jsonify({'result': 'not_found_error'})
+@bp.route('/unappend_viewer', methods=['GET', 'POST'])
+def unappend_viewer():
+    viewer = ViewerProjects.query.filter_by(project_number=request.form['project_number'],
+                                            viewer_id=request.form['viewer_id']).first()
+    if viewer:
+        db.session.delete(viewer)
+        db.session.commit()
+    else:
+        return jsonify({'result': 'not_found_error'})
 
-        return jsonify({'result': 'success'})
-    except:
-        return jsonify({'result': 'error'})
+    return jsonify({'result': 'success'})
 
 
 # прикрепляет заказчика к проекту
-@bp.route('/appended_viewer', methods=['GET', 'POST'])
+@bp.route('/append_viewer', methods=['GET', 'POST'])
 def append_viewer():
     try:
         new_viewer = ViewerProjects(project_number=request.form['project_number'],
@@ -1283,3 +1292,28 @@ def append_viewer():
         return jsonify({'result': 'success'})
     except:
         return jsonify({'result': 'error'})
+
+
+@bp.route('/sort_unappend_viewers', methods=['GET', 'POST'])
+def sort_unappend_viewers():
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            viewers = Viewer.query \
+                .order_by(Viewer.__dict__[request.form['parameter']].desc()) \
+                .all()
+        else:
+            viewers = Viewer.query \
+                .order_by(Viewer.__dict__[request.form['parameter']].asc()) \
+                .all()
+    else:
+        viewers = Viewer.query.order_by(Viewer.id).all()
+    viewers2 = []
+    for viewer in viewers:
+        x = True
+        for project in viewer.projects.all():
+            if project.project_number == int(request.form['project_number']):
+                x = False
+        if x:
+            viewers2.append(viewer)
+
+    return jsonify({'viewers': viewers_in_json(viewers2)})

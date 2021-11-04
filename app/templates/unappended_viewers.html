@@ -4,8 +4,7 @@
 
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
     <link rel="stylesheet"  href="{{ url_for('static', filename='admin_waiting_users.css')}}">
-    <script src="{{ url_for('static', filename='admin_viewers.js') }}"></script>
-
+    <script src="{{ url_for('static', filename='unappend_viewers.js')}}"></script>
     <div class="container">
         <h1 style="margin: 10px auto; text-align: center;">Недобавленные к проекту Заказчики</h1>
 
@@ -14,13 +13,13 @@
                 <thead>
                 <tr>
                     <th id="username" class="sort" data-order="0"
-                        onclick="sort(this.id)">ФИО</th>
+                        onclick="sort(this.id, {{ project_number }})">ФИО</th>
                     <th id="email" class="sort" data-order="0"
-                        onclick="sort(this.id)">Email</th>
+                        onclick="sort(this.id, {{ project_number }})">Email</th>
                     <th id="phone_number" class="sort" data-order="0"
-                        onclick="sort(this.id)">Номер телефона</th>
+                        onclick="sort(this.id, {{ project_number }})">Номер телефона</th>
                     <th id="expert_id" class="sort" data-order="0"
-                        onclick="sort(this.id)">ID как эксперта</th>
+                        onclick="sort(this.id, {{ project_number }})">ID как эксперта</th>
                 </tr>
                 </thead>
 
@@ -31,15 +30,16 @@
         </div>
 
         <div class="show">
-            <a id="show_more" class="show_btn" href="javascript:show_more(10)">
+            <a id="show_more" class="show_btn" href="javascript:show_more(10, {{ project_number }})">
                 Показать больше</a>
-            <a id="show_all" class="show_btn" href="javascript:show_more(10000)">
+            <a id="show_all" class="show_btn" href="javascript:show_more(10000, {{ project_number }})">
                 Показать все</a>
         </div>
+
     </div>
 
     <script>
-        show_more(0)
+        show_more(0, {{ project_number }})
     </script>
 
 {% endblock %}

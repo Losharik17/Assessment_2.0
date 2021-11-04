@@ -62,7 +62,6 @@ def viewers_in_json(viewers):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
-
     return string
 
 
