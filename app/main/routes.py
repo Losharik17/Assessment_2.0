@@ -1309,7 +1309,6 @@ def show_more_viewers():
     return jsonify({'viewers': viewers_in_json(viewers)})
 
 
-# функция не рабочая,
 @bp.route('/unappended_viewers', methods=['GET', 'POST'])
 @login_required
 def unappended_viewers():

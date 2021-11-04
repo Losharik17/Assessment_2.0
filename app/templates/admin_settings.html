@@ -94,6 +94,12 @@
             </div>
 
             <div class="input__wrapper">
+                <div id="" class="button" onclick="location.href='{{ url_for('auth.send_email') }}'">
+                    <span class="input__file_button_text">Повторно выслать пароли</span>
+                </div>
+            </div>
+
+            <div class="input__wrapper">
                 <div id="download" class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
                     <span class="input__file_button_text">Скачать Отчёт</span>
                 </div>
