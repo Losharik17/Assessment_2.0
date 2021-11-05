@@ -4,16 +4,13 @@ from flask import render_template, current_app
 from flask_mail import Message
 from sqlalchemy import create_engine
 from app import mail
-from app.main.functions import password_generator
+
 
 import smtplib
-import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
 from platform import python_version
-from sqlalchemy.orm import sessionmaker
+
 
 def send_async_email(app, subject, sender, recipients, text_body, html_body):
     msg = Message(subject, sender=sender, recipients=recipients)
@@ -50,16 +47,6 @@ def async_mail_new(app, project_number, type, number):
         for i in range(number):
             users.pop(0)
 
-        mail = smtplib.SMTP_SSL(current_app.config['MAIL_SERVER'])
-        mail.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
-        subject = 'NSPT Ваш пароль'
-        sender = current_app.config['MAIL_USERNAME']
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = subject
-        msg['From'] = '<' + sender + '>'
-        msg['Reply-To'] = sender
-        msg['Return-Path'] = sender
-        msg['X-Mailer'] = 'Python/' + (python_version())
 
         for user in users:
             recipients = user.email
@@ -70,6 +57,14 @@ def async_mail_new(app, project_number, type, number):
                                    user=user, password=user.password_hash)\
                    + '</p></body></html>'
 
+            subject = 'NSPT Ваш пароль'
+            sender = current_app.config['MAIL_USERNAME']
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = '<' + sender + '>'
+            msg['Reply-To'] = sender
+            msg['Return-Path'] = sender
+            msg['X-Mailer'] = 'Python/' + (python_version())
             msg['To'] = recipients
 
             part_text = MIMEText(text, 'plain')
@@ -78,6 +73,9 @@ def async_mail_new(app, project_number, type, number):
             msg.attach(part_text)
             msg.attach(part_html)
 
+            mail = smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT'])
+            mail.starttls()
+            mail.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
             mail.sendmail(sender, recipients, msg.as_string().encode('utf-8'))
-            time.sleep(1.5)
-        mail.quit()
+            mail.quit()
+            time.sleep(10)
