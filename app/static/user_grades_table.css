@@ -259,7 +259,7 @@
 
 @media(hover: hover) {
     .btn_delete:hover {
-        box-shadow: 0 1px 2px 0 rgb(26 115 232), 0 1px 3px 1px rgb(26 115 232);
+        box-shadow: 0 1px 2px 0 #e62929, 0 1px 3px 1px #e62929;
         background-color: #e62929;
     }
 }
