@@ -182,7 +182,7 @@ function draw_table(response, project_number) {
                     users[i][`sum_grade_${j}`] === 'None')
                     $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">–</td>`)
                 else
-                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.round(users[i][`sum_grade_${j}`] * 100) / 100}</td>`)
+                    $(`#number_str${i}`).append(`<td id="sum_grade_${j}${i}">${Math.round10(users[i][`sum_grade_${j}`], -2)}</td>`)
             }
         }
 
@@ -190,7 +190,7 @@ function draw_table(response, project_number) {
             users[i]['sum_grade_all'] === 'None')
             $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">–</td>`)
         else
-            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.round(users[i]['sum_grade_all'] * 100) / 100}</td>`)
+            $(`#number_str${i}`).append(`<td id="sum_grade_all${i}">${Math.round10(users[i]['sum_grade_all'], -2)}</td>`)
     }
 }
 
@@ -304,13 +304,13 @@ function sort(parameter, project_number) {
                 for (let j = 0; j < 10; j++)
                     if (users[i][`sum_grade_${j}`] != 0 && !isNaN(users[i][`sum_grade_${j}`]) &&
                         users[i][`sum_grade_${j}`] !== 'None')
-                        $(`#sum_grade_${j}${i}`).html(Math.round(users[i][`sum_grade_${j}`] * 100) / 100)
+                        $(`#sum_grade_${j}${i}`).html(Math.round10(users[i][`sum_grade_${j}`], -2))
                     else
                         $(`#sum_grade_${j}${i}`).html('–')
 
                 if (users[i][`sum_grade_all`] != 0 && !isNaN(users[i][`sum_grade_all`]) &&
                     users[i]['sum_grade_all'] !== 'None')
-                    $(`#sum_grade_all${i}`).html(Math.round(users[i]['sum_grade_all'] * 100) / 100)
+                    $(`#sum_grade_all${i}`).html(Math.round10(users[i]['sum_grade_all'], -2))
                 else
                     $(`#sum_grade_all${i}`).html('–')
             }
@@ -319,4 +319,52 @@ function sort(parameter, project_number) {
         alert("Error AJAX request")
     })
 }
+
+(function() {
+    /**
+     * Корректировка округления десятичных дробей.
+     *
+     * @param {String}  type  Тип корректировки.
+     * @param {Number}  value Число.
+     * @param {Integer} exp   Показатель степени (десятичный логарифм основания корректировки).
+     * @returns {Number} Скорректированное значение.
+     */
+    function decimalAdjust(type, value, exp) {
+        // Если степень не определена, либо равна нулю...
+        if (typeof exp === 'undefined' || +exp === 0) {
+            return Math[type](value);
+        }
+        value = +value;
+        exp = +exp;
+        // Если значение не является числом, либо степень не является целым числом...
+        if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+            return NaN;
+        }
+        // Сдвиг разрядов
+        value = value.toString().split('e');
+        value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+        // Обратный сдвиг
+        value = value.toString().split('e');
+        return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+    }
+
+    // Десятичное округление к ближайшему
+    if (!Math.round10) {
+        Math.round10 = function(value, exp) {
+            return decimalAdjust('round', value, exp);
+        };
+    }
+    // Десятичное округление вниз
+    if (!Math.floor10) {
+        Math.floor10 = function(value, exp) {
+            return decimalAdjust('floor', value, exp);
+        };
+    }
+    // Десятичное округление вверх
+    if (!Math.ceil10) {
+        Math.ceil10 = function(value, exp) {
+            return decimalAdjust('ceil', value, exp);
+        };
+    }
+})();
 

@@ -40,17 +40,6 @@ function edit_data(user_id, user_birthday) {
         $('#edit_data').html('Сохранить изменения').css({width: width, 'text-align': 'center'})
         edit_data.old_value = Array()
 
-        $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
-            '                        <input name="photo" type="file" id="photo" class="input input__file">' +
-            '                        <label id="photo_label" for="photo" class="button_re_2">' +
-            '                            <span id="photo_span" class="input__file-button-text_2">Изменить Фото Профиля</span>' +
-            '                        </label>' +
-            '                    </div>')
-
-        $('#photo_btn').slideUp(0).slideDown(300)
-        $('#photo').attr('file', '1').on('change', function () {
-            $('#photo').attr('file', $('#photo').attr('file') * -1)
-        })
 
         $('#data_table tr').each(function (index, element) {
             let td = $(this).children('td').children('span')
@@ -303,13 +292,14 @@ function edit_grade(grade_id, user_id, number_str) {
     }
 }
 
-function delete_user(id, project_id) {
+function delete_user(id, project_id, project_number) {
     if (confirm(`Удадить пользователя с ID ${project_id}?`))
         $.post('/delete_user', {
             role: 'user',
             id: id
         }).done(function (response) {
             alert('Пользователь удалён')
+            location.href = `/admin_users_table/${project_number}`
         }).fail(function () {
             alert('Error AJAX request')
         })
@@ -458,4 +448,3 @@ function sort(parameter, user_id) {
         alert("Error AJAX request")
     })
 }
-

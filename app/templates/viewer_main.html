@@ -11,7 +11,6 @@
                 <span class="text">Создать новый проект</span>
             </div>
         </div>
-
         {% for project in projects %}
             <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number) }}'">
                 <div class="block_logo">

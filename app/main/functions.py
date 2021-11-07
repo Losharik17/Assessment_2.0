@@ -62,7 +62,6 @@ def viewers_in_json(viewers):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
-
     return string
 
 
@@ -201,11 +200,11 @@ def excel_user(filename, number):
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
-    if last_user != None:
+    if last_user is not None:
         c = last_user.id
         i = c
         b = len(index) + c
-        if prev_user != None and prev_user.project_number == number:
+        if prev_user is not None and prev_user.project_number == number:
             l = prev_user.project_id
         else:
             l = 0
@@ -218,11 +217,13 @@ def excel_user(filename, number):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
-        if user.project_id == None:
+        user.set_password(password_generator())
+        if user.project_id is None:
             user.project_id = l + 1
         db.session.add(user)
         db.session.commit()
         l += 1
+
 
 def excel_expert(filename, number):
     df = pd.read_excel(filename)
@@ -261,16 +262,15 @@ def excel_expert(filename, number):
         db.session.add(expert)
         db.session.commit()
         l += 1
-        
+
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
         db.session.commit()
 
 
-
-def delete_function(): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end <= DATE('now', '12 month')")
+def delete_function():  # Функция для удаления старых данных
+    a = engine.execute("SELECT number FROM project WHERE end >= DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:
