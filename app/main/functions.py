@@ -293,15 +293,9 @@ def delete_function():  # Функция для удаления старых д
 
 
 def delete_timer():
-    shed = BackgroundScheduler(daemon=True)
-    shed.add_job(delete_function, 'interval', days=7)
-    sched = BackgroundScheduler(daemon=True)
-    sched.add_job(email_timer, 'interval', days=1)
-    email = BackgroundScheduler(daemon=True)
-    email.add_job(email_saver, 'interval', days=1)
-    shed.start()
-    sched.start()
-    email.start()
+    excel = BackgroundScheduler(daemon=True)
+    excel.add_job(excel_saver, 'interval', seconds=10)
+    excel.start()
 
 
 def redirects(arg=None):
