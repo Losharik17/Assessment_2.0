@@ -36,11 +36,16 @@
                     </table>
                 </div>
             </div>
-
-            <div id="edit_data" class="button_re" onclick="
-                    edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
-            </div>
-            <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
+            {% if user.birthday is not none %}
+                <div id="edit_data" class="button_re" onclick="
+                        edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
+                </div>
+            {% else %}
+                <div id="edit_data" class="button_re" onclick="
+                        edit_data({{ user.id }}, `99.99.99`)">Редактировать данные
+                </div>
+            {% endif %}
+            <div id="edit_data" class="button_delete" onclick="delete_user({{ user.id }}, {{ user.project_id }})">
                 Удалить участника
             </div>
             <input type="submit" name="submit" id="submit" style="visibility: hidden">
@@ -50,7 +55,7 @@
             <table class="table-sort">
                 <thead>
                 <tr>
-                    <th id="expert_id" class="sort" data-order="1" onclick="sort(this.id, {{ user_id }})">ID Эксперта</th>
+                    <th id="expertname" class="th_clean">Эксперт</th>
                     <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ user_id }})">Время</th>
                     {%set k = namespace(a=0) %}
                     {% for parameter in ParName %}
@@ -78,9 +83,11 @@
             $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
                 / (24 * 3600 * 365.25 * 1000)))
             show_more(0, {{ user_id }})
-        let src = $('#img').attr('src')
-        src = src.substr(0, 25) + 'uc' + src.substr(29)
-        $('#img').attr('src', src)
+
+            // костыль
+            let src = $('#img').attr('src')
+            src = src.substr(0, 25) + 'uc' + src.substr(29)
+            $('#img').attr('src', src)
 
         </script>
     {% else %}

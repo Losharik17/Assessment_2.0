@@ -2,9 +2,8 @@ from datetime import datetime
 from enum import unique
 from hashlib import md5
 from time import time
-from flask import current_app, request
+from flask import current_app
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import db, login
 from sqlalchemy import event, DDL
@@ -38,16 +37,16 @@ class User(UserMixin, db.Model):
         return '<Пользователь {}>'.format(self.username)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
-            algorithm='HS256').decode('utf-8')
+            algorithm='HS256').encode().decode('utf-8')
 
     def sum_grades(self):
         """считает сумму всех оценок по каждому критерию
@@ -123,6 +122,7 @@ class Expert(UserMixin, db.Model):
     username = db.Column(db.String(64))
     email = db.Column(db.String(128), index=True)
     weight = db.Column(db.Float, default=1.0)
+    photo = db.Column(db.String(1024))
     project_number = db.Column(db.Integer)
     id = db.Column(db.Integer, unique=True, primary_key=True)
     grades = db.relationship('Grade', backref='expert', lazy='dynamic')
@@ -130,16 +130,16 @@ class Expert(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
-            algorithm='HS256')
+            algorithm='HS256').encode().decode('utf-8')
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -179,7 +179,7 @@ class Grade(db.Model):
     def __repr__(self):
         return 'Оценка для участника номер {}'.format(self.user_id)
 
-    def set_points(self, grades):  # сломается если grades > чем кол-во параметров
+    def set_points(self, grades):
         """ устанавливает баллы для критериев """
         for i in range(len(grades)):
             if grades[i] is not None:
@@ -193,21 +193,20 @@ class Viewer(UserMixin, db.Model):
     email = db.Column(db.String(128), index=True, unique=True)
     phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
-    projects = db.relationship('Project', backref='viewer', lazy='dynamic')
-
+    projects = db.relationship('ViewerProjects', backref='viewer', lazy='dynamic')
     expert_id = db.Column(db.Integer)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
-            algorithm='HS256').decode('utf-8')
+            algorithm='HS256').encode().decode('utf-8')
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -219,13 +218,19 @@ class Viewer(UserMixin, db.Model):
         return Viewer.query.get(id)
 
 
+class ViewerProjects(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
+    viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
+    project_number = db.Column(db.Integer, db.ForeignKey('project.number'))
+
+
 class Project(db.Model):
     number = db.Column(db.Integer, primary_key=True, unique=True, autoincrement=True)
-    viewer_id = db.Column(db.Integer, db.ForeignKey('viewer.id'))
     name = db.Column(db.String(32))
     start = db.Column(db.Date)
     end = db.Column(db.Date)
     parameters = db.relationship('Parameter', backref='project', lazy='dynamic')
+    viewers = db.relationship('ViewerProjects', backref='project', lazy='dynamic')
 
 
 class Parameter(db.Model):
@@ -247,7 +252,7 @@ class WaitingUser(db.Model):
     password_hash = db.Column(db.String(128))
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def __repr__(self):
         return 'Пользователь {}'.format(self.id)
@@ -260,18 +265,19 @@ class Admin(UserMixin, db.Model):
     phone_number = db.Column(db.String(16))
     password_hash = db.Column(db.String(128))
     expert_id = db.Column(db.Integer)
+    viewer_id = db.Column(db.Integer)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = password
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return self.password_hash == password
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'],
-            algorithm='HS256').decode('utf-8')
+            algorithm='HS256').encode().decode('utf-8')
 
     @staticmethod
     def verify_reset_password_token(token):

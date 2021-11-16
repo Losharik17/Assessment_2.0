@@ -20,33 +20,54 @@
                         <div>
                             <div class="block_4" >
                                 <lable for="name">
-                                    <input name="name" id="name" type="text" placeholder="Название проекта" class="input_text_1">
+                                    <input name="name" id="name" type="text" placeholder="Название проекта" class="input_text_1"
+                                           value="{% if form is defined and form.get('name') is not none %}{{ form.get('name') }}{% endif %}" >
                                 </lable>
                             </div>
                             <div style="margin-top: 10px;" class="block_4">
-
                                 <div  class="form_group">
                                     <label for="start" class="form_label">Начало Проекта</label>
-                                    <input id="start" name="start" type="text" class="form_input">
+                                    <input id="start" name="start" type="text" class="form_input"
+                                           value="{% if form is defined and form.get('start') is not none %}{{ form.get('start') }}{% endif %}">
                                 </div>
                                 <div class="form_group">
                                     <label for="end" class="form_label">Конец Проекта</label>
-                                    <input id="end" name="end" type="text" class="form_input">
+                                    <input id="end" name="end" type="text" class="form_input"
+                                           value="{% if form is defined and form.get('end') is not none %}{{ form.get('end') }}{% endif %}">
                                 </div>
-
                             </div>
                             <div id="block_4_1" class="block_4">
-
                                 <label for="name0"></label>
-                                <input id="name0" name="name0" size="16" type="text" value="" class="input_text_2"
-                                       placeholder="Критерий 1"/>
+                                <input id="name0" name="name0" size="16" type="text" class="input_text_2" placeholder="Критерий 1"
+                                       value="{% if form is defined and form.get('name0') is not none %}{{ form.get('name0') }}{% endif %}"/>
                                 <div class="block_5">
                                     <input id="minus0" class="button" type="button" value="-">
-                                    <input class="crit" type="number" name="weight0" id="weight0" value="1.0" step="0.1" max="2.0" min="0.1"  />
+                                    <input class="crit" type="number" name="weight0" id="weight0" step="0.1" max="2.0" min="0.1"
+                                           value="{% if form is defined and form.get('weight0') is not none %}{{ form.get('weight0') }}{% else %}1.0{% endif %}"/>
                                     <input id="plus0" class="button" type="button" value="+">
                                 </div>
                             </div>
-                        </div>
+                            {% if form is defined %}
+                                {% for i in range(form.get('quantity')|int - 1) %}
+                                    {% if form.get('name{}'.format(i + 1)) != '' or form.get('weight{}'.format(i + 1)) != '1.0' %}
+                                        <div id="parameter{{ i + 1 }}">
+                                            <div id="block_4_1" class="block_4">
+                                                <label for="name{{ i + 1 }}"></label>
+                                                <input id="name{{ i + 1 }}" name="name{{ i + 1 }}" size="16" type="text" class="input_text_2" placeholder="Критерий {{ i + 2 }}"
+                                                       value="{% if form is defined and form.get('name{}'.format(i + 1)) is not none %}{{ form.get('name{}'.format(i + 1)) }}{% endif %}"/>
+                                                <div class="block_5">
+                                                    <input id="minus{{ i + 1 }}" class="button" type="button" value="-">
+                                                    <input class="crit" type="number" name="weight{{ i + 1 }}" id="weight{{ i + 1 }}" step="0.1" max="2.0" min="0.1"
+                                                           value="{% if form is defined and form.get('weight{}'.format(i + 1)) is not none %}{{ form.get('weight{}'.format(i + 1)) }}{% else %}1.0{% endif %}"/>
+                                                    <input id="plus{{ i + 1 }}" class="button" type="button" value="+">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                <script>console.log({{ form.get('quantity') }}, {{ form.get('name3') }})</script>
+                            {% endif %}
+                       </div>
                         <input type="button"  class="add_1" id="button_add" value="Добавить">
                         <input type="button"  class="add_2" id="button_delete" value="Удалить">
                         <br>
@@ -75,25 +96,9 @@
                             <span class="input__file-button-text">Загрузить Экспертов</span>
                         </label>
                     </div>
-                    <div class="input__wrapper">
-                        <input  type="file" name="users_photo" id="users_photo" class="input input__file" multiple>
-                        <label for="users_photo" class="input__file-button">
-                            <span class="input__file-icon-wrapper"><img class="input__file-icon" src="{{ url_for('static', filename='/download.png') }}" alt="Выбрать файл" width="25"></span>
-                            <span class="input__file-button-text">Загрузить Фото Участников</span>
-                        </label>
-                    </div>
-                    <div class="input__wrapper">
-                        <input  type="file" name="experts_photo" id="experts_photo" class="input input__file" multiple>
-                        <label for="experts_photo" class="input__file-button">
-                            <span class="input__file-icon-wrapper">
-                                <img class="input__file-icon"
-                                     src="{{ url_for('static', filename='/download.png') }}"
-                                     alt="Выбрать файл" width="25"></span>
-                            <span class="input__file-button-text">Загрузить Фото Экспертов</span>
-                        </label>
-                    </div>
                 </div>
-                <input type="number" name="quantity" id="quantity" value="1"
+                <input type="number" name="quantity" id="quantity"
+                       value="1"
                        style="visibility: hidden" />
                 <div class="container">
                     <input type="submit" onclick="waiting()" value="Создать проект" class="btn btn-5" >
@@ -102,6 +107,6 @@
         </form>
     </div>
 
-    <script src="{{ url_for('static', filename='create_project.js') }}"></script>
+        <script src="{{ url_for('static', filename='create_project.js') }}"></script>
     <script>$('#name').css('width', $('#block_4_1').width())</script>
 {% endblock %}

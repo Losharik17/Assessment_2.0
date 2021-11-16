@@ -18,12 +18,11 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
         if not user:
-            user = Viewer.query.filter_by(email=form.email.data.lower()).first()
+            user = Admin.query.filter_by(email=form.email.data.lower()).first()
             if not user:
-                user = Admin.query.filter_by(email=form.email.data.lower()).first()
+                user = Viewer.query.filter_by(email=form.email.data.lower()).first()
                 if not user:
                     user = Expert.query.filter_by(email=form.email.data.lower()).first()
-
         if user is None or not user.check_password(form.password.data):
             flash('Неверный пароль или email', 'warning')
             return redirect(url_for('auth.login'))

@@ -1,20 +1,21 @@
 import random
 import string
+
 from sqlalchemy import create_engine
 from app import db
-from app.auth.email import send_password_mail
-from app.models import User, Expert, Viewer
+from app.models import User, Expert, Viewer, Grade
 import pandas as pd
-from flask import redirect, url_for, flash, current_app
+from flask import redirect, url_for, flash, send_file
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
 from PIL import Image
 from datetime import datetime, timedelta
 from app.models import Project
-from app.auth.email import send_alert_mail
+from app.auth.email import send_alert_mail, send_role_refuse
 import os
 import shutil
+from datetime import date, datetime
 
 engine = create_engine("sqlite:///T_Park.db")
 
@@ -22,8 +23,7 @@ engine = create_engine("sqlite:///T_Park.db")
 def users_in_json(users):
     if not users:
         return '[]'
-    lenght = len(Project.query.filter_by(number=users[0].project_number).first()
-                 .parameters.all())
+    lenght = len(Project.query.filter_by(number=users[0].project_number).first().parameters.all())
 
     string = '['
     for user in users:
@@ -63,6 +63,7 @@ def viewers_in_json(viewers):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
@@ -91,13 +92,15 @@ def grades_in_json(grades, lenght):
 
     string = '['
     for grade in grades:
+
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"' \
+                        '"comment":"{4}", "username":"{5}", "expertname":"{6}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert.project_id),
                     str(grade.user.project_id),
-                    str(grade.comment))
+                    str(grade.comment), str(grade.user.username),
+                    str(grade.expert.username))
 
         for i in range(lenght):
             string += ',"parameter_{0}":"{1}"' \
@@ -106,6 +109,8 @@ def grades_in_json(grades, lenght):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
+    string = string.replace("\r", "").replace("\n", "")
+
     return string
 
 
@@ -126,6 +131,33 @@ def waiting_users_in_json(waiting_users):
     string = string[:len(string) - 1] + ']'
 
     return string
+
+
+def project_settings(request, project, project_number):
+    changes = False
+    result = request.form
+
+    if request.files['logo']:
+        os.chdir('app/static/images/{}'.format(project_number))
+        logo = request.files['logo']
+        logo.save(os.path.join(os.getcwd(), 'logo.png'))
+        os.chdir('../../../../')
+        changes = True
+
+    if result.get('name') != '':
+        setattr(project, 'name', result.get('name'))
+        changes = True
+
+    if result.get('start') != 'дд.мм.гг':
+        setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
+        changes = True
+    if result.get('end') != 'дд.мм.гг':
+        setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
+        changes = True
+
+    db.session.commit()
+    if changes:
+        flash('Изменения сохранены', 'success')
 
 
 def to_dict(row):
@@ -163,17 +195,18 @@ def password_generator():
 def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
-    df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region']
+    df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region', 'photo']
+    df['email'] = df['email'].str.lower()
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
-    if last_user != None:
+    if last_user is not None:
         c = last_user.id
         i = c
         b = len(index) + c
-        if prev_user != None and prev_user.project_number == number:
+        if prev_user is not None and prev_user.project_number == number:
             l = prev_user.project_id
         else:
             l = 0
@@ -186,17 +219,20 @@ def excel_user(filename, number):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
-        if user.project_id == None:
+        user.set_password(password_generator())
+        if user.project_id is None:
             user.project_id = l + 1
         db.session.add(user)
         db.session.commit()
         l += 1
+
 
 def excel_expert(filename, number):
     df = pd.read_excel(filename)
     df.head
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
+    df['email'] = df['email'].str.lower()
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
@@ -228,16 +264,15 @@ def excel_expert(filename, number):
         db.session.add(expert)
         db.session.commit()
         l += 1
-        
+
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
         db.session.delete(me)
         db.session.commit()
 
 
-
-def delete_function(): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end <= DATE('now', '12 month')")
+def delete_function():  # Функция для удаления старых данных
+    a = engine.execute("SELECT number FROM project WHERE end >= DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:
@@ -255,6 +290,7 @@ def delete_function(): #Функция для удаления старых да
             except:
                 pass
             os.chdir('../../../')
+
 
 def delete_timer():
     shed = BackgroundScheduler(daemon=True)
@@ -327,3 +363,177 @@ def email_saver():
                 expert.email = expert.email + 'λ'
                 db.session.add(expert)
                 db.session.commit()
+
+def excel_saver():
+    from main import app
+    with app.app_context():
+        a = engine.execute("SELECT number FROM project")
+        a = a.fetchall()
+        for project_number in a:
+            project_number = project_number[0]
+            data = User.query.all()
+            data_list = [to_dict(item) for item in data]
+            df1 = pd.DataFrame(data_list)
+
+            df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
+            excel_start_date = date(1899, 12, 30)
+            df1['birthday'] = df1['birthday'] - excel_start_date
+            df1.birthday = df1.birthday.dt.days
+
+            parameters = Project.query.filter_by(number=project_number).first().parameters.all()
+            i = 0
+            for parameter in parameters:
+                df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
+                i += 1
+            while i < 10:
+                df1 = df1.drop(columns={"sum_grade_{}".format(i)})
+                i += 1
+
+            df1['team'] = df1['team'].str.capitalize()
+            df1['region'] = df1['region'].str.capitalize()
+
+            for i in range(0, len(df1.index)):
+                try:
+                    if 'λ' in str(df1.email[i]):
+                        a = len(df1.email[i]) - 1
+                        df1.email[i] = df1.email[i][:a]
+                except:
+                    pass
+
+            df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+                                    'photo': 'Ссылка на фотографию',
+                                    "sum_grade_all": "Итоговая оценка",
+                                    'project_id': 'ID'})
+            df1["Имя"] = ""
+            df1["Фамилия"] = ""
+            df1["Отчество"] = ""
+            for i in range(0, len(df1.index)):
+                try:
+                    df1["Имя"][i]=df1["ФИО"][i].split()[1]
+                    df1["Фамилия"][i] = df1["ФИО"][i].split()[0]
+                    df1["Отчество"][i] = df1["ФИО"][i].split()[2]
+                except:
+                    pass
+            df1 = df1.fillna('-')
+            df1 = df1.loc[df1['project_number'] == int(project_number)]
+            df1 = df1.drop(columns=['password_hash', 'project_number'])
+            names = df1.columns.values
+            names_length = len(names)
+            new_name = [names[0], names[names_length-2], names[names_length-3],names[names_length-1],names[3], names[2], names[4], names[5], names[6]]
+            for i in range(8, names_length-3):
+                new_name.append(names[i])
+            new_name.append(names[7])
+            df1 = df1.reindex(columns=new_name)
+            data = Expert.query.all()
+            data_list = [to_dict(item) for item in data]
+            df2 = pd.DataFrame(data_list)
+
+            df2 = df2.loc[df2['project_number'] == int(project_number)]
+            df2 = df2.drop(columns=['password_hash', 'project_number'])
+            df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID',
+                                'quantity': 'Количество выставленных оценок'}, inplace=True)
+            df2["Имя"] = ""
+            df2["Фамилия"] = ""
+            df2["Отчество"] = ""
+            for i in range(0, len(df2.index)):
+                try:
+                    df2["Фамилия"][i] = df2["ФИО"][i].split()[0]
+                    df2["Имя"][i]=df2["ФИО"][i].split()[1]
+                    df2["Отчество"][i] = df2["ФИО"][i].split()[2]
+                except:
+                    pass
+            names = df2.columns.values
+            names_length = len(names)
+            new_name = [names[0],names[names_length-2],names[names_length-3],names[names_length-1],names[2],names[3], names[5], names[6]]
+            df2 = df2.reindex(columns=new_name)
+            data = Grade.query.all()
+            data_list = [to_dict(item) for item in data]
+            df3 = pd.DataFrame(data_list)
+            df3.rename(columns={'date': 'Дата выставления оценки', 'comment': 'Комментарий'}, inplace=True)
+            a = engine.execute("SELECT id FROM user WHERE project_number = ?", project_number)
+            a = a.fetchall()
+            f = []
+
+            for i in range(len(df3.index)):
+                c = 0
+                for rows in a:
+                    b = engine.execute("SELECT project_id FROM user WHERE id = ?", rows[0])
+                    b = b.fetchall()
+                    if df3.user_id[i] == rows[0] and c == 0:
+                        df3.user_id[i] = b[0][0]
+                        c += 1
+                if c == 0:
+                    f.append(int(i))
+            a = engine.execute("SELECT id FROM expert WHERE project_number = ?", project_number)
+            a = a.fetchall()
+
+            for i in range(len(df3.index)):
+                c = 0
+                for row in a:
+                    b = engine.execute("SELECT username FROM expert WHERE id = ?", row[0])
+                    b = b.fetchall()
+                    if c == 0 and int(df3.expert_id[i]) == row[0]:
+                        df3.expert_id[i] = b[0][0]
+                        c += 1
+
+            for row in f:
+                df3 = df3.drop([row])
+            i = 0
+            for parameter in parameters:
+                df3 = df3.rename(columns={"parameter_{}".format(i): parameter.name})
+                i += 1
+            while i < 10:
+                df3 = df3.drop(columns=["parameter_{}".format(i)])
+                i += 1
+            df3 = df3.drop(columns=['id'])
+            df2 = df2.drop(columns=['id'])
+            df1 = df1.drop(columns=['id'])
+            df1.columns = [x.capitalize() for x in df1.columns]
+            df1 = df1.rename(columns={'Id': 'ID', 'Фио': 'ФИО'})
+            df3.rename(columns={'user_id': 'ID участника', 'expert_id': 'ФИО эксперта'}, inplace=True)
+            df3["Имя"] = ""
+            df3["Фамилия"] = ""
+            df3["Отчество"] = ""
+            for i in range(0, len(df3.index)):
+                try:
+                    df3["Фамилия"][i] = df3["ФИО эксперта"][i].split()[0]
+                    df3["Имя"][i] = df3["ФИО эксперта"][i].split()[1]
+                    df3["Отчество"][i] = df3["ФИО эксперта"][i].split()[2]
+                except:
+                    pass
+            names = df3.columns.values
+            names_length = len(names)
+            new_name = [names[0], names[names_length - 2], names[names_length - 3], names[names_length - 1], names[2]]
+            for i in range(3, names_length - 3):
+                new_name.append(names[i])
+            df3 = df3.reindex(columns=new_name)
+            filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
+
+            writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
+            df1.to_excel(writer, sheet_name='Участники', index=False, float_format="%.2f")
+            workbook = writer.book
+            base_format = workbook.add_format({'align': 'center'})
+            new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
+            date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
+            date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
+            worksheet = writer.sheets['Участники']
+
+            worksheet.set_column('A:S', 21, base_format)
+            worksheet.set_column('F:F', 24, base_format)
+            worksheet.set_column('H:H', 26, base_format)
+            worksheet.set_column('E:E', 14, date_format)
+
+            df2.to_excel(writer, sheet_name='Эксперты', index=False)
+            worksheet = writer.sheets['Эксперты']
+            worksheet.set_column('A:G', 21, base_format)
+            worksheet.set_column('E:E', 24, base_format)
+            worksheet.set_column('G:G', 32, base_format)
+
+            df3.to_excel(writer, sheet_name='Оценки', index=False)
+            worksheet = writer.sheets['Оценки']
+            worksheet.set_column('A:P', 30, new_format)
+            worksheet.set_column('E:E', 24, date2_format)
+            writer.save()
+
+
+

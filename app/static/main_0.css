@@ -2,6 +2,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
+* {
+    -webkit-appearance: none; !important;
+}
 
 .preloader-text {
     position: fixed;
@@ -126,7 +129,8 @@
         width: max-content;
         height: max-content;
         position: relative;
-        max-width:180px;
+        max-width: 180px;
+        max-height: 51px;
     }
 
     .content {
@@ -155,7 +159,7 @@
         width: max-content;
         height: max-content;
         max-width: 310px;
-
+        max-height: 87px;
     }
 
     .content {
