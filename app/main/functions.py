@@ -1,11 +1,11 @@
 import random
 import string
+
 from sqlalchemy import create_engine
 from app import db
-from app.auth.email import send_password_mail
 from app.models import User, Expert, Viewer
 import pandas as pd
-from flask import redirect, url_for, flash, current_app
+from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask_login import current_user
 import PIL
@@ -22,8 +22,7 @@ engine = create_engine("sqlite:///T_Park.db")
 def users_in_json(users):
     if not users:
         return '[]'
-    lenght = len(Project.query.filter_by(number=users[0].project_number).first()
-                 .parameters.all())
+    lenght = len(Project.query.filter_by(number=users[0].project_number).first().parameters.all())
 
     string = '['
     for user in users:
@@ -91,13 +90,15 @@ def grades_in_json(grades, lenght):
 
     string = '['
     for grade in grades:
+
         string += '{' + '"id":{0},"date":"{1}","expert_id":"{2}","user_id":"{3}",' \
-                        '"comment":"{4}"' \
+                        '"comment":"{4}", "username":"{5}", "expertname":"{6}"' \
             .format(str(grade.id),
                     str(grade.date.strftime('%H:%M %d.%m.%y')),
                     str(grade.expert.project_id),
                     str(grade.user.project_id),
-                    str(grade.comment))
+                    str(grade.comment), str(grade.user.username),
+                    str(grade.expert.username))
 
         for i in range(lenght):
             string += ',"parameter_{0}":"{1}"' \
@@ -106,6 +107,8 @@ def grades_in_json(grades, lenght):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
+    string = string.replace("\r", "").replace("\n", "")
+
     return string
 
 
@@ -126,6 +129,33 @@ def waiting_users_in_json(waiting_users):
     string = string[:len(string) - 1] + ']'
 
     return string
+
+
+def project_settings(request, project, project_number):
+    changes = False
+    result = request.form
+
+    if request.files['logo']:
+        os.chdir('app/static/images/{}'.format(project_number))
+        logo = request.files['logo']
+        logo.save(os.path.join(os.getcwd(), 'logo.png'))
+        os.chdir('../../../../')
+        changes = True
+
+    if result.get('name') != '':
+        setattr(project, 'name', result.get('name'))
+        changes = True
+
+    if result.get('start') != 'дд.мм.гг':
+        setattr(project, 'start', datetime.strptime(result.get('start'), '%d.%m.%y'))
+        changes = True
+    if result.get('end') != 'дд.мм.гг':
+        setattr(project, 'end', datetime.strptime(result.get('end'), '%d.%m.%y'))
+        changes = True
+
+    db.session.commit()
+    if changes:
+        flash('Изменения сохранены', 'success')
 
 
 def to_dict(row):
@@ -164,16 +194,17 @@ def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region', 'photo']
+    df['email'] = df['email'].str.lower()
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
-    if last_user != None:
+    if last_user is not None:
         c = last_user.id
         i = c
         b = len(index) + c
-        if prev_user != None and prev_user.project_number == number:
+        if prev_user is not None and prev_user.project_number == number:
             l = prev_user.project_id
         else:
             l = 0
@@ -184,20 +215,14 @@ def excel_user(filename, number):
         l = 0
     for i in range(i, b):
         df.loc[[i - c]].to_sql('user', con=engine, if_exists='append', index=False)
-        a = password_generator()
         user = User.query.filter_by(id=i + 1).first()
         user.project_number = number
-        if user.project_id == None:
+        user.set_password(password_generator())
+        if user.project_id is None:
             user.project_id = l + 1
-        user.set_password(a)
         db.session.add(user)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(user, a)
-        except:
-            print("error")
-            raise
 
 
 def excel_expert(filename, number):
@@ -205,6 +230,7 @@ def excel_expert(filename, number):
     df.head
     df.drop = ['photo']
     df.columns = ['project_id', 'username', 'email', 'weight']
+    df['email'] = df['email'].str.lower()
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
@@ -225,7 +251,6 @@ def excel_expert(filename, number):
         db.session.commit()
     for i in range(i, b):
         df.loc[[i - c]].to_sql('expert', con=engine, if_exists='append', index=False)
-        a = password_generator()
         expert = Expert.query.filter_by(id=i + 1).first()
         if expert.project_id == None:
             expert.project_id = l + 1
@@ -233,15 +258,10 @@ def excel_expert(filename, number):
             expert.weight = 1
         expert.quantity = 0
         expert.project_number = number
-        expert.set_password(a)
+
         db.session.add(expert)
         db.session.commit()
         l += 1
-        try:
-            send_password_mail(expert, a)
-        except:
-            print('error')
-            raise
 
     me = Expert.query.filter_by(project_id='0').first()
     if me != None:
@@ -249,9 +269,8 @@ def excel_expert(filename, number):
         db.session.commit()
 
 
-
-def delete_function(): #Функция для удаления старых данных
-    a = engine.execute("SELECT number FROM project WHERE end <= DATE('now', '12 month')")
+def delete_function():  # Функция для удаления старых данных
+    a = engine.execute("SELECT number FROM project WHERE end >= DATE('now', '12 month')")
     a = a.fetchall()
     if a:
         for rows in a:

@@ -16,15 +16,13 @@ def login():
         return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data.lower()).first()
         if not user:
-            user = Viewer.query.filter_by(email=form.email.data).first()
+            user = Admin.query.filter_by(email=form.email.data.lower()).first()
             if not user:
-                user = Admin.query.filter_by(email=form.email.data).first()
+                user = Viewer.query.filter_by(email=form.email.data.lower()).first()
                 if not user:
-                    user = Expert.query.filter_by(email=form.email.data).first()
-                    if not user:
-                        user = WaitingUser.query.filter_by(email=form.email.data).first()
+                    user = Expert.query.filter_by(email=form.email.data.lower()).first()
         if user is None or not user.check_password(form.password.data):
             flash('Неверный пароль или email', 'warning')
             return redirect(url_for('auth.login'))
@@ -49,19 +47,16 @@ def register():
         return redirect(url_for('auth.login'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        if User.query.filter_by(email=form.email.data) is None or \
-                Expert.query.filter_by(email=form.email.data) is None or \
-                Admin.query.filter_by(email=form.email.data) is None or \
-                Viewer.query.filter_by(email=form.email.data) is None:
+        if User.query.filter_by(email=form.email.data.lower()) is None or \
+                Expert.query.filter_by(email=form.email.data.lower()) is None or \
+                Admin.query.filter_by(email=form.email.data.lower()) is None or \
+                Viewer.query.filter_by(email=form.email.data.lower()) is None:
             flash('Данная почта уже используется одним из пользователей.\n'
                   'Пожалуйста изпользуйте другой email адрес.', 'warning')
 
             return redirect(url_for('auth.register'))
 
-        #os.chdir("app/static/images/waiting_users")
-        #form.avatar.data.save(os.path.join(os.getcwd(), '{}.webp'.format(form.email.data)))
-        #os.chdir('../../../../')
-        waiting_user = WaitingUser(username=form.username.data, email=form.email.data,
+        waiting_user = WaitingUser(username=form.username.data, email=form.email.data.lower(),
                                    phone_number=form.phone_number.data, organization=form.organization.data)
         waiting_user.set_password(form.password.data)
         db.session.add(waiting_user)

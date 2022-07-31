@@ -10,21 +10,29 @@
             {% for project in projects %}
                 <div class="block" onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number) }}'">
                     <div class="block_logo">
-                        {% set path = 'images/' + project.number|string + '/' + project.number|string + '.png' %}
+                        {% set path = 'images/' + project.number|string + '/logo.png' %}
                         <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
                     </div>
-                    <div date="{{ project.end.strftime('%d.%m.%Y') }}" class="data">
+                    <div date="{% if project.end is not none %}{{ project.end.strftime('%d.%m.%Y') }}{% endif %}" class="data">
                         <h2  style="font-weight: normal; text-align:center">
                             {{ project.name }}
                         </h2>
                         <h3 style="font-weight: normal; text-align: center">
-                            {{ project.viewer.organization }}<br>
-                            {{ project.viewer.username }}
+                            {% if project.viewers.all()[0].organization is not none %}
+                                {{ project.viewers.all()[0].organization }}
+                            {% endif %}<br>
+                            {% if project.viewers.all()[0].username is not none%}
+                                {{ project.viewers.all()[0].username }}
+                            {% endif %}<br>
                         </h3>
                     </div>
 
                     <div class="date">
-                        <span>{{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}</span>
+                        <span>
+                            {% if project.start is not none and project.end is not none %}
+                                {{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}
+                            {% endif %}
+                        </span>
                     </div>
 
                 </div>
@@ -36,13 +44,14 @@
 
     <script>
         function end_project (element) {
+            if (!Number.isNaN(element)) {
+                let date = new Date(), pr_date
+                let project_date = element.attr('date').split('.')
 
-            let date = new Date(), pr_date
-            let project_date = element.attr('date').split('.')
-
-            pr_date = new Date(project_date[2], project_date[1] - 1, project_date[0])
-            if (pr_date < date) {
-                element.append('<div style="text-align: center; color:crimson">Проект завершён</div>')
+                pr_date = new Date(project_date[2], project_date[1] - 1, project_date[0])
+                if (pr_date < date) {
+                    element.append('<div style="text-align: center; color:crimson">Проект завершён</div>')
+                }
             }
         }
 

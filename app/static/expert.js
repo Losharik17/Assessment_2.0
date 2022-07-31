@@ -1,6 +1,6 @@
 $('#submit').addClass('form_button')
 $('label[for=user_id]').addClass('form_label')
-$('#user_id').addClass('form_input').attr('placeholder', " ")
+$('#user_id').addClass('form_input').attr('placeholder', " ").attr('autocomplete', 'off')
 $('#user_id').focus(function () {
     foc(this, $('label[for=user_id]'))
 }).blur(function () {

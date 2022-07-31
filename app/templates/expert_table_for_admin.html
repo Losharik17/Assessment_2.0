@@ -8,12 +8,10 @@
     <script src="{{ url_for('static', filename='expert_table_for_admin.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
-    <form action="{{ url_for('main.expert_table_for_admin', project_number=project_number,
-           expert_id=expert.id) }}" method="post" enctype="multipart/form-data">
+    <form>
         <div class="container">
             <div id="data" class="data">
-                {% set path = '/images/' + expert.project_number|string + '/experts/' + expert.project_id|string + '.png'%}
-                <img style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+               <img id="img" style="width: 100px; height: 150px" alt="">
                 <table id="data_table" style="margin: 10px;">
                     <tr>
                         <td style="text-align: left">ID: <span>{{ expert.project_id }}</span></td>
@@ -34,7 +32,7 @@
         <div id="edit_data" class="button_re" onclick="
                 edit_data({{ expert.id }})">Редактировать данные
         </div>
-        <div id="edit_data" class="button_re"
+        <div id="edit_data" class="button_delete"
              onclick="delete_user({{ expert.id }}, {{ expert.project_id }})">
             Удалить эксперта
         </div>
@@ -72,6 +70,22 @@
 
     <script>
         show_more(0, {{ expert.id }})
+
+        let src = "{{ user.photo }}"
+        if (src.includes('file')) {
+            let src2 = 'https://drive.google.com/uc?id='
+            for (let i = 0, j = 0; i < src.length && j < 6; i++) {
+                src2 += j === 5 ? src[i] : ''
+                src[i] === '/' ? j++ : j
+            }
+            src2 = src2.substr(0, src2.length - 1)
+            $('#img').attr('src', src2)
+        } else {
+            if (src.includes('open')) {
+                src = src.replace('open', 'uc')
+                $('#img').attr('src', src)
+            }
+        }
     </script>
 
 {% endblock %}
