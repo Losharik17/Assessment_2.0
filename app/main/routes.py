@@ -1,5 +1,6 @@
 import datetime
 import json
+
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
@@ -436,24 +437,19 @@ def create_project():
         delete_project = False
         try:
             if result.get('name'):
-                print(1)
                 project = Project(name=result.get('name'))
                 db.session.add(project)
                 db.session.commit()
-                print(1)
                 proj = ViewerProjects(viewer_id=viewer.id, project_number=project.number)
                 db.session.add(proj)
                 db.session.commit()
-                print(1)
                 delete_project = True
                 project = Project.query.all()[-1]
-                print(1)
                 for i in range(int(result.get('quantity'))):
                     if result.get('name{}'.format(i)).strip() != '':
                         db.session.add(Parameter(name=result.get('name{}'.format(i)).strip(),
                                                  weight=result.get('weight{}'.format(i)),
                                                  project_number=project.number))
-                print(1)
                 if result.get('start') and result.get('start') != 'дд.мм.гггг':
                     start = result.get('start')
                     setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
@@ -461,7 +457,6 @@ def create_project():
                     end = result.get('end')
                     setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
                 db.session.commit()
-                print(1)
                 os.chdir("app/static/images")
                 lvl += 3
                 if os.path.exists('{}'.format(project.number)):
@@ -469,11 +464,9 @@ def create_project():
                 os.mkdir('{}'.format(project.number))
                 os.chdir('{}'.format(project.number))
                 lvl += 1
-                print(1)
                 if request.files['logo']:
                     logo = request.files['logo']
                     logo.save(os.path.join(os.getcwd(), 'logo.png'.format(project.number)))
-                print(1)
                 os.chdir('../../../../')
                 lvl = 0
 
@@ -811,7 +804,6 @@ def admin_viewers():
 def unappended_viewers(project_number):
     if current_user.id <= 1200000:
         return redirects()
-
 
     return render_template("unappended_viewers.html", project_number=project_number,
                            back=url_for('main.admin_settings', project_number=project_number))

@@ -1,5 +1,7 @@
 import time
 from threading import Thread
+
+import celery
 from flask import render_template, current_app
 from flask_mail import Message
 from sqlalchemy import create_engine
@@ -79,3 +81,4 @@ def async_mail_new(app, project_number, type, number):
             mail.sendmail(sender, recipients, msg.as_string().encode('utf-8'))
             mail.quit()
             time.sleep(10)
+
