@@ -40,17 +40,6 @@ function edit_data(user_id, user_birthday) {
         $('#edit_data').html('Сохранить изменения').css({width: width, 'text-align': 'center'})
         edit_data.old_value = Array()
 
-        $('#edit_data').after('<div id="photo_btn" class="input__wrapper">' +
-            '                        <input name="photo" type="file" id="photo" class="input input__file">' +
-            '                        <label id="photo_label" for="photo" class="button_re_2">' +
-            '                            <span id="photo_span" class="input__file-button-text_2">Изменить Фото Профиля</span>' +
-            '                        </label>' +
-            '                    </div>')
-
-        $('#photo_btn').slideUp(0).slideDown(300)
-        $('#photo').attr('file', '1').on('change', function () {
-            $('#photo').attr('file', $('#photo').attr('file') * -1)
-        })
 
         $('#data_table tr').each(function (index, element) {
             let td = $(this).children('td').children('span')
@@ -147,13 +136,16 @@ function edit_data(user_id, user_birthday) {
                 }
             })
 
-            $('body').append(
-                `<div class="message success"><h4>Изменения сохранены</h4></div>`)
-            setTimeout( ()=> {
-                $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
-            setTimeout( ()=> {
-                $('.message').css({display: 'none'})}, 2300)
-
+            if (response['result'] !== 'successfully')
+                alert('Не удалось изменить дату рождения.\nПожалуйста, проверьте корректность введённой даты.')
+            else {
+                $('body').append(
+                    `<div class="message success"><h4>Изменения сохранены</h4></div>`)
+                setTimeout( ()=> {
+                    $('.message').css({transition: 'all 0.3s ease', opacity: 0})}, 2000)
+                setTimeout( ()=> {
+                    $('.message').css({display: 'none'})}, 2300)
+            }
         }).fail(function () {
             alert("Error AJAX request")
             $('#data_table tr').each(function (index, element) {
@@ -300,13 +292,14 @@ function edit_grade(grade_id, user_id, number_str) {
     }
 }
 
-function delete_user(id, project_id) {
+function delete_user(id, project_id, project_number) {
     if (confirm(`Удадить пользователя с ID ${project_id}?`))
         $.post('/delete_user', {
             role: 'user',
             id: id
         }).done(function (response) {
             alert('Пользователь удалён')
+            location.href = `/admin_users_table/${project_number}`
         }).fail(function () {
             alert('Error AJAX request')
         })
@@ -371,10 +364,10 @@ function show_more(new_field, user_id) {
 
             $("#tbody").append(`<tr id="number_str${i}"></tr>`)
 
-            if (grades[i]['expert_id'] === 'None')
-                $(`#number_str${i}`).append(`<td id="expert_id${i}">–</td>`)
+            if (grades[i]['expertname'] === 'None')
+                $(`#number_str${i}`).append(`<td id="expertname${i}">–</td>`)
             else
-                $(`#number_str${i}`).append(`<td id="expert_id${i}">${grades[i]['expert_id']}</td>`)
+                $(`#number_str${i}`).append(`<td id="expertname${i}">${grades[i]['expertname']}</td>`)
 
             if (grades[i]['date'] === 'None')
                 $(`#number_str${i}`).append(`<td id="date${i}">–</td>`)
@@ -435,7 +428,7 @@ function sort(parameter, user_id) {
             limit = quantity
 
             for (let i = 0; i < quantity; i++) {
-                $(`#expert_id${i}`).html(grades[i]['expert_id'] ? grades[i]['expert_id'] : '–');
+                $(`#expertname${i}`).html(grades[i]['expertname'] ? grades[i]['expertname'] : '–');
                 $(`#date${i}`).html(grades[i]['date'] ? grades[i]['date'] : '–')
 
                 for (let j = 0; j < 15; j++)
@@ -455,4 +448,3 @@ function sort(parameter, user_id) {
         alert("Error AJAX request")
     })
 }
-

@@ -17,5 +17,8 @@ $(`[value='0']`).each(function (index, element) {
 })
 
 
-$('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
-    / (24 * 3600 * 365.25 * 1000)))
+// делает кнопку отправки неактивной
+// чтобы предотвротить многократное выставление оценок
+document.getElementById('submit').addEventListener("click", function (event) {
+    setTimeout(()=> { $('#submit').attr('disabled','disabled')}, 1)
+})

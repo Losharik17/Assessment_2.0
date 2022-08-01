@@ -10,7 +10,7 @@ from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, redirects, compression, \
-    password_generator, project_settings, excel_saver, delete_timer
+    password_generator, project_settings
 from app.auth.email import send_role_update, send_role_refuse, send_password_mail
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
@@ -44,7 +44,130 @@ def export_excel(project_number):
     if current_user.id <= 1100000:
         return redirects()
 
+    data = User.query.all()
+    data_list = [to_dict(item) for item in data]
+    df1 = pd.DataFrame(data_list)
+
+    df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
+    excel_start_date = date(1899, 12, 30)
+    df1['birthday'] = df1['birthday'] - excel_start_date
+    df1.birthday = df1.birthday.dt.days
+
+    parameters = Project.query.filter_by(number=project_number).first().parameters.all()
+    i = 0
+    for parameter in parameters:
+        df1 = df1.rename(columns={"sum_grade_{}".format(i): parameter.name})
+        i += 1
+    while i < 10:
+        df1 = df1.drop(columns={"sum_grade_{}".format(i)})
+        i += 1
+
+    df1['team'] = df1['team'].str.capitalize()
+    df1['region'] = df1['region'].str.capitalize()
+
+    for i in range(0, len(df1.index)):
+        try:
+            if 'λ' in str(df1.email[i]):
+                a = len(df1.email[i]) - 1
+                df1.email[i] = df1.email[i][:a]
+        except:
+            pass
+
+    df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+                              'photo': 'Ссылка на фотографию',
+                              "sum_grade_all": "Итоговая оценка",
+                              'project_id': 'ID'})  # надо будет добавить изменение имен через формы
+    df1 = df1.fillna('-')
+    df1 = df1.loc[df1['project_number'] == int(project_number)]
+    df1 = df1.drop(columns=['password_hash', 'project_number'])
+    names = df1.columns.values
+    names_length = len(names)
+    new_name = [names[0], names[1], names[3], names[2], names[4], names[5], names[6]]
+    for i in range(8, names_length):
+        new_name.append(names[i])
+    new_name.append(names[7])
+    df1 = df1.reindex(columns=new_name)
+    data = Expert.query.all()
+    data_list = [to_dict(item) for item in data]
+    df2 = pd.DataFrame(data_list)
+
+    df2 = df2.loc[df2['project_number'] == int(project_number)]
+    df2 = df2.drop(columns=['password_hash', 'project_number'])
+    df2.rename(columns={'username': 'ФИО', 'weight': 'Вес', 'project_id': 'ID',
+                        'quantity': 'Количество выставленных оценок'}, inplace=True)
+    data = Grade.query.all()
+    data_list = [to_dict(item) for item in data]
+    df3 = pd.DataFrame(data_list)
+    df3.rename(columns={'date': 'Дата выставления оценки', 'comment': 'Комментарий'}, inplace=True)
+    a = engine.execute("SELECT id FROM user WHERE project_number = ?", project_number)
+    a = a.fetchall()
+    f = []
+
+    for i in range(len(df3.index)):
+        c = 0
+        for rows in a:
+            b = engine.execute("SELECT project_id FROM user WHERE id = ?", rows[0])
+            b = b.fetchall()
+            if df3.user_id[i] == rows[0] and c == 0:
+                df3.user_id[i] = b[0][0]
+                c += 1
+        if c == 0:
+            f.append(int(i))
+    a = engine.execute("SELECT id FROM expert WHERE project_number = ?", project_number)
+    a = a.fetchall()
+
+    for i in range(len(df3.index)):
+        c = 0
+        for row in a:
+            b = engine.execute("SELECT project_id FROM expert WHERE id = ?", row[0])
+            b = b.fetchall()
+            if int(df3.expert_id[i]) == row[0] and c == 0:
+                df3.expert_id[i] = b[0][0]
+                c += 1
+
+    for row in f:
+        df3 = df3.drop([row])
+    i = 0
+    for parameter in parameters:
+        df3 = df3.rename(columns={"parameter_{}".format(i): parameter.name})
+        i += 1
+    while i < 10:
+        df3 = df3.drop(columns=["parameter_{}".format(i)])
+        i += 1
+    df3 = df3.drop(columns=['id'])
+    df2 = df2.drop(columns=['id'])
+    df1 = df1.drop(columns=['id'])
+    df1.columns = [x.capitalize() for x in df1.columns]
+    df1 = df1.rename(columns={'Id': 'ID', 'Фио': 'ФИО'})
+    df3.rename(columns={'user_id': 'ID участника', 'expert_id': 'ID эксперта'}, inplace=True)
+
     filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
+
+    writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
+    df1.to_excel(writer, sheet_name='Участники', index=False, float_format="%.2f")
+    workbook = writer.book
+    base_format = workbook.add_format({'align': 'center'})
+    new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
+    date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
+    date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
+    worksheet = writer.sheets['Участники']
+
+    worksheet.set_column('A:Q', 21, base_format)
+    worksheet.set_column('B:B', 35, base_format)
+    worksheet.set_column('D:D', 24, base_format)
+    worksheet.set_column('F:F', 26, base_format)
+    worksheet.set_column('C:C', 14, date_format)
+
+    df2.to_excel(writer, sheet_name='Эксперты', index=False)
+    worksheet = writer.sheets['Эксперты']
+    worksheet.set_column('A:E', 21, base_format)
+    worksheet.set_column('B:B', 35, base_format)
+
+    df3.to_excel(writer, sheet_name='Оценки', index=False)
+    worksheet = writer.sheets['Оценки']
+    worksheet.set_column('A:N', 30, new_format)
+    worksheet.set_column('C:C', 24, date2_format)
+    writer.save()
 
     return send_file(filename, as_attachment=True, cache_timeout=0)
 
@@ -310,24 +433,19 @@ def create_project():
         delete_project = False
         try:
             if result.get('name'):
-                print(1)
                 project = Project(name=result.get('name'))
                 db.session.add(project)
                 db.session.commit()
-                print(1)
                 proj = ViewerProjects(viewer_id=viewer.id, project_number=project.number)
                 db.session.add(proj)
                 db.session.commit()
-                print(1)
                 delete_project = True
                 project = Project.query.all()[-1]
-                print(1)
                 for i in range(int(result.get('quantity'))):
                     if result.get('name{}'.format(i)).strip() != '':
                         db.session.add(Parameter(name=result.get('name{}'.format(i)).strip(),
                                                  weight=result.get('weight{}'.format(i)),
                                                  project_number=project.number))
-                print(1)
                 if result.get('start') and result.get('start') != 'дд.мм.гггг':
                     start = result.get('start')
                     setattr(project, 'start', datetime.strptime(start, '%d.%m.%y'))
@@ -335,7 +453,6 @@ def create_project():
                     end = result.get('end')
                     setattr(project, 'end', datetime.strptime(end, '%d.%m.%y'))
                 db.session.commit()
-                print(1)
                 os.chdir("app/static/images")
                 lvl += 3
                 if os.path.exists('{}'.format(project.number)):
@@ -343,11 +460,9 @@ def create_project():
                 os.mkdir('{}'.format(project.number))
                 os.chdir('{}'.format(project.number))
                 lvl += 1
-                print(1)
                 if request.files['logo']:
                     logo = request.files['logo']
                     logo.save(os.path.join(os.getcwd(), 'logo.png'.format(project.number)))
-                print(1)
                 os.chdir('../../../../')
                 lvl = 0
 
@@ -678,6 +793,16 @@ def admin_viewers():
     viewers = Viewer.query.limit(10)
 
     return render_template('admin_viewers.html', viewers=viewers, back=url_for('main.admin'))
+
+
+@bp.route('/unappended_viewers/<project_number>', methods=['GET', 'POST'])
+@login_required
+def unappended_viewers(project_number):
+    if current_user.id <= 1200000:
+        return redirects()
+
+    return render_template("unappended_viewers.html", project_number=project_number,
+                           back=url_for('main.admin_settings', project_number=project_number))
 
 
 # таблица личных оценок участника (для админа)
@@ -1078,21 +1203,22 @@ def save_user_data():
         d3 = data[3].strip().capitalize()
         if d3 != '':
             setattr(user, 'region', d3)
-    '''
-    if getattr(user, 'email') != data[4]:
-        d4 = data[4].strip().lower()
-        if d4 != '':
-            setattr(user, 'email', d4)
 
-    if getattr(user, 'password_hash', ) != data[5]:
-        d5 = data[5].strip()
-        if d5 != '':
-            setattr(user, 'password_hash', d5)
+    if len(data) >= 5:
+        if getattr(user, 'email') != data[4]:
+            d4 = data[4].strip().lower()
+            if d4 != '':
+                setattr(user, 'email', d4)
 
-    if getattr(user, 'photo') != data[6]:
-        d6 = data[6].strip()
-        if d6 != '':
-            setattr(user, 'photo', d6)'''
+        if getattr(user, 'password_hash', ) != data[5]:
+            d5 = data[5].strip()
+            if d5 != '':
+                setattr(user, 'password_hash', d5)
+        '''
+        if getattr(user, 'photo') != data[6]:
+            d6 = data[6].strip()
+            if d6 != '':
+                setattr(user, 'photo', d6)'''
 
     db.session.commit()
 
@@ -1146,6 +1272,21 @@ def unappended_viewers():
 
 # прикрепляет заказчика к проекту
 @bp.route('/appended_viewer', methods=['GET', 'POST'])
+@bp.route('/unappend_viewer', methods=['GET', 'POST'])
+def unappend_viewer():
+    viewer = ViewerProjects.query.filter_by(project_number=request.form['project_number'],
+                                            viewer_id=request.form['viewer_id']).first()
+    if viewer:
+        db.session.delete(viewer)
+        db.session.commit()
+    else:
+        return jsonify({'result': 'not_found_error'})
+
+    return jsonify({'result': 'success'})
+
+
+# прикрепляет заказчика к проекту
+@bp.route('/append_viewer', methods=['GET', 'POST'])
 def append_viewer():
     try:
         new_viewer = ViewerProjects(project_number=request.form['project_number'],
@@ -1157,3 +1298,27 @@ def append_viewer():
         return jsonify({'result': 'success'})
     except:
         return jsonify({'result': 'error'})
+
+@bp.route('/sort_unappend_viewers', methods=['GET', 'POST'])
+def sort_unappend_viewers():
+    if request.form['parameter'] != '':
+        if request.form['sort_up'] == 'true':
+            viewers = Viewer.query \
+                .order_by(Viewer.__dict__[request.form['parameter']].desc()) \
+                .all()
+        else:
+            viewers = Viewer.query \
+                .order_by(Viewer.__dict__[request.form['parameter']].asc()) \
+                .all()
+    else:
+        viewers = Viewer.query.order_by(Viewer.id).all()
+    viewers2 = []
+    for viewer in viewers:
+        x = True
+        for project in viewer.projects.all():
+            if project.project_number == int(request.form['project_number']):
+                x = False
+        if x:
+            viewers2.append(viewer)
+
+    return jsonify({'viewers': viewers_in_json(viewers2)})

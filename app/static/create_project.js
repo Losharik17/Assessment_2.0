@@ -27,21 +27,29 @@ function activate_buttons(index) {
 }
 
 
-activate_buttons(0)
+let number = 0
+for(let i = 0; i < 10; i++)
+    if ($(`#name${i}`).val() != null) {
+        number = i
+        activate_buttons(number)
+        $('#button_add').unbind()
+        $('#button_add').click(function () {
+            addField(number)
+        })
+        $('#button_delete').unbind()
+        $('#button_delete').click(function () {
+            deleteField(number)
+        })
+    }
 
-$('#button_add').click(function () {
-    addField(0)
-})
-
-$('#button_delete').click(function () {
-    deleteField(0)
-})
+document.getElementById('quantity').value = number + 1
 
 function deleteField(number) {
     if (number === 0)
         return alert('Извините. У вас должен быть хотя бы один критерий')
-
     $('#quantity').val(+$('#quantity').val() - 1)
+    document.getElementById('quantity').value = $('#quantity').val()
+
     $(`#parameter${number}`).slideUp(250)
     setTimeout(() => { $(`#parameter${number}`).remove() }, 250)
 
@@ -59,8 +67,9 @@ function deleteField(number) {
 function addField(number) {
     if (number === 9)
         return alert('Извините. Вы не можете создать более 10 критериев')
-
     $('#quantity').val(+$('#quantity').val() + 1)
+    document.getElementById('quantity').value = $('#quantity').val()
+
     $(`#button_add`).before(`<div id="parameter${number + 1}">
                                  <div class="block_4">
                                      <label for="name${number + 1}"></label>

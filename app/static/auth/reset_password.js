@@ -13,9 +13,9 @@ $('#password').focus(function () {
 
 $('#password2').addClass('form_input')
 $('#password2').focus(function () {
-    foc(this, $('label[for=password]'))
+    foc(this, $('label[for=password2]'))
 }).blur(function () {
-    blu(this, $('label[for=password]'))
+    blu(this, $('label[for=password2]'))
 })
 
 function foc(el, label) {

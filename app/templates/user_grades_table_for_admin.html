@@ -7,39 +7,49 @@
         <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
         <script src="{{ url_for('static', filename='user_grades_table_for_admin.js') }}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
-
-
-        <div class="container">
-            <div class="data">
-                <img id="img" style="width: 100px; height: 150px" alt="">
-                <table id="data_table" style="margin: 10px;" class="data_table">
-                    <tr>
-                        <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">ФИО: <span>{{ user.username }}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left" id="birthday">Возраст: <span></span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">Команда:
-                            <span>{% if user.team %}{{ user.team }}{% else %} – {% endif %}</span></td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left">Регион:
-                            <span>{% if user.region %}{{ user.region }}{% else %} – {% endif %}</span></td>
-                    </tr>
-                </table>
+        <form>
+            <div class="container">
+                <div class="data">
+                    <img id="img" style="width: 100px; height: 150px" alt="">
+                    <table id="data_table" style="margin: 10px;" class="data_table">
+                        <tr>
+                            <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">ФИО: <span>{{ user.username }}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left" id="birthday">Возраст: <span></span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">Команда:
+                                <span>{% if user.team %}{{ user.team }}{% else %} – {% endif %}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">Регион:
+                                <span>{% if user.region %}{{ user.region }}{% else %} – {% endif %}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">Почта: <span>{{ user.email }}</span></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left">Пароль: <span>{% if user.password_hash %}{{ user.password_hash }}{% else %} – {% endif %}</span></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-        </div>
-        {% if user.birthday is not none %}
-            <div id="edit_data" class="button_re" onclick="
-                    edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
-            </div>
-        {% else %}
-            <div id="edit_data" class="button_re" onclick="
-                    edit_data({{ user.id }}, `99.99.99`)">Редактировать данные
+            <!--Почему тут просто id а не project_id?-->
+            {% if user.birthday is not none %}
+                <div id="edit_data" class="button_re" onclick="
+                        edit_data({{ user.id }}, `{{ user.birthday.strftime('%d.%m.%Y') }}`)">Редактировать данные
+                </div>
+            {% else %}
+                <div id="edit_data" class="button_re" onclick="
+                        edit_data({{ user.id }}, `99.99.99`)">Редактировать данные
+                </div>
+            {% endif %}
+            <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }}, {{ user.project_number }})">
+                Удалить участника
             </div>
         {% endif %}
         <div id="edit_data" class="button_re" onclick="delete_user({{ user.id }}, {{ user.project_id }}, {{ user.project_number }})">
@@ -80,13 +90,21 @@
                 / (24 * 3600 * 365.25 * 1000)))
             show_more(0, {{ user_id }})
 
-            // костыль
-            let src = {{ user.photo }}
-            if (src.find('http')) {
-                src = src.substr(0, 25) + 'uc' + src.substr(29)
-                $('#img').attr('src', src)
+            let src = "{{ user.photo }}"
+            if (src.includes('file')) {
+                let src2 = 'https://drive.google.com/uc?id='
+                for (let i = 0, j = 0; i < src.length && j < 6; i++) {
+                    src2 += j === 5 ? src[i] : ''
+                    src[i] === '/' ? j++ : j
+                }
+                src2 = src2.substr(0, src2.length - 1)
+                $('#img').attr('src', src2)
+            } else {
+                if (src.includes('open')) {
+                    src = src.replace('open', 'uc')
+                    $('#img').attr('src', src)
+                }
             }
-
         </script>
     {% else %}
         <h3>Пользователя не существует или мы не смогли его найти</h3>

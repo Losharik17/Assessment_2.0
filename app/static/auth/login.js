@@ -16,8 +16,24 @@ $('#password').focus(function () {
     blu(this, $('label[for=password]'))
 })
 
+if (getParameterValue('mail')) {
+    $('label[for=email]').css({
+        top: '-18px',
+        'font-size': '12px',
+        'color': '#999999'
+    })
+    $('#email').val(getParameterValue('mail') || '')
+}
 
-
+function getParameterValue(name)
+{
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    let regexS = "[\\?&]"+name+"=([^&#]*)";
+    let regex = new RegExp( regexS );
+    let results = regex.exec( window.location.href );
+    if( results == null ) return "";
+    else return results[1];
+}
 
 function foc(el, label) {
     $(el).css({

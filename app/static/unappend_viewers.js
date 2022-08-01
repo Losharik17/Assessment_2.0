@@ -1,45 +1,9 @@
-let limit = 15
-
+let limit = 10
 sort.sort_up = false
 sort.current_parameter = 'username'
 sort.previous_parameter = ''
 $("#" + sort.current_parameter).attr("data-order", "1")
 
-
-const but = document.querySelectorAll(".btn");
-but.forEach((button) => {
-    button.onclick = function(e){
-        let x = e.clientX - e.target.offsetLeft;
-        let y = e.clientY - e.target.offsetTop;
-        let ripple = document.createElement("span");
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        this.appendChild(ripple);
-        setTimeout(function(){
-            ripple.remove();
-        }, 600);
-    }
-});
-
-
-function delete_buttons(user_id) {
-    document.addEventListener('click', function (event) {
-
-        for (let i = 0; i < limit; i++) {
-
-            if (event.target.tagName !== 'TD' &&
-                event.target.id.substring(0, event.target.id.length - 1) !== 'admin' &&
-                event.target.id.substring(0, event.target.id.length - 1) !== 'viewer' &&
-                event.target.id.substring(0, event.target.id.length - 1) !== `delete` &&
-                event.target.tagName !== 'INPUT') {
-
-                $('#buttons' + buttons.previous_str).fadeOut(300)
-                setTimeout(() => {$('#buttons' + buttons.previous_str)
-                    .css("display", "none")}, 300)
-            }
-        }
-    })
-}
 
 function buttons(quantity) {
     buttons.previous_str = ''
@@ -62,29 +26,63 @@ function buttons(quantity) {
             }).fadeTo(300, 1)
             buttons.previous_str = i
         })
-}
-}
-
-
-function delete_user(id, username) {
-    if (confirm(`Удалить пользователя ${username}?`) && confirm('Вы уверены?'))
-        $.post('/delete_user', {
-            role: 'viewer',
-            id: id
-        }).done(function (response) {
-            show_more(0)
-        }).fail(function () {
-            alert('Error AJAX request')
-        })
+    }
 }
 
-function show_more(new_field) {
+function delete_buttons(user_id) {
+    document.addEventListener('click', function (event) {
+
+        for (let i = 0; i < limit; i++) {
+
+            if (event.target.tagName !== 'TD' &&
+                event.target.id.substring(0, event.target.id.length - 1) !== `append` &&
+                event.target.tagName !== 'INPUT') {
+
+                $('#buttons' + buttons.previous_str).fadeOut(300)
+                setTimeout(() => {$('#buttons' + buttons.previous_str)
+                    .css("display", "none")}, 300)
+            }
+        }
+    })
+}
+
+const but = document.querySelectorAll(".btn");
+but.forEach((button) => {
+    button.onclick = function(e){
+        let x = e.clientX - e.target.offsetLeft;
+        let y = e.clientY - e.target.offsetTop;
+        let ripple = document.createElement("span");
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        this.appendChild(ripple);
+        setTimeout(function(){
+            ripple.remove();
+        }, 600);
+    }
+});
+
+function append_viewer(viewer_id, project_number) {
+    $.post('/append_viewer', {
+        project_number: project_number,
+        viewer_id: viewer_id,
+    }).done(function (response) {
+        alert('Заказчик прикреплён к проекту')
+        show_more(0, project_number)
+        }
+    ).fail(function () {
+        alert('Неожиданная ошибка, попробуйте перезагрузить страницу')
+    })
+
+}
+
+function show_more(new_field, project_number) {
 
     limit += new_field
 
-    $.post('/show_more_viewers', {
+    $.post('/sort_unappend_viewers', {
         lim: limit,
         parameter: sort.current_parameter,
+        project_number: project_number,
         sort_up: sort.sort_up,
     }).done(function (response) {
 
@@ -134,8 +132,8 @@ function show_more(new_field) {
                 $(`#number_str${i}`).append(`<td id="expert_id${i}">${viewers[i]['expert_id']}</td>`)
 
             $(`#number_str${i}`).append(`<div id="buttons${i}" class="buttons">` +
-                `<span id="delete${i}" onclick="delete_user(${viewers[i]['id']}, '${viewers[i]['username']}')">` +
-                `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span></div>`)
+                `<span id="append${i}" onclick="append_viewer(${viewers[i]['id']}, ${project_number})">` +
+                `<input id="d${i}" type="button" value="Прикрепить" class="btn_add"></span></div>`)
         }
         delete_buttons()
         buttons(limit)
@@ -144,7 +142,7 @@ function show_more(new_field) {
     })
 }
 
-function sort(parameter) {
+function sort(parameter, project_number) {
 
     if (sort.current_parameter === parameter) {
         sort.sort_up = !sort.sort_up
@@ -161,8 +159,9 @@ function sort(parameter) {
             $("#" + sort.current_parameter).attr("data-order", "-1")
     }
 
-    $.post('/sort_viewers', {
+    $.post('/sort_unappend_viewers', {
         parameter: parameter,
+        project_number: project_number,
         sort_up: sort.sort_up,
         lim: limit,
     }).done(
@@ -171,7 +170,7 @@ function sort(parameter) {
             let quantity = viewers.length
             limit = quantity
 
-            for (let i = 0; i < quantity; i++) {
+            for (let i = 0; i < 10; i++) {
                 $(`#username${i}`).html(viewers[i]['username'] ? viewers[i]['username'] : '–');
                 $(`#email${i}`).html(viewers[i]['email'] ? viewers[i]['email'] : '–')
                 $(`#expert_id${i}`).html(viewers[i]['expert_id'] ? viewers[i]['expert_id'] : '–')
@@ -179,10 +178,8 @@ function sort(parameter) {
 
                 /*<input id="d${i}" type="button" value="Добавить к проекту" class="btn_add"></span>*/
 
-                $(`#buttons${i}`).html(`<span id="delete${i}" onclick="delete_user(${viewers[i]['id']}, '${viewers[i]['username']}')">` +
-                    `<input id="d${i}" type="button" value="Удалить" class="btn_delete"></span>`)
-
-
+                $(`#buttons${i}`).html(`<span id="append${i}" onclick="append_viewer(${viewers[i]['id']}, ${project_number})">` +
+                    `<input id="d${i}" type="button" value="Прикрепить" class="btn_add"></span>`)
             }
             delete_buttons()
             buttons(limit)
