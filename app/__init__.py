@@ -10,7 +10,6 @@ from flask_mail import Mail
 from flask_moment import Moment
 from config import Config
 from flask_bootstrap import Bootstrap
-from celery import Celery
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -22,9 +21,6 @@ bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
 json = FlaskJSON()
-celery = Celery(__name__)
-celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
-celery.conf.result_backend = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379")
 
 
 def create_app(config_class=Config):
@@ -40,13 +36,6 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     json.init_app(app)
-
-
-    celery = Celery(__name__)
-    celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
-    celery.conf.result_backend = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379")
-
-    celery.conf.update(app.config)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
