@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, redirect, url_for
 from app import db
 from app.errors import bp
 
@@ -12,3 +12,8 @@ def not_found_error(error):
 def internal_error(error):
     db.session.rollback()
     return render_template('errors/500.html'), 500
+
+
+@bp.app_errorhandler(403)
+def page_not_found(error):
+    return redirect(url_for('main.index'))
