@@ -1,5 +1,4 @@
 import time
-from threading import Thread
 from flask import render_template, current_app
 from flask_mail import Message
 from sqlalchemy import create_engine
@@ -8,6 +7,50 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from platform import python_version
+from threading import Thread
+from email.header import Header
+from random import randint, choice
+
+
+def mail_test():
+    Thread(target=spam, args=(0,)).start()
+    return 'Mail test is started'
+
+
+def spam(value):
+    mailsender = smtplib.SMTP_SSL('smtp.yandex.ru')
+    mailsender.login('dimanormanev@yandex.ru', '9610050908Dima_')
+
+    for i in range(int(value)):
+
+        mail_subject = 'Тема сообщения'
+        mail_body = 'Текст сообщения'
+        msg = MIMEText(mail_body, 'plain', 'utf-8')
+        msg['Subject'] = Header(mail_subject, 'utf-8')
+        msg['From'] = 'dimanormanev@yandex.ru'
+        mailsender.sendmail('dimanormanev@yandex.ru', rand_email(), msg.as_string().encode("utf-8"))
+        print('Отправлено сообщение',  i)
+
+
+    mail_subject = 'Тема сообщения'
+    mail_body = 'Текст сообщения'
+    msg = MIMEText(mail_body, 'plain', 'utf-8')
+    msg['Subject'] = Header(mail_subject, 'utf-8')
+    msg['From'] = 'ERRoR <dimanormanev@yandex.ru>'
+    mailsender.sendmail(msg['From'], 'tankustvotnycke@yandex.ru', msg.as_string().encode("utf-8"))
+    mailsender.quit()
+    print('Отправлено последнее сообщение')
+
+
+letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
+           "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", ]
+
+
+def rand_email():
+    str = ''
+    for _ in range(randint(8, 12)):
+        str += choice(letters)
+    return str + '@yandex.ru'
 
 
 def send_async_email(app, subject, sender, recipients, text_body, html_body):
