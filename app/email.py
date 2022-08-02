@@ -1,13 +1,9 @@
 import time
 from threading import Thread
-
-import celery
 from flask import render_template, current_app
 from flask_mail import Message
 from sqlalchemy import create_engine
 from app import mail
-
-
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
