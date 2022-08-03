@@ -27,15 +27,20 @@ be_viewer = RoleNeed('viewer')
 be_expert = RoleNeed('expert')
 be_admin = RoleNeed('admin')
 be_user = RoleNeed('user')
+administrator_view = RoleNeed('admin')
+viewer_view = RoleNeed('viewer')
 
 # Permissions
 user = Permission(be_user)
 administrator = Permission(be_admin)
 viewer = Permission(be_viewer)
 expert = Permission(be_expert)
+administrator_view = Permission(administrator_view)
+viewer_view = Permission(viewer_view)
 
-apps_needs = [be_admin, be_viewer, be_user, be_expert]
-apps_permissions = [user, administrator, viewer, expert]
+
+apps_needs = [be_admin, be_viewer, be_user, be_expert, administrator_view, viewer_view]
+apps_permissions = [user, administrator, viewer, expert, administrator_view, viewer_view]
 
 @principal.identity_loader
 def load_identity_when_session_expires():
@@ -45,10 +50,11 @@ def load_identity_when_session_expires():
 @identity_loaded.connect
 def on_identity_loaded(sender, identity):
     needs = []
+    user = User.query.filter_by(email=identity.id).first()
     expert = Expert.query.filter_by(email=identity.id).first()
     viewer = Viewer.query.filter_by(email=identity.id).first()
     administrator = Admin.query.filter_by(email=identity.id).first()
-    if not AnonymousIdentity:
+    if user:
         needs.append(be_user)
     if expert or viewer or administrator:
         needs.append(be_expert)
@@ -56,6 +62,9 @@ def on_identity_loaded(sender, identity):
         needs.append(be_viewer)
     if administrator:
         needs.append(be_admin)
+        needs.append(administrator_view)
+    if viewer:
+        needs.append(viewer_view)
     for n in needs:
         g.identity.provides.add(n)
 
@@ -212,8 +221,6 @@ def export_excel(project_number):
 @bp.route('/user')
 @user.require()
 def user():
-    '''if 1000000 < current_user.id:
-        return redirects()'''
 
     user = User.query.filter_by(id=current_user.id).first()
     parameters = Parameter.query.filter_by(project_number=user.project_number).all()
@@ -234,15 +241,19 @@ def user():
 @expert.require()
 def expert(project_number):
 
-    if 1200000 < current_user.id < 1300000:
-        user = Admin.query.filter_by(id=current_user.id).first()
-        expert = Expert.query.filter_by(id=user.expert_id).first()
-        back = url_for('main.admin_settings', project_number=project_number)
-    elif 1100000 < current_user.id < 1200000:
-        user = Viewer.query.filter_by(id=current_user.id).first()
-        expert = Expert.query.filter_by(id=user.expert_id).first()
-        back = url_for('main.viewer_settings', project_number=project_number)
-    else:
+    try:
+        with administrator_view:
+            user = Admin.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
+            back = url_for('main.admin_settings', project_number=project_number)
+    except:
+        pass
+    try:
+        with viewer_view:
+            user = Viewer.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
+            back = url_for('main.viewer_settings', project_number=project_number)
+    except:
         expert = Expert.query.filter_by(id=current_user.id).first()
         back = None
 
@@ -294,13 +305,17 @@ def expert_table_for_viewer(project_number, expert_id):
 def expert_grade(project_number, user_id):
     form = GradeForm()
     if form.validate_on_submit():
-        if 1200000 < current_user.id < 1300000:
-            user = Admin.query.filter_by(id=current_user.id).first()
-            expert = Expert.query.filter_by(id=user.expert_id).first()
-        elif 1100000 < current_user.id < 1200000:
-            user = Viewer.query.filter_by(id=current_user.id).first()
-            expert = Expert.query.filter_by(id=user.expert_id).first()
-        else:
+        try:
+            with administrator_view:
+                user = Admin.query.filter_by(id=current_user.id).first()
+                expert = Expert.query.filter_by(id=user.expert_id).first()
+        except:
+            pass
+        try:
+            with viewer_view:
+                user = Viewer.query.filter_by(id=current_user.id).first()
+                expert = Expert.query.filter_by(id=user.expert_id).first()
+        except:
             expert = Expert.query.filter_by(id=current_user.id).first()
 
         grade = Grade(user_id=user_id, expert_id=expert.id, comment=form.comment.data)
@@ -437,10 +452,11 @@ def viewer_experts_table(project_number):
 @bp.route('/viewer/create_project', methods=['GET', 'POST'])
 @viewer.require()
 def create_project():
-    if current_user.id > 1200000:
-        admin = Admin.query.filter_by(id=current_user.id).first()
-        viewer = Viewer.query.filter_by(id=admin.viewer_id).first()
-    else:
+    try:
+        with administrator_view:
+            admin = Admin.query.filter_by(id=current_user.id).first()
+            viewer = Viewer.query.filter_by(id=admin.viewer_id).first()
+    except:
         viewer = Viewer.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
