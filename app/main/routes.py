@@ -23,24 +23,24 @@ from sqlalchemy import create_engine
 engine = create_engine("sqlite:///T_Park.db")
 
 # Needs
-be_viewer = RoleNeed('viewer')
-be_expert = RoleNeed('expert')
-be_admin = RoleNeed('admin')
+be_viewer = RoleNeed('viewers')
+be_expert = RoleNeed('experts')
+be_admin = RoleNeed('administrator')
 be_user = RoleNeed('user')
-administrator_view = RoleNeed('admin')
-viewer_view = RoleNeed('viewer')
+administrator_view = RoleNeed('administrator_view')
+viewer_view = RoleNeed('viewer_view')
 
 # Permissions
 user = Permission(be_user)
 administrator = Permission(be_admin)
-viewer = Permission(be_viewer)
-expert = Permission(be_expert)
+viewers = Permission(be_viewer)
+experts = Permission(be_expert)
 administrator_view = Permission(administrator_view)
 viewer_view = Permission(viewer_view)
 
 
 apps_needs = [be_admin, be_viewer, be_user, be_expert, administrator_view, viewer_view]
-apps_permissions = [user, administrator, viewer, expert, administrator_view, viewer_view]
+apps_permissions = [user, administrator, viewers, experts, administrator_view, viewer_view]
 
 @principal.identity_loader
 def load_identity_when_session_expires():
@@ -61,8 +61,8 @@ def on_identity_loaded(sender, identity):
     if viewer or administrator:
         needs.append(be_viewer)
     if administrator:
-        needs.append(be_admin)
         needs.append(administrator_view)
+        needs.append(be_admin)
     if viewer:
         needs.append(viewer_view)
     for n in needs:
@@ -86,7 +86,7 @@ def dwn():
 
 
 @bp.route('/excel/<project_number>', methods=['GET', 'POST'])
-@viewer.require(http_exception=403)
+@viewers.require(http_exception=403)
 def export_excel(project_number):
 
     data = User.query.all()
@@ -238,22 +238,17 @@ def user():
 
 # ввод номера участника для перехода к выставлению оценки
 @bp.route('/expert/<project_number>', methods=['GET', 'POST'])
-@expert.require()
+@experts.require()
 def expert(project_number):
-
-    try:
-        with administrator_view:
-            user = Admin.query.filter_by(id=current_user.id).first()
-            expert = Expert.query.filter_by(id=user.expert_id).first()
-            back = url_for('main.admin_settings', project_number=project_number)
-    except:
-        pass
-    try:
-        with viewer_view:
-            user = Viewer.query.filter_by(id=current_user.id).first()
-            expert = Expert.query.filter_by(id=user.expert_id).first()
-            back = url_for('main.viewer_settings', project_number=project_number)
-    except:
+    if administrator_view.require():
+        user = Admin.query.filter_by(id=current_user.id).first()
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+        back = url_for('main.admin_settings', project_number=project_number)
+    elif viewer_view.require():
+        user = Viewer.query.filter_by(id=current_user.id).first()
+        expert = Expert.query.filter_by(id=user.expert_id).first()
+        back = url_for('main.viewer_settings', project_number=project_number)
+    else:
         expert = Expert.query.filter_by(id=current_user.id).first()
         back = None
 
@@ -287,7 +282,7 @@ def expert_table_for_admin(project_number, expert_id):
 
 # таблица оценок эксперта (для наблюдателя)
 @bp.route('/expert_table_for_viewer/<project_number>/<expert_id>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def expert_table_for_viewer(project_number, expert_id):
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
@@ -301,21 +296,17 @@ def expert_table_for_viewer(project_number, expert_id):
 
 # выставление оценки участнику
 @bp.route('/expert/<project_number>/<user_id>', methods=['GET', 'POST'])
-@expert.require()
+@experts.require()
 def expert_grade(project_number, user_id):
     form = GradeForm()
     if form.validate_on_submit():
-        try:
-            with administrator_view:
-                user = Admin.query.filter_by(id=current_user.id).first()
-                expert = Expert.query.filter_by(id=user.expert_id).first()
-        except:
-            pass
-        try:
-            with viewer_view:
-                user = Viewer.query.filter_by(id=current_user.id).first()
-                expert = Expert.query.filter_by(id=user.expert_id).first()
-        except:
+        if administrator_view.require():
+            user = Admin.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
+        elif viewer_view.require():
+            user = Viewer.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
+        else:
             expert = Expert.query.filter_by(id=current_user.id).first()
 
         grade = Grade(user_id=user_id, expert_id=expert.id, comment=form.comment.data)
@@ -344,7 +335,7 @@ def expert_grade(project_number, user_id):
 
 # главня страница наблюдателя
 @bp.route('/viewer', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def viewer():
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     projects = viewer.projects  # пары заказчик-проект из таблицы ViewerProjects
@@ -364,7 +355,7 @@ def viewer():
 
 # страница Настройки проектов + доступ к юзерам и экспертам.
 @bp.route('/viewer/settings/<project_number>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def viewer_settings(project_number):
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = viewer.projects.filter_by(project_number=project_number) \
@@ -402,7 +393,7 @@ def viewer_settings(project_number):
 
 # таблица всех участников из проекта для наблюдателя
 @bp.route('/viewer_users_table/<project_number>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def viewer_users_table(project_number):
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
@@ -423,7 +414,7 @@ def viewer_users_table(project_number):
 
 # таблица личных оценок участника (для наблюдателя)
 @bp.route('/user_grades_table_for_viewer/<project_number>/<user_id>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def user_grades_table_for_viewer(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
@@ -437,7 +428,7 @@ def user_grades_table_for_viewer(project_number, user_id):
 
 # табллца экспертов для наблюдателя
 @bp.route('/viewer_experts_table/<project_number>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def viewer_experts_table(project_number):
     viewer = Viewer.query.filter_by(id=current_user.id).first()
     project = Project.query.filter_by(number=project_number).first()
@@ -450,13 +441,12 @@ def viewer_experts_table(project_number):
 
 # страница для создания нового проекта
 @bp.route('/viewer/create_project', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def create_project():
-    try:
-        with administrator_view:
-            admin = Admin.query.filter_by(id=current_user.id).first()
-            viewer = Viewer.query.filter_by(id=admin.viewer_id).first()
-    except:
+    if administrator_view.require():
+        admin = Admin.query.filter_by(id=current_user.id).first()
+        viewer = Viewer.query.filter_by(id=admin.viewer_id).first()
+    else:
         viewer = Viewer.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
@@ -565,7 +555,7 @@ def create_project():
 
 # добавление участника
 @bp.route('/add_new_user/<project_number>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def add_new_user(project_number):
 
     if request.method == 'POST':
@@ -637,7 +627,7 @@ def add_new_user(project_number):
 
 # добавление эксперта
 @bp.route('/add_new_expert/<project_number>', methods=['GET', 'POST'])
-@viewer.require()
+@viewers.require()
 def add_new_expert(project_number):
 
     if request.method == 'POST':
@@ -688,7 +678,7 @@ def add_new_expert(project_number):
         else:
             flash('Проверьте корректность введённых данных', 'warning')
 
-    if (current_user.id <= 1200000):
+    if  (current_user.id <= 1200000):
         return render_template('add_new_expert.html', title='Добавление участника',
                                project_number=project_number,
                                back=url_for('main.viewer_settings', project_number=project_number))
