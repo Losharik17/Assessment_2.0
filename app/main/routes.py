@@ -20,6 +20,7 @@ from datetime import date, datetime
 import shutil
 from sqlalchemy import create_engine
 
+
 engine = create_engine("sqlite:///T_Park.db")
 
 # Needs
@@ -27,8 +28,8 @@ be_viewer = RoleNeed('viewers')
 be_expert = RoleNeed('experts')
 be_admin = RoleNeed('administrator')
 be_user = RoleNeed('user')
-administrator_view = RoleNeed('administrator_view')
-viewer_view = RoleNeed('viewer_view')
+administrator_view = RoleNeed('administrator')
+viewer_view = RoleNeed('viewer')
 
 # Permissions
 user = Permission(be_user)
@@ -67,6 +68,7 @@ def on_identity_loaded(sender, identity):
         needs.append(viewer_view)
     for n in needs:
         g.identity.provides.add(n)
+    print(g.identity.provides)
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -240,17 +242,20 @@ def user():
 @bp.route('/expert/<project_number>', methods=['GET', 'POST'])
 @experts.require()
 def expert(project_number):
-    if administrator_view.require():
-        user = Admin.query.filter_by(id=current_user.id).first()
-        expert = Expert.query.filter_by(id=user.expert_id).first()
-        back = url_for('main.admin_settings', project_number=project_number)
-    elif viewer_view.require():
-        user = Viewer.query.filter_by(id=current_user.id).first()
-        expert = Expert.query.filter_by(id=user.expert_id).first()
-        back = url_for('main.viewer_settings', project_number=project_number)
-    else:
-        expert = Expert.query.filter_by(id=current_user.id).first()
-        back = None
+    try:
+        with administrator_view.require():
+            user = Admin.query.filter_by(id=current_user.id).first()
+            expert = Expert.query.filter_by(id=user.expert_id).first()
+            back = url_for('main.admin_settings', project_number=project_number)
+    except:
+        try:
+            with viewer_view.require():
+                user = Viewer.query.filter_by(id=current_user.id).first()
+                expert = Expert.query.filter_by(id=user.expert_id).first()
+                back = url_for('main.viewer_settings', project_number=project_number)
+        except:
+            expert = Expert.query.filter_by(id=current_user.id).first()
+            back = None
 
     form = UserForm()
     if form.validate_on_submit():
@@ -443,10 +448,11 @@ def viewer_experts_table(project_number):
 @bp.route('/viewer/create_project', methods=['GET', 'POST'])
 @viewers.require()
 def create_project():
-    if administrator_view.require():
-        admin = Admin.query.filter_by(id=current_user.id).first()
-        viewer = Viewer.query.filter_by(id=admin.viewer_id).first()
-    else:
+    try:
+        with administrator_view.require():
+            admin = Admin.query.filter_by(id=current_user.id).first()
+            viewer = Viewer.query.filter_by(id=admin.viewer_id).first()
+    except:
         viewer = Viewer.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
