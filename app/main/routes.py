@@ -68,7 +68,6 @@ def on_identity_loaded(sender, identity):
         needs.append(viewer_view)
     for n in needs:
         g.identity.provides.add(n)
-    print(g.identity.provides)
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
