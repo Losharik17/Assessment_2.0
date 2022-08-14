@@ -19,6 +19,7 @@ from app.auth.email import send_alert_mail, send_role_refuse
 import os
 import shutil
 from datetime import date, datetime
+import re
 
 engine = create_engine("sqlite:///T_Park.db")
 
@@ -198,10 +199,18 @@ def password_generator():
 def excel_user(filename, number):
     df = pd.read_excel(filename)
     df.head
+    special_char = ['"', '*', '/', '(', ')', ':', '\n', '.', '!', ',', '-']
+    special_char_escaped = list(map(re.escape, special_char))
     df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region', 'photo']
+    df.applymap(lambda x: x.strip() if type(x)==str else x)
+    df['username'] = df['username'].str.strip()
     df['email'] = df['email'].str.lower()
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
+    df['birthday'] = df['birthday'].dt.date
+    df['username'] = df['username'].replace(special_char_escaped, ' ', regex=True)
+    df['team'] = df['team'].replace(special_char_escaped, ' ', regex=True)
+    df['region'] = df['region'].replace(special_char_escaped, ' ', regex=True)
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
@@ -234,8 +243,13 @@ def excel_expert(filename, number):
     df = pd.read_excel(filename)
     df.head
     df.drop = ['photo']
+    special_char = ['"', '*', '/', '(', ')', ':', '\n', '.', '!', ',', '-']
+    special_char_escaped = list(map(re.escape, special_char))
     df.columns = ['project_id', 'username', 'email', 'weight']
+    df.applymap(lambda x: x.strip() if type(x)==str else x)
+    df['username'] = df['username'].str.strip()
     df['email'] = df['email'].str.lower()
+    df['username'] = df['username'].replace(special_char_escaped, ' ', regex=True)
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
