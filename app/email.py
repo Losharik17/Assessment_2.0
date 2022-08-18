@@ -19,8 +19,10 @@ from sqlalchemy.orm import sessionmaker
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 from platform import python_version
+from os.path import basename
 
 
 def send_async_email(app, subject, sender, recipients, text_body, html_body):
@@ -58,6 +60,15 @@ def async_mail_new(app, project_number, type, number):
         for i in range(number):
             users.pop(0)
 
+        subject = 'NSPT Ваш пароль'
+        sender = current_app.config['MAIL_USERNAME']
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = '<' + sender + '>'
+        msg['Reply-To'] = sender
+        msg['Return-Path'] = sender
+        msg['X-Mailer'] = 'Python/' + (python_version())
+
         for user in users:
             recipients = user.email
             text = render_template('email/send_password.txt',
@@ -75,6 +86,14 @@ def async_mail_new(app, project_number, type, number):
             msg.attach(part_text)
             msg.attach(part_html)
 
+            """excel_file = '1.xlsx'
+            with open(excel_file, 'rb') as f:
+                part = MIMEApplication(
+                    f.read(),
+                    Name='1.xlsx'
+                )
+            msg.attach(part)"""
+
             mail = smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT'])
             mail.starttls()
             mail.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
@@ -82,3 +101,60 @@ def async_mail_new(app, project_number, type, number):
             mail.quit()
             time.sleep(10)
 
+
+def send_excel_mail(project_number, excel, number=0):
+    from main import app
+    Thread(target=async_excel_mail(),
+           args=(app, project_number, excel, number)).start()
+
+
+def async_excel_mail(app, organization, excel, number):
+    from app.models import Viewer, Project
+    with app.app_context():
+        engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
+        users = Viewer.query.filter_by(organization=organization).all()
+        engine.dispose()
+        for i in range(number):
+            users.pop(0)
+
+        subject = 'NSPT Отчёт(ы)'
+        sender = current_app.config['MAIL_USERNAME']
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = '<' + sender + '>'
+        msg['Reply-To'] = sender
+        msg['Return-Path'] = sender
+        msg['X-Mailer'] = 'Python/' + (python_version())
+
+        for user in users:
+            recipients = user.email
+            names = user.project.name
+            text = render_template('email/send_excel.txt',
+                                   user=user, names=names)
+            html = '<html><head></head><body><p>' + \
+                   render_template('email/send_excel.html',
+                                   user=user, names=names) \
+                   + '</p></body></html>'
+
+            msg['To'] = recipients
+
+            part_text = MIMEText(text, 'plain')
+            part_html = MIMEText(html, 'html')
+
+            msg.attach(part_text)
+            msg.attach(part_html)
+
+            excel_file = excel
+            with open(excel_file, 'rb') as f:
+                part = MIMEApplication(
+                    f.read(),
+                    Name=str(excel_file)
+                )
+            msg.attach(part)
+
+            mail = smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT'])
+            mail.starttls()
+            mail.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
+            mail.sendmail(sender, recipients, msg.as_string().encode('utf-8'))
+            mail.quit()
+            time.sleep(10)
