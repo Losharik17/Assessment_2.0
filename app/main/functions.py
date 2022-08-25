@@ -563,6 +563,7 @@ def excel_letter():
     with app.app_context():
         projects = Project.query.all()
         for project in projects:
-            excel = project.name
-            send_excel_mail(project.number, excel)
+            if datetime.now().date() <= project.end:
+                excel = project.name
+                send_excel_mail(project.number, excel)
 
