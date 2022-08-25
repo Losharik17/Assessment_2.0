@@ -102,22 +102,24 @@ def async_mail_new(app, project_number, type, number):
             time.sleep(10)
 
 
-def send_excel_mail(project_number, excel, number=0):
+def send_excel_mail(project_id, excel, number=0):
     from main import app
-    Thread(target=async_excel_mail(),
-           args=(app, project_number, excel, number)).start()
+    Thread(target=async_excel_mail,
+           args=(app, project_id, excel, number)).start()
 
 
-def async_excel_mail(app, organization, excel, number):
-    from app.models import Viewer, Project
+def async_excel_mail(app, project_id, excel, number):
+    from app.models import Viewer, ViewerProjects, Project
     with app.app_context():
         engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
-        users = Viewer.query.filter_by(organization=organization).all()
+        project = ViewerProjects.query.filter_by(project_number=project_id).first()
+        viewer = Viewer.query.filter_by(id=project.viewer_id).first()
+        users = Viewer.query.filter_by(organization=viewer.organization).all()
         engine.dispose()
         for i in range(number):
             users.pop(0)
 
-        subject = 'NSPT Отчёт(ы)'
+        subject = 'NSPT Отчёт'
         sender = current_app.config['MAIL_USERNAME']
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
@@ -127,13 +129,14 @@ def async_excel_mail(app, organization, excel, number):
         msg['X-Mailer'] = 'Python/' + (python_version())
 
         for user in users:
+            name = Project.query.filter_by(number=project_id).first()
             recipients = user.email
-            names = user.project.name
+            name = name.name
             text = render_template('email/send_excel.txt',
-                                   user=user, names=names)
+                                   user=user, name=name)
             html = '<html><head></head><body><p>' + \
                    render_template('email/send_excel.html',
-                                   user=user, names=names) \
+                                   user=user, name=name) \
                    + '</p></body></html>'
 
             msg['To'] = recipients
@@ -144,7 +147,7 @@ def async_excel_mail(app, organization, excel, number):
             msg.attach(part_text)
             msg.attach(part_html)
 
-            excel_file = excel
+            excel_file = excel + '.xlsx'
             with open(excel_file, 'rb') as f:
                 part = MIMEApplication(
                     f.read(),

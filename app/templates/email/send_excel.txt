@@ -1,9 +1,9 @@
 Здравствуйте {{ user.username }},
 
-Вам пришли отчеты с сайта: http://rating.nspt.ru
+Вам пришел отчет с сайта: http://rating.nspt.ru
 
-По проектам:
+По проекту:
 
-"{{ names }}"
+"{{ name }}"
 
 

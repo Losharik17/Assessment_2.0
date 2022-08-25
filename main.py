@@ -5,7 +5,7 @@ from app.main.functions import delete_timer
 
 app = create_app()
 
-delete_timer()
+#delete_timer()
 
 @app.shell_context_processor
 def make_shell_context():

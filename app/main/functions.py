@@ -10,6 +10,7 @@ from app.models import User, Expert, Viewer
 import pandas as pd
 from flask import redirect, url_for, flash
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask_login import current_user
 import PIL
 from PIL import Image
@@ -313,6 +314,12 @@ def delete_timer():
     excel = BackgroundScheduler(daemon=True)
     excel.add_job(excel_saver, 'interval', seconds=10)
     excel.start()
+    excel_mail = BackgroundScheduler(daemon=True)
+    trigger = CronTrigger(
+        year="*", month="*", day="*", hour="19", minute="0", second="0"
+    )
+    excel_mail.add_job(excel_letter, trigger=trigger)
+    excel_mail.start()
 
 
 def redirects(arg=None):
@@ -550,4 +557,12 @@ def excel_saver():
             pass
 
 
+def excel_letter():
+    from main import app
+    from app.email import send_excel_mail
+    with app.app_context():
+        projects = Project.query.all()
+        for project in projects:
+            excel = project.name
+            send_excel_mail(project.number, excel)
 

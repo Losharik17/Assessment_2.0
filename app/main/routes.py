@@ -11,7 +11,7 @@ from app.main import bp
 from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
     waiting_users_in_json, viewers_in_json, \
     excel_expert, excel_user, to_dict, redirects, compression, \
-    password_generator, project_settings, excel_saver
+    password_generator, project_settings, excel_saver, excel_letter
 from app.auth.email import send_role_update, send_role_refuse, send_password_mail
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
@@ -75,15 +75,14 @@ def index():
         return redirects('base')
 
     mail = request.args.get('mail')
-
     return render_template('base.html', auth=current_user.is_authenticated,
                            mail=mail)
 
 
 @bp.route('/download')
 def dwn():
-    excel_saver()
-    return render_template('download.html')
+    excel_letter()
+    return redirect('base')
 
 
 @bp.route('/excel/<project_number>', methods=['GET', 'POST'])
@@ -512,7 +511,7 @@ def create_project():
                         experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
                         experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
                         excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
-                        send_mail_new(project.number, 'experts')
+                        #send_mail_new(project.number, 'experts')
                 except:
                     flash('Что-то не так с файлом экспертов', 'danger')
                     db.session.rollback()
