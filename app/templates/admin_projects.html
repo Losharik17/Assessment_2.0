@@ -48,7 +48,7 @@
                 let date = new Date(), pr_date
                 let project_date = element.attr('date').split('.')
 
-                pr_date = new Date(project_date[2], project_date[1] - 1, project_date[0])
+                pr_date = new Date(project_date[2], project_date[1] - 1, +project_date[0] + 1)
                 if (pr_date < date) {
                     element.append('<div style="text-align: center; color:crimson">Проект завершён</div>')
                 }
