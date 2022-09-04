@@ -41,14 +41,16 @@
                     </table>
                 </div>
             </div>
-            {{ user.birthday }}
+
             <div id="edit_data" class="button_re" onclick="
                     edit_data({{ user.id }}, `{{ user.birthday }}`)">Редактировать данные
             </div>
+
             <div id="delete_user" class="button_delete"
                  onclick="delete_user({{ user.id }}, {{ user.project_id }}, {{ user.project_number }})">
                 Удалить участника
             </div>
+
             <input type="submit" name="submit" id="submit" style="visibility: hidden">
         </form>
 
@@ -83,6 +85,7 @@
         <script>
             $('#birthday').children('span').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
                 / (24 * 3600 * 365.25 * 1000)))
+
             show_more(0, {{ user_id }})
 
             {#let src = "{{ user.photo }}"#}

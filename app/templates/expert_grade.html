@@ -1,15 +1,16 @@
 {% extends "main_0.html" %}
 
 
-{%  block app_content %}
+{% block app_content %}
 
-    <link rel="stylesheet"  href="{{ url_for('static', filename='expert_grade.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='expert_grade.css') }}">
 
     <div class="content">
         <div class="container" style="width: 100%;">
             <div class="data">
-                {% set path='/images/'+ project_number|string +'/users/'+ user.project_id|string +'.png' %}
-                <img id="img" style="width: 100px; height: 150px" src="{{ user.photo }}" alt="">
+                {% set path = 'images/' + project_number|string + '/users/' + user.project_id|string + '.png' %}
+                <img id="img" style="width: 100px; height: 150px" src="{{ url_for('static', filename=path) }}" alt="">
+
                 <table style="margin: 10px;">
                     <tr>
                         <td>ID: {{ user.project_id }}</td>
@@ -18,7 +19,7 @@
                         <td>ФИО: {{ user.username }}</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left" >Возраст: <span id="birthday"></span></td>
+                        <td style="text-align: left">Возраст: <span id="birthday"></span></td>
                     </tr>
                     <tr>
                         <td>Команда: {{ user.team }}</td>
@@ -28,7 +29,7 @@
         </div>
         <div class="assessments">
 
-            <form  action="" method="post" class="form">
+            <form action="" method="post" class="form">
                 {{ form.hidden_tag() }}
                 {% set i = namespace(a=0) %}
                 {% for parameter in parameters %}
@@ -65,9 +66,9 @@
     <script>
         $('#birthday').append(Math.floor((new Date() - new Date(`{{ user.birthday }}`))
             / (24 * 3600 * 365.25 * 1000)))
-        let src = $('#img').attr('src')
-        src = src.substr(0, 25) + 'uc' + src.substr(29)
-        $('#img').attr('src', src)
+        {#let src = $('#img').attr('src')#}
+        {#src = src.substr(0, 25) + 'uc' + src.substr(29)#}
+        {#$('#img').attr('src', src)#}
     </script>
 
 {% endblock %}
