@@ -208,6 +208,10 @@ def excel_user(filename, number):
     df.columns = ['username', 'email', 'birthday', 'team', 'region', 'photo']
     df.applymap(lambda x: x.strip() if type(x) == str else x)
 
+    df['username'] = df['username'].replace(special_char_escaped, ' ', regex=True)
+    df['team'] = df['team'].replace(special_char_escaped, ' ', regex=True)
+    df['region'] = df['region'].replace(special_char_escaped, ' ', regex=True)
+
     df['username'] = df['username'].str.strip()
     try:
         df['email'] = df['email'].str.lower()
@@ -225,10 +229,6 @@ def excel_user(filename, number):
         df['birthday'] = df['birthday'].dt.date
     except:
         pass
-
-    df['username'] = df['username'].replace(special_char_escaped, ' ', regex=True)
-    df['team'] = df['team'].replace(special_char_escaped, ' ', regex=True)
-    df['region'] = df['region'].replace(special_char_escaped, ' ', regex=True)
 
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
@@ -269,8 +269,10 @@ def excel_expert(filename, number):
     special_char_escaped = list(map(re.escape, special_char))
     df.columns = ['username', 'email', 'weight']
     df.applymap(lambda x: x.strip() if type(x) == str else x)
-    df['username'] = df['username'].str.strip()
+
     df['username'] = df['username'].replace(special_char_escaped, ' ', regex=True)
+    df['username'] = df['username'].str.strip()
+
     try:
         df['email'] = df['email'].str.lower()
     except:
