@@ -110,7 +110,7 @@ input::-webkit-inner-spin-button {
 
 
     /*Download avatar*/
-.input__wrapper_2 {
+.input__wrapper {
     width: 100%;
     position: relative;
     margin: 0 0 15px;

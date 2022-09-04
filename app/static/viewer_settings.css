@@ -47,16 +47,12 @@
     }
 
     .block_2 {
-
         margin: 0 30px;
     }
 
-    .input__wrapper_2 {
+    .input__wrapper_phone {
         display: none;
-
     }
-
-
 }
 
 
@@ -116,7 +112,7 @@
     }
 
 
-    .input__wrapper_1 {
+    .input__wrapper_pc {
         display: none;
     }
 
@@ -233,19 +229,9 @@
     line-height: 1;
     font: 400 16px Roboto;
     text-decoration: none;
-
 }
 
-
-.input__wrapper {
-    margin: 0 0 15px;
-}
-
-.input__wrapper_1 {
-    margin: 0 0 15px;
-}
-
-.input__wrapper_2 {
+.input__wrapper, .input__wrapper_pc, .input__wrapper_phone {
     margin: 0 0 15px;
 }
 
@@ -274,19 +260,15 @@ a {
     border-width: 0;
     color: rgba(0, 64, 144, 0.7);
     text-decoration: none;
-
 }
 
 .download_button:hover {
     color: #fff;
-
 }
-
 
 .date_text {
     margin-left: 20px;
     display: block;
-
 }
 
 .submit {
