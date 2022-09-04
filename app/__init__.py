@@ -11,6 +11,7 @@ from flask_moment import Moment
 from config import Config
 from inbox import Inbox
 from threading import Thread
+from flask_principal import Principal
 
 
 db = SQLAlchemy()
@@ -23,6 +24,7 @@ mail = Mail()
 moment = Moment()
 json = FlaskJSON()
 inbox = Inbox()
+principal = Principal()
 
 
 def inbox_start(inbox):
@@ -41,6 +43,8 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+    principal.init_app(app)
+
     Thread(target=inbox_start, args=(inbox, )).start()
 
     from app.errors import bp as errors_bp

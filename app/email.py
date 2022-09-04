@@ -97,3 +97,4 @@ def async_email(subject, sender, recipients, text_body, html_body):
         msg['To'] = recipient
         mail.sendmail(sender, recipient, msg.as_string().encode("utf-8"))
     mail.quit()
+

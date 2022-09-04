@@ -43,6 +43,7 @@ def send_role_update(user, role):
                                                user=user, role=role))
 
 
+
 def send_role_refuse(user):
     email.send_email('NSPT Изменение вашего статуса',
                      sender=current_app.config['MAIL_USERNAME'],
