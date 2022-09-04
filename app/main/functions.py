@@ -62,6 +62,7 @@ def viewers_in_json(viewers):
         string += '},'
 
     string = string[:len(string) - 1] + ']'
+
     return string
 
 
@@ -196,9 +197,18 @@ def excel_user(filename, number):
     os.chdir("../../../../")
     df.head
     df.columns = ['username', 'email', 'birthday', 'team', 'region']
-    df['email'] = df['email'].str.lower()
-    df['team'] = df['team'].str.capitalize()
-    df['region'] = df['region'].str.capitalize()
+    try:
+        df['email'] = df['email'].str.lower()
+    except:
+        pass
+    try:
+        df['team'] = df['team'].str.capitalize()
+    except:
+        pass
+    try:
+        df['region'] = df['region'].str.capitalize()
+    except:
+        pass
     prev_user = User.query.filter_by(project_number=number).order_by(User.id.desc()).first()
     last_user = User.query.order_by(User.id.desc()).first()
     index = df.index
@@ -234,7 +244,10 @@ def excel_expert(filename, number):
     df.head
     df.drop = ['photo']
     df.columns = ['username', 'email', 'weight']
-    df['email'] = df['email'].str.lower()
+    try:
+        df['email'] = df['email'].str.lower()
+    except:
+        pass
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
     index = df.index
