@@ -2,7 +2,7 @@
 
 
 {% block app_content %}
-    <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='viewer_main.css') }}">
     <div class="content">
         <h1 class="title">Проекты</h1>
 
@@ -12,32 +12,36 @@
             </div>
         </div>
         {% for project in projects %}
-            <div class="block" onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number) }}'">
-                <div class="block_logo">
-                    {% set path = 'images/' + project.number|string + '/logo.png' %}
-                    <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
-                </div>
-                <div date="{% if project.end is not none %}{{ project.end.strftime('%d.%m.%Y') }}{% endif %}" class="data">
-                    <h2 style="font-weight: normal; text-align: center">
-                        {{ project.name }}
-                    </h2>
-                </div>
+            {% if project %}
+                <div class="block"
+                     onclick="location.href='{{ url_for('main.viewer_settings', project_number=project.number) }}'">
+                    <div class="block_logo">
+                        {% set path = 'images/' + project.number|string + '/logo.png' %}
+                        <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
+                    </div>
+                    <div date="{% if project.end is not none %}{{ project.end.strftime('%d.%m.%Y') }}{% endif %}"
+                         class="data">
+                        <h2 style="font-weight: normal; text-align: center">
+                            {{ project.name }}
+                        </h2>
+                    </div>
 
-                <div class="date">
+                    <div class="date">
                     <span>
                         {% if project.start is not none and project.end is not none %}
                             {{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}
                         {% endif %}
                     </span>
-                </div>
+                    </div>
 
-            </div>
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 
     <script src="{{ url_for('static', filename='viewer_main.js') }}"></script>
     <script>
-        function end_project (element) {
+        function end_project(element) {
             if (!Number.isNaN(element)) {
                 let date = new Date(), pr_date
                 let project_date = element.attr('date').split('.')

@@ -2,40 +2,44 @@
 
 <!--в разработке-->
 {% block app_content %}
-    <link rel="stylesheet"  href="{{ url_for('static', filename='viewer_main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='viewer_main.css') }}">
     <div class="content">
         <h1 class="title">Проекты</h1>
 
         <div>
             {% for project in projects %}
-                <div class="block" onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number) }}'">
-                    <div class="block_logo">
-                        {% set path = 'images/' + project.number|string + '/logo.png' %}
-                        <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
-                    </div>
-                    <div date="{% if project.end is not none %}{{ project.end.strftime('%d.%m.%Y') }}{% endif %}" class="data">
-                        <h2  style="font-weight: normal; text-align:center">
-                            {{ project.name }}
-                        </h2>
-                        <h3 style="font-weight: normal; text-align: center">
-                            {% if project.viewers.all()[0].organization is not none %}
-                                {{ project.viewers.all()[0].organization }}
-                            {% endif %}<br>
-                            {% if project.viewers.all()[0].username is not none%}
-                                {{ project.viewers.all()[0].username }}
-                            {% endif %}<br>
-                        </h3>
-                    </div>
+                {% if project %}
+                    <div class="block"
+                         onclick="location.href='{{ url_for('main.admin_settings', project_number=project.number) }}'">
+                        <div class="block_logo">
+                            {% set path = 'images/' + project.number|string + '/logo.png' %}
+                            <img src="{{ url_for('static', filename=path) }}" class="profil_image" alt="">
+                        </div>
+                        <div date="{% if project.end is not none %}{{ project.end.strftime('%d.%m.%Y') }}{% endif %}"
+                             class="data">
+                            <h2 style="font-weight: normal; text-align:center">
+                                {{ project.name }}
+                            </h2>
+                            <h3 style="font-weight: normal; text-align: center">
+                                {% if project.viewers.all()[0].organization is not none %}
+                                    {{ project.viewers.all()[0].organization }}
+                                {% endif %}<br>
+                                {% if project.viewers.all()[0].username is not none %}
+                                    {{ project.viewers.all()[0].username }}
+                                {% endif %}<br>
+                            </h3>
+                        </div>
 
-                    <div class="date">
+                        <div class="date">
                         <span>
                             {% if project.start is not none and project.end is not none %}
                                 {{ project.start.strftime('%d.%m.%y') }} – {{ project.end.strftime('%d.%m.%y') }}
                             {% endif %}
                         </span>
-                    </div>
+                        </div>
 
-                </div>
+                    </div>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
@@ -43,7 +47,7 @@
 
 
     <script>
-        function end_project (element) {
+        function end_project(element) {
             if (!Number.isNaN(element)) {
                 let date = new Date(), pr_date
                 let project_date = element.attr('date').split('.')
@@ -58,6 +62,7 @@
         $('.data').each(function (index, element) {
             end_project($(element))
         })
+
         $('.profil_image').each(function (index, element) {
             $(element).css('max-height', document.documentElement.clientHeight * 0.2 + 'px')
         })

@@ -13,6 +13,7 @@ def mail_test():
     Thread(target=async_mail_proj, args=(current_app.config['MAIL_USERNAME'],)).start()
     return 'Mail test is started'
 
+
 def send_mail_proj(project_id, role):
     if role == 'expert':
         recipients = Expert.query.filter_by(project_id=project_id).all()

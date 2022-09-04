@@ -4,7 +4,7 @@ import sqlalchemy
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
-from app.email import send_mail_proj,  async_mail_proj, mail_test
+from app.email import send_mail_proj, async_mail_proj, mail_test
 from app.main.forms import GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser, ViewerProjects
 from app.main import bp
@@ -22,6 +22,7 @@ from sqlalchemy import create_engine
 
 engine = create_engine("sqlite:///T_Park.db")
 sql_null = sqlalchemy.null()
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -57,8 +58,11 @@ def export_excel(project_number):
 
     df1['birthday'] = pd.to_datetime(df1['birthday']).dt.date
     excel_start_date = date(1899, 12, 30)
-    df1['birthday'] = df1['birthday'] - excel_start_date
-    df1.birthday = df1.birthday.dt.days
+    try:
+        df1['birthday'] = df1['birthday'] - excel_start_date
+        df1.birthday = df1.birthday.dt.days
+    except:
+        pass
 
     parameters = Project.query.filter_by(number=project_number).first().parameters.all()
     i = 0
@@ -209,11 +213,11 @@ def expert(project_number):
 
     if 1200000 < current_user.id < 1300000:
         user = Admin.query.filter_by(id=current_user.id).first()
-        expert = Expert.query.filter_by(id=user.expert_id).first()
+        expert = Expert.query.filter_by(email=user.email, project_number=project_number).first()
         back = url_for('main.admin_settings', project_number=project_number)
     elif 1100000 < current_user.id < 1200000:
         user = Viewer.query.filter_by(id=current_user.id).first()
-        expert = Expert.query.filter_by(id=user.expert_id).first()
+        expert = Expert.query.filter_by(email=user.email, project_number=project_number).first()
         back = url_for('main.viewer_settings', project_number=project_number)
     else:
         expert = Expert.query.filter_by(id=current_user.id).first()
@@ -289,10 +293,10 @@ def expert_grade(project_number, user_id):
     if form.validate_on_submit():
         if 1200000 < current_user.id < 1300000:
             user = Admin.query.filter_by(id=current_user.id).first()
-            expert = Expert.query.filter_by(id=user.expert_id).first()
+            expert = Expert.query.filter_by(email=user.email, project_number=project_number).first()
         elif 1100000 < current_user.id < 1200000:
             user = Viewer.query.filter_by(id=current_user.id).first()
-            expert = Expert.query.filter_by(id=user.expert_id).first()
+            expert = Expert.query.filter_by(email=user.email, project_number=project_number).first()
         else:
             expert = Expert.query.filter_by(id=current_user.id).first()
 
@@ -339,6 +343,7 @@ def viewer():
     except:
         # proj не отсортировался
         pass
+
     return render_template('viewer_main.html', viewer=viewer, projects=proj, title='Проекты')
 
 
@@ -407,13 +412,17 @@ def viewer_settings(project_number):
 
         project_settings(request, project, project_number)
 
+    grade_acсess = \
+        True if Expert.query.filter_by(email=viewer.email, project_number=project_number).first() is not None else False
+
+
     '''        return redirect(url_for('main.viewer_settings', project_number=project_number))
         else:
             flash('Что-то пошло не так', 'warning')
             return redirect(url_for('main.viewer_settings', project_number=project_number))'''
 
     return render_template('viewer_settings.html', viewer=viewer, project=project, title='Настройки проекта',
-                           back=url_for('main.viewer'))
+                           grade_acсess=grade_acсess, back=url_for('main.viewer'))
 
 
 # таблица всех участников из проекта для наблюдателя
@@ -789,12 +798,15 @@ def admin_settings(project_number):
 
         project_settings(request, project, project_number)
 
+    grade_acсess = \
+        True if Expert.query.filter_by(email=admin.email, project_number=project_number).first() is not None else False
+
     '''        return redirect(url_for('main.admin_settings', project_number=project_number))
         else:
             flash('Что-то пошло не так', 'warning')
             return redirect(url_for('main.admin_settings', project_number=project_number))'''
 
-    return render_template('admin_settings.html', admin=admin, project=project,
+    return render_template('admin_settings.html', admin=admin, project=project, grade_acсess=grade_acсess,
                            back=url_for('main.admin_projects'))
 
 

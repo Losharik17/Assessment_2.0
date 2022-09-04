@@ -27,11 +27,14 @@
                         <span class="input__file_button_text">Участники</span>
                     </div><br>
                 </div>
+                
                 <div class="input__wrapper">
-                    <div class="button" onclick="location.href='{{ url_for('main.expert', project_number=project.number) }}'">
+                    <div class="{% if not grade_acсess %}button_denied{% else %}button{% endif %}"
+                    {% if grade_acсess %} onclick="location.href='{{ url_for('main.expert', project_number=project.number) }}'"{% endif %}>
                         <span class="input__file_button_text">Выставить оценки</span>
                     </div>
                 </div>
+
                 <div class="input__wrapper">
                     <div class="button" onclick="location.href='{{ url_for('main.admin_experts_table',
             project_number=project.number) }}'">
@@ -45,9 +48,8 @@
                         <span class="input__file_button_text">Загрузить новый логотип</span>
                     </label>
                 </div>
-
-
             </div>
+
             <div class="block_2">
                 <div class="input__wrapper_1">
                     <input  type="file" name="users" id="input__file_6" class="input input__file">
@@ -55,29 +57,34 @@
                         <span class="input__file_button_text">Добавить участников</span>
                     </label>
                 </div>
+
                 <div class="input__wrapper_1">
                     <input  type="file" name="users_photo" id="users_photo" class="input input__file" multiple>
                     <label for="users_photo" class="button">
                         <span class="input__file_button_text">Добавить фото участников</span>
                     </label>
                 </div>
+
                 <div class="input__wrapper_1">
                     <input  type="file" name="experts" id="input__file_7" class="input input__file">
                     <label for="input__file_7" class="button">
                         <span class="input__file_button_text">Добавить экспертов</span>
                     </label>
                 </div>
+
                 <div class="input__wrapper_1">
                     <input  type="file" name="experts_photo" id="experts_photo" class="input input__file" multiple>
                     <label for="experts_photo" class="button">
                         <span class="input__file_button_text">Добавить фото экспертов</span>
                     </label>
                 </div>
+
                 <div class="input__wrapper_2" onclick="location.href='{{ url_for('main.add_new_user', project_number=project.number) }}'">
                     <label for="input__file_8" class="button">
                         <span class="input__file_button_text">Добавить Участника</span>
                     </label>
                 </div>
+
                 <div class="input__wrapper_2" onclick="location.href='{{ url_for('main.add_new_expert', project_number=project.number) }}'">
                     <label for="input__file_9" class="button">
                         <span class="input__file_button_text">Добавить Эксперта</span>
@@ -85,8 +92,8 @@
                 </div>
             </div>
         </div>
-        <div class="block_3">
 
+        <div class="block_3">
             <div class="input__wrapper" style="margin-top:10px">
                 <div class="button" onclick="location.href='{{ url_for('main.unappended_viewers', project_number=project.number) }}'">
                     <span class="input__file_button_text">Добавить Заказчика</span>
@@ -94,10 +101,13 @@
             </div>
 
             <div class="input__wrapper">
-                <div id="download" class="button" onclick="location.href='{{ url_for('main.export_excel', project_number=project.number) }}'">
-                    <span class="input__file_button_text">Скачать Отчёт</span>
-                </div>
+                <a href="{{ url_for('main.export_excel', project_number=project.number) }}" target="_blank">
+                    <div id="download" class="button">
+                        <span class="input__file_button_text">Скачать Отчёт</span>
+                    </div>
+                </a>
             </div>
+
             <div class="form_group" style="margin-top: 30px;">
                 <label for="name" class="form_label">Название Проекта</label>
                 <input id="name" name="name" type="text" value="{% if project.name is not none %}{{ project.name }}{% endif %}"
