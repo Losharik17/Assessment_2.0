@@ -1,10 +1,10 @@
 import datetime
 import json
-
+import sqlalchemy
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
 from flask_login import current_user, login_required
 from app import db
-from app.email import send_mail_new
+from app.email import send_mail_proj,  async_mail_proj, mail_test
 from app.main.forms import GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser, ViewerProjects
 from app.main import bp
@@ -21,7 +21,7 @@ import shutil
 from sqlalchemy import create_engine
 
 engine = create_engine("sqlite:///T_Park.db")
-
+sql_null = sqlalchemy.null()
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -29,6 +29,9 @@ def index():
         return redirects('base')
 
     mail = request.args.get('mail')
+
+    # async_mail_proj(current_app.config['MAIL_USERNAME'])
+    # mail_test()
 
     return render_template('base.html', auth=current_user.is_authenticated,
                            mail=mail)
@@ -240,6 +243,13 @@ def expert_table_for_admin(project_number, expert_id):
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
+    if request.method == 'POST':
+        if request.files['photo']:
+            os.chdir("app/static/images/{}/experts".format(project_number))
+            photo = request.files['photo']
+            photo.save(os.path.join(os.getcwd(), '{}.png').format(expert.project_id))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
+
     return render_template('expert_table_for_admin.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
                            ParName=parameters,
@@ -255,6 +265,13 @@ def expert_table_for_viewer(project_number, expert_id):
     grades = Grade.query.filter_by(expert_id=expert_id).order_by(Grade.user_id).limit(20)
     expert = Expert.query.filter_by(id=expert_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    if request.method == 'POST':
+        if request.files['photo']:
+            os.chdir("app/static/images/{}/experts".format(project_number))
+            photo = request.files['photo']
+            photo.save(os.path.join(os.getcwd(), '{}.png').format(expert.project_id))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(expert.project_id)))
 
     return render_template('expert_table_for_viewer.html', title='Профиль эксперта',
                            grades=grades, expert=expert, project_number=project_number,
@@ -337,22 +354,56 @@ def viewer_settings(project_number):
 
     if request.method == 'POST':
         # try:
-
+        number = 0
         if request.files['users']:
             users = request.files['users']
-            number = User.query.filter_by(project_number=project_number).all()[-1].project_id
+            if len(User.query.filter_by(project_number=project_number).all()) > 0:
+                number = User.query.filter_by(project_number=project_number).all()[-1].project_id
+            else:
+                number = 0
             users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
-            users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
+            os.chdir("app/static/images/{}".format(project_number))
+            users.save(users.filename)
+            os.chdir("../../../../")
             excel_user(users.filename, project.number)
             send_mail_new(project.number, 'users', number)
 
+        if request.files['users_photo']:
+            try:
+                users_photo = request.files.getlist("users_photo")
+                os.chdir("app/static/images/{}/users".format(project_number))
+                for photo in users_photo:
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
+                    number += 1
+                os.chdir('../../../../../')
+            except:
+                pass
+
         if request.files['experts']:
             experts = request.files['experts']
-            number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
+            if len(Expert.query.filter_by(project_number=project_number).all()) > 0:
+                number = Expert.query.filter_by(project_number=project_number).all()[-1].project_id
+            else:
+                number = 0
             experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
-            experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
+            os.chdir("app/static/images/{}".format(project_number))
+            experts.save(experts.filename)
+            os.chdir("../../../../")
             excel_expert(experts.filename, project.number)
             send_mail_new(project.number, 'experts', number)
+
+        if request.files['experts_photo']:
+            try:
+                experts_photo = request.files.getlist("experts_photo")
+                os.chdir("app/static/images/{}/experts".format(project_number))
+                for photo in experts_photo:
+                    photo.save(os.path.join(os.getcwd(), '{}.png').format(number + 1))
+                    compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(number + 1)))
+                    number += 1
+                os.chdir('../../../../../')
+            except:
+                pass
 
         project_settings(request, project, project_number)
 
@@ -397,6 +448,13 @@ def user_grades_table_for_viewer(project_number, user_id):
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
+
+    if request.method == 'POST':
+        if request.files['photo']:
+            os.chdir("app/static/images/{}/users".format(project_number))
+            photo = request.files['photo']
+            photo.save(os.path.join(os.getcwd(), '{}.png').format(user.project_id))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
 
     return render_template('user_grades_table_for_viewer.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
@@ -463,6 +521,9 @@ def create_project():
                     shutil.rmtree('{}'.format(project.number))
                 os.mkdir('{}'.format(project.number))
                 os.chdir('{}'.format(project.number))
+                os.mkdir('users'.format(project.number))
+                os.mkdir('experts'.format(project.number))
+
                 lvl += 1
                 if request.files['logo']:
                     logo = request.files['logo']
@@ -476,7 +537,7 @@ def create_project():
                         users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
                         users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
                         excel_user(users.filename, project.number)
-                        send_mail_new(project.number, 'users')
+                        send_mail_proj(project.number, 'user')
                 except:
                     flash('Что-то не так с файлом участников', 'danger')
                     db.session.rollback()
@@ -489,7 +550,7 @@ def create_project():
                         experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
                         experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
                         excel_expert(experts.filename.rsplit(".", 1)[0], project.number)
-                        send_mail_new(project.number, 'experts')
+                        send_mail_proj(project.number, 'expert')
                 except:
                     flash('Что-то не так с файлом экспертов', 'danger')
                     db.session.rollback()
@@ -820,6 +881,13 @@ def user_grades_table_for_admin(project_number, user_id):
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
 
+    if request.method == 'POST':
+        if request.files['photo']:
+            os.chdir("app/static/images/{}/users".format(project_number))
+            photo = request.files['photo']
+            photo.save(os.path.join(os.getcwd(), '{}.png').format(user.project_id))
+            compression(100, 150, os.path.join(os.getcwd(), '{}.png'.format(user.project_id)))
+
     return render_template('user_grades_table_for_admin.html', title='Оценки участника',
                            grades=grades, user=user, project_number=project_number,
                            ParName=parameters, user_id=user_id, len=len(parameters),
@@ -1046,14 +1114,17 @@ def delete_user():
 
     if role == 'user':
         user = User.query.filter_by(id=request.form['id']).first()
-        os.chdir('app/static/images/{}/users'.format(user.project_number))
         try:
-            old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
-            if os.path.exists(old_img):
-                os.remove(old_img)
+            os.chdir('app/static/images/{}/users'.format(user.project_number))
+            try:
+                old_img = os.path.join(os.getcwd(), '{}.png'.format(user.project_id))
+                if os.path.exists(old_img):
+                    os.remove(old_img)
+            except:
+                pass
+            os.chdir('../../../../../')
         except:
             pass
-        os.chdir('../../../../../')
 
         for grade in user.grades.all():
             t_expert = grade.expert
@@ -1166,7 +1237,7 @@ def save_expert_data():
 
     if getattr(expert, 'weight') != data[1]:
         setattr(expert, 'weight', data[1])
-    '''
+
     if getattr(expert, 'email') != data[2]:
         d2 = data[2].strip().lower()
         if d2 != '':
@@ -1180,7 +1251,7 @@ def save_expert_data():
     if getattr(expert, 'photo') != data[4]:
         d4 = data[4].strip()
         if d4 != '':
-            setattr(expert, 'photo', d4)'''
+            setattr(expert, 'photo', d4)
 
     db.session.commit()
 
@@ -1194,7 +1265,7 @@ def save_user_data():
     user = User.query.filter_by(id=request.form['user_id']).first()
 
     if getattr(user, 'username') != data[0]:
-        d1 = data[1].strip().capitalize()
+        d1 = data[0].strip().capitalize()
         if d1 != '':
             setattr(user, 'username', data[0])
 
@@ -1214,22 +1285,27 @@ def save_user_data():
             if d4 != '':
                 setattr(user, 'email', d4)
 
-        if getattr(user, 'password_hash', ) != data[5]:
-            d5 = data[5].strip()
-            if d5 != '':
-                setattr(user, 'password_hash', d5)
-        '''
-        if getattr(user, 'photo') != data[6]:
-            d6 = data[6].strip()
-            if d6 != '':
-                setattr(user, 'photo', d6)'''
+    if getattr(user, 'password_hash', ) != data[5]:
+        d5 = data[5].strip()
+        if d5 != '':
+            setattr(user, 'password_hash', d5)
+
+    '''
+    if getattr(user, 'photo') != data[6]:
+        d6 = data[6].strip()
+        if d6 != '':
+            setattr(user, 'photo', d6)'''
 
     db.session.commit()
 
     try:
-        setattr(user, 'birthday', datetime.strptime(data[1], '%Y-%m-%d'))
+        if data[1] and getattr(user, 'password_hash', ) != datetime.strptime(data[1], '%Y-%m-%d'):
+            setattr(user, 'birthday', datetime.strptime(data[1], '%Y-%m-%d'))
+        else:
+            setattr(user, 'birthday', sql_null)
         db.session.commit()
     except:
+        print(4)
         return jsonify({'result': 'error'})
 
     return jsonify({'result': 'successfully'})

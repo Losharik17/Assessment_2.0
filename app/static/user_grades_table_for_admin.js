@@ -53,6 +53,11 @@ function edit_data(user_id, user_birthday) {
             }
             else if (index === 2) {
                 edit_data.old_value.push(user_birthday)
+
+                if (user_birthday) {
+                    user_birthday = user_birthday.split('-').reverse().join('.')
+                }
+
                 td.html(`<input id="d${index}" onchange="
                                     document.getElementById(this.id).setAttribute('value', this.value)" 
                                     class="form" type="text" value="${user_birthday}">`)
@@ -301,7 +306,7 @@ function delete_user(id, project_id, project_number) {
             alert('Пользователь удалён')
             location.href = `/admin_users_table/${project_number}`
         }).fail(function () {
-            alert('Error AJAX request')
+            alert('Не удалось удалить пользователя.\nError AJAX request')
         })
 }
 

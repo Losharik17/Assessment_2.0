@@ -1,44 +1,64 @@
-import time
-from flask import render_template, current_app
-from flask_mail import Message
-from sqlalchemy import create_engine
-from app import mail
+from flask import current_app, render_template
+from app.models import Expert, User
 import smtplib
-from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from platform import python_version
 from threading import Thread
 from email.header import Header
-from random import randint, choice
+from app import inbox
 
 
 def mail_test():
-    Thread(target=spam, args=(0,)).start()
+    Thread(target=async_mail_proj, args=(current_app.config['MAIL_USERNAME'],)).start()
     return 'Mail test is started'
 
+def send_mail_proj(project_id, role):
+    if role == 'expert':
+        recipients = Expert.query.filter_by(project_id=project_id).all()
+    else:
+        recipients = User.query.filter_by(project_id=project_id).all()
 
-def spam(value):
-    mailsender = smtplib.SMTP_SSL('smtp.yandex.ru')
-    mailsender.login('dimanormanev@yandex.ru', '9610050908Dima_')
+    sender = current_app.config['MAIL_USERNAME']
+    Thread(target=async_mail_proj, args=(sender, recipients)).start()
 
-    for i in range(int(value)):
 
-        mail_subject = 'Тема сообщения'
-        mail_body = 'Текст сообщения'
-        msg = MIMEText(mail_body, 'plain', 'utf-8')
+@inbox.collate
+def async_mail_proj(sender):
+    mail = smtplib.SMTP_SSL('smtp.yandex.ru', 587)
+    mail.login(sender, '9610050908Dima_')
+
+    for recipient in range(1000):
+        mail_subject = 'Ваш пароль'
+        text_body = f'Здравствуйте, {recipient}, вам'
+        msg = MIMEMultipart("alternative")
+        msg.attach(MIMEText(text_body, 'plain', 'utf-8'))
+        # msg.attach(MIMEText(html, 'html', 'utf-8'))
         msg['Subject'] = Header(mail_subject, 'utf-8')
-        msg['From'] = 'dimanormanev@yandex.ru'
-        mailsender.sendmail('dimanormanev@yandex.ru', rand_email(), msg.as_string().encode("utf-8"))
-        print('Отправлено сообщение',  i)
+        msg['From'] = f'NSPT <{sender}>'
+        msg['Reply-To'] = sender
+        msg['Return-Path'] = sender
+        msg['X-Mailer'] = 'Python/' + (python_version())
+        x = rand_email()
+        msg['To'] = x
+        mail.sendmail(sender, x, msg.as_string().encode("utf-8"))
+        print('Отправлено сообщение',  recipient)
 
+    # html_body = render_template('email/send_password.html',
+    #                             user='dfsgd', password='dsgfgdseret')
 
     mail_subject = 'Тема сообщения'
-    mail_body = 'Текст сообщения'
-    msg = MIMEText(mail_body, 'plain', 'utf-8')
+    text_body = 'Текст сообщения'
+    msg = MIMEMultipart("alternative")
+    msg.attach(MIMEText(text_body, 'plain', 'utf-8'))
+    # msg.attach(MIMEText(html_body, 'html', 'utf-8'))
     msg['Subject'] = Header(mail_subject, 'utf-8')
-    msg['From'] = 'ERRoR <dimanormanev@yandex.ru>'
-    mailsender.sendmail(msg['From'], 'tankustvotnycke@yandex.ru', msg.as_string().encode("utf-8"))
-    mailsender.quit()
+    msg['From'] = f'NSPT <{sender}>'
+    msg['Reply-To'] = sender
+    msg['Return-Path'] = sender
+    msg['X-Mailer'] = 'Python/' + (python_version())
+    mail.sendmail(sender, 'tankustvotnycke@yandex.ru', msg.as_string().encode("utf-8"))
+    mail.quit()
     print('Отправлено последнее сообщение')
 
 
@@ -47,77 +67,32 @@ letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 
 
 def rand_email():
+    from random import randint, choice
     str = ''
     for _ in range(randint(8, 12)):
         str += choice(letters)
     return str + '@yandex.ru'
 
 
-def send_async_email(app, subject, sender, recipients, text_body, html_body):
-    msg = Message(subject, sender=sender, recipients=recipients)
-    msg.body = text_body
-    msg.html = html_body
-    with app.app_context():
-        mail.send(msg)
-
 
 def send_email(subject, sender, recipients, text_body, html_body):
-    from main import app
-    Thread(target=send_async_email,
-           args=(app, subject, sender, recipients, text_body, html_body)).start()
+    Thread(target=async_email, args=(subject, sender, recipients, text_body, html_body)).start()
 
 
-def send_mail_new(project_number, typ, number=0):
-    from main import app
-    Thread(target=async_mail_new,
-           args=(app, project_number, typ, number)).start()
+@inbox.collate
+def async_email(subject, sender, recipients, text_body, html_body):
+    mail = smtplib.SMTP_SSL('smtp.yandex.ru')
+    mail.login(sender, '9610050908Dima_')
 
-
-def async_mail_new(app, project_number, type, number):
-    from app.models import Expert, User
-    with app.app_context():
-        engine = create_engine(current_app.config['SQLALCHEMY_DATABASE_URI'])
-        if type == 'users':
-            users = User.query.filter_by(project_number=project_number).all()
-            engine.dispose()
-        elif type == 'experts':
-            users = Expert.query.filter_by(project_number=project_number).all()
-            engine.dispose()
-        else:
-            return
-        for i in range(number):
-            users.pop(0)
-
-
-        for user in users:
-            recipients = user.email
-            text = render_template('email/send_password.txt',
-                                   user=user, password=user.password_hash)
-            html = '<html><head></head><body><p>' + \
-                   render_template('email/send_password.html',
-                                   user=user, password=user.password_hash)\
-                   + '</p></body></html>'
-
-            subject = 'NSPT Ваш пароль'
-            sender = current_app.config['MAIL_USERNAME']
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = subject
-            msg['From'] = '<' + sender + '>'
-            msg['Reply-To'] = sender
-            msg['Return-Path'] = sender
-            msg['X-Mailer'] = 'Python/' + (python_version())
-            msg['To'] = recipients
-
-            part_text = MIMEText(text, 'plain')
-            part_html = MIMEText(html, 'html')
-
-            msg.attach(part_text)
-            msg.attach(part_html)
-
-            mail = smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT'])
-            mail.starttls()
-            mail.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
-            mail.sendmail(sender, recipients, msg.as_string().encode('utf-8'))
-            mail.quit()
-            time.sleep(10)
-
+    for recipient in recipients:
+        msg = MIMEMultipart("alternative")
+        msg.attach(MIMEText(text_body, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+        msg['Subject'] = Header(subject, 'utf-8')
+        msg['From'] = f'NSPT <{sender}>'
+        msg['Reply-To'] = sender
+        msg['Return-Path'] = sender
+        msg['X-Mailer'] = 'Python/' + (python_version())
+        msg['To'] = recipient
+        mail.sendmail(sender, recipient, msg.as_string().encode("utf-8"))
+    mail.quit()

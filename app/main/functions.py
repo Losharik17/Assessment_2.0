@@ -191,9 +191,11 @@ def password_generator():
 
 
 def excel_user(filename, number):
+    os.chdir("app/static/images/{}".format(number))
     df = pd.read_excel(filename)
+    os.chdir("../../../../")
     df.head
-    df.columns = ['project_id', 'username', 'email', 'birthday', 'team', 'region', 'photo']
+    df.columns = ['username', 'email', 'birthday', 'team', 'region']
     df['email'] = df['email'].str.lower()
     df['team'] = df['team'].str.capitalize()
     df['region'] = df['region'].str.capitalize()
@@ -226,10 +228,12 @@ def excel_user(filename, number):
 
 
 def excel_expert(filename, number):
+    os.chdir("app/static/images/{}".format(number))
     df = pd.read_excel(filename)
+    os.chdir("../../../../")
     df.head
     df.drop = ['photo']
-    df.columns = ['project_id', 'username', 'email', 'weight']
+    df.columns = ['username', 'email', 'weight']
     df['email'] = df['email'].str.lower()
     prev_expert = Expert.query.filter_by(project_number=number).order_by(Expert.id.desc()).first()
     last_expert = Expert.query.order_by(Expert.id.desc()).first()
@@ -258,6 +262,7 @@ def excel_expert(filename, number):
             expert.weight = 1
         expert.quantity = 0
         expert.project_number = number
+        expert.set_password(password_generator())
 
         db.session.add(expert)
         db.session.commit()

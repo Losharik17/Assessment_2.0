@@ -9,7 +9,9 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
 from config import Config
-from flask_bootstrap import Bootstrap
+from inbox import Inbox
+from threading import Thread
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -17,10 +19,15 @@ login = LoginManager()
 login.login_view = 'auth.login'
 login.login_message = 'Пожалуйста, авторизируйтесь для доступа к данной странице.'
 login.login_message_category = 'warning'
-bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
 json = FlaskJSON()
+inbox = Inbox()
+
+
+def inbox_start(inbox):
+    inbox.serve(address='0.0.0.0', port=4467)
+    inbox.dispatch()
 
 
 def create_app(config_class=Config):
@@ -33,9 +40,8 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
-    bootstrap.init_app(app)
     moment.init_app(app)
-    json.init_app(app)
+    Thread(target=inbox_start, args=(inbox, )).start()
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)

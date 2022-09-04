@@ -1,16 +1,18 @@
 {% extends "main_0.html" %}
 
 
-{%  block app_content %}
+{% block app_content %}
 
-    <link rel="stylesheet"  href="{{ url_for('static', filename='admin_table.css')}}">
-    <link rel="stylesheet"  href="{{ url_for('static', filename='user_grades_table.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='user_grades_table.css') }}">
     <script src="{{ url_for('static', filename='expert_table_for_viewer.js') }}"></script>
 
-    <form>
-        <div class="container">
-            <div id="data" class="data">
-                <img id="img" style="width: 100px; height: 150px"" alt="">
+    <form action="{{ url_for('main.expert_table_for_viewer', project_number=project_number, expert_id=expert.id) }}" method="POST"
+              enctype="multipart/form-data">
+            <div class="container">
+                <div class="data">
+                    {%  set path = 'images/' + project_number|string + '/experts/' + expert.project_id|string + '.png' %}
+                    <img id="img" style="width: 100px; height: 150px" src="{{ url_for('static', filename=path)}}" alt="">
                 <table id="data_table" style="margin: 10px;">
                     <tr>
                         <td style="text-align: left">ID: <span>{{ expert.project_id }}</span></td>
@@ -22,7 +24,8 @@
                         <td style="text-align: left">Вес: <span>{{ expert.weight }}</span></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left">Количество оценок: <span id="grades_number">{{ expert.quantity }}</span></td>
+                        <td style="text-align: left">Количество оценок: <span
+                                id="grades_number">{{ expert.quantity }}</span></td>
                     </tr>
                 </table>
             </div>
@@ -44,7 +47,7 @@
                 <th id="date" class="sort" data-order="0" onclick="sort(this.id, {{ expert.id }})">Время</th>
                 {% set i = namespace(a=0) %}
                 {% for parameter in ParName %}
-                    <th id="parameter{{ i.a }}"  class="th_clean">{{ parameter.name }}</th>
+                    <th id="parameter{{ i.a }}" class="th_clean">{{ parameter.name }}</th>
                     {% set i.a = i.a + 1 %}
                 {% endfor %}
                 <th id="comment" class="th_clean">Комментарий</th>
@@ -68,21 +71,21 @@
     <script>
         show_more(0, {{ expert.id }})
 
-        let src = "{{ user.photo }}"
-        if (src.includes('file')) {
-            let src2 = 'https://drive.google.com/uc?id='
-            for (let i = 0, j = 0; i < src.length && j < 6; i++) {
-                src2 += j === 5 ? src[i] : ''
-                src[i] === '/' ? j++ : j
-            }
-            src2 = src2.substr(0, src2.length - 1)
-            $('#img').attr('src', src2)
-        } else {
-            if (src.includes('open')) {
-                src = src.replace('open', 'uc')
-                $('#img').attr('src', src)
-            }
-        }
+        {#let src = "{{ user.photo }}"#}
+        {#if (src.includes('file')) {#}
+        {#    let src2 = 'https://drive.google.com/uc?id='#}
+        {#    for (let i = 0, j = 0; i < src.length && j < 6; i++) {#}
+        {#        src2 += j === 5 ? src[i] : ''#}
+        {#        src[i] === '/' ? j++ : j#}
+        {#    }#}
+        {#    src2 = src2.substr(0, src2.length - 1)#}
+        {#    $('#img').attr('src', src2)#}
+        {# else {#}
+        {#    if (src.includes('open')) {#}
+        {#        src = src.replace('open', 'uc')#}
+        {#        $('#img').attr('src', src)#}
+        {#    }#}
+        {##}
     </script>
 
 {% endblock %}

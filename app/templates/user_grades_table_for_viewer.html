@@ -9,10 +9,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/jquery.inputmask.bundle.min.js"></script>
 
 
-        <form>
+        <form action="{{ url_for('main.user_grades_table_for_viewer', project_number=project_number, user_id=user_id) }}" method="POST"
+              enctype="multipart/form-data">
             <div class="container">
                 <div class="data">
-                    <img id="img" style="width: 100px; height: 150px" alt="">
+                    {%  set path = 'images/' + project_number|string + '/users/' + user.project_id|string + '.png' %}
+                    <img id="img" style="width: 100px; height: 150px" src="{{ url_for('static', filename=path)}}" alt="">
                     <table id="data_table" style="margin: 10px;" class="data_table">
                         <tr>
                             <td style="text-align: left">ID: <span>{{ user.project_id }}</span></td>
@@ -82,21 +84,21 @@
                 / (24 * 3600 * 365.25 * 1000)))
             show_more(0, {{ user_id }})
 
-            let src = "{{ user.photo }}"
-            if (src.includes('file')) {
-                let src2 = 'https://drive.google.com/uc?id='
-                for (let i = 0, j = 0; i < src.length && j < 6; i++) {
-                    src2 += j === 5 ? src[i] : ''
-                    src[i] === '/' ? j++ : j
-                }
-                src2 = src2.substr(0, src2.length - 1)
-                $('#img').attr('src', src2)
-            } else {
-                if (src.includes('open')) {
-                    src = src.replace('open', 'uc')
-                    $('#img').attr('src', src)
-                }
-            }
+            {#let src = "{{ user.photo }}"#}
+            {#if (src.includes('file')) {#}
+            {#    let src2 = 'https://drive.google.com/uc?id='#}
+            {#    for (let i = 0, j = 0; i < src.length && j < 6; i++) {#}
+            {#        src2 += j === 5 ? src[i] : ''#}
+            {#        src[i] === '/' ? j++ : j#}
+            {#    }#}
+            {#    src2 = src2.substr(0, src2.length - 1)#}
+            {#    $('#img').attr('src', src2)#}
+            {# else {#}
+            {#    if (src.includes('open')) {#}
+            {#        src = src.replace('open', 'uc')#}
+            {#        $('#img').attr('src', src)#}
+            {#    }#}
+            {##}
         </script>
     {% else %}
         <h3>Пользователя не существует или мы не смогли его найти</h3>
