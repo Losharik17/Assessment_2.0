@@ -27,7 +27,7 @@
                         <span class="input__file_button_text">Участники</span>
                     </div><br>
                 </div>
-                
+
                 <div class="input__wrapper">
                     <div class="{% if not grade_acсess %}button_denied{% else %}button{% endif %}"
                     {% if grade_acсess %} onclick="location.href='{{ url_for('main.expert', project_number=project.number) }}'"{% endif %}>
