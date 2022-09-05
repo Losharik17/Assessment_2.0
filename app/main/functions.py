@@ -299,9 +299,9 @@ def excel_expert(filename, number):
     for i in range(i, b):
         df.loc[[i - c]].to_sql('expert', con=engine, if_exists='append', index=False)
         expert = Expert.query.filter_by(id=i + 1).first()
-        if expert.project_id == None:
+        if expert.project_id is None:
             expert.project_id = l + 1
-        if expert.weight == None:
+        if expert.weight is None:
             expert.weight = 1
         expert.quantity = 0
         expert.project_number = number
@@ -410,6 +410,7 @@ def email_saver():
                 db.session.add(expert)
                 db.session.commit()
 
+
 def excel_saver():
     from main import app
     with app.app_context():
@@ -447,16 +448,17 @@ def excel_saver():
                     except:
                         pass
 
-                df1 = df1.rename(columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
-                                        'photo': 'Ссылка на фотографию',
-                                        "sum_grade_all": "Итоговая оценка",
-                                        'project_id': 'ID'})
+                df1 = df1.rename(
+                    columns={"region": "Регион", "team": "Команда", "username": "ФИО", "birthday": "Дата рождения",
+                             'photo': 'Ссылка на фотографию',
+                             "sum_grade_all": "Итоговая оценка",
+                             'project_id': 'ID'})
                 df1["Имя"] = ""
                 df1["Фамилия"] = ""
                 df1["Отчество"] = ""
                 for i in range(0, len(df1.index)):
                     try:
-                        df1["Имя"][i]=df1["ФИО"][i].split()[1]
+                        df1["Имя"][i] = df1["ФИО"][i].split()[1]
                         df1["Фамилия"][i] = df1["ФИО"][i].split()[0]
                         df1["Отчество"][i] = df1["ФИО"][i].split()[2]
                     except:
@@ -466,8 +468,9 @@ def excel_saver():
                 df1 = df1.drop(columns=['password_hash', 'project_number'])
                 names = df1.columns.values
                 names_length = len(names)
-                new_name = [names[0], names[names_length-2], names[names_length-3],names[names_length-1],names[3], names[2], names[4], names[5], names[6]]
-                for i in range(8, names_length-3):
+                new_name = [names[0], names[names_length - 2], names[names_length - 3], names[names_length - 1],
+                            names[3], names[2], names[4], names[5], names[6]]
+                for i in range(8, names_length - 3):
                     new_name.append(names[i])
                 new_name.append(names[7])
                 df1 = df1.reindex(columns=new_name)
@@ -485,13 +488,14 @@ def excel_saver():
                 for i in range(0, len(df2.index)):
                     try:
                         df2["Фамилия"][i] = df2["ФИО"][i].split()[0]
-                        df2["Имя"][i]=df2["ФИО"][i].split()[1]
+                        df2["Имя"][i] = df2["ФИО"][i].split()[1]
                         df2["Отчество"][i] = df2["ФИО"][i].split()[2]
                     except:
                         pass
                 names = df2.columns.values
                 names_length = len(names)
-                new_name = [names[0],names[names_length-2],names[names_length-3],names[names_length-1],names[2],names[3], names[5], names[6]]
+                new_name = [names[0], names[names_length - 2], names[names_length - 3], names[names_length - 1],
+                            names[2], names[3], names[5], names[6]]
                 df2 = df2.reindex(columns=new_name)
                 data = Grade.query.all()
                 data_list = [to_dict(item) for item in data]
@@ -550,11 +554,13 @@ def excel_saver():
                         pass
                 names = df3.columns.values
                 names_length = len(names)
-                new_name = [names[0], names[names_length - 2], names[names_length - 3], names[names_length - 1], names[2]]
+                new_name = [names[0], names[names_length - 2], names[names_length - 3], names[names_length - 1],
+                            names[2]]
                 for i in range(3, names_length - 3):
                     new_name.append(names[i])
                 df3 = df3.reindex(columns=new_name)
-                filename = os.path.join(os.getcwd(), "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
+                filename = os.path.join(os.getcwd(),
+                                        "{}.xlsx".format(Project.query.filter_by(number=project_number).first().name))
 
                 writer = pd.ExcelWriter(filename, datetime_format='dd/mm/yyyy hh:mm', engine='xlsxwriter')
                 df1.to_csv(writer, sheet_name='Участники', index=False, float_format="%.2f")
@@ -562,7 +568,8 @@ def excel_saver():
                 base_format = workbook.add_format({'align': 'center'})
                 new_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'text_wrap': True})
                 date_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy'})
-                date2_format = workbook.add_format({'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
+                date2_format = workbook.add_format(
+                    {'align': 'center', 'valign': 'vcenter', 'num_format': 'dd/mm/yyyy hh:mm'})
                 worksheet = writer.sheets['Участники']
 
                 worksheet.set_column('A:S', 21, base_format)
@@ -594,4 +601,3 @@ def excel_letter():
             if datetime.now().date() <= project.end:
                 excel = project.name
                 send_excel_mail(project.number, excel)
-
