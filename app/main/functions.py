@@ -1,6 +1,5 @@
 import random
 import string
-
 from sqlalchemy import create_engine
 from app import db
 from app.models import User, Expert, Viewer, Grade
@@ -21,6 +20,7 @@ import os
 import shutil
 from datetime import date, datetime
 import re
+import json
 
 engine = create_engine("sqlite:///T_Park.db")
 
@@ -38,10 +38,10 @@ def users_in_json(users):
         else:
             birthday = '-'
         string += '{' + '"id":{0},"username":"{1}","birthday":"{2}","team":"{3}",' \
-                        '"project_number":{4}, "project_id":{5},"region":"{6}",' \
+                        '"project_number":{4}, "project_id":{5},"region":"{6}","email":"{7}",' \
             .format(str(user.id), str(user.username), str(birthday),
                     str(user.team), str(user.project_number),
-                    str(user.project_id), str(user.region))
+                    str(user.project_id), str(user.region), str(user.email))
 
         for i in range(lenght):
             string += '"sum_grade_{0}":"{1}",' \
@@ -79,13 +79,13 @@ def experts_in_json(experts):
 
     for expert in experts:
         string += '{' + '"id":{0},"username":"{1}","weight":"{2}","quantity":"{3}",' \
-                        '"project_number":{4}, "project_id":{5}' \
+                        '"project_number":{4}, "project_id":{5}, "email":{6}' \
             .format(str(expert.id),
                     str(expert.username),
                     str(expert.weight),
                     str(expert.quantity),
                     str(expert.project_number),
-                    str(expert.project_id)) + '},'
+                    str(expert.project_id), str(expert.email)) + '},'
 
     string = string[:len(string) - 1] + ']'
     return string

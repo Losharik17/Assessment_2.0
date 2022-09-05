@@ -1,13 +1,11 @@
 import datetime
 import json
 import sqlalchemy
-from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file
-from flask_login import current_user, login_required
-from app import db
 from app.email import send_mail_proj, async_mail_proj, mail_test
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file, g
 from flask_login import current_user, login_required
-from flask_principal import Principal, Permission, RoleNeed, Identity, identity_changed, identity_loaded, AnonymousIdentity, ActionNeed
+from flask_principal import Principal, Permission, RoleNeed, Identity, identity_changed, identity_loaded, \
+    AnonymousIdentity, ActionNeed
 from app import db, principal
 from app.main.forms import GradeForm, UserForm
 from app.models import User, Expert, Grade, Viewer, Admin, Parameter, Project, WaitingUser, ViewerProjects
@@ -23,7 +21,6 @@ import os
 from datetime import date, datetime
 import shutil
 from sqlalchemy import create_engine
-
 
 engine = create_engine("sqlite:///T_Park.db")
 sql_null = sqlalchemy.null()
@@ -44,14 +41,15 @@ experts = Permission(be_expert)
 administrator_view = Permission(administrator_view)
 viewer_view = Permission(viewer_view)
 
-
 apps_needs = [be_admin, be_viewer, be_user, be_expert, administrator_view, viewer_view]
 apps_permissions = [user, administrator, viewers, experts, administrator_view, viewer_view]
+
 
 @principal.identity_loader
 def load_identity_when_session_expires():
     if hasattr(current_user, 'id'):
         return Identity(current_user.id)
+
 
 @identity_loaded.connect
 def on_identity_loaded(sender, identity):
@@ -98,7 +96,6 @@ def dwn():
 @bp.route('/excel/<project_number>', methods=['GET', 'POST'])
 @viewers.require(http_exception=403)
 def export_excel(project_number):
-
     data = User.query.all()
     data_list = [to_dict(item) for item in data]
     df1 = pd.DataFrame(data_list)
@@ -234,7 +231,6 @@ def export_excel(project_number):
 @bp.route('/user')
 @user.require()
 def user():
-
     user = User.query.filter_by(id=current_user.id).first()
     parameters = Parameter.query.filter_by(project_number=user.project_number).all()
     sum = []
@@ -447,9 +443,8 @@ def viewer_settings(project_number):
 
         project_settings(request, project, project_number)
 
-    grade_acсess = \
+    grade_access = \
         True if Expert.query.filter_by(email=viewer.email, project_number=project_number).first() is not None else False
-
 
     '''        return redirect(url_for('main.viewer_settings', project_number=project_number))
         else:
@@ -457,7 +452,7 @@ def viewer_settings(project_number):
             return redirect(url_for('main.viewer_settings', project_number=project_number))'''
 
     return render_template('viewer_settings.html', viewer=viewer, project=project, title='Настройки проекта',
-                           grade_acсess=grade_acсess, back=url_for('main.viewer'))
+                           grade_acсess=grade_access, back=url_for('main.viewer'))
 
 
 # таблица всех участников из проекта для наблюдателя
@@ -637,7 +632,6 @@ def create_project():
 @bp.route('/add_new_user/<project_number>', methods=['GET', 'POST'])
 @viewers.require()
 def add_new_user(project_number):
-
     if request.method == 'POST':
         result = request.form
 
@@ -709,7 +703,6 @@ def add_new_user(project_number):
 @bp.route('/add_new_expert/<project_number>', methods=['GET', 'POST'])
 @viewers.require()
 def add_new_expert(project_number):
-
     if request.method == 'POST':
         result = request.form
         if result.get('username') and result.get('email'):
@@ -758,7 +751,7 @@ def add_new_expert(project_number):
         else:
             flash('Проверьте корректность введённых данных', 'warning')
 
-    if  (current_user.id <= 1200000):
+    if (current_user.id <= 1200000):
         return render_template('add_new_expert.html', title='Добавление участника',
                                project_number=project_number,
                                back=url_for('main.viewer_settings', project_number=project_number))
@@ -816,7 +809,7 @@ def admin_settings(project_number):
 
         project_settings(request, project, project_number)
 
-    grade_acсess = \
+    grade_access = \
         True if Expert.query.filter_by(email=admin.email, project_number=project_number).first() is not None else False
 
     '''        return redirect(url_for('main.admin_settings', project_number=project_number))
@@ -824,7 +817,7 @@ def admin_settings(project_number):
             flash('Что-то пошло не так', 'warning')
             return redirect(url_for('main.admin_settings', project_number=project_number))'''
 
-    return render_template('admin_settings.html', admin=admin, project=project, grade_acсess=grade_acсess,
+    return render_template('admin_settings.html', admin=admin, project=project, grade_access=grade_access,
                            back=url_for('main.admin_projects'))
 
 
@@ -866,7 +859,6 @@ def admin_experts_table(project_number):
 @bp.route('/admin_waiting_users', methods=['GET', 'POST'])
 @administrator.require()
 def admin_waiting_users():
-
     waiting_users = WaitingUser.query.limit(15)
 
     return render_template('admin_waiting_users.html', waiting_users=waiting_users,
@@ -876,7 +868,6 @@ def admin_waiting_users():
 @bp.route('/admin_viewers', methods=['GET', 'POST'])
 @administrator.require()
 def admin_viewers():
-
     viewers = Viewer.query.limit(10)
 
     return render_template('admin_viewers.html', viewers=viewers, back=url_for('main.admin'))
@@ -885,7 +876,6 @@ def admin_viewers():
 @bp.route('/unappended_viewers/<project_number>', methods=['GET', 'POST'])
 @administrator.require()
 def unappended_viewers(project_number):
-
     return render_template("unappended_viewers.html", project_number=project_number,
                            back=url_for('main.admin_settings', project_number=project_number))
 
@@ -894,7 +884,6 @@ def unappended_viewers(project_number):
 @bp.route('/user_grades_table_for_admin/<project_number>/<user_id>', methods=['GET', 'POST'])
 @administrator.require()
 def user_grades_table_for_admin(project_number, user_id):
-
     grades = Grade.query.filter_by(user_id=user_id).order_by(Grade.expert_id).limit(20)
     user = User.query.filter_by(id=user_id).first()
     parameters = Parameter.query.filter_by(project_number=project_number).all()
@@ -1323,7 +1312,6 @@ def save_user_data():
             setattr(user, 'birthday', sql_null)
         db.session.commit()
     except:
-        print(4)
         return jsonify({'result': 'error'})
 
     return jsonify({'result': 'successfully'})
@@ -1349,7 +1337,6 @@ def show_more_viewers():
             .order_by(Viewer.id).limit(int(request.form['lim']) + 1)
 
     return jsonify({'viewers': viewers_in_json(viewers)})
-
 
 
 @bp.route('/unappend_viewer', methods=['GET', 'POST'])
@@ -1378,6 +1365,7 @@ def append_viewer():
         return jsonify({'result': 'success'})
     except:
         return jsonify({'result': 'error'})
+
 
 @bp.route('/sort_unappend_viewers', methods=['GET', 'POST'])
 def sort_unappend_viewers():

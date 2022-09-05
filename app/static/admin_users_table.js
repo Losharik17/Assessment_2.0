@@ -162,6 +162,12 @@ function draw_table(response, project_number) {
         else
             $(`#number_str${i}`).append(`<td id="username${i}">${users[i]['username']}</td>`)
 
+        if (users[i]['email'] === 'None')
+            $(`#number_str${i}`).append(`<td id="email${i}">–</td>`)
+        else
+            $(`#number_str${i}`).append(`<td id="email${i}">${users[i]['email']}</td>`)
+
+
         if (users[i]['birthday'] === 'None' || users[i]['birthday'] === '-')
             $(`#number_str${i}`).append(`<td id="birthday${i}">–</td>`)
         else
@@ -295,6 +301,7 @@ function sort(parameter, project_number) {
 
                 $(`#project_id${i}`).html(users[i]['project_id'] ? users[i]['project_id'] : '–');
                 $(`#username${i}`).html(users[i]['username'] ? users[i]['username'] : '–')
+                $(`#email${i}`).html(users[i]['email'] !== 'None' ? users[i]['email'] : '–')
 
                 $(`#birthday${i}`).html((users[i]['birthday'] !== 'None' && users[i]['birthday'] !== '-') ?
                     Math.floor((new Date() - new Date(users[i]['birthday'])) / (24 * 3600 * 365.25 * 1000)) :
