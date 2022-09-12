@@ -23,13 +23,13 @@ login.login_message_category = 'warning'
 mail = Mail()
 moment = Moment()
 json = FlaskJSON()
-inbox = Inbox()
+# inbox = Inbox()
 principal = Principal()
 
 
-def inbox_start(inbox):
-    inbox.serve(address='0.0.0.0', port=4467)
-    inbox.dispatch()
+# def inbox_start(inbox):
+#     inbox.serve(address='0.0.0.0', port=4467)
+#     inbox.dispatch()
 
 
 def create_app(config_class=Config):
@@ -45,7 +45,7 @@ def create_app(config_class=Config):
     moment.init_app(app)
     principal.init_app(app)
 
-    Thread(target=inbox_start, args=(inbox, )).start()
+    # Thread(target=inbox_start, args=(inbox, )).start()
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
