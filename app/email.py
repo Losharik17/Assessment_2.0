@@ -1,12 +1,62 @@
 from flask import current_app, render_template
 from app.models import Expert, User
-import smtplib
+from smtplib import SMTP
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from platform import python_version
 from threading import Thread
 from email.header import Header
+from email.utils import make_msgid
 from app import inbox
+import asyncio
+
+
+def mail_test_2():
+    # asyncio.run(async_mail_test())
+    Thread(target=async_mail_test).start()
+    return 'Mail test is started'
+
+
+SMTP_HOST = 'smtp.go1.unisender.ru'
+SMTP_USERNAME = 'dimanormanev@yandex.ru'
+SMTP_PASSWORD = '6gjgdikw5i543hsj8oror7cyq9tytjpgob51ukty'
+
+
+# @inbox.collate
+def async_mail_test():
+    from main import app
+    conn = SMTP('smtp.go1.unisender.ru', 25)
+    conn.ehlo()
+    conn.starttls()
+    conn.ehlo_or_helo_if_needed()
+    conn.login('5168197', SMTP_PASSWORD)
+    recipients = ['tankustvotnycke@yandex.ru', 'eternal-programmers@yandex.ru',
+                  'rating.nspt@yandex.ru', 'chernovedick2017@yandex.ru']
+    for recipient in recipients:
+        with app.app_context():
+            html_body = render_template('email/send_password.html',
+                                        username='dfsgd', password='dsgfgdseret',
+                                        email=recipient)
+
+            text_body = render_template('email/send_password.txt',
+                                        username='dfsgd', password='dsgfgdseret')
+        mail_subject = 'Тема сообщения'
+        msg = MIMEMultipart("alternative")
+        msg['Message-ID'] = make_msgid()
+        msg['X-Mailer'] = 'Python/' + (python_version())
+        msg['Subject'] = Header(mail_subject, 'utf-8')
+        msg['From'] = f'NSPT <{SMTP_USERNAME}>'
+        msg['Reply-To'] = SMTP_USERNAME
+        msg['Return-Path'] = SMTP_USERNAME
+        msg.attach(MIMEText(text_body, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+
+        try:
+            conn.sendmail(SMTP_USERNAME, recipient, msg.as_string().encode("utf-8"))
+            print('Отправлено сообщение')
+        except:
+            print('Ошибка')
+    conn.quit()
 
 
 def mail_test():
@@ -43,7 +93,7 @@ def async_mail_proj(sender):
         x = rand_email()
         msg['To'] = x
         mail.sendmail(sender, x, msg.as_string().encode("utf-8"))
-        print('Отправлено сообщение',  recipient)
+        print('Отправлено сообщение', recipient)
 
     # html_body = render_template('email/send_password.html',
     #                             user='dfsgd', password='dsgfgdseret')
@@ -75,7 +125,6 @@ def rand_email():
     return str + '@yandex.ru'
 
 
-
 def send_email(subject, sender, recipients, text_body, html_body):
     Thread(target=async_email, args=(subject, sender, recipients, text_body, html_body)).start()
 
@@ -97,4 +146,3 @@ def async_email(subject, sender, recipients, text_body, html_body):
         msg['To'] = recipient
         mail.sendmail(sender, recipient, msg.as_string().encode("utf-8"))
     mail.quit()
-

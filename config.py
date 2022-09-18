@@ -13,16 +13,13 @@ class Config(object):
     MAIL_PORT = 587
     MAIL_USE_TLS = 1
     MAIL_USE_SSL = 0
-    MAIL_USERNAME = 'rating.nspt@gmail.com'
-    MAIL_PASSWORD = '9610050908Dima'
+    MAIL_USERNAME = 'dimanormanev@yandex.ru'
+    MAIL_PASSWORD = '9610050908Dima_'
     MAIL_DEFAULT_SENDER = 'flask@example.com'
     ADMINS = ['eternal-programmers@yandex.ru']
     USER_PER_PAGE = 15
     UPLOAD_FOLDER = '/app/static/images'
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-    CELERY_BROKER_URL = 'http://127.0.0.1:5000'
-    CELERY_RESULT_BACKEND = 'http://127.0.0.1:5000'
-    # BROKER_URL = 'redis://localhost:6379/0'
-    # CELERY_RESULT_BACKEND = 'redis'
+
 
 '''1m|MWoY?@S$kiEfO'''

@@ -1,7 +1,6 @@
 import datetime
 import json
 import sqlalchemy
-from app.email import send_mail_proj, async_mail_proj, mail_test
 from flask import render_template, flash, redirect, url_for, request, jsonify, current_app, send_file, g
 from flask_login import current_user, login_required
 from flask_principal import Principal, Permission, RoleNeed, Identity, identity_changed, identity_loaded, \
@@ -17,6 +16,7 @@ from app.main.functions import users_in_json, experts_in_json, grades_in_json, \
 from app.auth.email import send_role_update, send_role_refuse, send_password_mail
 import pandas as pd
 from app.main.secure_filename_2 import secure_filename_2
+from app.email import send_mail_proj, async_mail_proj, mail_test_2
 import os
 from datetime import date, datetime
 import shutil
@@ -68,6 +68,7 @@ def on_identity_loaded(sender, identity):
         needs.append(administrator_view)
         needs.append(be_admin)
     if viewer:
+        print(444)
         needs.append(viewer_view)
     for n in needs:
         g.identity.provides.add(n)
@@ -81,7 +82,7 @@ def index():
     mail = request.args.get('mail')
 
     # async_mail_proj(current_app.config['MAIL_USERNAME'])
-    # mail_test()
+    # mail_test_2()
 
     return render_template('base.html', auth=current_user.is_authenticated,
                            mail=mail)
@@ -402,7 +403,7 @@ def viewer_settings(project_number):
             users.save(users.filename)
             os.chdir("../../../../")
             excel_user(users.filename, project.number)
-            send_mail_new(project.number, 'users', number)
+            # send_mail_new(project.number, 'users', number)
 
         if request.files['users_photo']:
             try:
@@ -427,7 +428,7 @@ def viewer_settings(project_number):
             experts.save(experts.filename)
             os.chdir("../../../../")
             excel_expert(experts.filename, project.number)
-            send_mail_new(project.number, 'experts', number)
+            # send_mail_new(project.number, 'experts', number)
 
         if request.files['experts_photo']:
             try:
@@ -797,7 +798,7 @@ def admin_settings(project_number):
             users.filename = secure_filename_2(users.filename.rsplit(" ", 1)[0])
             users.save(secure_filename_2(users.filename.rsplit(".", 1)[0]))
             excel_user(users.filename, project.number)
-            send_mail_new(project.number, 'users', number)
+            # send_mail_new(project.number, 'users', number)
 
         if request.files['experts']:
             experts = request.files['experts']
@@ -805,7 +806,7 @@ def admin_settings(project_number):
             experts.filename = secure_filename_2(experts.filename.rsplit(" ", 1)[0])
             experts.save(secure_filename_2(experts.filename.rsplit(".", 1)[0]))
             excel_expert(experts.filename, project.number)
-            send_mail_new(project.number, 'experts', number)
+            # send_mail_new(project.number, 'experts', number)
 
         project_settings(request, project, project_number)
 

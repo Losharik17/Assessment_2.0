@@ -12,6 +12,7 @@ from config import Config
 from inbox import Inbox
 from threading import Thread
 from flask_principal import Principal
+import asyncio
 
 
 db = SQLAlchemy()
@@ -23,13 +24,13 @@ login.login_message_category = 'warning'
 mail = Mail()
 moment = Moment()
 json = FlaskJSON()
-# inbox = Inbox()
+inbox = Inbox()
 principal = Principal()
 
 
-# def inbox_start(inbox):
-#     inbox.serve(address='0.0.0.0', port=4467)
-#     inbox.dispatch()
+async def inbox_start(inbox):
+    inbox.serve(address='0.0.0.0', port=4467)
+    inbox.dispatch()
 
 
 def create_app(config_class=Config):
@@ -46,6 +47,9 @@ def create_app(config_class=Config):
     principal.init_app(app)
 
     # Thread(target=inbox_start, args=(inbox, )).start()
+    # asyncio.run(inbox_start(inbox))
+    # inbox.serve(address='0.0.0.0', port=4467)
+    # inbox.dispatch()
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
